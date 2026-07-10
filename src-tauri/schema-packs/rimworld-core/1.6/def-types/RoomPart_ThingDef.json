@@ -1,0 +1,25 @@
+{
+  "defType": "RoomPart_ThingDef",
+  "label": "Room part thing",
+  "description": "A room part that places a specific thing. Inherits from RoomPartDef.",
+  "inherits": ["RoomPartDef"],
+  "fieldOrder": ["thingDef", "stuffDef"],
+  "fields": {
+    "thingDef": {
+      "label": "Thing",
+      "description": "ThingDef placed by this room part.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "stuffDef": {
+      "label": "Stuff",
+      "description": "Material (ThingDef) used when placing the thing, if it is stuffable.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

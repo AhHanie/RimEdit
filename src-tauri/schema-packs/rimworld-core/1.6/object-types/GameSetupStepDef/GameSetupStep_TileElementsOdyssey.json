@@ -1,0 +1,8 @@
+{
+  "objectType": "GameSetupStep_TileElementsOdyssey",
+  "label": "Game setup step: Tile elements (Odyssey)",
+  "description": "Initializes Odyssey world landmarks (WorldLandmarks). No loadable XML fields.",
+  "inherits": ["GameSetupStep"],
+  "fieldOrder": [],
+  "fields": {}
+}

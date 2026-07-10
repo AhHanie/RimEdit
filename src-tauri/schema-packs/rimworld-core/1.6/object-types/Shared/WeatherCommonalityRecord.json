@@ -1,0 +1,22 @@
+{
+  "objectType": "WeatherCommonalityRecord",
+  "label": "Weather commonality record",
+  "description": "Associates a WeatherDef with a relative commonality weight for biome weather selection. The XML element name is the WeatherDef defName; scalar text is the commonality.",
+  "fieldOrder": ["weather", "commonality"],
+  "fields": {
+    "weather": {
+      "label": "Weather",
+      "description": "WeatherDef this record applies to. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "WeatherDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight controlling how often this weather type occurs. Populated from XML scalar text by the keyedObjectList loader.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

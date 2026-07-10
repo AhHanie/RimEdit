@@ -1,0 +1,31 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationAttributeSet",
+  "label": "Attribute Set",
+  "description": "Sets an XML attribute on the node(s) matched by xpath, adding it if absent or overwriting it if present.",
+  "fieldOrder": ["xpath", "attribute", "value"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Target node(s) to set the attribute on.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    },
+    "attribute": {
+      "label": "Attribute",
+      "description": "Name of the attribute to set.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "required": true
+    },
+    "value": {
+      "label": "Value",
+      "description": "Text value to set the attribute to.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "required": true
+    }
+  }
+}

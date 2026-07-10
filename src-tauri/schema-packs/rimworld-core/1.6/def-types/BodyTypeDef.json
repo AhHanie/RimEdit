@@ -1,0 +1,88 @@
+{
+  "defType": "BodyTypeDef",
+  "label": "Body type",
+  "description": "Defines the graphic paths, wound anchors, offsets, and attach points for a pawn body type such as Male, Female, Thin, Hulk, or Fat.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "bodyNakedGraphicPath",
+    "bodyDessicatedGraphicPath",
+    "woundAnchors",
+    "woundScale",
+    "headOffset",
+    "bodyGraphicScale",
+    "bedOffset",
+    "attachPoints",
+    "attachPointsDessicated"
+  ],
+  "fields": {
+    "bodyNakedGraphicPath": {
+      "label": "Body naked graphic path",
+      "description": "Texture path for the naked body graphic, relative to the game content root.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "bodyDessicatedGraphicPath": {
+      "label": "Body dessicated graphic path",
+      "description": "Texture path for the dessicated (dead, dried-out) body graphic, relative to the game content root.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "woundAnchors": {
+      "label": "Wound anchors",
+      "description": "Spatial anchors that map wound zones to positions on the body graphic.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "WoundAnchor" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "woundScale": {
+      "label": "Wound scale",
+      "description": "Uniform scale multiplier applied to wound decal graphics on this body type.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "headOffset": {
+      "label": "Head offset",
+      "description": "Offset of the head graphic from the body graphic origin as (x, y).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0, 0.32)", "(0, 0.28)"]
+    },
+    "bodyGraphicScale": {
+      "label": "Body graphic scale",
+      "description": "Scale of the body graphic as (x, y). Defaults to (1, 1).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "defaultValue": "(1, 1)",
+      "xml": "element"
+    },
+    "bedOffset": {
+      "label": "Bed offset",
+      "description": "Vertical offset applied when the pawn is rendered lying in a bed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "attachPoints": {
+      "label": "Attach points",
+      "description": "Named spatial anchor points on the living body graphic for attached overlays and equipment.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "AttachPoint" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "attachPointsDessicated": {
+      "label": "Attach points dessicated",
+      "description": "Named spatial anchor points on the dessicated body graphic for attached overlays.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "AttachPoint" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

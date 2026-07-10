@@ -1,0 +1,80 @@
+{
+  "objectType": "FilthProperties",
+  "label": "Filth properties",
+  "description": "Properties for filth things controlling age-out behavior, cleaning cost, rain washing, and appearance.",
+  "fieldOrder": [
+    "cleaningWorkToReduceThickness",
+    "growthRate",
+    "rainWashes",
+    "maxThickness",
+    "pinSize",
+    "drawColor",
+    "spreadToAdjacentRooms",
+    "placementMask"
+  ],
+  "fields": {
+    "cleaningWorkToReduceThickness": {
+      "label": "Cleaning work to reduce thickness",
+      "description": "Work ticks required to reduce this filth's thickness by one unit.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 20,
+      "xml": "element"
+    },
+    "growthRate": {
+      "label": "Growth rate",
+      "description": "Thickness units added per game day by accumulation. 0 means no growth.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "rainWashes": {
+      "label": "Rain washes",
+      "description": "Whether rain gradually removes this filth from outdoor cells.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "maxThickness": {
+      "label": "Max thickness",
+      "description": "Maximum thickness this filth can accumulate to before new additions are dropped.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 3,
+      "xml": "element"
+    },
+    "pinSize": {
+      "label": "Pin size",
+      "description": "Size multiplier for the filth graphic when rendered as a map-mesh pin.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "drawColor": {
+      "label": "Draw color",
+      "description": "RGBA color override for this filth's graphic.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.3, 0.2, 0.1, 1)"]
+    },
+    "spreadToAdjacentRooms": {
+      "label": "Spread to adjacent rooms",
+      "description": "If true, high-thickness filth can spread into neighboring room cells.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "placementMask": {
+      "label": "Placement mask",
+      "description": "List of terrain affordance tags controlling which terrain types accept this filth.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

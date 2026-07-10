@@ -1,0 +1,37 @@
+.root {
+  width: var(--w-rail);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+  gap: 2px;
+  background: var(--surface-rail);
+  border-right: 1px solid var(--border-subtle);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 7px;
+  color: var(--text-muted);
+}
+
+.btn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.btnActive {
+  background: var(--accent-muted);
+  color: var(--accent);
+}
+
+.btnActive:hover {
+  background: var(--accent-muted);
+  color: var(--accent);
+}

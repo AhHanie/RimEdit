@@ -1,0 +1,66 @@
+{
+  "defType": "StuffCategoryDef",
+  "label": "Stuff category",
+  "description": "Classifies a material as a stuff category (metallic, woody, stony, fabric, leather, bioferrite) for use in buildable and recipe filters.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "noun",
+    "destroySoundSmall",
+    "destroySoundMedium",
+    "destroySoundLarge"
+  ],
+  "fields": {
+    "noun": {
+      "label": "Noun",
+      "description": "The noun used for this stuff category in grammar rules (e.g. \"metal\", \"wood\"). Translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "destroySoundSmall": {
+      "label": "Destroy sound (small)",
+      "description": "Sound played when a small structure made of this stuff category is destroyed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "destroySoundMedium": {
+      "label": "Destroy sound (medium)",
+      "description": "Sound played when a medium structure made of this stuff category is destroyed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "destroySoundLarge": {
+      "label": "Destroy sound (large)",
+      "description": "Sound played when a large structure made of this stuff category is destroyed. Omitted on Fabric and Leathery.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "new-stuff-category": {
+      "label": "New stuff category",
+      "description": "Minimal stuff category with a label and noun.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "noun"],
+      "fieldValues": {}
+    }
+  }
+}

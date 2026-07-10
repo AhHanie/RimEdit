@@ -1,0 +1,27 @@
+{
+  "defType": "PsychicRitualDef_SummonShamblers",
+  "label": "Psychic ritual -- summon shamblers",
+  "description": "Ritual that summons shambler undead from outside the map. Combat points and eligibility are evaluated at cast time.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "combatPointsFromQualityRange",
+    "shamblersAllowed"
+  ],
+  "fields": {
+    "combatPointsFromQualityRange": {
+      "label": "Combat points from quality range",
+      "description": "Range of combat points spent on summoned shamblers, lerped through by ritual quality.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "shamblersAllowed": {
+      "label": "Shamblers allowed",
+      "description": "Runtime flag overwritten by InitializeCast -- not meaningful to set in XML. Tracks whether the current map and biome allow shamblers to enter.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "objectType": "WorldGenStep_Tiles",
+  "label": "Tiles world gen step",
+  "description": "Generates the base world tile grid.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

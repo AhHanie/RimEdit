@@ -1,0 +1,14 @@
+{
+  "formatVersion": 2,
+  "packId": "rimedit.rimworld.core",
+  "name": "RimWorld Core",
+  "version": "1.6.0",
+  "gameVersion": "1.6",
+  "rimeditVersion": "0.1.0",
+  "author": "RimEdit",
+  "priority": 0,
+  "dependencies": [],
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": ["object-types"],
+  "patchOperationDirectories": ["patch-operations"]
+}

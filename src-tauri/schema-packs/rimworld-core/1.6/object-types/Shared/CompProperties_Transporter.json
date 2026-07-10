@@ -1,0 +1,91 @@
+{
+  "objectType": "CompProperties_Transporter",
+  "label": "Transporter comp",
+  "description": "Comp properties for things that can load and carry cargo or pawns as a transport container.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": [
+    "massCapacity",
+    "restEffectiveness",
+    "max1PerGroup",
+    "canChangeAssignedThingsAfterStarting",
+    "showOverallStats",
+    "pawnLoadedSound",
+    "pawnExitSound",
+    "shouldTickContents",
+    "showMassInInspectString"
+  ],
+  "fields": {
+    "massCapacity": {
+      "label": "Mass capacity",
+      "description": "Maximum total mass in kg that this transporter can carry.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 150,
+      "xml": "element"
+    },
+    "restEffectiveness": {
+      "label": "Rest effectiveness",
+      "description": "How effectively pawns inside rest while being transported. 0 means no rest gain.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "max1PerGroup": {
+      "label": "Max 1 per group",
+      "description": "If true, only one transporter of this type can be included per launch group.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canChangeAssignedThingsAfterStarting": {
+      "label": "Can change assigned things after starting",
+      "description": "If true, the cargo manifest can be edited after a launch countdown has begun.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOverallStats": {
+      "label": "Show overall stats",
+      "description": "If true, aggregate group stats (total mass, capacity) are shown in the transporter UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "pawnLoadedSound": {
+      "label": "Pawn loaded sound",
+      "description": "Sound played when a pawn enters and boards this transporter.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "pawnExitSound": {
+      "label": "Pawn exit sound",
+      "description": "Sound played when a pawn disembarks from this transporter.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "shouldTickContents": {
+      "label": "Should tick contents",
+      "description": "If true, things stored inside this transporter continue to tick while in transit.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showMassInInspectString": {
+      "label": "Show mass in inspect string",
+      "description": "If true, current cargo mass is displayed in the inspect panel for this transporter.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

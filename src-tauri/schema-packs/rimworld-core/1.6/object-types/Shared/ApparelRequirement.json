@@ -1,0 +1,53 @@
+{
+  "objectType": "ApparelRequirement",
+  "label": "Apparel requirement",
+  "description": "Specifies body part coverage, required tags, allowed tags, and required defs for a pawn apparel requirement.",
+  "fieldOrder": [
+    "bodyPartGroupsMatchAny",
+    "requiredTags",
+    "allowedTags",
+    "requiredDefs",
+    "groupLabel"
+  ],
+  "fields": {
+    "bodyPartGroupsMatchAny": {
+      "label": "Body part groups (match any)",
+      "description": "The apparel must cover at least one of these body part groups.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "BodyPartGroupDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "requiredTags": {
+      "label": "Required tags",
+      "description": "Apparel must have at least one of these tags to satisfy the requirement.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "allowedTags": {
+      "label": "Allowed tags",
+      "description": "Apparel with any of these tags is allowed to satisfy the requirement when no required tag matches.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "requiredDefs": {
+      "label": "Required defs",
+      "description": "Specific ThingDefs that are always allowed to satisfy the requirement.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "groupLabel": {
+      "label": "Group label",
+      "description": "Label shown for this requirement group in the UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

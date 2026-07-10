@@ -1,0 +1,41 @@
+{
+  "objectType": "GenStep_ScatterGroupPrefabs",
+  "label": "Scatter group prefabs",
+  "description": "Scatters PrefabDef instances from a weighted group list across the map.",
+  "inherits": ["GenStep_Scatterer"],
+  "fieldOrder": [
+    "Class",
+    "count",
+    "countPer10kCellsRange",
+    "nearPlayerStart",
+    "nearMapCenter",
+    "minSpacing",
+    "spotMustBeStandable",
+    "minDistToPlayerStart",
+    "minDistToPlayerStartPct",
+    "minEdgeDist",
+    "minEdgeDistPct",
+    "extraNoBuildEdgeDist",
+    "validators",
+    "fallbackValidators",
+    "allowInWaterBiome",
+    "allowFoggedPositions",
+    "allowRoofed",
+    "onlyOnStartingMap",
+    "minPollution",
+    "allowMechanoidDatacoreReadOrLost",
+    "isJunk",
+    "warnOnFail",
+    "groups"
+  ],
+  "fields": {
+    "groups": {
+      "label": "Groups",
+      "description": "Weighted list of prefab entries. One prefab group is chosen per scatter placement.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ScatterGroupPrefab" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

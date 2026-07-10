@@ -1,0 +1,37 @@
+{
+  "objectType": "RoleEffect_GiveThoughtOnTend",
+  "label": "Role effect (give thought on tend)",
+  "description": "Gives a thought to the tended pawn when the role pawn tends to them.",
+  "fieldOrder": ["Class", "label", "labelKey", "thoughtDef"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleEffect subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Label shown for this role effect.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the role effect label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "thoughtDef": {
+      "label": "Thought def",
+      "description": "Thought given to the tended pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

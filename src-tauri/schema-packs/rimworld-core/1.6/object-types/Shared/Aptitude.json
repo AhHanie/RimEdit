@@ -1,0 +1,30 @@
+{
+  "objectType": "Aptitude",
+  "label": "Aptitude",
+  "description": "A skill and level pair applied as a passion-independent aptitude adjustment.",
+  "fieldOrder": [
+    "skill",
+    "level"
+  ],
+  "fields": {
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef that this aptitude adjustment targets.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "level": {
+      "label": "Level",
+      "description": "Integer aptitude level applied to the skill. Positive values improve the skill; negative values reduce it.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

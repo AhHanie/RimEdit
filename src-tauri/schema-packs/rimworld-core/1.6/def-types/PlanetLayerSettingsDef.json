@@ -1,0 +1,32 @@
+{
+  "defType": "PlanetLayerSettingsDef",
+  "label": "Planet layer settings",
+  "description": "Defines camera and rendering geometry for a planet layer, such as radius, view angle, subdivisions, and camera offsets.",
+  "inherits": ["Def"],
+  "fieldOrder": ["settings"],
+  "fields": {
+    "settings": {
+      "label": "Settings",
+      "description": "Planet layer settings values, such as radius, view angle, subdivisions, and camera offsets.",
+      "type": { "kind": "object", "schemaRef": "PlanetLayerSettings" },
+      "required": false,
+      "defaultCollapsed": false,
+      "xml": "object"
+    }
+  },
+  "templates": {
+    "new-planet-layer-settings": {
+      "label": "New planet layer settings",
+      "description": "Minimal planet layer settings with the default radius, subdivisions, and view angle.",
+      "includeRequiredFields": true,
+      "promptFields": [],
+      "fieldValues": {
+        "settings": {
+          "radius": 100,
+          "subdivisions": 10,
+          "viewAngle": 180
+        }
+      }
+    }
+  }
+}

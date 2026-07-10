@@ -1,0 +1,46 @@
+{
+  "defType": "MemeGroupDef",
+  "label": "Meme group",
+  "description": "Defines a visual grouping of meme icons on the ideology screen, controlling how a set of memes is laid out and rendered together.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "drawOffset",
+    "maxRows",
+    "renderOrder",
+    "renderWithGap"
+  ],
+  "fields": {
+    "drawOffset": {
+      "label": "Draw offset",
+      "description": "UI draw offset for this group's icon cluster in normalized screen space, as (x, y).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element",
+      "default": "(0, 0)"
+    },
+    "maxRows": {
+      "label": "Max rows",
+      "description": "Maximum number of meme icons stacked in a column for this group.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "default": "2"
+    },
+    "renderOrder": {
+      "label": "Render order",
+      "description": "Sort order for rendering this group on the ideology screen. Lower values render first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "default": "0"
+    },
+    "renderWithGap": {
+      "label": "Render with gap",
+      "description": "Whether to add extra spacing before this group when rendering.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "default": "false"
+    }
+  }
+}

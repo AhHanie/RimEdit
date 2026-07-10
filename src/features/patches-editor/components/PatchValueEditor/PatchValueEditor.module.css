@@ -1,0 +1,212 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.modeToggle {
+  display: flex;
+  gap: 2px;
+}
+
+.modeBtn {
+  font-size: 10px;
+  padding: 2px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.modeBtn[data-active="true"] {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.modeBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rawXml {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-base, transparent);
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+.structuredBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+}
+
+.subField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.subLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.subField input,
+.subField select,
+.subField textarea {
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-base, transparent);
+  color: var(--text-primary);
+}
+
+.subField select option {
+  background: var(--surface-editor);
+  color: var(--text-primary);
+}
+
+.objectGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+}
+
+.objectList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.objectListItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 3px;
+}
+
+.objectListItemHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.objectListItemHeader select,
+.objectListItemHeader input {
+  flex: 1;
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+}
+
+.objectListItemHeader select option {
+  background: var(--surface-editor);
+  color: var(--text-primary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.listRow {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.listRow input {
+  flex: 1;
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.iconBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.addBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 3px;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.addBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.unsupportedNote {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.error {
+  font-size: 11px;
+  color: var(--text-error);
+}

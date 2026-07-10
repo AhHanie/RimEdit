@@ -1,0 +1,19 @@
+{
+  "defType": "BodyPartTagDef",
+  "label": "Body part tag",
+  "description": "Tags that categorize body parts. A tag can be marked vital, which means any pawn missing all body parts that carry that tag will die.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "vital"
+  ],
+  "fields": {
+    "vital": {
+      "label": "Vital",
+      "description": "If true, a pawn missing every body part carrying this tag will die.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

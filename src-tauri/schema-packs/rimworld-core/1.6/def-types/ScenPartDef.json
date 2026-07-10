@@ -1,0 +1,170 @@
+{
+  "defType": "ScenPartDef",
+  "label": "Scenario part",
+  "description": "Defines a reusable scenario part that can be added to scenarios. Controls which C# class implements the part and how it interacts with scenario editing and generation.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "category", "scenPartClass", "summaryPriority", "selectionWeight", "maxUses",
+    "canBeRandomlyAdded", "canBePlayerAddedRemoved", "pageClass", "gameCondition",
+    "gameConditionTargetsWorld", "durationRandomRange", "designatorType", "genStep",
+    "preventRemovalOfFaction"
+  ],
+  "fields": {
+    "category": {
+      "label": "Category",
+      "description": "Grouping category for this scenario part. Controls where it appears in the scenario editor and how it is treated during scenario generation.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Undefined", "Fixed", "StartingImportant", "PlayerPawnFilter",
+          "PlayerPawnModifier", "GameCondition", "Rule", "StartingItem",
+          "WorldThing", "Misc"
+        ]
+      }
+    },
+    "scenPartClass": {
+      "label": "Scenario part class",
+      "description": "C# class that implements this scenario part. Must extend ScenPart.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "summaryPriority": {
+      "label": "Summary priority",
+      "description": "Controls ordering in the scenario summary display. Higher values appear first (sorted descending). Defaults to -1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": -1
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative weight used when this part is randomly added to a scenario. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "maxUses": {
+      "label": "Max uses",
+      "description": "Maximum number of times this part can be added to a single scenario. Defaults to 999999.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 999999
+    },
+    "canBeRandomlyAdded": {
+      "label": "Can be randomly added",
+      "description": "Whether this part can be automatically added during random scenario generation. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "canBePlayerAddedRemoved": {
+      "label": "Can be player added or removed",
+      "description": "Whether the player can manually add or remove this part in the scenario editor. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "pageClass": {
+      "label": "Page class",
+      "description": "C# class for the configuration page shown when this part is selected for editing, if any.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "gameCondition": {
+      "label": "Game condition",
+      "description": "GameConditionDef applied or managed by this scenario part.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GameConditionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "gameConditionTargetsWorld": {
+      "label": "Game condition targets world",
+      "description": "When true, the game condition is applied to the world rather than the local map. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "durationRandomRange": {
+      "label": "Duration random range",
+      "description": "Randomised duration in days for game conditions started by this part. Defaults to 30~100.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["30~100", "90~500"]
+    },
+    "designatorType": {
+      "label": "Designator type",
+      "description": "C# Designator class whose use is restricted by this scenario part (used by rule-based parts).",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "genStep": {
+      "label": "Gen step",
+      "description": "GenStepDef that this scenario part enables, disables, or modifies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GenStepDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "preventRemovalOfFaction": {
+      "label": "Prevent removal of faction",
+      "description": "FactionDef whose scenario parts cannot be removed when this part is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FactionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "basic-scen-part": {
+      "label": "Basic scenario part",
+      "description": "Minimal scenario part with category and implementation class.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "category", "scenPartClass"],
+      "fieldValues": {}
+    },
+    "game-condition-scen-part": {
+      "label": "Game condition scenario part",
+      "description": "Scenario part that starts a game condition with a random duration.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "gameCondition", "durationRandomRange"],
+      "fieldValues": {
+        "scenPartClass": "ScenPart_GameCondition",
+        "category": "GameCondition"
+      }
+    },
+    "map-gen-toggle": {
+      "label": "Map gen toggle scenario part",
+      "description": "Scenario part that disables a map generation step.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "genStep"],
+      "fieldValues": {
+        "scenPartClass": "ScenPart_DisableMapGen",
+        "category": "Misc"
+      }
+    }
+  }
+}

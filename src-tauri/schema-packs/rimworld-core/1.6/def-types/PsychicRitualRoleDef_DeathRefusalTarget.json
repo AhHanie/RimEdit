@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualRoleDef_DeathRefusalTarget",
+  "label": "Psychic ritual role -- death refusal target",
+  "description": "Role variant for the target pawn in a death-refusal psychic ritual. Adds a reason string shown when the target leaves due to reaching the maximum death-refusal count.",
+  "inherits": ["PsychicRitualRoleDef"],
+  "fieldOrder": [
+    "psychicRitualLeaveReason_MaxDeathRefusal"
+  ],
+  "fields": {
+    "psychicRitualLeaveReason_MaxDeathRefusal": {
+      "label": "Leave reason (max death refusal)",
+      "description": "Message shown when the target leaves the ritual because they have reached the maximum death-refusal count.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

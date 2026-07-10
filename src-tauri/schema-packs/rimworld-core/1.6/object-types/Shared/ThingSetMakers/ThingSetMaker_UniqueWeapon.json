@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_UniqueWeapon",
+  "label": "Unique weapon maker",
+  "description": "Generates a unique weapon from the eligible pool, ensuring it has not already been generated in this session.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

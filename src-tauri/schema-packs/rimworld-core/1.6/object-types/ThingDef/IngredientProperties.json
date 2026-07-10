@@ -1,0 +1,27 @@
+{
+  "objectType": "IngredientProperties",
+  "label": "Ingredient properties",
+  "description": "Properties for things used as recipe inputs, controlling stack-merge behavior.",
+  "fieldOrder": [
+    "mergeCountOrDefault",
+    "canMergeDifferentStuff"
+  ],
+  "fields": {
+    "mergeCountOrDefault": {
+      "label": "Merge count or default",
+      "description": "Number of items merged into a single recipe ingredient slot. -1 uses the recipe default.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "canMergeDifferentStuff": {
+      "label": "Can merge different stuff",
+      "description": "Whether ingredients made from different stuff types can be mixed in the same bill.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

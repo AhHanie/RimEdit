@@ -1,0 +1,57 @@
+{
+  "defType": "LandingOutcomeDef",
+  "label": "Landing outcome",
+  "description": "Defines a negative outcome the gravship controller may apply when a gravship lands with a failed quality roll.",
+  "inherits": ["Def"],
+  "fieldOrder": ["weight", "letterLabel", "letterText", "letterDef", "workerClass"],
+  "fields": {
+    "weight": {
+      "label": "Weight",
+      "description": "Relative probability weight used when randomly selecting among eligible landing outcomes.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "Translated title shown in the letter pane when this outcome is triggered. Marked [MustTranslate] -- a keyed translation entry is expected.",
+      "type": { "kind": "localizedString" },
+      "required": true,
+      "xml": "element"
+    },
+    "letterText": {
+      "label": "Letter text",
+      "description": "Translated body text shown in the letter pane. Supports grammar tokens {GRAVSHIP}, {PILOT_nameDef}, and {COPILOT_nameDef}. Marked [MustTranslate].",
+      "type": { "kind": "localizedString" },
+      "required": true,
+      "xml": "element"
+    },
+    "letterDef": {
+      "label": "Letter def",
+      "description": "Letter type that controls the icon and severity displayed when this outcome fires. Typically NegativeEvent.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": { "defType": "LetterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "Fully-qualified C# class name of the concrete LandingOutcomeWorker subclass that implements this outcome's effects.",
+      "type": { "kind": "typeName" },
+      "required": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-landing-outcome": {
+      "label": "Basic landing outcome",
+      "description": "Minimal landing outcome with a worker class, letter, and default weight.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "letterLabel", "letterText", "letterDef"],
+      "fieldValues": {
+        "weight": "1"
+      }
+    }
+  }
+}

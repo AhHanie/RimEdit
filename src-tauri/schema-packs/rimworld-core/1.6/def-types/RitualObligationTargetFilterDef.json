@@ -1,0 +1,85 @@
+{
+  "defType": "RitualObligationTargetFilterDef",
+  "label": "Ritual obligation target filter",
+  "description": "Defines logic for selecting valid targets for obligation-triggered rituals.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass", "colonistThingsOnly", "thingDefs", "minUnroofedCells",
+    "unroofedCellSearchRadius", "woodPerParticipant", "maxSpeakerDistance",
+    "maxDrumDistance"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class implementing the obligation target filter logic. Must extend RitualObligationTargetFilter.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "colonistThingsOnly": {
+      "label": "Colonist things only",
+      "description": "If true, only things owned by the player colony are valid targets.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "thingDefs": {
+      "label": "Thing defs",
+      "description": "List of ThingDefs that are valid obligation targets.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "minUnroofedCells": {
+      "label": "Min unroofed cells",
+      "description": "Minimum number of unroofed cells required near the target for the obligation to trigger.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "unroofedCellSearchRadius": {
+      "label": "Unroofed cell search radius",
+      "description": "Radius in cells searched around the target when counting unroofed cells.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "woodPerParticipant": {
+      "label": "Wood per participant",
+      "description": "Amount of wood required per participant for this obligation filter.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxSpeakerDistance": {
+      "label": "Max speaker distance",
+      "description": "Maximum distance from the target at which a speaker role pawn is valid.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxDrumDistance": {
+      "label": "Max drum distance",
+      "description": "Maximum distance from the target at which a drum building is counted.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-obligation-target-filter": {
+      "label": "New ritual obligation target filter",
+      "description": "Minimal obligation target filter with a worker class.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "workerClass"],
+      "fieldValues": {}
+    }
+  }
+}

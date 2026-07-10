@@ -1,0 +1,72 @@
+{
+  "objectType": "TraitIngestionThoughtsOverride",
+  "label": "Trait ingestion thoughts override",
+  "description": "Overrides ingestion thoughts for a specific ingestible or meat source category for pawns with a given trait degree.",
+  "fieldOrder": [
+    "thing",
+    "meatSource",
+    "thoughts",
+    "thoughtsDirect",
+    "thoughtsAsIngredient"
+  ],
+  "fields": {
+    "thing": {
+      "label": "Thing",
+      "description": "ThingDef of the specific ingestible this override applies to. Mutually exclusive with meatSource.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "meatSource": {
+      "label": "Meat source",
+      "description": "Meat source category this override applies to when thing is not set.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["NotMeat", "Undefined", "Insect", "Humanlike"]
+      }
+    },
+    "thoughts": {
+      "label": "Thoughts",
+      "description": "ThoughtDefs added (or suppressed) when the pawn ingests the matched item.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "thoughtsDirect": {
+      "label": "Thoughts (direct)",
+      "description": "ThoughtDefs added (or suppressed) when the pawn directly ingests the matched item (not as an ingredient).",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "thoughtsAsIngredient": {
+      "label": "Thoughts (as ingredient)",
+      "description": "ThoughtDefs added (or suppressed) when the pawn consumes a meal containing the matched item as an ingredient.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

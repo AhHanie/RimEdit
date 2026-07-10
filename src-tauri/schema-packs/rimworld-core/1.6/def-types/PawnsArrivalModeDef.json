@@ -1,0 +1,177 @@
+{
+  "defType": "PawnsArrivalModeDef",
+  "label": "Pawns arrival mode",
+  "description": "Defines how a raiding or visiting group of pawns arrives on the map (e.g. walking from edge, drop pods, tunneling). Referenced by FactionDef arrival mode white/blacklists.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "selectionWeightCurve",
+    "pointsFactorCurve",
+    "minTechLevel",
+    "forQuickMilitaryAid",
+    "walkIn",
+    "canBeBackup",
+    "minSpaceSelectionWeight",
+    "biomeWhitelist",
+    "biomeBlacklist",
+    "layerWhitelist",
+    "layerBlacklist",
+    "textEnemy",
+    "textFriendly",
+    "textWillArrive",
+    "selectionWeightCurvesPerFaction"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# PawnsArrivalModeWorker subclass that implements the arrival logic for this mode.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "PawnsArrivalModeWorker",
+      "xml": "element",
+      "examples": [
+        "PawnsArrivalModeWorker_EdgeWalkIn",
+        "PawnsArrivalModeWorker_EdgeDrop",
+        "PawnsArrivalModeWorker_CenterDrop",
+        "PawnsArrivalModeWorker_RandomDrop",
+        "PawnsArrivalModeWorker_ClusterDrop"
+      ]
+    },
+    "selectionWeightCurve": {
+      "label": "Selection weight curve",
+      "description": "Piecewise linear curve mapping incident points to relative selection weight. Used when no per-faction curve applies.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "pointsFactorCurve": {
+      "label": "Points factor curve",
+      "description": "Piecewise linear curve mapping incident points to a raid-points multiplier applied after this mode is chosen.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "minTechLevel": {
+      "label": "Min tech level",
+      "description": "Minimum faction tech level required for this arrival mode to be eligible.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Undefined",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Animal", "Neolithic", "Medieval", "Industrial", "Spacer", "Ultra", "Archotech"]
+      }
+    },
+    "forQuickMilitaryAid": {
+      "label": "For quick military aid",
+      "description": "If true, this arrival mode is used when a faction sends a quick military aid response.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "walkIn": {
+      "label": "Walk in",
+      "description": "If true, pawns walk in from the map edge rather than being dropped. Affects music and certain eligibility checks.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canBeBackup": {
+      "label": "Can be backup",
+      "description": "If true, this arrival mode can be selected as a backup when the primary mode is ineligible.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "minSpaceSelectionWeight": {
+      "label": "Min space selection weight",
+      "description": "Minimum selection weight when the raid is on a space (Odyssey) tile. -1 means no space-specific floor.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "biomeWhitelist": {
+      "label": "Biome whitelist",
+      "description": "If non-empty, this arrival mode can only be used on maps with one of these BiomeDefs.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "BiomeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "biomeBlacklist": {
+      "label": "Biome blacklist",
+      "description": "BiomeDefs on which this arrival mode may not be used.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "BiomeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerWhitelist": {
+      "label": "Layer whitelist",
+      "description": "If non-empty, this arrival mode can only be used on tiles with one of these PlanetLayerDefs (Odyssey).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerBlacklist": {
+      "label": "Layer blacklist",
+      "description": "PlanetLayerDefs on which this arrival mode may not be used (Odyssey).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "textEnemy": {
+      "label": "Text (enemy)",
+      "description": "Flavor text shown when a hostile group arrives using this mode. Supports RimWorld format placeholders such as {0} and {0_pawnsPluralDef}.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "textFriendly": {
+      "label": "Text (friendly)",
+      "description": "Flavor text shown when a friendly group arrives using this mode.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "textWillArrive": {
+      "label": "Text (will arrive)",
+      "description": "Flavor text shown when a group is announced as incoming using this mode.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "selectionWeightCurvesPerFaction": {
+      "label": "Selection weight curves per faction",
+      "description": "Per-faction overrides for the selection weight curve. When a raid faction matches an entry, its curve is used instead of selectionWeightCurve.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "FactionCurve" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "walk-in-arrival": {
+      "label": "Walk-in arrival",
+      "description": "Arrival mode where pawns walk in from the map edge.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "selectionWeightCurve", "textEnemy", "textFriendly", "textWillArrive"],
+      "fieldValues": {
+        "walkIn": "true"
+      }
+    },
+    "drop-pod-arrival": {
+      "label": "Drop pod arrival",
+      "description": "Arrival mode where pawns drop in via pods. Optionally restricted to a tech level and planet layer.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "selectionWeightCurve", "minTechLevel", "layerWhitelist", "textEnemy", "textFriendly", "textWillArrive"],
+      "fieldValues": {}
+    }
+  }
+}

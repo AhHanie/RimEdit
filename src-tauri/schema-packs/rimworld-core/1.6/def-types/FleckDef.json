@@ -1,0 +1,322 @@
+{
+  "defType": "FleckDef",
+  "label": "Fleck",
+  "description": "Defines a transient visual effect particle or overlay.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "fleckSystemClass",
+    "altitudeLayer",
+    "altitudeLayerIncOffset",
+    "drawGUIOverlay",
+    "graphicData",
+    "randomGraphics",
+    "realTime",
+    "attachedToHead",
+    "useAttachLink",
+    "fadeInTime",
+    "solidTime",
+    "fadeOutTime",
+    "acceleration",
+    "speedPerTime",
+    "growthRate",
+    "scalers",
+    "collide",
+    "landSound",
+    "unattachedDrawOffset",
+    "attachedDrawOffset",
+    "rotateTowardsMoveDirection",
+    "rotateTowardsMoveDirectionExtraAngle",
+    "drawOffscreen",
+    "archHeight",
+    "archDuration",
+    "archCurve",
+    "scalingAnchor"
+  ],
+  "fields": {
+    "fleckSystemClass": {
+      "label": "Fleck system class",
+      "description": "C# FleckSystem subclass that drives this fleck's per-tick simulation. Must derive from FleckSystem.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["FleckSystemThrown", "FleckSystemStatic", "FleckSystemSplash"]
+    },
+    "altitudeLayer": {
+      "label": "Altitude layer",
+      "description": "Rendering depth layer that controls draw order relative to terrain, buildings, and pawns.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "BelowTerrain",
+          "TerrainEdges",
+          "Terrain",
+          "TerrainScatter",
+          "Floor",
+          "Conduits",
+          "FloorCoverings",
+          "FloorEmplacement",
+          "Filth",
+          "Zone",
+          "SmallWire",
+          "LowPlant",
+          "MoteLow",
+          "Shadows",
+          "DoorMoveable",
+          "Building",
+          "BuildingBelowTop",
+          "BuildingOnTop",
+          "Item",
+          "ItemImportant",
+          "LayingPawn",
+          "PawnRope",
+          "Projectile",
+          "Pawn",
+          "PawnUnused",
+          "PawnState",
+          "Blueprint",
+          "MoteOverheadLow",
+          "MoteOverhead",
+          "Gas",
+          "Skyfaller",
+          "Weather",
+          "LightingOverlay",
+          "VisEffects",
+          "FogOfWar",
+          "Darkness",
+          "WorldClipper",
+          "Silhouettes",
+          "MapDataOverlay",
+          "MetaOverlays",
+          "_Count"
+        ]
+      },
+      "examples": ["MoteLow", "MoteOverhead", "Terrain"]
+    },
+    "altitudeLayerIncOffset": {
+      "label": "Altitude layer inc offset",
+      "description": "Additional fine-grained altitude offset within the chosen altitude layer.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawGUIOverlay": {
+      "label": "Draw GUI overlay",
+      "description": "If true, the fleck is drawn on the GUI overlay pass rather than the world pass.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "graphicData": {
+      "label": "Graphic data",
+      "description": "Primary visual rendering settings. Used when randomGraphics is not set.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object"
+    },
+    "randomGraphics": {
+      "label": "Random graphics",
+      "description": "List of GraphicData variants. The fleck system picks one at spawn when this list is populated.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "realTime": {
+      "label": "Real time",
+      "description": "If true, the fleck advances using real wall-clock time instead of game ticks, ignoring time speed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "attachedToHead": {
+      "label": "Attached to head",
+      "description": "If true, the fleck tracks the head position of its attached pawn rather than the body root.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useAttachLink": {
+      "label": "Use attach link",
+      "description": "If true, the fleck uses an attach-link to follow a moving thing during its lifetime.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fadeInTime": {
+      "label": "Fade in time",
+      "description": "Duration in seconds for the fleck to fade from transparent to fully opaque.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "solidTime": {
+      "label": "Solid time",
+      "description": "Duration in seconds the fleck remains at full opacity before fading out. Source default 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "fadeOutTime": {
+      "label": "Fade out time",
+      "description": "Duration in seconds for the fleck to fade from full opacity to transparent.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "acceleration": {
+      "label": "Acceleration",
+      "description": "World-space velocity change per second as (x, y, z). Source default is Vector3.zero.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0, 0, 0)", "(0, -9.8, 0)"]
+    },
+    "speedPerTime": {
+      "label": "Speed per time",
+      "description": "Speed change per second as a FloatRange. Supports both scalar values such as -40 and ranges such as 0.2~0.5.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["-40", "0.2~0.5", "-2"]
+    },
+    "growthRate": {
+      "label": "Growth rate",
+      "description": "Scale change per second. Positive values grow the fleck; negative values shrink it.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "examples": ["-0.5", "0.005", "1"]
+    },
+    "scalers": {
+      "label": "Scalers",
+      "description": "List of CurvedScaler entries that animate scale along individual world axes over the fleck lifetime.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "CurvedScaler" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "collide": {
+      "label": "Collide",
+      "description": "If true, the fleck system performs terrain collision checks during movement.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "landSound": {
+      "label": "Land sound",
+      "description": "SoundDef played when the fleck lands after arch motion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "unattachedDrawOffset": {
+      "label": "Unattached draw offset",
+      "description": "World-space draw offset applied when the fleck is not attached to a thing.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0, 0, 0)"]
+    },
+    "attachedDrawOffset": {
+      "label": "Attached draw offset",
+      "description": "World-space draw offset applied when the fleck is attached to a thing.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "rotateTowardsMoveDirection": {
+      "label": "Rotate towards move direction",
+      "description": "If true, the fleck graphic rotates to face its current movement direction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "rotateTowardsMoveDirectionExtraAngle": {
+      "label": "Rotate towards move direction extra angle",
+      "description": "Additional rotation in degrees added on top of the movement-direction angle when rotateTowardsMoveDirection is true.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawOffscreen": {
+      "label": "Draw offscreen",
+      "description": "If true, the fleck is drawn even when outside the visible camera bounds.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "archHeight": {
+      "label": "Arch height",
+      "description": "Peak world-unit height of the parabolic arch trajectory as a FloatRange. Supports scalar and range values.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.5", "0.5~2", "12~16"]
+    },
+    "archDuration": {
+      "label": "Arch duration",
+      "description": "Duration in seconds of the parabolic arch trajectory as a FloatRange.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.5", "1.2", "1.15"]
+    },
+    "archCurve": {
+      "label": "Arch curve",
+      "description": "SimpleCurve that shapes the vertical component of the arch trajectory over normalized time 0–1.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "scalingAnchor": {
+      "label": "Scaling anchor",
+      "description": "Pivot point for scale animations as (x, y, z). Source default is (0.5, 0.5, 0.5).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0.5, 0.5, 0.5)",
+      "xml": "element",
+      "examples": ["(0.5, 0.5, 0.5)", "(0.5, 0.2, 0)"]
+    }
+  },
+  "templates": {
+    "staticFleck": {
+      "label": "Static fleck",
+      "description": "A non-moving fleck that fades in, holds, and fades out at a fixed position.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "fleckSystemClass", "altitudeLayer", "graphicData", "solidTime", "fadeOutTime"],
+      "fieldValues": {
+        "fleckSystemClass": "FleckSystemStatic",
+        "altitudeLayer": "MoteOverhead",
+        "solidTime": 1,
+        "fadeOutTime": 0.5
+      }
+    },
+    "thrownFleck": {
+      "label": "Thrown fleck",
+      "description": "A fleck that moves through the world with a speed and optional growth rate.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "fleckSystemClass", "altitudeLayer", "graphicData", "solidTime", "fadeOutTime", "speedPerTime", "growthRate"],
+      "fieldValues": {
+        "fleckSystemClass": "FleckSystemThrown",
+        "altitudeLayer": "MoteOverhead",
+        "solidTime": 1,
+        "fadeOutTime": 0.5
+      }
+    }
+  }
+}

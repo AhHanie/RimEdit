@@ -1,0 +1,15 @@
+{
+  "objectType": "WorldGenStep_Lakes",
+  "label": "Lakes world gen step",
+  "description": "Generates lakes across the world map.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

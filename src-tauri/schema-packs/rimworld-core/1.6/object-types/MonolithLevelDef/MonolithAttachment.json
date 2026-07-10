@@ -1,0 +1,39 @@
+{
+  "objectType": "MonolithAttachment",
+  "label": "Monolith attachment",
+  "description": "A decorative or structural object attached to the void monolith at a specific level, positioned relative to the monolith center.",
+  "fieldOrder": [
+    "def",
+    "graphicIndex",
+    "offset"
+  ],
+  "fields": {
+    "def": {
+      "label": "Def",
+      "description": "ThingDef used as the attachment graphic or object.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "graphicIndex": {
+      "label": "Graphic index",
+      "description": "Selects which graphic variant of the attachment ThingDef to render.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Integer grid offset from the monolith center, given as (x, y) in cell coordinates.",
+      "type": { "kind": "vector2" },
+      "required": true,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "defType": "GatheringDef",
+  "label": "Gathering",
+  "description": "Defines a social gathering event such as a party, marriage ceremony, or concert. Controls the worker class, pawn duty, random scheduling weight, spot definitions, UI messages, and optional royal-title requirements.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "duty",
+    "randomSelectionWeight",
+    "respectTimetable",
+    "gatherSpotDefs",
+    "letterTitle",
+    "letterText",
+    "calledOffMessage",
+    "finishedMessage",
+    "requiredTitleAny"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# GatheringWorker subclass that implements eligibility checks, spot selection, and scheduling for this gathering type.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "GatheringWorker_Party",
+        "GatheringWorker_Concert",
+        "GatheringWorker_MarriageCeremony"
+      ]
+    },
+    "duty": {
+      "label": "Duty",
+      "description": "DutyDef applied to attending pawns while the gathering is active.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "DutyDef", "allowAbstract": false, "scope": "allSources" },
+      "required": false,
+      "xml": "element"
+    },
+    "randomSelectionWeight": {
+      "label": "Random selection weight",
+      "description": "Weight used when auto-scheduling this gathering. A value of 0 means the gathering is never auto-selected (IsRandomSelectable returns false when this is 0).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "respectTimetable": {
+      "label": "Respect timetable",
+      "description": "When true, pawns consult their joy timetable before joining. Set to false for mandatory gatherings such as marriage ceremonies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "gatherSpotDefs": {
+      "label": "Gather spot defs",
+      "description": "ThingDefs that can serve as gathering spots (e.g. PartySpot). When empty, the worker selects any suitable cell.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "letterTitle": {
+      "label": "Letter title",
+      "description": "Title of the letter sent to the player when this gathering starts.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterText": {
+      "label": "Letter text",
+      "description": "Body text of the letter sent when this gathering starts. Supports the {ORGANIZER_labelShort} named argument.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "calledOffMessage": {
+      "label": "Called off message",
+      "description": "Message displayed when the gathering is cancelled before it completes.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "finishedMessage": {
+      "label": "Finished message",
+      "description": "Message displayed when the gathering completes normally.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "requiredTitleAny": {
+      "label": "Required title (any)",
+      "description": "The organizer must hold at least one of these royal titles for the gathering to be available. Used by Concert to require Knight, Praetor, Baron, or Count.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": { "defType": "RoyalTitleDef", "allowAbstract": false, "scope": "allSources" }
+      },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "new-gathering": {
+      "label": "New gathering",
+      "description": "Starter gathering with worker class, duty, and selection weight pre-filled. Matches the Party gathering structure.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "workerClass", "duty"],
+      "fieldValues": {
+        "randomSelectionWeight": "1"
+      }
+    }
+  }
+}

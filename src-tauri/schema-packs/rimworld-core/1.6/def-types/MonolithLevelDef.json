@@ -1,0 +1,381 @@
+{
+  "defType": "MonolithLevelDef",
+  "label": "Monolith level",
+  "description": "Defines a progression level for the void monolith Anomaly structure, controlling its appearance, threat behavior, study requirements, and the letter/gizmo text shown to the player at that stage.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "level",
+    "graphicIndex",
+    "monolithGlows",
+    "anomalyThreatTier",
+    "useInactiveAnomalyThreatFraction",
+    "useActiveAnomalyThreatFraction",
+    "anomalyThreatFractionFactor",
+    "anomalyThreatFraction",
+    "incidentsOnReached",
+    "triggersGrayPall",
+    "unreachableDuringConditions",
+    "advanceThroughActivation",
+    "desiredHarbingerTreeCount",
+    "postEndgame",
+    "monolithGlowRadiusOverride",
+    "monolithStudyCategory",
+    "entityCatagoryCompletionRequired",
+    "entityCountCompletionRequired",
+    "anomalyMentalBreakChance",
+    "activateSound",
+    "activatedSound",
+    "attachments",
+    "sizeIncludingAttachments",
+    "uiIconPath",
+    "monolithLabel",
+    "monolithDescription",
+    "levelInspectText",
+    "extraQuestDescription",
+    "activateGizmoText",
+    "activateFloatMenuText",
+    "activateGizmoDescription",
+    "pawnSentToActivateMessage",
+    "monolithCanBeActivatedText",
+    "activateQuestText",
+    "activatableLetterLabel",
+    "activatableLetterText",
+    "activatedLetterText"
+  ],
+  "fields": {
+    "level": {
+      "label": "Level",
+      "description": "Progression index for this monolith level. 0 = Inactive, increasing values represent greater awakening.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "graphicIndex": {
+      "label": "Graphic index",
+      "description": "Selects the monolith body graphic variant rendered at this level.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "monolithGlows": {
+      "label": "Monolith glows",
+      "description": "Whether the monolith emits ambient light at this level.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "anomalyThreatTier": {
+      "label": "Anomaly threat tier",
+      "description": "Anomaly threat intensity tier used by the storyteller at this level. 0 = inactive, 1 = stirring, 2 = active.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "useInactiveAnomalyThreatFraction": {
+      "label": "Use inactive anomaly threat fraction",
+      "description": "If true, use the storyteller's inactive anomaly threat fraction setting as the base fraction at this level.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useActiveAnomalyThreatFraction": {
+      "label": "Use active anomaly threat fraction",
+      "description": "If true, use the storyteller's active anomaly threat fraction setting as the base fraction at this level.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "anomalyThreatFractionFactor": {
+      "label": "Anomaly threat fraction factor",
+      "description": "Multiplier applied on top of the selected base threat fraction.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "anomalyThreatFraction": {
+      "label": "Anomaly threat fraction",
+      "description": "Direct threat fraction override used only when neither inactive nor active fraction flags are set.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "incidentsOnReached": {
+      "label": "Incidents on reached",
+      "description": "IncidentDefs that fire immediately when the monolith reaches this level.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "triggersGrayPall": {
+      "label": "Triggers gray pall",
+      "description": "If true, reaching this level triggers the Gray Pall game condition.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "unreachableDuringConditions": {
+      "label": "Unreachable during conditions",
+      "description": "GameConditionDefs that must be absent for the monolith to advance to this level.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "GameConditionDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "advanceThroughActivation": {
+      "label": "Advance through activation",
+      "description": "If true, the player can manually send a pawn to activate the monolith and advance past this level.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "desiredHarbingerTreeCount": {
+      "label": "Desired harbinger tree count",
+      "description": "Target number of harbinger trees the game will attempt to maintain while the monolith is at this level.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "postEndgame": {
+      "label": "Post endgame",
+      "description": "If true, this level represents a post-endgame state after the main monolith quest resolves.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "monolithGlowRadiusOverride": {
+      "label": "Monolith glow radius override",
+      "description": "Overrides the default glow light radius. -1 means use the default radius.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "monolithStudyCategory": {
+      "label": "Monolith study category",
+      "description": "KnowledgeCategoryDef that the player studies by interacting with the monolith at this level.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "KnowledgeCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "entityCatagoryCompletionRequired": {
+      "label": "Entity category completion required",
+      "description": "EntityCategoryDef whose discovered entity count must reach entityCountCompletionRequired before the monolith can advance. Note: game reports a config error if this is set but entityCountCompletionRequired is 0.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "EntityCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "entityCountCompletionRequired": {
+      "label": "Entity count completion required",
+      "description": "Number of entities in the entityCatagoryCompletionRequired category that must be discovered to allow the monolith to advance. Must be greater than 0 if entityCatagoryCompletionRequired is set.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "anomalyMentalBreakChance": {
+      "label": "Anomaly mental break chance",
+      "description": "Per-interval chance that a colonist near the monolith suffers an anomaly-triggered mental break while the monolith is at this level.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "activateSound": {
+      "label": "Activate sound",
+      "description": "SoundDef played when the player initiates monolith activation at this level.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "activatedSound": {
+      "label": "Activated sound",
+      "description": "SoundDef played when monolith activation completes and the level advances.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "attachments": {
+      "label": "Attachments",
+      "description": "Decorative or structural objects attached to the monolith graphic at this level, each with a ThingDef, graphic index, and grid offset.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "MonolithAttachment" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "sizeIncludingAttachments": {
+      "label": "Size including attachments",
+      "description": "Total footprint of the monolith plus its attachments as (x, y) cell dimensions. When absent, the game derives the footprint from the monolith body size alone.",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element"
+    },
+    "uiIconPath": {
+      "label": "UI icon path",
+      "description": "Asset path for the icon shown in the monolith level progress UI.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "monolithLabel": {
+      "label": "Monolith label",
+      "description": "Display label for the monolith building when it is at this level.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "monolithDescription": {
+      "label": "Monolith description",
+      "description": "Description shown for the monolith at this level (used by the disrupted endgame level in shipped data).",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "levelInspectText": {
+      "label": "Level inspect text",
+      "description": "Short string shown in the monolith building inspection panel at this level.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "extraQuestDescription": {
+      "label": "Extra quest description",
+      "description": "Additional paragraph appended to the monolith quest description at this level.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "activateGizmoText": {
+      "label": "Activate gizmo text",
+      "description": "Short verb label displayed on the activation gizmo button.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "activateFloatMenuText": {
+      "label": "Activate float menu text",
+      "description": "Right-click float menu option text. May use {0} as a placeholder for the monolith label.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "activateGizmoDescription": {
+      "label": "Activate gizmo description",
+      "description": "Tooltip shown when hovering the activation gizmo.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "pawnSentToActivateMessage": {
+      "label": "Pawn sent to activate message",
+      "description": "Message letter sent when a pawn is assigned to activate the monolith. May use {PAWN_nameDef} for the assigned pawn's name.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "monolithCanBeActivatedText": {
+      "label": "Monolith can be activated text",
+      "description": "Compact text shown in the UI when the player is now able to activate this level.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "activateQuestText": {
+      "label": "Activate quest text",
+      "description": "Quest step objective text for the monolith activation task.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "activatableLetterLabel": {
+      "label": "Activatable letter label",
+      "description": "Title of the letter sent to announce that this level can now be activated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "activatableLetterText": {
+      "label": "Activatable letter text",
+      "description": "Body text of the letter sent to announce that this level can now be activated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "activatedLetterText": {
+      "label": "Activated letter text",
+      "description": "Body text of the letter sent after the pawn completes activation. May use {PAWN_nameDef} and {PAWN_pronoun}.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-inactive-level": {
+      "label": "New inactive level",
+      "description": "A monolith level in the investigation phase where the player researches entities rather than manually activating.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "defName",
+        "label",
+        "level",
+        "graphicIndex",
+        "anomalyThreatTier",
+        "useInactiveAnomalyThreatFraction",
+        "levelInspectText",
+        "uiIconPath"
+      ],
+      "fieldValues": {
+        "advanceThroughActivation": "true"
+      }
+    },
+    "new-active-level": {
+      "label": "New active level",
+      "description": "A monolith level where the player can actively study the monolith and send a pawn to activate.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "defName",
+        "label",
+        "level",
+        "graphicIndex",
+        "anomalyThreatTier",
+        "useActiveAnomalyThreatFraction",
+        "monolithStudyCategory",
+        "levelInspectText",
+        "uiIconPath"
+      ],
+      "fieldValues": {}
+    }
+  }
+}

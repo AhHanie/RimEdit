@@ -1,0 +1,149 @@
+.root {
+  margin-bottom: 8px;
+}
+
+.previewRegion {
+  position: relative;
+  height: 120px;
+  width: 100%;
+  background-color: var(--surface-editor);
+  background-image:
+    linear-gradient(45deg, var(--checker-a, rgba(128, 128, 128, 0.15)) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--checker-a, rgba(128, 128, 128, 0.15)) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--checker-a, rgba(128, 128, 128, 0.15)) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--checker-a, rgba(128, 128, 128, 0.15)) 75%);
+  background-size: 16px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.statusText {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.errorText {
+  font-size: 11px;
+  color: var(--text-error);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.pathHint {
+  font-size: 10px;
+  color: var(--text-muted);
+  opacity: 0.7;
+  text-align: center;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  padding: 0 8px;
+}
+
+.carousel {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 4px;
+}
+
+.carouselButton {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-panel, rgba(0, 0, 0, 0.45));
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.carouselButton:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.carouselButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.carouselLabel {
+  font-size: 11px;
+  color: var(--text-primary);
+  background: var(--surface-panel, rgba(0, 0, 0, 0.45));
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 0 2px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-subtle);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.dot:hover {
+  background: var(--text-muted);
+}
+
+.dotActive {
+  background: var(--text-muted);
+}
+
+.warnings {
+  margin-top: 4px;
+}
+
+.warning {
+  font-size: 11px;
+  color: var(--status-warn, #e0a000);
+  overflow-wrap: anywhere;
+  margin: 2px 0;
+  padding: 0;
+}

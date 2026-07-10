@@ -1,0 +1,30 @@
+{
+  "objectType": "RoomRequirement_ForbidAltars",
+  "label": "Room requirement (forbid altars)",
+  "description": "Requires the room to contain no altars.",
+  "fieldOrder": ["Class", "labelKey", "disablingPrecepts"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoomRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the room requirement label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "disablingPrecepts": {
+      "label": "Disabling precepts",
+      "description": "Precepts that disable this room requirement.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

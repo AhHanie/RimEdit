@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalRequireCapacities",
+  "label": "Think node conditional require capacities",
+  "description": "Satisfied when the pawn is capable of all the listed pawn capacities.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["requiredCapacities"],
+  "fields": {
+    "requiredCapacities": {
+      "label": "Required capacities",
+      "description": "All capacities in this list must be functional for the conditional to be satisfied.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PawnCapacityDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

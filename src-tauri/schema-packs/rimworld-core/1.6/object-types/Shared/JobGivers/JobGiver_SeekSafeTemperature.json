@@ -1,0 +1,33 @@
+{
+  "objectType": "JobGiver_SeekSafeTemperature",
+  "label": "Job giver seek safe temperature",
+  "description": "Directs the pawn to move to a region within its comfortable temperature range.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": ["maxRadius", "requiresInjury", "waitInSafeTemp"],
+  "fields": {
+    "maxRadius": {
+      "label": "Max radius",
+      "description": "Maximum distance in cells the pawn will travel to find a safe temperature zone. -1 means unlimited.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "requiresInjury": {
+      "label": "Requires injury",
+      "description": "If true, the pawn only seeks safe temperature when it has a serious temperature injury.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "waitInSafeTemp": {
+      "label": "Wait in safe temp",
+      "description": "If true, the pawn issues a short wait job when already in a safe temperature region.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

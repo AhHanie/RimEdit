@@ -1,0 +1,24 @@
+{
+  "objectType": "IdeoWeaponClassPair",
+  "label": "Ideo weapon class pair",
+  "description": "Specifies the noble and despised weapon classes for an ideology or culture. Pawns have mood bonuses for carrying noble weapons and penalties for despised ones.",
+  "fieldOrder": ["noble", "despised"],
+  "fields": {
+    "noble": {
+      "label": "Noble",
+      "description": "WeaponClassDef preferred by this ideology or culture. Pawns get a mood bonus for using this weapon class.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WeaponClassDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "despised": {
+      "label": "Despised",
+      "description": "WeaponClassDef disfavored by this ideology or culture. Pawns get a mood penalty for using this weapon class.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WeaponClassDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

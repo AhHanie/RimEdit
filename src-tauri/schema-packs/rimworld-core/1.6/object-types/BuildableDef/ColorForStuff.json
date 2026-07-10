@@ -1,0 +1,35 @@
+{
+  "objectType": "ColorForStuff",
+  "label": "Color for stuff",
+  "description": "Overrides the tint color of a thing when it is built from a specific stuff material.",
+  "fieldOrder": ["stuff", "color"],
+  "fields": {
+    "stuff": {
+      "label": "Stuff",
+      "description": "ThingDef reference for the stuff material this color override applies to.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "color": {
+      "label": "Color",
+      "description": "Tint color applied to the thing when built from the specified stuff. Format: (r, g, b, a) with components in 0–1 range.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(1, 0.5, 0.5, 1)",
+        "(0.8, 0.6, 0.4, 1)"
+      ]
+    }
+  }
+}

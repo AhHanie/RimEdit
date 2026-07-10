@@ -1,0 +1,23 @@
+{
+  "defType": "RoadWorldLayerDef",
+  "label": "Road world layer",
+  "description": "Defines one visual layer used when rendering roads on the world map. Each layer has a draw order and a base color.",
+  "inherits": ["Def"],
+  "fieldOrder": ["order", "color"],
+  "fields": {
+    "order": {
+      "label": "Order",
+      "description": "Draw order for this layer relative to other road world layers. Lower values render beneath higher values.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "color": {
+      "label": "Color",
+      "description": "Base RGB color applied to this road layer on the world map.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

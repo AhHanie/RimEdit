@@ -1,0 +1,34 @@
+{
+  "defType": "BossDef",
+  "label": "Boss",
+  "description": "Defines a mechanoid boss that can be summoned by the Mechhive faction. Each BossDef names a unique boss type linked to a PawnKindDef.",
+  "inherits": ["Def"],
+  "fieldOrder": ["kindDef", "appearAfterTicks"],
+  "fields": {
+    "kindDef": {
+      "label": "Kind def",
+      "description": "PawnKindDef that defines this boss's stats, weapons, and appearance. Must be unique across all BossDef instances.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" },
+      "required": true,
+      "xml": "element"
+    },
+    "appearAfterTicks": {
+      "label": "Appear after ticks",
+      "description": "Number of ticks after game start before this boss can appear. Defaults to int.MaxValue (2,147,483,647). Shipped values are 7,200,000 (2 years), 14,400,000 (4 years), and 21,600,000 (6 years).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 2147483647,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-boss": {
+      "label": "New boss",
+      "description": "Minimal boss definition with a def name, label, kind def, and appear-after ticks.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "kindDef", "appearAfterTicks"],
+      "fieldValues": {}
+    }
+  }
+}

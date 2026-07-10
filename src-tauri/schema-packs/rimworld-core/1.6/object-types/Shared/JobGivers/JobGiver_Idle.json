@@ -1,0 +1,18 @@
+{
+  "objectType": "JobGiver_Idle",
+  "label": "Job giver idle",
+  "description": "Directs the pawn to stand idle for a fixed number of ticks. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "ticks"
+  ],
+  "fields": {
+    "ticks": {
+      "label": "Ticks",
+      "description": "Number of game ticks the pawn idles before the job expires.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

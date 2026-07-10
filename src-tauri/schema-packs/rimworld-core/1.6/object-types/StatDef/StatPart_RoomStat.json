@@ -1,0 +1,41 @@
+{
+  "objectType": "StatPart_RoomStat",
+  "label": "Stat part (room stat)",
+  "description": "Scales the stat based on a room statistic such as impressiveness or cleanliness.",
+  "fieldOrder": ["Class", "priority", "roomStat", "customLabel"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "roomStat": {
+      "label": "Room stat",
+      "description": "RoomStatDef whose value is used to scale this stat.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RoomStatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "customLabel": {
+      "label": "Custom label",
+      "description": "Override label shown in the stat explanation for this part. Marked [MustTranslate].",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

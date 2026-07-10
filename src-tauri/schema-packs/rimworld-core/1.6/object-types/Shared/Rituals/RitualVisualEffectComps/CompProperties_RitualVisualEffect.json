@@ -1,0 +1,161 @@
+{
+  "objectType": "CompProperties_RitualVisualEffect",
+  "label": "Ritual visual effect comp properties",
+  "description": "Base schema for visual effect comp property objects used by RitualVisualEffectDef. Subclass is selected by the Class attribute.",
+  "fieldOrder": [
+    "Class", "compClass", "moteDef", "fleckDef", "effecterDef",
+    "velocity", "velocityDir", "rotation", "rotationRate", "scale",
+    "offset", "roomCheckOffset", "scaleWithRoom", "scalePositionWithRoom",
+    "onlySpawnInSameRoom", "colorOverride", "overrideColors"
+  ],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "CompProperties_RitualVisualEffect",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "CompProperties_RitualEffectConstantCircle": "CompProperties_RitualEffectConstantCircle",
+      "CompProperties_RitualEffectIntervalSpawn": "CompProperties_RitualEffectIntervalSpawn",
+      "CompProperties_RitualEffectIntervalSpawnArea": "CompProperties_RitualEffectIntervalSpawnArea",
+      "CompProperties_RitualEffectIntervalSpawnCircle": "CompProperties_RitualEffectIntervalSpawnCircle",
+      "CompProperties_RitualEffectIntervalSpawnDividedCircle": "CompProperties_RitualEffectIntervalSpawnDividedCircle",
+      "CompProperties_RitualEffectDrum": "CompProperties_RitualEffectDrum",
+      "CompProperties_RitualEffectLightball": "CompProperties_RitualEffectLightball",
+      "CompProperties_RitualEffectSpawnOnPawn": "CompProperties_RitualEffectSpawnOnPawn",
+      "CompProperties_RitualEffectSpawnOnRole": "CompProperties_RitualEffectSpawnOnRole",
+      "CompProperties_RitualEffectStaticAreaRandomMote": "CompProperties_RitualEffectStaticAreaRandomMote"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# CompProperties_RitualVisualEffect subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Comp class",
+      "description": "C# RitualVisualEffectComp subclass instantiated at runtime by this properties object.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "moteDef": {
+      "label": "Mote def",
+      "description": "ThingDef (mote) spawned by this visual effect comp.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "fleckDef": {
+      "label": "Fleck def",
+      "description": "FleckDef spawned by this visual effect comp.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FleckDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "effecterDef": {
+      "label": "Effecter def",
+      "description": "EffecterDef spawned by this visual effect comp.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "velocity": {
+      "label": "Velocity",
+      "description": "FloatRange controlling random velocity magnitude for spawned effects.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "velocityDir": {
+      "label": "Velocity direction",
+      "description": "Vector3 direction for effect velocity.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "rotation": {
+      "label": "Rotation",
+      "description": "FloatRange controlling random initial rotation of spawned effects.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "rotationRate": {
+      "label": "Rotation rate",
+      "description": "FloatRange controlling random rotation rate of spawned effects.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "FloatRange controlling random scale of spawned effects. Defaults to 1~1.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Vector3 positional offset applied to spawned effects.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "roomCheckOffset": {
+      "label": "Room check offset",
+      "description": "IntVec3 offset from the spawn position used when checking room membership.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "scaleWithRoom": {
+      "label": "Scale with room",
+      "description": "If true, the effect scale is multiplied by the room size.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scalePositionWithRoom": {
+      "label": "Scale position with room",
+      "description": "If true, the spawn position offset is scaled by the room size.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlySpawnInSameRoom": {
+      "label": "Only spawn in same room",
+      "description": "If true, this comp only spawns effects inside the same room as the ritual target.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "colorOverride": {
+      "label": "Color override",
+      "description": "Optional color that overrides the tint color from the parent RitualVisualEffectDef.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "overrideColors": {
+      "label": "Override colors",
+      "description": "List of colors randomly chosen as the tint for each spawned effect.",
+      "type": { "kind": "list" },
+      "items": { "kind": "color" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

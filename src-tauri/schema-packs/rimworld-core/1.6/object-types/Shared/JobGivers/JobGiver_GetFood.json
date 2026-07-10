@@ -1,0 +1,33 @@
+{
+  "objectType": "JobGiver_GetFood",
+  "label": "Job giver get food",
+  "description": "Directs the pawn to find and eat food when sufficiently hungry.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": ["minCategory", "maxLevelPercentage", "forceScanWholeMap"],
+  "fields": {
+    "minCategory": {
+      "label": "Min category",
+      "description": "Minimum hunger level at which the pawn begins looking for food.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Fed", "Hungry", "UrgentlyHungry", "Starving"] }
+    },
+    "maxLevelPercentage": {
+      "label": "Max level percentage",
+      "description": "If the pawn's food level is above this fraction (0–1), do not seek food.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "forceScanWholeMap": {
+      "label": "Force scan whole map",
+      "description": "If true, food search is not restricted to nearby regions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

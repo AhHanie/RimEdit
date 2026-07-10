@@ -1,0 +1,34 @@
+{
+  "objectType": "PassionMod",
+  "label": "Passion mod",
+  "description": "Modifies a pawn's passion for a skill when this gene is active.",
+  "fieldOrder": [
+    "skill",
+    "modType"
+  ],
+  "fields": {
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef whose passion is modified.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "modType": {
+      "label": "Mod type",
+      "description": "How the passion is changed. AddOneLevel raises passion by one tier; DropAll removes all passion.",
+      "type": {
+        "kind": "enum",
+        "values": ["None", "AddOneLevel", "DropAll"]
+      },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "defType": "StyleCategoryDef",
+  "label": "Style category",
+  "description": "A named group of ThingDef–ThingStyleDef pairings representing a coherent visual theme (e.g., Hindu, Horaxian) used by the ideology system.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "thingDefStyles",
+    "iconPath",
+    "fixedIdeoOnly",
+    "addDesignators",
+    "addDesignatorGroups",
+    "soundOngoingRitual",
+    "ritualVisualEffectDef"
+  ],
+  "fields": {
+    "thingDefStyles": {
+      "label": "Thing def styles",
+      "description": "List of ThingDef–ThingStyleDef pairings that form this style category's visual theme. The central field; present in every shipped StyleCategoryDef.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ThingDefStyle" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path for the category icon shown in the ideology style picker.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Icons/IdeoStyles/Hindu"]
+    },
+    "fixedIdeoOnly": {
+      "label": "Fixed ideo only",
+      "description": "If true, this style category is only available to fixed (non-randomized) ideologies. The Horaxian category sets this to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "addDesignators": {
+      "label": "Add designators",
+      "description": "BuildableDefs added to the architect menu when a colony's ideology uses this style category.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "BuildableDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "addDesignatorGroups": {
+      "label": "Add designator groups",
+      "description": "DesignatorDropdownGroupDefs added alongside addDesignators when this style category is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "DesignatorDropdownGroupDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "soundOngoingRitual": {
+      "label": "Sound ongoing ritual",
+      "description": "Ambient SoundDef played during rituals that use this style. Set in every shipped ideology style category.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ritualVisualEffectDef": {
+      "label": "Ritual visual effect def",
+      "description": "RitualVisualEffectDef played during rituals that use this style. Set in every shipped ideology style category.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RitualVisualEffectDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  },
+  "templates": {
+    "basic-category": {
+      "label": "Basic category",
+      "description": "A style category with a thingDefStyles list, icon, and ritual sound and visual effect.",
+      "includeRequiredFields": true,
+      "promptFields": ["thingDefStyles", "iconPath", "soundOngoingRitual", "ritualVisualEffectDef"],
+      "fieldValues": {}
+    }
+  }
+}

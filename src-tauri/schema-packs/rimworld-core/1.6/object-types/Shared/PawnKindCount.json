@@ -1,0 +1,21 @@
+{
+  "objectType": "PawnKindCount",
+  "label": "Pawn kind count",
+  "description": "A starting pawn count entry that specifies a pawn kind. Used in ScenPart_ConfigPage_ConfigureStartingPawns_KindDefs to define the mix of pawn kinds in the starting party.",
+  "inherits": ["StartingPawnCount"],
+  "fieldOrder": ["kindDef", "count", "requiredAtStart"],
+  "fields": {
+    "kindDef": {
+      "label": "Kind def",
+      "description": "PawnKindDef for this starting pawn group.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

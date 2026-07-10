@@ -1,0 +1,222 @@
+{
+  "defType": "RitualOutcomeEffectDef",
+  "label": "Ritual outcome effect",
+  "description": "Defines the outcome effects, quality comps, and associated data for a ritual. Referenced by RitualPatternDef via ritualOutcomeEffect.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass", "startingQuality", "minQuality", "maxQuality",
+    "givesDevelopmentPoints", "memoryDef", "outcomeChances", "honorFromQuality",
+    "extraPredictedOutcomeDescriptions", "extraInfoLines", "extraOutcomeDescriptions",
+    "effecter", "fleckDef", "flecksPerCell", "fleckRotationRange", "fleckScaleRange",
+    "fleckVelocityAngle", "fleckVelocitySpeed", "filthDefToSpawn", "filthCountToSpawn",
+    "comps", "warnOnLowQuality", "allowAttachableOutcome", "allowOutcomeWithNoAttendance"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class that implements the ritual outcome effect logic. Must extend RitualOutcomeEffectWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "startingQuality": {
+      "label": "Starting quality",
+      "description": "Initial quality value before comps are applied.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minQuality": {
+      "label": "Min quality",
+      "description": "Minimum clamped quality value after all comps are applied.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxQuality": {
+      "label": "Max quality",
+      "description": "Maximum clamped quality value after all comps are applied.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "givesDevelopmentPoints": {
+      "label": "Gives development points",
+      "description": "If true, completing this ritual awards ideo development points.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "memoryDef": {
+      "label": "Memory def",
+      "description": "ThoughtDef applied to participants as a default memory, independent of any specific outcome chance.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "outcomeChances": {
+      "label": "Outcome chances",
+      "description": "List of weighted outcome possibilities. The chance values should sum to 1.0.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualOutcomePossibility" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "honorFromQuality": {
+      "label": "Honor from quality",
+      "description": "SimpleCurve mapping ritual quality (X) to royal honor awarded (Y). Only relevant for Royalty rituals.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "extraPredictedOutcomeDescriptions": {
+      "label": "Extra predicted outcome descriptions",
+      "description": "Additional localized strings shown in the predicted outcome list in the ritual UI.",
+      "type": { "kind": "list" },
+      "items": { "kind": "localizedString" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "extraInfoLines": {
+      "label": "Extra info lines",
+      "description": "Additional localized strings shown as informational lines in the ritual outcome UI.",
+      "type": { "kind": "list" },
+      "items": { "kind": "localizedString" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "extraOutcomeDescriptions": {
+      "label": "Extra outcome descriptions",
+      "description": "List of extra outcome chance descriptions shown in the UI, each optionally referencing a method to compute a quality-dependent display value.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualOutcomeEffectExtraOutcomeChanceDescription" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "effecter": {
+      "label": "Effecter",
+      "description": "EffecterDef spawned at the ritual location when the ritual completes.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "EffecterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "fleckDef": {
+      "label": "Fleck def",
+      "description": "FleckDef spawned across the ritual area when the ritual completes.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FleckDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "flecksPerCell": {
+      "label": "Flecks per cell",
+      "description": "Number of fleck instances spawned per cell of the ritual area.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "fleckRotationRange": {
+      "label": "Fleck rotation range",
+      "description": "FloatRange controlling the random initial rotation of each spawned fleck. Defaults to 0~360.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~360",
+      "xml": "element"
+    },
+    "fleckScaleRange": {
+      "label": "Fleck scale range",
+      "description": "FloatRange controlling the random scale of each spawned fleck. Defaults to 1~1.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element"
+    },
+    "fleckVelocityAngle": {
+      "label": "Fleck velocity angle",
+      "description": "FloatRange controlling the random velocity direction (degrees) of each spawned fleck. Defaults to 0~0.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "fleckVelocitySpeed": {
+      "label": "Fleck velocity speed",
+      "description": "FloatRange controlling the random velocity speed of each spawned fleck. Defaults to 0~0.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "filthDefToSpawn": {
+      "label": "Filth def to spawn",
+      "description": "ThingDef (filth) spawned across the ritual area when the ritual completes.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "filthCountToSpawn": {
+      "label": "Filth count to spawn",
+      "description": "IntRange controlling how many filth instances are spawned. Defaults to 0~0.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "comps": {
+      "label": "Comps",
+      "description": "List of quality modifier comps evaluated during and after the ritual to compute the final quality. Each li element selects a comp class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualOutcomeComp" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "warnOnLowQuality": {
+      "label": "Warn on low quality",
+      "description": "If true, the game shows a warning letter when the ritual quality is low.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowAttachableOutcome": {
+      "label": "Allow attachable outcome",
+      "description": "If true, a RitualAttachableOutcomeEffectDef can be attached to this ritual outcome to add bonus effects.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowOutcomeWithNoAttendance": {
+      "label": "Allow outcome with no attendance",
+      "description": "If true, the ritual can produce an outcome even if no pawns attended. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

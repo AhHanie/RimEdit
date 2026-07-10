@@ -1,0 +1,19 @@
+{
+  "objectType": "ThinkNode_ConditionalRandom",
+  "label": "Think node conditional random",
+  "description": "Conditional node whose condition passes with a fixed probability each evaluation. Inherits ThinkNode_Conditional fields (including invert) and base ThinkNode fields.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": [
+    "chance"
+  ],
+  "fields": {
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0.0–1.0) that the condition passes on each evaluation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    }
+  }
+}

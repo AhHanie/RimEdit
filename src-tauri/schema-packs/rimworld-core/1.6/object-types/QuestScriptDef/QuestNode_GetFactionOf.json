@@ -1,0 +1,30 @@
+{
+  "objectType": "QuestNode_GetFactionOf",
+  "label": "QuestNode GetFactionOf",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_GetFactionOf.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "thing",
+    "storeAs"
+  ],
+  "fields": {
+    "thing": {
+      "description": "Slate variable for the thing whose faction is read.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "storeAs": {
+      "description": "Slate variable name to store the faction.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

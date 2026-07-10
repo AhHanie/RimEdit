@@ -1,0 +1,459 @@
+{
+  "objectType": "RaceProperties",
+  "label": "Race properties",
+  "description": "Pawn race definition covering biology, AI, diet, trainability, life stages, sound, and reproduction.",
+  "fieldOrder": [
+    "fleshType",
+    "body",
+    "baseBodySize",
+    "baseHealthScale",
+    "baseHungerRate",
+    "foodType",
+    "intelligence",
+    "trainability",
+    "lifeExpectancy",
+    "lifeStageAges",
+    "lifeStageWorkSettings",
+    "gestationPeriodDays",
+    "hasGenders",
+    "wildness",
+    "petness",
+    "manhunterOnDamageChance",
+    "manhunterOnTameFailChance",
+    "nuzzleMtbHours",
+    "nameOnTameChance",
+    "nameGenerator",
+    "nameGeneratorFemale",
+    "predator",
+    "maxPreyBodySize",
+    "prey",
+    "packAnimal",
+    "herdAnimal",
+    "herdMigrationAllowed",
+    "needsRest",
+    "hediffGiverSets",
+    "renderTree",
+    "thinkTreeMainKind",
+    "thinkTreeConstantKind",
+    "corpseDef",
+    "bloodDef",
+    "bloodSmearDef",
+    "leatherDef",
+    "meatDef",
+    "shadowData",
+    "specialShadowData",
+    "soundMeleeHitPawn",
+    "soundMeleeHitBuilding",
+    "soundMeleeMiss",
+    "soundDeath",
+    "soundAngry",
+    "soundWounded",
+    "soundCalm",
+    "soundCall",
+    "thumbnailColor",
+    "headPosPerRotation"
+  ],
+  "fields": {
+    "fleshType": {
+      "label": "Flesh type",
+      "description": "FleshTypeDef controlling damage flavor text, bleed appearance, and butcher audio.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FleshTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "body": {
+      "label": "Body",
+      "description": "BodyDef defining the pawn's anatomy for injury and surgery calculations.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "BodyDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "baseBodySize": {
+      "label": "Base body size",
+      "description": "Base body size used for carry capacity, hit chance, and crowd calculations.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "baseHealthScale": {
+      "label": "Base health scale",
+      "description": "Multiplier on all body part max hit points.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "baseHungerRate": {
+      "label": "Base hunger rate",
+      "description": "Nutrition consumed per day at normal activity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.45,
+      "xml": "element"
+    },
+    "foodType": {
+      "label": "Food type",
+      "description": "FoodTypeFlags value listing accepted food categories (comma-separated flags).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["OmnivoreAnimal", "HerbivoreTall, HerbivoreRough", "Carnivore, Meal, Corpse"]
+    },
+    "intelligence": {
+      "label": "Intelligence",
+      "description": "Cognitive tier controlling social interactions, work eligibility, and backstory.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Creepy", "Animal", "ToolUser", "Humanlike"]
+      }
+    },
+    "trainability": {
+      "label": "Trainability",
+      "description": "TrainabilityDef controlling which training assignments are available for this animal.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TrainabilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "lifeExpectancy": {
+      "label": "Life expectancy",
+      "description": "Maximum natural lifespan in years.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 100,
+      "xml": "element"
+    },
+    "lifeStageAges": {
+      "label": "Life stage ages",
+      "description": "Ordered list of LifeStageAge entries defining growth stages and their onset ages.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LifeStageAge" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "lifeStageWorkSettings": {
+      "label": "Life stage work settings",
+      "description": "Minimum biological ages for work types at this life stage. Child element names are WorkTypeDef defNames; text is the minimum age in years.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LifeStageWorkSettings" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "workType",
+      "valueField": "minAge",
+      "keyReference": {
+        "defType": "WorkTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "gestationPeriodDays": {
+      "label": "Gestation period days",
+      "description": "Days of pregnancy before offspring are born.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "hasGenders": {
+      "label": "Has genders",
+      "description": "Whether individuals of this race are assigned a biological sex.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "wildness": {
+      "label": "Wildness",
+      "description": "Difficulty of taming (0 = completely docile, 1 = untameable by normal means).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "petness": {
+      "label": "Petness",
+      "description": "How much colonists value this animal as a pet for mood purposes.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "manhunterOnDamageChance": {
+      "label": "Manhunter on damage chance",
+      "description": "Probability (0–1) this animal goes manhunter when damaged.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "manhunterOnTameFailChance": {
+      "label": "Manhunter on tame fail chance",
+      "description": "Probability (0–1) this animal goes manhunter when a taming attempt fails.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "nuzzleMtbHours": {
+      "label": "Nuzzle mean-time-between (hours)",
+      "description": "Average hours between spontaneous nuzzle interactions with colonists. -1 disables nuzzling.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "nameOnTameChance": {
+      "label": "Name on tame chance",
+      "description": "Probability (0–1) the animal receives a name when tamed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "nameGenerator": {
+      "label": "Name generator",
+      "description": "RulePackDef used to generate male animal names.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "nameGeneratorFemale": {
+      "label": "Name generator (female)",
+      "description": "RulePackDef used to generate female animal names.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "predator": {
+      "label": "Predator",
+      "description": "If true, this animal hunts prey and can be set to hunt colonists when manhunting.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "maxPreyBodySize": {
+      "label": "Max prey body size",
+      "description": "Maximum body size of prey this predator will hunt.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "prey": {
+      "label": "Prey",
+      "description": "If true, predators will hunt this animal.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "packAnimal": {
+      "label": "Pack animal",
+      "description": "If true, this animal can carry caravan gear.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "herdAnimal": {
+      "label": "Herd animal",
+      "description": "If true, this animal congregates in herds on the world map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "herdMigrationAllowed": {
+      "label": "Herd migration allowed",
+      "description": "Whether herds of this animal can pass through the local tile as a migration event.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "needsRest": {
+      "label": "Needs rest",
+      "description": "If true, this pawn has a rest need and will seek sleep.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "hediffGiverSets": {
+      "label": "Hediff giver sets",
+      "description": "HediffGiverSetDef references for disease and illness packages applied to this race.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "HediffGiverSetDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "renderTree": {
+      "label": "Render tree",
+      "description": "PawnRenderTreeDef defining the recursive render-node tree used to draw this race.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnRenderTreeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thinkTreeMainKind": {
+      "label": "Think tree (main)",
+      "description": "ThinkTreeDef for the primary AI decision-making loop.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThinkTreeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thinkTreeConstantKind": {
+      "label": "Think tree (constant)",
+      "description": "ThinkTreeDef for always-active AI sub-goals evaluated every tick.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThinkTreeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "corpseDef": {
+      "label": "Corpse def",
+      "description": "ThingDef spawned when this pawn dies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "bloodDef": {
+      "label": "Blood def",
+      "description": "ThingDef spawned as blood filth when this pawn bleeds. Private in source.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "bloodSmearDef": {
+      "label": "Blood smear def",
+      "description": "ThingDef spawned as blood smear filth when this pawn is dragged. Private in source.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "leatherDef": {
+      "label": "Leather def",
+      "description": "ThingDef produced as leather when this pawn is butchered.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "meatDef": {
+      "label": "Meat def",
+      "description": "ThingDef produced as meat when this pawn is butchered.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "shadowData": {
+      "label": "Shadow data",
+      "description": "Shadow shape and offset drawn beneath this pawn.",
+      "type": { "kind": "object", "schemaRef": "ShadowData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "specialShadowData": {
+      "label": "Special shadow data",
+      "description": "Override shadow used in certain special render contexts.",
+      "type": { "kind": "object", "schemaRef": "ShadowData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "soundMeleeHitPawn": {
+      "label": "Sound melee hit pawn",
+      "description": "SoundDef played when this pawn strikes another pawn in melee.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundMeleeHitBuilding": {
+      "label": "Sound melee hit building",
+      "description": "SoundDef played when this pawn strikes a building in melee.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundMeleeMiss": {
+      "label": "Sound melee miss",
+      "description": "SoundDef played when this pawn misses a melee attack.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundDeath": {
+      "label": "Sound death",
+      "description": "SoundDef played when this pawn dies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundAngry": {
+      "label": "Sound angry",
+      "description": "SoundDef played when this animal becomes aggressive.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundWounded": {
+      "label": "Sound wounded",
+      "description": "SoundDef played when this pawn is injured.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundCalm": {
+      "label": "Sound calm",
+      "description": "SoundDef played when this animal is calm and idle.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundCall": {
+      "label": "Sound call",
+      "description": "SoundDef played when this animal calls to other animals.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thumbnailColor": {
+      "label": "Thumbnail color",
+      "description": "RGBA tint used for this race's background thumbnail in the wildlife tab.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.9, 0.6, 0.3, 1)"]
+    },
+    "headPosPerRotation": {
+      "label": "Head position per rotation",
+      "description": "List of Vector3 offsets (one per rotation direction: N/E/S/W) for head position in the pawn render.",
+      "type": { "kind": "list" },
+      "items": { "kind": "vector3" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

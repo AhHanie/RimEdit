@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_HasRelic",
+  "label": "Stat part (has relic)",
+  "description": "Adds an offset to the stat when the colony possesses an ideology relic.",
+  "fieldOrder": ["Class", "priority", "offset"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Flat offset added to the stat when a relic is held by the colony.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

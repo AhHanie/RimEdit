@@ -1,0 +1,8 @@
+{
+  "defType": "RenderSkipFlagDef",
+  "label": "Render skip flag",
+  "description": "Defines a bit flag used by RimWorld's pawn renderer to skip rendering specific body layers (e.g. Head, Hair, Beard, Eyes, Body) on pawns wearing certain apparel. The runtime mask is derived from def load order via FlagDefUtility.SetMaskFromIndex and is not XML-authored.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {}
+}

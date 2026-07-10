@@ -1,0 +1,9 @@
+{
+  "objectType": "ChildBirthCellSearchPattern",
+  "label": "Cell search pattern (child birth)",
+  "description": "Searches for the appropriate cell for a childbirth ritual.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" }
+  }
+}

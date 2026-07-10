@@ -1,0 +1,110 @@
+{
+  "objectType": "StockGenerator",
+  "label": "Stock generator",
+  "description": "Base schema for RimWorld stock generators. The concrete subclass is selected by the Class attribute on each <li> element. StockGenerator is abstract -- every entry must specify a Class.",
+  "fieldOrder": [
+    "Class",
+    "countRange",
+    "customCountRanges",
+    "totalPriceRange",
+    "maxTechLevelGenerate",
+    "maxTechLevelBuy",
+    "price"
+  ],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "StockGenerator",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "StockGenerator_Animals": "StockGenerator_Animals",
+      "StockGenerator_BuyExpensiveSimple": "StockGenerator_BuyExpensiveSimple",
+      "StockGenerator_BuySingleDef": "StockGenerator_BuySingleDef",
+      "StockGenerator_BuySlaves": "StockGenerator_BuySlaves",
+      "StockGenerator_BuyTradeTag": "StockGenerator_BuyTradeTag",
+      "StockGenerator_Category": "StockGenerator_Category",
+      "StockGenerator_MarketValue": "StockGenerator_MarketValue",
+      "StockGenerator_MultiDef": "StockGenerator_MultiDef",
+      "StockGenerator_ReinforcedBarrels": "StockGenerator_ReinforcedBarrels",
+      "StockGenerator_SingleDef": "StockGenerator_SingleDef",
+      "StockGenerator_Slaves": "StockGenerator_Slaves",
+      "StockGenerator_Tag": "StockGenerator_Tag",
+      "StockGenerator_Techprints": "StockGenerator_Techprints",
+      "StockGenerator_Tomes": "StockGenerator_Tomes"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StockGenerator subclass. Selects the generator strategy and the additional fields available for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "Number of items to generate. Compact IntRange format min~max. Source default IntRange.Zero.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "customCountRanges": {
+      "label": "Custom count ranges",
+      "description": "Per-ThingDef count overrides. Each child element name is a ThingDef defName; the text content is the IntRange override for that def.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "valueType": { "kind": "intRange" }
+    },
+    "totalPriceRange": {
+      "label": "Total price range",
+      "description": "Target total market value range for generated items. Used as an alternative or complement to countRange. Source default FloatRange.Zero.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxTechLevelGenerate": {
+      "label": "Max tech level (generate)",
+      "description": "Maximum TechLevel of items this generator will include in its sell stock. Source default Archotech.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Undefined", "Animal", "Neolithic", "Medieval",
+          "Industrial", "Spacer", "Ultra", "Archotech"
+        ]
+      }
+    },
+    "maxTechLevelBuy": {
+      "label": "Max tech level (buy)",
+      "description": "Maximum TechLevel of items this generator will buy from the player. Source default Archotech.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Undefined", "Animal", "Neolithic", "Medieval",
+          "Industrial", "Spacer", "Ultra", "Archotech"
+        ]
+      }
+    },
+    "price": {
+      "label": "Price",
+      "description": "Price tier applied to all things handled by this generator. Affects buy/sell price multipliers. Source default Normal.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Undefined", "VeryCheap", "Cheap", "Normal", "Expensive", "Exorbitant"
+        ]
+      }
+    }
+  }
+}

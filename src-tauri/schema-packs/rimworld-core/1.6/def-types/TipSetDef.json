@@ -1,0 +1,26 @@
+{
+  "defType": "TipSetDef",
+  "label": "Tip set",
+  "description": "Defines a named collection of gameplay tips displayed on the loading screen. Each tip is a localized string that can be translated via its TKey attribute.",
+  "inherits": ["Def"],
+  "fieldOrder": ["tips"],
+  "fields": {
+    "tips": {
+      "label": "Tips",
+      "description": "List of gameplay tips shown on the loading screen. Each entry is a localizable string; the TKey attribute on each element is used by the translation system.",
+      "type": { "kind": "list" },
+      "items": { "kind": "localizedString" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "new-tip-set": {
+      "label": "New tip set",
+      "description": "Minimal tip set with a defName and an initial tips list ready for authoring.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName"],
+      "fieldValues": {}
+    }
+  }
+}

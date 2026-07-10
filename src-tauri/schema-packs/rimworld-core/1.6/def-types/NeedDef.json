@@ -1,0 +1,298 @@
+{
+  "defType": "NeedDef",
+  "label": "Need",
+  "description": "Defines a pawn need, including eligibility rules, UI behavior, and level change behavior.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "needClass",
+    "minIntelligence",
+    "colonistAndPrisonersOnly",
+    "playerMechsOnly",
+    "colonistsOnly",
+    "slavesOnly",
+    "onlyIfCausedByHediff",
+    "onlyIfCausedByGene",
+    "onlyIfCausedByTrait",
+    "onlyIfCausedByIdeo",
+    "neverOnPrisoner",
+    "neverOnSlave",
+    "titleRequiredAny",
+    "hediffRequiredAny",
+    "nullifyingPrecepts",
+    "requiredComps",
+    "developmentalStageFilter",
+    "showOnNeedList",
+    "baseLevel",
+    "major",
+    "listPriority",
+    "tutorHighlightTag",
+    "showForCaravanMembers",
+    "scaleBar",
+    "showUnitTicks",
+    "fallPerDay",
+    "seekerRisePerHour",
+    "seekerFallPerHour",
+    "freezeWhileSleeping",
+    "freezeInMentalState"
+  ],
+  "fields": {
+    "needClass": {
+      "label": "Need class",
+      "description": "C# Need subclass that implements this need's runtime behavior. Required by RimWorld; omitting it is a config error.",
+      "type": { "kind": "typeName" },
+      "required": true,
+      "xml": "element",
+      "examples": ["Need_Mood", "Need_Food", "Need_Chemical", "Need_Deathrest", "Need_Seeker"]
+    },
+    "minIntelligence": {
+      "label": "Min intelligence",
+      "description": "Minimum Intelligence level a pawn must have for this need to apply. Defaults to Animal.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Animal",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Animal", "ToolUser", "Humanlike"]
+      }
+    },
+    "colonistAndPrisonersOnly": {
+      "label": "Colonists and prisoners only",
+      "description": "If true, this need only applies to colonists and prisoners, not visitors or other pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "playerMechsOnly": {
+      "label": "Player mechs only",
+      "description": "If true, this need only applies to player-controlled mechanoids.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "colonistsOnly": {
+      "label": "Colonists only",
+      "description": "If true, this need only applies to colonists, excluding prisoners and guests.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "slavesOnly": {
+      "label": "Slaves only",
+      "description": "If true, this need only applies to slave pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyIfCausedByHediff": {
+      "label": "Only if caused by hediff",
+      "description": "If true, this need is only instantiated when a hediff on the pawn causes it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyIfCausedByGene": {
+      "label": "Only if caused by gene",
+      "description": "If true, this need is only instantiated when a gene on the pawn causes it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyIfCausedByTrait": {
+      "label": "Only if caused by trait",
+      "description": "If true, this need is only instantiated when a trait on the pawn causes it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyIfCausedByIdeo": {
+      "label": "Only if caused by ideo",
+      "description": "If true, this need is only instantiated when the pawn's ideoligion causes it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "neverOnPrisoner": {
+      "label": "Never on prisoner",
+      "description": "If true, this need is never applied to prisoner pawns regardless of other eligibility rules.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "neverOnSlave": {
+      "label": "Never on slave",
+      "description": "If true, this need is never applied to slave pawns regardless of other eligibility rules.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "titleRequiredAny": {
+      "label": "Title required (any)",
+      "description": "Royal titles of which the pawn must hold at least one for this need to apply.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "RoyalTitleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "hediffRequiredAny": {
+      "label": "Hediff required (any)",
+      "description": "Hediffs of which the pawn must have at least one active for this need to apply.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nullifyingPrecepts": {
+      "label": "Nullifying precepts",
+      "description": "Precepts that suppress this need when held by the pawn's ideoligion.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "PreceptDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredComps": {
+      "label": "Required comps",
+      "description": "Comp properties that must be present on the pawn for this need to be instantiated. Evaluated when Anomaly is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "CompProperties" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "developmentalStageFilter": {
+      "label": "Developmental stage filter",
+      "description": "DevelopmentalStage flags (comma-separated) controlling which life stages this need applies to. Defaults to Child and Adult.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "Child, Adult",
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      },
+      "examples": ["Adult", "Baby, Child, Adult", "None, Newborn, Baby, Child, Adult"]
+    },
+    "showOnNeedList": {
+      "label": "Show on need list",
+      "description": "If true, this need appears in the pawn's needs tab. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "baseLevel": {
+      "label": "Base level",
+      "description": "Starting level of this need when the pawn first spawns. Defaults to 0.5.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "major": {
+      "label": "Major",
+      "description": "If true, this need is treated as a major need and displayed more prominently in the needs UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "listPriority": {
+      "label": "List priority",
+      "description": "Sort priority in the needs UI. Higher values appear earlier in the list.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "tutorHighlightTag": {
+      "label": "Tutor highlight tag",
+      "description": "Tag used by the tutorial system to highlight this need. Not a translated string.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "showForCaravanMembers": {
+      "label": "Show for caravan members",
+      "description": "If true, this need is shown in the caravan needs overview.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scaleBar": {
+      "label": "Scale bar",
+      "description": "If true, the need bar is drawn with a scale indicator.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showUnitTicks": {
+      "label": "Show unit ticks",
+      "description": "If true, unit tick marks are drawn on the need bar.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fallPerDay": {
+      "label": "Fall per day",
+      "description": "How much this need level falls per in-game day. Used by chemical-style needs. Defaults to 0.5.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "seekerRisePerHour": {
+      "label": "Seeker rise per hour",
+      "description": "Rate at which the Need_Seeker level rises per in-game hour when the seeker target is available.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "seekerFallPerHour": {
+      "label": "Seeker fall per hour",
+      "description": "Rate at which the Need_Seeker level falls per in-game hour when the seeker target is absent.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "freezeWhileSleeping": {
+      "label": "Freeze while sleeping",
+      "description": "If true, this need level does not change while the pawn is sleeping.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "freezeInMentalState": {
+      "label": "Freeze in mental state",
+      "description": "If true, this need level does not change while the pawn is in a mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

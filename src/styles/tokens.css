@@ -1,0 +1,95 @@
+/* Light theme tokens (default) */
+:root {
+  color-scheme: light;
+  --font-ui: Inter, Avenir, Helvetica, Arial, sans-serif;
+  --font-mono: "Cascadia Code", "Fira Code", Consolas, monospace;
+
+  --surface-app: #f0f2f5;
+  --surface-titlebar: #ffffff;
+  --surface-panel: #f7f8fa;
+  --surface-editor: #ffffff;
+  --surface-tab-active: #ffffff;
+  --surface-tab-inactive: #eceef2;
+  --surface-hover: rgba(0, 0, 0, 0.05);
+  --surface-active: rgba(0, 0, 0, 0.08);
+  --surface-overlay: rgba(0, 0, 0, 0.45);
+  --surface-rail: #e8eaed;
+
+  --text-primary: #1a2236;
+  --text-muted: #5c6880;
+  --text-disabled: #9aa3b2;
+  --text-accent: #2155c9;
+  --text-error: #c0392b;
+
+  --border-subtle: #d8dce5;
+  --border-strong: #b0b8c8;
+  --border-focus: #2155c9;
+
+  --accent: #2155c9;
+  --accent-muted: rgba(33, 85, 201, 0.12);
+
+  --status-ok: #1a7a3f;
+  --status-warn: #a05c00;
+  --status-error: #c0392b;
+  --status-bar-bg: #2155c9;
+  --status-bar-text: #ffffff;
+
+  --h-titlebar: 44px;
+  --w-rail: 48px;
+  --w-explorer: 300px;
+  --h-statusbar: 24px;
+  --h-tree-row: 28px;
+  --h-tab: 36px;
+  --sz-icon-btn: 30px;
+  --tree-indent: 16px;
+
+  --syntax-xml-tag: #1058a0;
+  --syntax-xml-attribute: #7c4d0a;
+  --syntax-xml-attribute-value: #2e7d32;
+  --syntax-xml-comment: #718096;
+  --syntax-xml-processing: #9c27b0;
+  --syntax-xml-punctuation: #5c6880;
+  --syntax-xml-entity: #c62828;
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-app: #111318;
+  --surface-titlebar: #1a1d24;
+  --surface-panel: #171a21;
+  --surface-editor: #101217;
+  --surface-tab-active: #101217;
+  --surface-tab-inactive: #171a21;
+  --surface-hover: rgba(255, 255, 255, 0.06);
+  --surface-active: rgba(255, 255, 255, 0.10);
+  --surface-overlay: rgba(0, 0, 0, 0.70);
+  --surface-rail: #13161d;
+
+  --text-primary: #e0e4ee;
+  --text-muted: #8892a4;
+  --text-disabled: #4a5266;
+  --text-accent: #7aa2ff;
+  --text-error: #f28779;
+
+  --border-subtle: #242934;
+  --border-strong: #3a4258;
+  --border-focus: #7aa2ff;
+
+  --accent: #7aa2ff;
+  --accent-muted: rgba(122, 162, 255, 0.15);
+
+  --status-ok: #4caf80;
+  --status-warn: #e8b24d;
+  --status-error: #f28779;
+  --status-bar-bg: #1a2a5e;
+  --status-bar-text: #c8d4f0;
+
+  --syntax-xml-tag: #79b8ff;
+  --syntax-xml-attribute: #ffab40;
+  --syntax-xml-attribute-value: #a5d6a7;
+  --syntax-xml-comment: #616e7c;
+  --syntax-xml-processing: #ce93d8;
+  --syntax-xml-punctuation: #8892a4;
+  --syntax-xml-entity: #ef9a9a;
+}

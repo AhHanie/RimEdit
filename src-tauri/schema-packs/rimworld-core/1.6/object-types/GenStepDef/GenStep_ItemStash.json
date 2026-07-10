@@ -1,0 +1,41 @@
+{
+  "objectType": "GenStep_ItemStash",
+  "label": "Item stash",
+  "description": "Scatters an item stash stockpile onto the map.",
+  "inherits": ["GenStep_Scatterer"],
+  "fieldOrder": [
+    "Class",
+    "count",
+    "countPer10kCellsRange",
+    "nearPlayerStart",
+    "nearMapCenter",
+    "minSpacing",
+    "spotMustBeStandable",
+    "minDistToPlayerStart",
+    "minDistToPlayerStartPct",
+    "minEdgeDist",
+    "minEdgeDistPct",
+    "extraNoBuildEdgeDist",
+    "validators",
+    "fallbackValidators",
+    "allowInWaterBiome",
+    "allowFoggedPositions",
+    "allowRoofed",
+    "onlyOnStartingMap",
+    "minPollution",
+    "allowMechanoidDatacoreReadOrLost",
+    "isJunk",
+    "warnOnFail",
+    "thingSetMakerDef"
+  ],
+  "fields": {
+    "thingSetMakerDef": {
+      "label": "Thing set maker def",
+      "description": "ThingSetMakerDef used to generate the contents of the stash. Defaults to MapGen_DefaultStockpile if omitted.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingSetMakerDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

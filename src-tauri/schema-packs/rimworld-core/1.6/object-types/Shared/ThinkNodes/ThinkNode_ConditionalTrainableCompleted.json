@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalTrainableCompleted",
+  "label": "Think node conditional trainable completed",
+  "description": "Satisfied when the pawn has completed the specified trainable step.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["trainable"],
+  "fields": {
+    "trainable": {
+      "label": "Trainable",
+      "description": "The training step the pawn must have learned for this conditional to be satisfied.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TrainableDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

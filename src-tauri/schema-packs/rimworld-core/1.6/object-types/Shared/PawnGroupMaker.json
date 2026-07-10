@@ -1,0 +1,113 @@
+{
+  "objectType": "PawnGroupMaker",
+  "label": "Pawn group maker",
+  "description": "Defines a pawn group template - a set of weighted PawnKindDef options used to populate raids, settlements, trader caravans, and other groups for a faction.",
+  "fieldOrder": [
+    "kindDef",
+    "commonality",
+    "disallowedStrategies",
+    "maxTotalPoints",
+    "options",
+    "traders",
+    "carriers",
+    "guards"
+  ],
+  "fields": {
+    "kindDef": {
+      "label": "Kind def",
+      "description": "PawnGroupKindDef that controls which generator worker this group maker uses (e.g. Combat, Trader, Settlement).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnGroupKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight for selecting this group maker when multiple group makers share the same kindDef.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 100,
+      "xml": "element"
+    },
+    "disallowedStrategies": {
+      "label": "Disallowed strategies",
+      "description": "RaidStrategyDefs that cannot use this group maker. Used to prevent certain pawn mixes from appearing in incompatible strategies such as Siege.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "RaidStrategyDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "maxTotalPoints": {
+      "label": "Max total points",
+      "description": "Maximum combined combat points this group maker can be selected for. Group makers with a low cap appear only in small raids.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999999,
+      "xml": "element"
+    },
+    "options": {
+      "label": "Options",
+      "description": "Combat or general pawn options. Child element names are PawnKindDef defNames; text is the float selection weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnGenOption" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "kind",
+      "valueField": "selectionWeight",
+      "keyReference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "traders": {
+      "label": "Traders",
+      "description": "Trader pawn options for Trader-kind group makers. Child element names are PawnKindDef defNames; text is the float selection weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnGenOption" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "kind",
+      "valueField": "selectionWeight",
+      "keyReference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "carriers": {
+      "label": "Carriers",
+      "description": "Pack animal or carrier pawn options for Trader-kind group makers. Child element names are PawnKindDef defNames; text is the float selection weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnGenOption" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "kind",
+      "valueField": "selectionWeight",
+      "keyReference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "guards": {
+      "label": "Guards",
+      "description": "Guard pawn options for Trader-kind group makers. Child element names are PawnKindDef defNames; text is the float selection weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnGenOption" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "kind",
+      "valueField": "selectionWeight",
+      "keyReference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

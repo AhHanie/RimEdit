@@ -1,0 +1,115 @@
+{
+  "defType": "ChemicalDef",
+  "label": "Chemical",
+  "description": "Defines a chemical substance that pawns can become addicted to.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "addictionHediff",
+    "toleranceHediff",
+    "canBinge",
+    "canBeAddicted",
+    "generateAddictionGenes",
+    "geneOverdoseChanceFactorResist",
+    "geneOverdoseChanceFactorImmune",
+    "geneToleranceBuildupFactorResist",
+    "geneToleranceBuildupFactorImmune",
+    "onGeneratedAddictedToleranceChance",
+    "onGeneratedAddictedEvents"
+  ],
+  "fields": {
+    "addictionHediff": {
+      "label": "Addiction hediff",
+      "description": "HediffDef applied when a pawn becomes addicted to this chemical.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" },
+      "requiredWhen": { "field": "canBeAddicted", "value": true }
+    },
+    "toleranceHediff": {
+      "label": "Tolerance hediff",
+      "description": "HediffDef representing tolerance buildup for this chemical.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canBinge": {
+      "label": "Can binge",
+      "description": "If true, pawns can binge on this chemical.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canBeAddicted": {
+      "label": "Can be addicted",
+      "description": "If true, pawns can become addicted to this chemical.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "generateAddictionGenes": {
+      "label": "Generate addiction genes",
+      "description": "If true, genes related to this chemical's addiction can be generated.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "geneOverdoseChanceFactorResist": {
+      "label": "Gene overdose chance factor (resist)",
+      "description": "Multiplier on overdose chance for pawns with a chemical-resistance gene.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element",
+      "bounds": { "min": 0 }
+    },
+    "geneOverdoseChanceFactorImmune": {
+      "label": "Gene overdose chance factor (immune)",
+      "description": "Multiplier on overdose chance for pawns with a chemical-immunity gene.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element",
+      "bounds": { "min": 0 }
+    },
+    "geneToleranceBuildupFactorResist": {
+      "label": "Gene tolerance buildup factor (resist)",
+      "description": "Multiplier on tolerance buildup for pawns with a chemical-resistance gene.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element",
+      "bounds": { "min": 0 }
+    },
+    "geneToleranceBuildupFactorImmune": {
+      "label": "Gene tolerance buildup factor (immune)",
+      "description": "Multiplier on tolerance buildup for pawns with a chemical-immunity gene.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element",
+      "bounds": { "min": 0 }
+    },
+    "onGeneratedAddictedToleranceChance": {
+      "label": "On generated addicted: tolerance chance",
+      "description": "Probability that a pawn generated with this addiction also has an active tolerance hediff.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element",
+      "bounds": { "min": 0, "max": 1 }
+    },
+    "onGeneratedAddictedEvents": {
+      "label": "On generated addicted: events",
+      "description": "Hediff givers run on pawns generated with this addiction.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "items": { "kind": "object", "schemaRef": "HediffGiver_Event" }
+    }
+  }
+}

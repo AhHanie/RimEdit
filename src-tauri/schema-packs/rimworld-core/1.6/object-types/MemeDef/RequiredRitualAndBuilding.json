@@ -1,0 +1,32 @@
+{
+  "objectType": "RequiredRitualAndBuilding",
+  "label": "Required ritual and building",
+  "description": "Pairs a precept and ritual pattern with a required building type. Memes use this to force inclusion of a specific building alongside a ritual.",
+  "fieldOrder": ["precept", "pattern", "building"],
+  "fields": {
+    "precept": {
+      "label": "Precept",
+      "description": "PreceptDef for the ritual that this entry governs.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "pattern": {
+      "label": "Pattern",
+      "description": "RitualPatternDef that defines the ritual's behavior.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RitualPatternDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "building": {
+      "label": "Building",
+      "description": "ThingDef that must be present in the room for this ritual.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

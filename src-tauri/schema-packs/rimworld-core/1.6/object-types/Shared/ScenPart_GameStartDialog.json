@@ -1,0 +1,35 @@
+{
+  "objectType": "ScenPart_GameStartDialog",
+  "label": "Game start dialog",
+  "description": "Shows a dialog box when the game starts. Displays a message from a text key or direct string and plays an optional sound when closed.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "text", "textKey", "closeSound"],
+  "fields": {
+    "text": {
+      "label": "Text",
+      "description": "Direct dialog text to display. Use textKey instead for translated strings.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "textKey": {
+      "label": "Text key",
+      "description": "Translation key for the dialog text. Preferred over direct text for translated content.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "closeSound": {
+      "label": "Close sound",
+      "description": "SoundDef played when the player closes this dialog.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

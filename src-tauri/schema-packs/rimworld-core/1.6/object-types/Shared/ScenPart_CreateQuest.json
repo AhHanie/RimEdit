@@ -1,0 +1,21 @@
+{
+  "objectType": "ScenPart_CreateQuest",
+  "label": "Create quest",
+  "description": "Starts a specific quest at the beginning of the game.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "questDef"],
+  "fields": {
+    "questDef": {
+      "label": "Quest def",
+      "description": "QuestScriptDef to trigger at game start.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "QuestScriptDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

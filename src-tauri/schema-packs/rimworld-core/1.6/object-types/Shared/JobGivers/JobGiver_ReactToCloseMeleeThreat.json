@@ -1,0 +1,17 @@
+{
+  "objectType": "JobGiver_ReactToCloseMeleeThreat",
+  "label": "Job giver react to close melee threat",
+  "description": "Issues a melee attack job against the pawn's current melee threat. Optionally restricted to threats within a maximum distance.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": ["maxDistance"],
+  "fields": {
+    "maxDistance": {
+      "label": "Max distance",
+      "description": "Maximum distance from the pawn to the melee threat for this node to react. -1 means no distance limit.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    }
+  }
+}

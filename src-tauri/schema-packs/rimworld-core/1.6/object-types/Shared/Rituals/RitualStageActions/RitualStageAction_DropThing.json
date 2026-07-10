@@ -1,0 +1,24 @@
+{
+  "objectType": "RitualStageAction_DropThing",
+  "label": "Ritual stage action (drop thing)",
+  "description": "Spawns a thing at the ritual target location when the stage action fires.",
+  "fieldOrder": ["Class", "def", "count"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "def": {
+      "label": "Def",
+      "description": "ThingDef to spawn at the ritual target location.",
+      "type": { "kind": "defReference", "reference": { "defType": "ThingDef" } },
+      "required": false,
+      "xml": "element"
+    },
+    "count": {
+      "label": "Count",
+      "description": "Number of things to spawn. Defaults to 1.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

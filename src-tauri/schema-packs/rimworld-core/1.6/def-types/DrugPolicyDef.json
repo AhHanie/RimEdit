@@ -1,0 +1,50 @@
+{
+  "defType": "DrugPolicyDef",
+  "label": "Drug policy",
+  "description": "Defines which drugs colonists are allowed to use and under what conditions. Controls pleasure-drug blanket allowance and per-drug scheduling rules.",
+  "inherits": ["Def"],
+  "fieldOrder": ["allowPleasureDrugs", "entries"],
+  "fields": {
+    "allowPleasureDrugs": {
+      "label": "Allow pleasure drugs",
+      "description": "When true, all drugs classified as pleasure drugs are allowed for joy without requiring individual entries. Does not affect addiction management or scheduling.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "entries": {
+      "label": "Entries",
+      "description": "Per-drug scheduling rules. Each list item controls whether a specific drug is allowed for addiction treatment, recreational joy, or timed automatic scheduling.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DrugPolicyEntry" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "empty-drug-policy": {
+      "label": "Empty drug policy",
+      "description": "Policy that prohibits all drugs. No entries or pleasure-drug override.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    },
+    "pleasure-drugs-policy": {
+      "label": "Pleasure drugs policy",
+      "description": "Policy that allows all pleasure drugs for joy without per-drug entries.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "allowPleasureDrugs": "true"
+      }
+    },
+    "custom-entry-policy": {
+      "label": "Custom entry policy",
+      "description": "Policy with a per-drug entries list. Add one <li> per drug.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

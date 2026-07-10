@@ -1,0 +1,22 @@
+{
+  "objectType": "StatPart_MaxChanceIfRotting",
+  "label": "Stat part (max chance if rotting)",
+  "description": "Caps the stat at a maximum value when the item is in a rotting state.",
+  "fieldOrder": ["Class", "priority"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

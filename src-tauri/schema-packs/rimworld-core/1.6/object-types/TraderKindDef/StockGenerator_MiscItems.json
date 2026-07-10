@@ -1,0 +1,8 @@
+{
+  "objectType": "StockGenerator_MiscItems",
+  "label": "Misc items generator",
+  "description": "Abstract base for market-value-weighted misc item generators. Generates individual items one at a time up to countRange, selecting by weight. Subclassed by StockGenerator_MarketValue.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": [],
+  "fields": {}
+}

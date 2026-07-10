@@ -1,0 +1,143 @@
+{
+  "objectType": "StorytellerCompProperties_RandomMain",
+  "label": "Random main comp",
+  "description": "Primary incident driver for Randy Random. Selects incidents from weighted categories at a mean time between events.",
+  "fieldOrder": [
+    "Class",
+    "compClass",
+    "minDaysPassed",
+    "allowedTargetTags",
+    "disallowedTargetTags",
+    "minIncChancePopulationIntentFactor",
+    "enableIfAnyModActive",
+    "disableIfAnyModActive",
+    "mtbDays",
+    "categoryWeights",
+    "maxThreatBigIntervalDays",
+    "randomPointsFactorRange",
+    "skipThreatBigIfRaidBeacon",
+    "spaceMtbDayFactor",
+    "spaceMinSpacingDays"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# StorytellerCompProperties type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime StorytellerComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "minDaysPassed": {
+      "label": "Min days passed",
+      "description": "Earliest in-game day on which this comp can fire.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "allowedTargetTags": {
+      "label": "Allowed target tags",
+      "description": "Restrict this comp to firing at incident targets with one of these tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedTargetTags": {
+      "label": "Disallowed target tags",
+      "description": "Exclude incident targets with any of these tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "minIncChancePopulationIntentFactor": {
+      "label": "Min inc chance population intent factor",
+      "description": "Minimum population-intent multiplier applied to incident chance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.05,
+      "xml": "element"
+    },
+    "enableIfAnyModActive": {
+      "label": "Enable if any mod active",
+      "description": "This comp is active only when at least one mod in this list is loaded.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disableIfAnyModActive": {
+      "label": "Disable if any mod active",
+      "description": "This comp is disabled when any mod in this list is loaded.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "mtbDays": {
+      "label": "MTB days",
+      "description": "Mean time between incidents, in in-game days.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "categoryWeights": {
+      "label": "Category weights",
+      "description": "Per-category relative weights for incident selection. Each child element name is an IncidentCategoryDef defName, value is the float weight.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "IncidentCategoryDef", "allowAbstract": false, "scope": "allSources" },
+      "valueType": { "kind": "float" },
+      "examples": ["<Misc>3.5</Misc>", "<ThreatBig>1.4</ThreatBig>", "<ThreatSmall>0.6</ThreatSmall>"]
+    },
+    "maxThreatBigIntervalDays": {
+      "label": "Max threat big interval days",
+      "description": "Maximum days between large-threat incidents. Ensures threats never become too sparse.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 99999,
+      "xml": "element"
+    },
+    "randomPointsFactorRange": {
+      "label": "Random points factor range",
+      "description": "Multiplier sampled from this range and applied to incident threat points.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0.5~1.5",
+      "xml": "element"
+    },
+    "skipThreatBigIfRaidBeacon": {
+      "label": "Skip threat big if raid beacon",
+      "description": "If true, large-threat incidents are suppressed when a raid beacon is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "spaceMtbDayFactor": {
+      "label": "Space MTB day factor",
+      "description": "Multiplier applied to MTB when the colony is in space.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 2,
+      "xml": "element"
+    },
+    "spaceMinSpacingDays": {
+      "label": "Space min spacing days",
+      "description": "Minimum days between incidents when the colony is in space.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 2,
+      "xml": "element"
+    }
+  }
+}

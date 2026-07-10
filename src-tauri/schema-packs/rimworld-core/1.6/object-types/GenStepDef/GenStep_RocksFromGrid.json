@@ -1,0 +1,37 @@
+{
+  "objectType": "GenStep_RocksFromGrid",
+  "label": "Rocks from grid",
+  "description": "Generates rock edifices and roofs from the elevation grid, then scatters mineable ore lumps.",
+  "fieldOrder": ["Class", "maxMineableValue", "ignoreMaxIfGravship", "overrideBlotchesPer10kCells"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_RocksFromGrid.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "maxMineableValue": {
+      "label": "Max mineable value",
+      "description": "Private field. Maximum base market value for mineables scattered by this step.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "ignoreMaxIfGravship": {
+      "label": "Ignore max if gravship",
+      "description": "Private field. When true, maxMineableValue is ignored on maps created by gravship landing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "overrideBlotchesPer10kCells": {
+      "label": "Override blotches per 10k cells",
+      "description": "Private field. When set, overrides the biome-derived ore blotch density with this fixed value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

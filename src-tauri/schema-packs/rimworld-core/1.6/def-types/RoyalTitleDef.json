@@ -1,0 +1,331 @@
+{
+  "defType": "RoyalTitleDef",
+  "label": "Royal title",
+  "description": "Defines a rank in a faction's royal title hierarchy (e.g. Knight, Count, Duke). Referenced by RoyalImplantRule.minTitle and other royalty-related fields.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "seniority",
+    "favorCost",
+    "labelFemale",
+    "changeHeirQuestPoints",
+    "commonality",
+    "disabledWorkTags",
+    "inheritanceWorkerOverrideClass",
+    "requiredMinimumApparelQuality",
+    "requiredApparel",
+    "permits",
+    "minExpectation",
+    "disabledJoyKinds",
+    "tags",
+    "rewards",
+    "suppressIdleAlert",
+    "canBeInherited",
+    "allowDignifiedMeditationFocus",
+    "permitPointsAwarded",
+    "awardWorkerClass",
+    "awardThought",
+    "lostThought",
+    "throneRoomRequirements",
+    "bedroomRequirements",
+    "recruitmentResistanceOffset",
+    "foodRequirement",
+    "replaceOnRecruited",
+    "decreeMtbDays",
+    "decreeMinIntervalDays",
+    "decreeMentalBreakCommonality",
+    "decreeTags",
+    "grantedAbilities",
+    "speechCooldown",
+    "maxPsylinkLevel"
+  ],
+  "fields": {
+    "seniority": {
+      "label": "Seniority",
+      "description": "Numeric rank value. Higher seniority means a more senior title. Used to order titles and resolve inheritance.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "favorCost": {
+      "label": "Favor cost",
+      "description": "Empire favor required to be awarded this title. A value of 0 means the title is not awardable via favor.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelFemale": {
+      "label": "Label (female)",
+      "description": "Alternate title label used for female pawns. If omitted, the standard label is used for all genders.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "changeHeirQuestPoints": {
+      "label": "Change heir quest points",
+      "description": "Points granted for the change-heir quest associated with this title. Required for awardable titles (favorCost > 0). Defaults to -1 (undefined).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight for how often this title appears among NPC pawns. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "disabledWorkTags": {
+      "label": "Disabled work tags",
+      "description": "WorkTags flags listing work categories that are forbidden for pawns holding this title. Each li element is one WorkTags flag name.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "flags": true,
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": [
+          "None",
+          "ManualDumb",
+          "ManualSkilled",
+          "Violent",
+          "Caring",
+          "Social",
+          "Commoner",
+          "Intellectual",
+          "Animals",
+          "Artistic",
+          "Crafting",
+          "Cooking",
+          "Firefighting",
+          "Cleaning",
+          "Hauling",
+          "PlantWork",
+          "Mining",
+          "Hunting",
+          "Constructing",
+          "Shooting",
+          "AllWork"
+        ]
+      }
+    },
+    "inheritanceWorkerOverrideClass": {
+      "label": "Inheritance worker override class",
+      "description": "C# class overriding the faction's default RoyalTitleInheritanceWorker for this title.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "requiredMinimumApparelQuality": {
+      "label": "Required minimum apparel quality",
+      "description": "Minimum quality level that all required apparel pieces must meet for this title.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Awful",
+          "Poor",
+          "Normal",
+          "Good",
+          "Excellent",
+          "Masterwork",
+          "Legendary"
+        ]
+      }
+    },
+    "requiredApparel": {
+      "label": "Required apparel",
+      "description": "Apparel requirements a pawn must meet to hold this title without a mood penalty.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ApparelRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "permits": {
+      "label": "Permits",
+      "description": "RoyalTitlePermitDefs that pawns at this title rank can select when receiving the title.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "RoyalTitlePermitDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "minExpectation": {
+      "label": "Minimum expectation",
+      "description": "The minimum ExpectationDef tier a pawn holding this title must meet to avoid mood penalties.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ExpectationDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "disabledJoyKinds": {
+      "label": "Disabled joy kinds",
+      "description": "JoyKindDefs that pawns holding this title are not allowed to use for recreation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "JoyKindDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "Arbitrary string tags used to group or filter titles in quests and other systems.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "rewards": {
+      "label": "Rewards",
+      "description": "Items given to a pawn upon receiving this title.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ThingDefCountClass" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "suppressIdleAlert": {
+      "label": "Suppress idle alert",
+      "description": "If true, the game suppresses the idle pawn alert for pawns holding this title.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canBeInherited": {
+      "label": "Can be inherited",
+      "description": "If true, this title can be passed to an heir when the holder dies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowDignifiedMeditationFocus": {
+      "label": "Allow dignified meditation focus",
+      "description": "If true (default), pawns with this title may use the dignified meditation focus type.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "permitPointsAwarded": {
+      "label": "Permit points awarded",
+      "description": "Number of permit points the pawn gains when awarded this title.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "awardWorkerClass": {
+      "label": "Award worker class",
+      "description": "C# class (RoyalTitleAwardWorker subclass) that handles the award sequence for this title. Defaults to RoyalTitleAwardWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "awardThought": {
+      "label": "Award thought",
+      "description": "ThoughtDef (Thought_MemoryRoyalTitle subclass) given to a pawn when they receive this title.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "lostThought": {
+      "label": "Lost thought",
+      "description": "ThoughtDef (Thought_MemoryRoyalTitle subclass) given to a pawn when they lose this title.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "throneRoomRequirements": {
+      "label": "Throne room requirements",
+      "description": "RoomRequirements that the pawn's assigned throne room must meet.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RoomRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "bedroomRequirements": {
+      "label": "Bedroom requirements",
+      "description": "RoomRequirements that the pawn's assigned bedroom must meet.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RoomRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "recruitmentResistanceOffset": {
+      "label": "Recruitment resistance offset",
+      "description": "Flat offset added to the recruitment resistance of pawns holding this title.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "foodRequirement": {
+      "label": "Food requirement",
+      "description": "Defines the minimum food quality and allowed food types or specific ThingDefs that satisfy this title's food requirement.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "object",
+      "schemaRef": "RoyalTitleFoodRequirement"
+    },
+    "replaceOnRecruited": {
+      "label": "Replace on recruited",
+      "description": "When a pawn with this title is recruited, their title is replaced by this RoyalTitleDef.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RoyalTitleDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "decreeMtbDays": {
+      "label": "Decree mean time between (days)",
+      "description": "Mean time in days between random decree events for this title. Set to -1 to disable decrees. Defaults to -1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "decreeMinIntervalDays": {
+      "label": "Decree minimum interval (days)",
+      "description": "Minimum days between two consecutive decree events. Defaults to 2.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 2,
+      "xml": "element"
+    },
+    "decreeMentalBreakCommonality": {
+      "label": "Decree mental break commonality",
+      "description": "Relative weight for the mental break decree type. Higher values increase the chance of a mental break decree.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "decreeTags": {
+      "label": "Decree tags",
+      "description": "String tags filtering which decree types are available to pawns holding this title.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "grantedAbilities": {
+      "label": "Granted abilities",
+      "description": "AbilityDefs unlocked for the pawn while they hold this title.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "speechCooldown": {
+      "label": "Speech cooldown",
+      "description": "Cooldown in ticks between uses of the Speech ability. Serialized as a single integer (RimWorld treats it as min == max of an IntRange).",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxPsylinkLevel": {
+      "label": "Max psylink level",
+      "description": "Maximum psylink level a pawn may hold while at this title rank.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

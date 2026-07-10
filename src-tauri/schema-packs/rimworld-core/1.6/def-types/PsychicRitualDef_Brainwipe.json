@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualDef_Brainwipe",
+  "label": "Psychic ritual -- brainwipe",
+  "description": "Ritual that wipes the target pawn's mind, putting them into a coma. Coma duration scales with ritual quality.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "comaDurationDaysFromQualityCurve"
+  ],
+  "fields": {
+    "comaDurationDaysFromQualityCurve": {
+      "label": "Coma duration days from quality curve",
+      "description": "Curve mapping ritual quality to the coma duration in days.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

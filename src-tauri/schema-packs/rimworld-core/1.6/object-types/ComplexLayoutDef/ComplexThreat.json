@@ -1,0 +1,47 @@
+{
+  "objectType": "ComplexThreat",
+  "label": "Complex threat",
+  "description": "A weighted threat entry for a ComplexLayoutDef. The element name is the ComplexThreatDef defName; scalar text is the selection weight.",
+  "fieldOrder": ["def", "selectionWeight", "chancePerComplex", "maxPerComplex", "maxPerRoom"],
+  "fields": {
+    "def": {
+      "label": "Threat def",
+      "description": "ComplexThreatDef defName. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "ComplexThreatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative selection weight for this threat. May also be provided as a scalar text node on the element.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "chancePerComplex": {
+      "label": "Chance per complex",
+      "description": "Probability this threat is selected per complex layout.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "maxPerComplex": {
+      "label": "Max per complex",
+      "description": "Maximum instances of this threat per complex layout. Omit for uncapped.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxPerRoom": {
+      "label": "Max per room",
+      "description": "Maximum instances of this threat per room.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    }
+  }
+}

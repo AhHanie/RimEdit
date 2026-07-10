@@ -1,0 +1,178 @@
+{
+  "objectType": "RitualStage",
+  "label": "Ritual stage",
+  "description": "Base schema for ritual stage objects. Subclass is selected by the Class attribute.",
+  "fieldOrder": [
+    "Class", "defaultDuty", "endTriggers", "failTriggers", "preAction", "postAction",
+    "interruptedAction", "pawnLeaveAction", "highlightRolePositions",
+    "highlightRolePawns", "tickActionMaker", "visualEffectDef", "spectatorsRequired",
+    "essential", "ignoreDurationToFinishAfterStage", "allowedSpectateSidesOverride",
+    "spectateDistanceOverride", "showProgressBar", "roleBehaviors"
+  ],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RitualStage",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "RitualStage": "RitualStage",
+      "RitualStage_AnimaTreeLinking": "RitualStage_AnimaTreeLinking",
+      "RitualStage_InteractWithAnimal": "RitualStage_InteractWithAnimal",
+      "RitualStage_InteractWithPrisoner": "RitualStage_InteractWithPrisoner",
+      "RitualStage_InteractWithRole": "RitualStage_InteractWithRole",
+      "RitualStage_OnTheThrone": "RitualStage_OnTheThrone",
+      "RitualStage_WaitingForParticipants": "RitualStage_WaitingForParticipants"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualStage subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "defaultDuty": {
+      "label": "Default duty",
+      "description": "DutyDef assigned to pawns that do not have a role-specific duty in this stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DutyDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "endTriggers": {
+      "label": "End triggers",
+      "description": "List of triggers that end this stage when any one fires. Each li selects a class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StageEndTrigger" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "failTriggers": {
+      "label": "Fail triggers",
+      "description": "List of triggers that fail the ritual when any one fires. Each li selects a class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StageFailTrigger" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "preAction": {
+      "label": "Pre-action",
+      "description": "Action executed at the start of this stage. Class attribute selects the subclass.",
+      "type": { "kind": "object", "schemaRef": "RitualStageAction" },
+      "required": false,
+      "xml": "object"
+    },
+    "postAction": {
+      "label": "Post-action",
+      "description": "Action executed when this stage ends normally. Class attribute selects the subclass.",
+      "type": { "kind": "object", "schemaRef": "RitualStageAction" },
+      "required": false,
+      "xml": "object"
+    },
+    "interruptedAction": {
+      "label": "Interrupted action",
+      "description": "Action executed when this stage is interrupted. Class attribute selects the subclass.",
+      "type": { "kind": "object", "schemaRef": "RitualStageAction" },
+      "required": false,
+      "xml": "object"
+    },
+    "pawnLeaveAction": {
+      "label": "Pawn leave action",
+      "description": "Action executed when a role pawn leaves the ritual during this stage. Class attribute selects the subclass.",
+      "type": { "kind": "object", "schemaRef": "RitualStageAction" },
+      "required": false,
+      "xml": "object"
+    },
+    "highlightRolePositions": {
+      "label": "Highlight role positions",
+      "description": "List of role IDs whose target positions are highlighted on the map during this stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "highlightRolePawns": {
+      "label": "Highlight role pawns",
+      "description": "List of role IDs whose assigned pawns are highlighted during this stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tickActionMaker": {
+      "label": "Tick action maker",
+      "description": "Per-tick action maker executed each tick during this stage. Class attribute selects the subclass.",
+      "type": { "kind": "object", "schemaRef": "RitualStageTickActionMaker" },
+      "required": false,
+      "xml": "object"
+    },
+    "visualEffectDef": {
+      "label": "Visual effect def",
+      "description": "RitualVisualEffectDef whose comps are spawned while this stage is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RitualVisualEffectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "spectatorsRequired": {
+      "label": "Spectators required",
+      "description": "If true, the ritual fails if all spectators leave during this stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "essential": {
+      "label": "Essential",
+      "description": "If true, skipping or failing this stage ends the entire ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreDurationToFinishAfterStage": {
+      "label": "Ignore duration to finish after stage",
+      "description": "If true, the ritual does not wait for remaining duration after this stage ends.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedSpectateSidesOverride": {
+      "label": "Allowed spectate sides override",
+      "description": "Overrides which sides of the ritual rect spectators may stand on during this stage.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Horizontal", "Vertical", "East", "West", "North", "South", "All"]
+      }
+    },
+    "spectateDistanceOverride": {
+      "label": "Spectate distance override",
+      "description": "IntRange overriding the valid spectator distance for this stage. Defaults to 0~0 (no override).",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "showProgressBar": {
+      "label": "Show progress bar",
+      "description": "If true, a progress bar is shown on the ritual spot during this stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "roleBehaviors": {
+      "label": "Role behaviors",
+      "description": "List of per-role duty and position overrides for this stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualRoleBehavior" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

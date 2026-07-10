@@ -1,0 +1,85 @@
+{
+  "defType": "ExpansionDef",
+  "label": "Expansion",
+  "description": "Defines a RimWorld expansion or DLC entry, including its icon, background, store links, brand color, and linked mod package ID.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "iconPath",
+    "notOwnedIconPath",
+    "backgroundPath",
+    "linkedMod",
+    "steamUrl",
+    "siteUrl",
+    "previewImagesFolderPath",
+    "isCore",
+    "primaryColor"
+  ],
+  "fields": {
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture asset path for the expansion icon shown when the DLC is owned.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "notOwnedIconPath": {
+      "label": "Not owned icon path",
+      "description": "Texture asset path for the icon shown when the DLC is not owned. Falls back to the owned icon if empty.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "backgroundPath": {
+      "label": "Background path",
+      "description": "Texture asset path for the expansion background image.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "linkedMod": {
+      "label": "Linked mod",
+      "description": "Package ID of the mod this expansion entry represents (e.g. Ludeon.RimWorld.Royalty). Lowercased automatically on load.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Ludeon.RimWorld", "Ludeon.RimWorld.Royalty", "Ludeon.RimWorld.Ideology", "Ludeon.RimWorld.Biotech", "Ludeon.RimWorld.Anomaly"]
+    },
+    "steamUrl": {
+      "label": "Steam URL",
+      "description": "Steam store page URL for this expansion.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "siteUrl": {
+      "label": "Site URL",
+      "description": "Official website URL for this expansion.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "previewImagesFolderPath": {
+      "label": "Preview images folder path",
+      "description": "Folder path containing preview images for this expansion.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "isCore": {
+      "label": "Is core",
+      "description": "If true, this entry represents the base game rather than a paid expansion.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "primaryColor": {
+      "label": "Primary color",
+      "description": "Brand color for this expansion, used in UI accents. Accepts integer (0-255) components as (r, g, b). Defaults to white (255, 255, 255).",
+      "type": { "kind": "color" },
+      "required": false,
+      "defaultValue": "(255, 255, 255)",
+      "xml": "element"
+    }
+  }
+}

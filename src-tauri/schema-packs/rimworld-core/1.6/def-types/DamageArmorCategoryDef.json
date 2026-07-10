@@ -1,0 +1,28 @@
+{
+  "defType": "DamageArmorCategoryDef",
+  "label": "Damage armor category",
+  "description": "Defines an armor category used to resolve which stat governs armor penetration and resistance for a given damage type. The three shipped categories are Sharp, Blunt, and Heat.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "multStat",
+    "armorRatingStat"
+  ],
+  "fields": {
+    "multStat": {
+      "label": "Mult stat",
+      "description": "StatDef used to multiply outgoing damage of this armor category (e.g. ArmorPenetration_Sharp).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "armorRatingStat": {
+      "label": "Armor rating stat",
+      "description": "StatDef that holds the pawn or thing armor rating for this category (e.g. ArmorRating_Sharp).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

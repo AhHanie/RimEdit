@@ -1,0 +1,17 @@
+{
+  "defType": "BodyDef",
+  "label": "Body",
+  "description": "Defines the full body structure of a pawn as a recursive tree of body part records rooted at corePart.",
+  "inherits": ["Def"],
+  "fieldOrder": ["corePart"],
+  "fields": {
+    "corePart": {
+      "label": "Core part",
+      "description": "Root body part record for this body. All other body parts are children of this record.",
+      "type": { "kind": "object", "schemaRef": "BodyPartRecord" },
+      "required": false,
+      "defaultCollapsed": false,
+      "xml": "object"
+    }
+  }
+}

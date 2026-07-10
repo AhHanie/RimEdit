@@ -1,0 +1,23 @@
+{
+  "objectType": "CurveKey",
+  "label": "Curve key",
+  "description": "A graphic state switch keyframe in a CurveKeyAnimationPart. At the given tick the node's graphic switches to the referenced GraphicStateDef.",
+  "fieldOrder": ["tick", "graphicState"],
+  "fields": {
+    "tick": {
+      "label": "Tick",
+      "description": "Animation tick at which the graphic state switches.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "graphicState": {
+      "label": "Graphic state",
+      "description": "GraphicStateDef to activate at this tick.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "GraphicStateDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

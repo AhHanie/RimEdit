@@ -1,0 +1,24 @@
+{
+  "objectType": "DrawDataBodyTypeScale",
+  "label": "Body type scale",
+  "description": "A BodyTypeDef-keyed scale entry inside DrawData.bodyTypeScales. Uses custom XML loading where the child element name is the BodyTypeDef defName and its text is the scale value.",
+  "fieldOrder": ["bodyType", "scale"],
+  "fields": {
+    "bodyType": {
+      "label": "Body type",
+      "description": "BodyTypeDef this scale entry applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "BodyTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Scale multiplier applied when the pawn has this body type.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

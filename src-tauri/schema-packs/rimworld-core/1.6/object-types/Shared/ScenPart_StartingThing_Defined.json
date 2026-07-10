@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_StartingThing_Defined",
+  "label": "Starting thing (defined)",
+  "description": "Adds a specific item to the starting inventory. Item type, material, count, and quality are all configurable.",
+  "inherits": ["ScenPart_ThingCount"]
+}

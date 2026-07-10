@@ -1,0 +1,21 @@
+{
+  "objectType": "StockGenerator_MultiDef",
+  "label": "Multi-def generator",
+  "description": "Generates a specific number of a randomly chosen ThingDef from an explicit list. Picks one def per generation pass.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": ["thingDefs"],
+  "fields": {
+    "thingDefs": {
+      "label": "Thing defs",
+      "description": "Pool of ThingDefs to pick from. One is selected at random each time this generator fires.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

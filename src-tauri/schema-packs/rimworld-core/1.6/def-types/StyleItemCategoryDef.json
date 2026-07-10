@@ -1,0 +1,8 @@
+{
+  "defType": "StyleItemCategoryDef",
+  "label": "Style item category",
+  "description": "A named grouping used to organize hair, beard, tattoo, and fur styles in the pawn customization UI. Shipped categories include Misc, Rough, Formal, and Cultist.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,77 @@
+{
+  "defType": "MusicTransitionDef",
+  "label": "Music transition",
+  "description": "Declares when a MusicSequenceDef activates, at what priority, and under what danger conditions. The game evaluates all active transitions each music tick and plays the highest-priority sequence whose conditions are met.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerType",
+    "priority",
+    "sequence",
+    "dangerRequirement",
+    "overridesInterruptions"
+  ],
+  "fields": {
+    "workerType": {
+      "label": "Worker type",
+      "description": "MusicTransition subclass that evaluates whether this transition should activate. Defaults to MusicTransition (the base implementation).",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "MusicTransition",
+      "xml": "element",
+      "examples": [
+        "MusicTransition"
+      ]
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Selection priority when multiple transitions are simultaneously eligible. Higher values win. Defaults to 100.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 100,
+      "xml": "element"
+    },
+    "sequence": {
+      "label": "Sequence",
+      "description": "The MusicSequenceDef to activate when this transition fires.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MusicSequenceDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "dangerRequirement": {
+      "label": "Danger requirement",
+      "description": "Restricts when this transition can activate based on map danger state. None means no restriction; RequiresDanger activates only during danger; RequiresNoDanger activates only outside danger. Defaults to None.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "RequiresDanger", "RequiresNoDanger"]
+      }
+    },
+    "overridesInterruptions": {
+      "label": "Overrides interruptions",
+      "description": "If true, this transition blocks other transitions from interrupting the currently playing sequence. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-music-transition": {
+      "label": "New music transition",
+      "description": "Minimal transition that activates a named sequence without a danger requirement.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "sequence", "priority"],
+      "fieldValues": {
+        "workerType": "MusicTransition",
+        "priority": "100"
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_DrugEffectFactor",
+  "label": "Drug effect factor comp",
+  "description": "Modifies the severity effect of a chemical drug.",
+  "fieldOrder": ["Class", "compClass", "chemical", "factor"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "chemical": {
+      "label": "Chemical",
+      "description": "Chemical whose effect this comp modifies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ChemicalDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Multiplier applied to the drug's effect severity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

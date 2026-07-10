@@ -1,0 +1,8 @@
+{
+  "formatVersion": 1,
+  "packId": "test.override",
+  "name": "Test Override Pack",
+  "version": "0.1.0",
+  "priority": 10,
+  "defTypeDirectories": ["def-types"]
+}

@@ -1,0 +1,19 @@
+{
+  "objectType": "Rule_NamePerson",
+  "label": "Person name rule",
+  "description": "A grammar rule that produces a random human first name from the name database.",
+  "inherits": ["Rule"],
+  "fieldOrder": ["Class", "keyword", "tag", "requiredTag", "usesLimit", "constantConstraints", "gender"],
+  "fields": {
+    "gender": {
+      "label": "Gender",
+      "description": "Restricts name selection to the specified gender. None selects male or female randomly.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Male", "Female"]
+      }
+    }
+  }
+}

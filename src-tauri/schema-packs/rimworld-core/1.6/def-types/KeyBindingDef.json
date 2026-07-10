@@ -1,0 +1,164 @@
+{
+  "defType": "KeyBindingDef",
+  "label": "Key binding",
+  "description": "Defines a configurable keyboard shortcut used by commands, abilities, main tabs, and designators.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "category",
+    "defaultKeyCodeA",
+    "defaultKeyCodeB",
+    "devModeOnly",
+    "ignoreConflictsWith",
+    "extraConflictTags"
+  ],
+  "fields": {
+    "category": {
+      "label": "Category",
+      "description": "KeyBindingCategoryDef that groups this binding with related bindings and controls conflict checking.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "KeyBindingCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "defaultKeyCodeA": {
+      "label": "Default key code A",
+      "description": "Primary default key for this binding. Players can rebind this in the key settings menu. Use None for no default.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "None",
+          "Backspace", "Delete", "Tab", "Clear", "Return", "Pause", "Escape", "Space",
+          "Keypad0", "Keypad1", "Keypad2", "Keypad3", "Keypad4",
+          "Keypad5", "Keypad6", "Keypad7", "Keypad8", "Keypad9",
+          "KeypadPeriod", "KeypadDivide", "KeypadMultiply", "KeypadMinus",
+          "KeypadPlus", "KeypadEnter", "KeypadEquals",
+          "UpArrow", "DownArrow", "RightArrow", "LeftArrow",
+          "Insert", "Home", "End", "PageUp", "PageDown",
+          "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8",
+          "F9", "F10", "F11", "F12", "F13", "F14", "F15",
+          "Alpha0", "Alpha1", "Alpha2", "Alpha3", "Alpha4",
+          "Alpha5", "Alpha6", "Alpha7", "Alpha8", "Alpha9",
+          "Exclaim", "DoubleQuote", "Hash", "Dollar", "Percent",
+          "Ampersand", "Quote", "LeftParen", "RightParen",
+          "Asterisk", "Plus", "Comma", "Minus", "Period", "Slash",
+          "Colon", "Semicolon", "Less", "Equals", "Greater", "Question", "At",
+          "LeftBracket", "Backslash", "RightBracket", "Caret", "Underscore", "BackQuote",
+          "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+          "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+          "LeftCurlyBracket", "Pipe", "RightCurlyBracket", "Tilde",
+          "Numlock", "CapsLock", "ScrollLock",
+          "RightShift", "LeftShift", "RightControl", "LeftControl", "RightAlt", "LeftAlt",
+          "LeftMeta", "LeftCommand", "LeftApple", "LeftWindows",
+          "RightMeta", "RightCommand", "RightApple", "RightWindows",
+          "AltGr", "Help", "Print", "SysReq", "Break", "Menu",
+          "Mouse0", "Mouse1", "Mouse2", "Mouse3", "Mouse4", "Mouse5", "Mouse6",
+          "JoystickButton0", "JoystickButton1", "JoystickButton2", "JoystickButton3",
+          "JoystickButton4", "JoystickButton5", "JoystickButton6", "JoystickButton7",
+          "JoystickButton8", "JoystickButton9", "JoystickButton10", "JoystickButton11",
+          "JoystickButton12", "JoystickButton13", "JoystickButton14", "JoystickButton15",
+          "JoystickButton16", "JoystickButton17", "JoystickButton18", "JoystickButton19"
+        ]
+      }
+    },
+    "defaultKeyCodeB": {
+      "label": "Default key code B",
+      "description": "Secondary default key for this binding. Allows a second simultaneous binding, commonly used for arrow key alternatives to WASD. Use None for no default.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "None",
+          "Backspace", "Delete", "Tab", "Clear", "Return", "Pause", "Escape", "Space",
+          "Keypad0", "Keypad1", "Keypad2", "Keypad3", "Keypad4",
+          "Keypad5", "Keypad6", "Keypad7", "Keypad8", "Keypad9",
+          "KeypadPeriod", "KeypadDivide", "KeypadMultiply", "KeypadMinus",
+          "KeypadPlus", "KeypadEnter", "KeypadEquals",
+          "UpArrow", "DownArrow", "RightArrow", "LeftArrow",
+          "Insert", "Home", "End", "PageUp", "PageDown",
+          "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8",
+          "F9", "F10", "F11", "F12", "F13", "F14", "F15",
+          "Alpha0", "Alpha1", "Alpha2", "Alpha3", "Alpha4",
+          "Alpha5", "Alpha6", "Alpha7", "Alpha8", "Alpha9",
+          "Exclaim", "DoubleQuote", "Hash", "Dollar", "Percent",
+          "Ampersand", "Quote", "LeftParen", "RightParen",
+          "Asterisk", "Plus", "Comma", "Minus", "Period", "Slash",
+          "Colon", "Semicolon", "Less", "Equals", "Greater", "Question", "At",
+          "LeftBracket", "Backslash", "RightBracket", "Caret", "Underscore", "BackQuote",
+          "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+          "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+          "LeftCurlyBracket", "Pipe", "RightCurlyBracket", "Tilde",
+          "Numlock", "CapsLock", "ScrollLock",
+          "RightShift", "LeftShift", "RightControl", "LeftControl", "RightAlt", "LeftAlt",
+          "LeftMeta", "LeftCommand", "LeftApple", "LeftWindows",
+          "RightMeta", "RightCommand", "RightApple", "RightWindows",
+          "AltGr", "Help", "Print", "SysReq", "Break", "Menu",
+          "Mouse0", "Mouse1", "Mouse2", "Mouse3", "Mouse4", "Mouse5", "Mouse6",
+          "JoystickButton0", "JoystickButton1", "JoystickButton2", "JoystickButton3",
+          "JoystickButton4", "JoystickButton5", "JoystickButton6", "JoystickButton7",
+          "JoystickButton8", "JoystickButton9", "JoystickButton10", "JoystickButton11",
+          "JoystickButton12", "JoystickButton13", "JoystickButton14", "JoystickButton15",
+          "JoystickButton16", "JoystickButton17", "JoystickButton18", "JoystickButton19"
+        ]
+      }
+    },
+    "devModeOnly": {
+      "label": "Dev mode only",
+      "description": "If true, this binding is only active when development mode is enabled. The key will not fire in normal gameplay.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreConflictsWith": {
+      "label": "Ignore conflicts with",
+      "description": "List of KeyBindingDefs whose key codes are excluded from conflict detection with this binding. Used when two bindings intentionally share a key because only one can be active at a time.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": {
+          "defType": "KeyBindingDef",
+          "allowAbstract": false,
+          "scope": "allSources"
+        }
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "extraConflictTags": {
+      "label": "Extra conflict tags",
+      "description": "String tags that group this binding with others for conflict checking. Bindings sharing any tag are treated as conflicting even if they belong to non-conflicting categories.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": ["ModifierIncrement"]
+    }
+  },
+  "templates": {
+    "basic-binding": {
+      "label": "Basic binding",
+      "description": "A key binding with a category and a primary default key.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "category", "defaultKeyCodeA"],
+      "fieldValues": {}
+    },
+    "dev-binding": {
+      "label": "Developer binding",
+      "description": "A key binding only active in development mode.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "category", "defaultKeyCodeA"],
+      "fieldValues": {
+        "devModeOnly": "true"
+      }
+    }
+  }
+}

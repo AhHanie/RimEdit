@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="MyMod.PatchOperationFoo" MayRequire="MyMod.PackageId">
+    <xpath>Defs/ThingDef[defName="Wall"]</xpath>
+    <customField>
+      <nested>value</nested>
+    </customField>
+  </Operation>
+</Patch>

@@ -1,0 +1,106 @@
+{
+  "objectType": "QuestNode_GiveRewards",
+  "label": "QuestNode GiveRewards",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_GiveRewards.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignal",
+    "parms",
+    "customLetterLabel",
+    "customLetterText",
+    "customLetterLabelRules",
+    "customLetterTextRules",
+    "useDifficultyFactor",
+    "variants",
+    "addCampLootReward",
+    "nodeIfChosenPawnSignalUsed"
+  ],
+  "fields": {
+    "inSignal": {
+      "description": "Signal name that gives rewards.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "parms": {
+      "description": "Slate variable resolving to RewardsGeneratorParams, for example $rewardParms.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "customLetterLabel": {
+      "description": "Translatable custom reward letter label.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "customLetterText": {
+      "description": "Translatable custom reward letter text.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "customLetterLabelRules": {
+      "description": "Inline RulePack for custom reward letter label.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "customLetterTextRules": {
+      "description": "Inline RulePack for custom reward letter text.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "useDifficultyFactor": {
+      "description": "SlateRef<bool?> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "variants": {
+      "description": "SlateRef<int?> reward variant count.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "3"
+    },
+    "addCampLootReward": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "nodeIfChosenPawnSignalUsed": {
+      "description": "QuestNode run when the chosen-pawn signal is used.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

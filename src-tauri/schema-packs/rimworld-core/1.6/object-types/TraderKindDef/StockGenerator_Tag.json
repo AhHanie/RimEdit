@@ -1,0 +1,35 @@
+{
+  "objectType": "StockGenerator_Tag",
+  "label": "Trade tag generator",
+  "description": "Generates items that carry a specific trade tag. Picks a random selection of matching ThingDefs up to thingDefCountRange.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": ["tradeTag", "thingDefCountRange", "excludedThingDefs"],
+  "fields": {
+    "tradeTag": {
+      "label": "Trade tag",
+      "description": "Trade tag string. ThingDefs whose tradeTags list contains this value are eligible for generation.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "thingDefCountRange": {
+      "label": "Thing def count range",
+      "description": "How many distinct ThingDefs to pick per generation pass. Source default IntRange.One.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "excludedThingDefs": {
+      "label": "Excluded thing defs",
+      "description": "ThingDefs explicitly excluded from generation even if they carry the matching trade tag.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

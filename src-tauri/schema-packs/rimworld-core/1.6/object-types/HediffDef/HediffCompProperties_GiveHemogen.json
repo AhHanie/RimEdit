@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_GiveHemogen",
+  "label": "Give hemogen comp",
+  "description": "Provides hemogen to the pawn per day while this hediff is active.",
+  "fieldOrder": ["Class", "compClass", "hemogenPerDay"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "hemogenPerDay": {
+      "label": "Hemogen per day",
+      "description": "Hemogen units given per day.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

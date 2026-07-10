@@ -1,0 +1,135 @@
+{
+  "objectType": "RoyalAid",
+  "label": "Royal aid",
+  "description": "Configuration for a permit's callable aid action: targeting, pawn drops, resource drops, and orbital strike parameters.",
+  "fieldOrder": [
+    "favorCost",
+    "points",
+    "overrideAcceptableTemperatureRange",
+    "pawnCount",
+    "pawnKindDef",
+    "targetingRange",
+    "targetingRequireLOS",
+    "aidDurationDays",
+    "radius",
+    "intervalTicks",
+    "explosionCount",
+    "warmupTicks",
+    "explosionRadiusRange",
+    "itemsToDrop"
+  ],
+  "fields": {
+    "favorCost": {
+      "label": "Favor cost",
+      "description": "Amount of imperial favor spent each time this permit is called. Source validation expects a positive value when royalAid is present.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "points": {
+      "label": "Points",
+      "description": "Raid point budget used when spawning aid pawns.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "overrideAcceptableTemperatureRange": {
+      "label": "Override acceptable temperature range",
+      "description": "Temperature range in which the aid can be called. Omit to allow any temperature.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "pawnCount": {
+      "label": "Pawn count",
+      "description": "Number of pawns to drop when this aid is called. Used together with pawnKindDef.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "pawnKindDef": {
+      "label": "Pawn kind",
+      "description": "PawnKindDef for the pawns dropped by this aid.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "targetingRange": {
+      "label": "Targeting range",
+      "description": "Maximum map distance from the calling pawn at which the aid target cell can be selected.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "targetingRequireLOS": {
+      "label": "Targeting require LOS",
+      "description": "If true, the calling pawn must have line of sight to the target cell. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "aidDurationDays": {
+      "label": "Aid duration days",
+      "description": "Number of in-game days the aid pawns remain before departing. Used by laborer permits.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Radius in tiles of the orbital strike pattern. Used by orbital strike permits.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "intervalTicks": {
+      "label": "Interval ticks",
+      "description": "Tick delay between successive explosions in the strike pattern. Used by orbital strike permits.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "explosionCount": {
+      "label": "Explosion count",
+      "description": "Number of explosions in the orbital strike sequence.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "warmupTicks": {
+      "label": "Warmup ticks",
+      "description": "Ticks of warmup animation before the first explosion fires.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "explosionRadiusRange": {
+      "label": "Explosion radius range",
+      "description": "FloatRange for per-explosion blast radius, randomly sampled each detonation.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "itemsToDrop": {
+      "label": "Items to drop",
+      "description": "Resources dropped at the target cell. Child element names are ThingDef defNames; text is the integer count. Example: <Steel>250</Steel>.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ThingDefCountClass" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "thingDef",
+      "valueField": "count",
+      "keyReference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

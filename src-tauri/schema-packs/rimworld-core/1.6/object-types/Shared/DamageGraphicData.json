@@ -1,0 +1,174 @@
+{
+  "objectType": "DamageGraphicData",
+  "label": "Damage graphic data",
+  "description": "Damage overlay textures and regions for a graphic. Maps to Verse.DamageGraphicData in RimWorld source.",
+  "fieldOrder": [
+    "enabled",
+    "rect",
+    "rectN",
+    "rectE",
+    "rectS",
+    "rectW",
+    "scratches",
+    "cornerTL",
+    "cornerTR",
+    "cornerBL",
+    "cornerBR",
+    "edgeLeft",
+    "edgeRight",
+    "edgeTop",
+    "edgeBot"
+  ],
+  "fields": {
+    "enabled": {
+      "label": "Enabled",
+      "description": "Whether damage overlays are shown on this graphic. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "rect": {
+      "label": "Rect",
+      "description": "Default damage region as (x, y, width, height) for all rotations.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(0,0.35,1,0.3)",
+        "(0.5, 0.1, 5, 2.8)"
+      ]
+    },
+    "rectN": {
+      "label": "Rect north",
+      "description": "Damage region override for north-facing rotation as (x, y, width, height).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(0,0.35,1,0.3)"
+      ]
+    },
+    "rectE": {
+      "label": "Rect east",
+      "description": "Damage region override for east-facing rotation as (x, y, width, height).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(0,0.35,1,0.3)"
+      ]
+    },
+    "rectS": {
+      "label": "Rect south",
+      "description": "Damage region override for south-facing rotation as (x, y, width, height).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(0,0.35,1,0.3)"
+      ]
+    },
+    "rectW": {
+      "label": "Rect west",
+      "description": "Damage region override for west-facing rotation as (x, y, width, height).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(0,0.35,1,0.3)"
+      ]
+    },
+    "scratches": {
+      "label": "Scratches",
+      "description": "List of texture paths for scratch overlay graphics. Each <li> is a texture path.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": [
+        "Damage/Scratch"
+      ]
+    },
+    "cornerTL": {
+      "label": "Corner top-left",
+      "description": "Texture path for the top-left corner damage overlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Damage/Corner"
+      ]
+    },
+    "cornerTR": {
+      "label": "Corner top-right",
+      "description": "Texture path for the top-right corner damage overlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Damage/Corner"
+      ]
+    },
+    "cornerBL": {
+      "label": "Corner bottom-left",
+      "description": "Texture path for the bottom-left corner damage overlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Damage/Corner"
+      ]
+    },
+    "cornerBR": {
+      "label": "Corner bottom-right",
+      "description": "Texture path for the bottom-right corner damage overlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Damage/Corner"
+      ]
+    },
+    "edgeLeft": {
+      "label": "Edge left",
+      "description": "Texture path for the left edge damage overlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Damage/Edge"
+      ]
+    },
+    "edgeRight": {
+      "label": "Edge right",
+      "description": "Texture path for the right edge damage overlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Damage/Edge"
+      ]
+    },
+    "edgeTop": {
+      "label": "Edge top",
+      "description": "Texture path for the top edge damage overlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Damage/Edge"
+      ]
+    },
+    "edgeBot": {
+      "label": "Edge bottom",
+      "description": "Texture path for the bottom edge damage overlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Damage/Edge"
+      ]
+    }
+  }
+}

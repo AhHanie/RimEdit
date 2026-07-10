@@ -1,0 +1,46 @@
+{
+  "objectType": "HediffCompProperties_Disappears",
+  "label": "Disappears comp",
+  "description": "Causes this hediff to disappear after a set number of ticks.",
+  "fieldOrder": ["Class", "compClass", "disappearAfterTicks", "showRemainingTime", "canUseDecline"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "disappearAfterTicks": {
+      "label": "Disappear after ticks",
+      "description": "Ticks after which this hediff disappears.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "showRemainingTime": {
+      "label": "Show remaining time",
+      "description": "If true, remaining time is shown in the health tab.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canUseDecline": {
+      "label": "Can use decline",
+      "description": "If true, severity can decline to trigger disappearance.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

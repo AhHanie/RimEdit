@@ -1,0 +1,8 @@
+{
+  "objectType": "WorldObjectCompProperties_ItemStashContents",
+  "label": "Item stash contents comp",
+  "description": "Tracks the item stash contents associated with this world object.",
+  "inherits": ["WorldObjectCompProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

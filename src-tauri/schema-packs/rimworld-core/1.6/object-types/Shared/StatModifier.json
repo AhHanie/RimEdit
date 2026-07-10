@@ -1,0 +1,30 @@
+{
+  "objectType": "StatModifier",
+  "label": "Stat modifier",
+  "description": "A stat and numeric value pair used to offset or scale a named stat.",
+  "fieldOrder": [
+    "stat",
+    "value"
+  ],
+  "fields": {
+    "stat": {
+      "label": "Stat",
+      "description": "StatDef that this modifier targets.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "value": {
+      "label": "Value",
+      "description": "The offset or factor applied to the stat.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

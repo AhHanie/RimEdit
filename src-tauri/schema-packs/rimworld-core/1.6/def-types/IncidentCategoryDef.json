@@ -1,0 +1,42 @@
+{
+  "defType": "IncidentCategoryDef",
+  "label": "Incident category",
+  "description": "Groups incidents for storyteller scheduling and parameter generation.",
+  "inherits": ["Def"],
+  "fieldOrder": ["needsParmsPoints", "tale", "canUseAnomalyChance"],
+  "fields": {
+    "needsParmsPoints": {
+      "label": "Needs parms points",
+      "description": "If true, this category expects storyteller-generated threat points via IncidentParms. Used for threat and point-scaled quest categories.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tale": {
+      "label": "Tale",
+      "description": "Default TaleDef recorded for incidents in this category when the incident itself does not specify a tale.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TaleDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canUseAnomalyChance": {
+      "label": "Can use anomaly chance",
+      "description": "If true, this category is eligible for Anomaly-specific incident chance logic.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-incident-category": {
+      "label": "Basic incident category",
+      "description": "Minimal incident category with only the required inherited identity fields.",
+      "includeRequiredFields": true,
+      "promptFields": [],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "defType": "TestDef",
+  "fields": {
+    "defName": {
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "intValueList": {
+      "label": "Integer value list with default",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "IntValueItem" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "key",
+      "valueField": "amount",
+      "repeatable": true
+    },
+    "rangeValueList": {
+      "label": "Range value list with default",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RangeEntry" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "key",
+      "valueField": "range",
+      "repeatable": true
+    },
+    "noDefaultList": {
+      "label": "List with no value field default",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "NoDefaultItem" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "key",
+      "valueField": "count",
+      "repeatable": false
+    },
+    "badDefaultList": {
+      "label": "List whose value field default is not a valid scalar",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BadDefaultItem" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "key",
+      "valueField": "amount",
+      "repeatable": false
+    }
+  }
+}

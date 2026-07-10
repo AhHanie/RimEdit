@@ -1,0 +1,21 @@
+{
+  "objectType": "ScenPart_PlayerFaction",
+  "label": "Player faction",
+  "description": "Defines the player faction type for this scenario. Always present as the playerFaction field in a Scenario.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "factionDef"],
+  "fields": {
+    "factionDef": {
+      "label": "Faction def",
+      "description": "FactionDef defining the player faction for this scenario.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FactionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

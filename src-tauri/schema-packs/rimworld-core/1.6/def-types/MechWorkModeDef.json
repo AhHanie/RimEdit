@@ -1,0 +1,67 @@
+{
+  "defType": "MechWorkModeDef",
+  "label": "Mech work mode",
+  "description": "Defines a mechanical work mode available to a mechanitor's mechs, including its UI icon, display order, charge limit behavior, and overlay drawer class.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "iconPath",
+    "uiOrder",
+    "ignoreGroupChargeLimits",
+    "workerClass"
+  ],
+  "fields": {
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Path to the work mode icon texture, relative to the game's Textures folder. Not localized.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "UI/Icons/WorkMode/Work",
+        "UI/Icons/WorkMode/Escort",
+        "UI/Icons/WorkMode/Recharge",
+        "UI/Icons/WorkMode/SelfShutdown"
+      ]
+    },
+    "uiOrder": {
+      "label": "UI order",
+      "description": "Determines the display order of this work mode in the mechanitor work mode picker. Lower values appear first. Defaults to 0.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "ignoreGroupChargeLimits": {
+      "label": "Ignore group charge limits",
+      "description": "When true, mechs in this mode are not subject to the per-group charge capacity limits. Used by the Recharge mode.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class responsible for drawing work mode overlays and target lines. Must be a subclass of WorkModeDrawer.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "WorkModeDrawer",
+      "xml": "element",
+      "examples": [
+        "WorkModeDrawer",
+        "WorkModeDrawer_Escort"
+      ]
+    }
+  },
+  "templates": {
+    "basic-mech-work-mode": {
+      "label": "Basic mech work mode",
+      "description": "A mech work mode with an icon path and display order. Uses the default WorkModeDrawer.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "iconPath", "uiOrder"],
+      "fieldValues": {
+        "ignoreGroupChargeLimits": false,
+        "workerClass": "WorkModeDrawer"
+      }
+    }
+  }
+}

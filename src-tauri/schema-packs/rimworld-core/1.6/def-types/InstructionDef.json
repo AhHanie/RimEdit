@@ -1,0 +1,225 @@
+{
+  "defType": "InstructionDef",
+  "label": "Instruction",
+  "description": "Defines a single tutorial instruction shown to the player during a lesson. Each instruction has an initiation event tag that starts it, optional end tags that dismiss it, and optional allowed-action tags that filter what the player can do while it is active.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "instructionClass",
+    "text",
+    "textController",
+    "startCentered",
+    "tutorialModeOnly",
+    "eventTagInitiate",
+    "eventTagInitiateSource",
+    "eventTagsEnd",
+    "actionTagsAllowed",
+    "rejectInputMessage",
+    "concept",
+    "highlightTags",
+    "onMapInstruction",
+    "targetCount",
+    "thingDef",
+    "recipeDef",
+    "recipeTargetCount",
+    "giveOnActivateDef",
+    "giveOnActivateCount",
+    "endTutorial",
+    "resetBuildDesignatorStuffs"
+  ],
+  "fields": {
+    "instructionClass": {
+      "label": "Instruction class",
+      "description": "C# Lesson_Instruction subclass that drives this instruction's progress tracking and completion logic. Defaults to Instruction_Basic, which completes when eventTagsEnd fires. Mods can add custom subclasses.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Instruction_Basic",
+        "Instruction_BuildInRoom",
+        "Instruction_AddBill",
+        "Instruction_PlaceStockpile",
+        "Instruction_LearnConcept",
+        "Instruction_DownRaider"
+      ]
+    },
+    "text": {
+      "label": "Text",
+      "description": "Localized instruction text shown in the tutorial HUD panel. Required by ConfigErrors. Supports input binding tokens such as {Key:TogglePause} and positional format placeholders such as {0}.",
+      "type": { "kind": "localizedString" },
+      "required": true,
+      "xml": "element",
+      "examples": [
+        "Click the colonist to select them.",
+        "Press {Key:TogglePause} to pause the game."
+      ]
+    },
+    "textController": {
+      "label": "Text (controller)",
+      "description": "Optional controller- or Steam Deck-specific alternative to text. The runtime property Text returns this value when a gamepad is active.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "startCentered": {
+      "label": "Start centered",
+      "description": "If true, the tutorial HUD panel starts in the center of the screen instead of its normal anchored position.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tutorialModeOnly": {
+      "label": "Tutorial mode only",
+      "description": "If true, this instruction is skipped unless the player is in tutorial mode. Source default is true, so it is absent from most shipped XML.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "eventTagInitiate": {
+      "label": "Event tag (initiate)",
+      "description": "Tutor event tag string that triggers this instruction to become active. Required by ConfigErrors. This is a plain string identifier, not a def reference.",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element",
+      "examples": ["ChooseLandingSite", "BuildRoomWalls", "Draft"]
+    },
+    "eventTagInitiateSource": {
+      "label": "Event tag (initiate source)",
+      "description": "Another InstructionDef whose eventTagInitiate value is reused as this instruction's initiation tag. Used to chain or share event tags between instructions.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "InstructionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "eventTagsEnd": {
+      "label": "Event tags (end)",
+      "description": "Tutor event tag strings that dismiss this instruction when fired. Each entry is a plain string identifier matching a tutor event tag in game code or mods.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": ["RoomBuilt", "StockpilePlaced", "BillAdded"]
+    },
+    "actionTagsAllowed": {
+      "label": "Action tags allowed",
+      "description": "Tutor action or event tag strings the player is permitted to perform while this instruction is active. Any action not in this list triggers rejectInputMessage. Each entry is a plain string identifier.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": ["BuildFrame", "PlaceBlueprint", "SelectObject"]
+    },
+    "rejectInputMessage": {
+      "label": "Reject input message",
+      "description": "Localized message shown to the player when they attempt an action not in actionTagsAllowed while this instruction is active.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Finish the current task first.", "You cannot do that during this tutorial step."]
+    },
+    "concept": {
+      "label": "Concept",
+      "description": "ConceptDef taught to the player when this instruction is activated. The learning readout for the concept is shown alongside the instruction text.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ConceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "highlightTags": {
+      "label": "Highlight tags",
+      "description": "UI element highlight tag strings pulsed on screen while this instruction is active. These are plain string identifiers, not def references.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": ["MainTab-Architect", "DesignatorDrill", "ColonistBar"]
+    },
+    "onMapInstruction": {
+      "label": "On-map instruction",
+      "description": "Localized text drawn directly on the map surface for spatial tutorial instructions that require the player to look at a specific location.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "targetCount": {
+      "label": "Target count",
+      "description": "Numeric progress target used by certain Lesson_Instruction subclasses (such as Instruction_BuildNearRoom) to track how many objects must be built, created, or interacted with before completion.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "thingDef": {
+      "label": "Thing def",
+      "description": "ThingDef used by instruction subclasses that require a specific thing to be built, placed, or interacted with to complete.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "recipeDef": {
+      "label": "Recipe def",
+      "description": "RecipeDef that the player must add to a bill at a production bench to complete the Instruction_AddBill step.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RecipeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "recipeTargetCount": {
+      "label": "Recipe target count",
+      "description": "Number of times the recipe must be added to bills for the instruction to count as complete.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "giveOnActivateDef": {
+      "label": "Give on activate (def)",
+      "description": "ThingDef spawned and given to the player's colony when this instruction becomes active. Only spawned when giveOnActivateCount is greater than zero.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "giveOnActivateCount": {
+      "label": "Give on activate (count)",
+      "description": "Stack count of giveOnActivateDef to spawn when this instruction activates. A value of zero or less disables the spawn.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "endTutorial": {
+      "label": "End tutorial",
+      "description": "If true, the tutorial session ends after this instruction is deactivated.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "resetBuildDesignatorStuffs": {
+      "label": "Reset build designator stuffs",
+      "description": "If true, the build designator's stuff-material selection is reset to default when this instruction activates. Used to prevent the tutorial from being blocked by an unusual material choice.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-instruction": {
+      "label": "Basic instruction",
+      "description": "A simple tutorial instruction that activates on one event tag and ends on another.",
+      "includeRequiredFields": true,
+      "promptFields": ["text", "eventTagInitiate", "eventTagsEnd", "actionTagsAllowed", "rejectInputMessage"]
+    },
+    "build-instruction": {
+      "label": "Build instruction",
+      "description": "A tutorial instruction that requires the player to build a specific thing to complete.",
+      "includeRequiredFields": true,
+      "promptFields": ["text", "eventTagInitiate", "thingDef", "targetCount", "actionTagsAllowed", "rejectInputMessage"],
+      "fieldValues": {
+        "instructionClass": "Instruction_BuildInRoom"
+      }
+    }
+  }
+}

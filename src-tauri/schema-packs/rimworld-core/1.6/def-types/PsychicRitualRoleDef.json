@@ -1,0 +1,84 @@
+{
+  "defType": "PsychicRitualRoleDef",
+  "label": "Psychic ritual role",
+  "description": "Defines a role that pawns can fill in a psychic ritual, including eligibility conditions and invocation behavior.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "allowedCount",
+    "allowedConditions",
+    "canHandleOfferings",
+    "psychicRitualWaitsForArrival",
+    "showInvocationVfx",
+    "applyPowerOffset",
+    "removeOnLost"
+  ],
+  "fields": {
+    "allowedCount": {
+      "label": "Allowed count",
+      "description": "Number of pawns that may fill this role. Written as min~max.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "0~1"
+    },
+    "allowedConditions": {
+      "label": "Allowed conditions",
+      "description": "Condition flags indicating states in which a pawn is still permitted to fill this role. A pawn in a state whose bit is absent from this mask is disqualified.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "flagsText",
+      "defaultValue": "Default",
+      "validationHints": {
+        "allowedValues": [
+          "None", "Dead", "Downed", "Drafted", "Sleeping", "Bleeding",
+          "Burning", "MentalState", "ExtremeTemperature", "Humanlike",
+          "NonHumanlike", "Prisoner", "Slave", "Freeman", "InsideBuilding",
+          "NonPlayerFaction", "NotOnMap", "HasAnotherLord", "LeftVoluntarily",
+          "Vanished", "Baby", "Child", "Adult", "NoPath", "SubHuman",
+          "IdeoUnwilling", "NoPsychicSensitivity", "TemporaryFactionMember",
+          "Error", "All", "Default", "DefaultInvoker"
+        ]
+      }
+    },
+    "canHandleOfferings": {
+      "label": "Can handle offerings",
+      "description": "Whether a pawn in this role can contribute offerings to the ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "psychicRitualWaitsForArrival": {
+      "label": "Ritual waits for arrival",
+      "description": "Whether the ritual waits for the pawn in this role to arrive before starting.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "showInvocationVfx": {
+      "label": "Show invocation VFX",
+      "description": "Whether the pawn in this role displays the invocation visual effect.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "applyPowerOffset": {
+      "label": "Apply power offset",
+      "description": "Whether the pawn's psychic sensitivity contributes to the ritual power offset.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "removeOnLost": {
+      "label": "Remove on lost",
+      "description": "Whether the pawn is removed from the ritual when the role assignment is lost.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    }
+  }
+}

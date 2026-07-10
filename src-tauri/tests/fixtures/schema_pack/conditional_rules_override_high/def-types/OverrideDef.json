@@ -1,0 +1,17 @@
+{
+  "defType": "OverrideDef",
+  "label": "Override Def",
+  "fields": {},
+  "validationRules": {
+    "shared-rule": {
+      "kind": "requiredWhen",
+      "field": "options",
+      "when": {
+        "field": "threshold",
+        "operator": "greaterThan",
+        "value": 0
+      },
+      "message": "From high priority pack."
+    }
+  }
+}

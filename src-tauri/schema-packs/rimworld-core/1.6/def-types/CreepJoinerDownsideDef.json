@@ -1,0 +1,168 @@
+{
+  "defType": "CreepJoinerDownsideDef",
+  "label": "Creep joiner downside",
+  "description": "Defines a downside applied to the colony when a creep joiner pawn joins. The downside triggers according to its timing fields and is executed by the associated worker class. Inherits selection-weight and compatibility fields from CreepJoinerBaseDef.",
+  "inherits": ["CreepJoinerBaseDef"],
+  "fieldOrder": [
+    "repeats",
+    "hasLetter",
+    "letterLabel",
+    "letterDesc",
+    "letterDef",
+    "traits",
+    "hediffs",
+    "triggersAfterDays",
+    "abilities",
+    "triggerMtbDays",
+    "triggerMinDays",
+    "canOccurWhenImprisoned",
+    "canOccurWhileDowned",
+    "mustBeConscious",
+    "workerType"
+  ],
+  "fields": {
+    "repeats": {
+      "label": "Repeats",
+      "description": "When true, the downside triggers repeatedly on an MTB schedule defined by triggerMtbDays. When false, it fires once after triggersAfterDays.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hasLetter": {
+      "label": "Has letter",
+      "description": "When true, a letter is sent to the player when this downside triggers. Requires letterLabel, letterDesc, and letterDef.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "Title of the letter sent when this downside triggers. Supports pawn grammar arguments such as {PAWN_nameDef}. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterDesc": {
+      "label": "Letter description",
+      "description": "Body text of the letter sent when this downside triggers. Supports pawn grammar arguments such as {PAWN_nameDef}, {PAWN_pronoun}, {PAWN_possessive}, {PAWN_objective}. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterDef": {
+      "label": "Letter def",
+      "description": "LetterDef controlling the letter type (icon, sound, and pin behavior) used when this downside triggers.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "LetterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "traits": {
+      "label": "Traits",
+      "description": "Traits forced onto the pawn when this downside is active. Loaded via BackstoryTrait.LoadDataFromXmlCustom: element name is the TraitDef defName; text is the integer degree (omitted text resolves to degree 0).",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BackstoryTrait" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "def",
+      "valueField": "degree",
+      "keyReference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "repeatable": true
+    },
+    "hediffs": {
+      "label": "Hediffs",
+      "description": "HediffDefs applied to the pawn when this downside is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "triggersAfterDays": {
+      "label": "Triggers after days",
+      "description": "Random float range (min~max days) after joining before this downside triggers. Mutually exclusive with triggerMtbDays; set only one. Defaults to 0~0 (immediate).",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "abilities": {
+      "label": "Abilities",
+      "description": "AbilityDefs granted to the pawn when this downside is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "AbilityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "triggerMtbDays": {
+      "label": "Trigger MTB days",
+      "description": "Mean-time-between occurrences in days for repeating downsides. Mutually exclusive with triggersAfterDays; set only one. Defaults to 0 (disabled).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "triggerMinDays": {
+      "label": "Trigger min days",
+      "description": "Minimum days between repeated triggers when repeats is true. Only meaningful alongside triggerMtbDays. Defaults to 0~0.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "canOccurWhenImprisoned": {
+      "label": "Can occur when imprisoned",
+      "description": "When true, this downside can trigger even if the creep joiner is currently held as a prisoner.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canOccurWhileDowned": {
+      "label": "Can occur while downed",
+      "description": "When false, this downside will not trigger while the creep joiner is downed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "mustBeConscious": {
+      "label": "Must be conscious",
+      "description": "When true, this downside only triggers when the creep joiner is conscious.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "workerType": {
+      "label": "Worker type",
+      "description": "C# class deriving from BaseCreepJoinerWorker that executes this downside when it triggers.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "CreepJoinerWorker_DepartDownside",
+        "CreepJoinerWorker_AggressiveDownside",
+        "CreepJoinerWorker_MetalhorrorDownside",
+        "CreepJoinerWorker_PsychicAgony"
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "objectType": "RitualStageTickActionMaker",
+  "label": "Ritual stage tick action maker",
+  "description": "Base schema for per-tick action makers executed each tick during a ritual stage. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RitualStageTickActionMaker",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "RitualStageAction_ReleaseLanterns": "RitualStageAction_ReleaseLanterns"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualStageTickActionMaker subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

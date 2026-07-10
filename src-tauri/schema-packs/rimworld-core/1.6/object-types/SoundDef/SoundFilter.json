@@ -1,0 +1,27 @@
+{
+  "objectType": "SoundFilter",
+  "label": "Sound filter",
+  "description": "Base schema for audio filter list items. Specific item schemas are selected by the li Class attribute.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "SoundFilter",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "SoundFilterEcho": "SoundFilterEcho",
+      "SoundFilterHighPass": "SoundFilterHighPass",
+      "SoundFilterLowPass": "SoundFilterLowPass",
+      "SoundFilterReverb": "SoundFilterReverb"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Filter class",
+      "description": "C# SoundFilter subclass used by RimWorld DirectXmlLoader for this filter list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ThingDef>
+  <defName>Granite</defName>
+  <label>granite</label>
+  <description>A hard igneous rock.</description>
+</ThingDef>

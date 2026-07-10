@@ -1,0 +1,30 @@
+{
+  "objectType": "ReportStringOverride",
+  "label": "Report string override",
+  "description": "Overrides the inspect panel job string for a specific job while the pawn has this hediff.",
+  "fieldOrder": [
+    "jobDef",
+    "message"
+  ],
+  "fields": {
+    "jobDef": {
+      "label": "Job",
+      "description": "JobDef for which the report string is overridden.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "JobDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "message": {
+      "label": "Message",
+      "description": "Replacement string shown in the inspect panel when the pawn is performing this job. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

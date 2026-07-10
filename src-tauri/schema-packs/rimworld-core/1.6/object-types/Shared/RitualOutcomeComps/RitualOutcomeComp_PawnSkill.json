@@ -1,0 +1,63 @@
+{
+  "objectType": "RitualOutcomeComp_PawnSkill",
+  "label": "Ritual outcome comp (pawn skill)",
+  "description": "Scores quality based on a skill level of the pawn in the specified role, evaluated via a curve.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "roleId", "skillDef"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Not used directly; quality is computed from the curve evaluated at the skill level.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "SimpleCurve mapping the pawn skill level (X) to quality offset (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "roleId": {
+      "label": "Role ID",
+      "description": "Ritual role ID string identifying which pawn's skill to evaluate.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "skillDef": {
+      "label": "Skill def",
+      "description": "SkillDef whose level is evaluated for the role pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

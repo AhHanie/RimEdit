@@ -1,0 +1,8 @@
+{
+  "objectType": "WorldObjectCompProperties_Timeout",
+  "label": "Timeout comp",
+  "description": "Causes this world object to be automatically removed after a configured time period.",
+  "inherits": ["WorldObjectCompProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

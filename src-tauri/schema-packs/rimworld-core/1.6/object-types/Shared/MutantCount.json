@@ -1,0 +1,38 @@
+{
+  "objectType": "MutantCount",
+  "label": "Mutant count",
+  "description": "A starting pawn count entry that specifies a mutant type. Used in ScenPart_ConfigPage_ConfigureStartingPawns_Mutants to define how many pawns of each mutant type are generated.",
+  "inherits": ["StartingPawnCount"],
+  "fieldOrder": ["mutant", "allowedDevelopmentalStages", "description", "count", "requiredAtStart"],
+  "fields": {
+    "mutant": {
+      "label": "Mutant",
+      "description": "MutantDef used when generating pawns for this entry.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MutantDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowedDevelopmentalStages": {
+      "label": "Allowed developmental stages",
+      "description": "Developmental stages allowed for pawns generated from this entry. Defaults to Baby, Child, and Adult.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      }
+    },
+    "description": {
+      "label": "Description",
+      "description": "Optional custom label for this mutant count entry, used in the UI instead of the mutant label. Translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

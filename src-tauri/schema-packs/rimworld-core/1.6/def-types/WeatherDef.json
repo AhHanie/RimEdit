@@ -1,0 +1,334 @@
+{
+  "defType": "WeatherDef",
+  "label": "Weather",
+  "description": "Defines a weather type: how long it lasts, its eligibility conditions, gameplay multipliers, sky colors, ambient sounds, and the C# worker class that implements its effects.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "durationRange",
+    "repeatable",
+    "isBad",
+    "canOccurAsRandomForcedEvent",
+    "favorability",
+    "temperatureRange",
+    "commonalityRainfallFactor",
+    "transitionTicksOverride",
+    "minMonolithLevel",
+    "canOccurInAmbientHorror",
+    "letterText",
+    "letterLabel",
+    "letterDef",
+    "rainRate",
+    "snowRate",
+    "sandRate",
+    "windSpeedFactor",
+    "windSpeedOffset",
+    "moveSpeedMultiplier",
+    "accuracyMultiplier",
+    "maxRangeCap",
+    "perceivePriority",
+    "doToxicBuildup",
+    "weatherThought",
+    "maxGlow",
+    "preventSkygaze",
+    "preventsShuttleLaunch",
+    "ambientSounds",
+    "eventMakers",
+    "overlayClasses",
+    "skyColorsNightMid",
+    "skyColorsNightEdge",
+    "skyColorsDay",
+    "skyColorsDusk",
+    "workerClass"
+  ],
+  "fields": {
+    "durationRange": {
+      "label": "Duration range",
+      "description": "Range of ticks this weather lasts when it starts. Drawn uniformly at weather start.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "16000~160000",
+      "xml": "element"
+    },
+    "repeatable": {
+      "label": "Repeatable",
+      "description": "If false, this weather can only occur once per game.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isBad": {
+      "label": "Is bad",
+      "description": "If true, this weather is considered bad and may affect colonist mood and storyteller behavior.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canOccurAsRandomForcedEvent": {
+      "label": "Can occur as random forced event",
+      "description": "If true, the storyteller may force this weather as a random event outside normal biome commonality.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "favorability": {
+      "label": "Favorability",
+      "description": "How favorable this weather is considered. Affects colonist thoughts and biome scoring.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Neutral",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["VeryBad", "Bad", "Neutral", "Good", "VeryGood"] }
+    },
+    "temperatureRange": {
+      "label": "Temperature range",
+      "description": "Ambient temperature range (Celsius) at which this weather can naturally occur. Weather outside this range is not selected by the weather system.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "-999~999",
+      "xml": "element"
+    },
+    "commonalityRainfallFactor": {
+      "label": "Commonality rainfall factor",
+      "description": "Curve scaling this weather's biome commonality by annual rainfall (mm). X = rainfall, Y = multiplier.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "transitionTicksOverride": {
+      "label": "Transition ticks override",
+      "description": "If set to a value other than int.MaxValue (2147483647), overrides the default transition duration when this weather starts.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 2147483647,
+      "xml": "element"
+    },
+    "minMonolithLevel": {
+      "label": "Min monolith level",
+      "description": "Minimum Monolith activation level required for this weather to occur (Anomaly DLC).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "canOccurInAmbientHorror": {
+      "label": "Can occur in ambient horror",
+      "description": "If true, this weather can occur while ambient horror is active (Anomaly DLC).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "letterText": {
+      "label": "Letter text",
+      "description": "Body text of the notification letter sent when this weather starts. Used by weather workers that send a letter.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "Header label of the notification letter sent when this weather starts.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterDef": {
+      "label": "Letter def",
+      "description": "LetterDef controlling the notification letter icon, sound, and urgency.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LetterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "rainRate": {
+      "label": "Rain rate",
+      "description": "Rate at which rain particles fall during this weather. 0 means no rain.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "snowRate": {
+      "label": "Snow rate",
+      "description": "Rate at which snow accumulates during this weather. 0 means no snowfall.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "sandRate": {
+      "label": "Sand rate",
+      "description": "Rate at which sand particles appear during this weather (sandstorm). 0 means no sand.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "windSpeedFactor": {
+      "label": "Wind speed factor",
+      "description": "Multiplier applied to the base wind speed while this weather is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "windSpeedOffset": {
+      "label": "Wind speed offset",
+      "description": "Flat addition to wind speed while this weather is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "moveSpeedMultiplier": {
+      "label": "Move speed multiplier",
+      "description": "Multiplier applied to pawn movement speed while this weather is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "accuracyMultiplier": {
+      "label": "Accuracy multiplier",
+      "description": "Multiplier applied to ranged accuracy while this weather is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "maxRangeCap": {
+      "label": "Max range cap",
+      "description": "Maximum effective ranged attack range while this weather is active. -1 means uncapped.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "perceivePriority": {
+      "label": "Perceive priority",
+      "description": "Priority used when multiple weathers are active to decide which one colonists perceive for mood thoughts.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "doToxicBuildup": {
+      "label": "Do toxic buildup",
+      "description": "If true, pawns exposed to this weather accumulate toxic buildup over time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "weatherThought": {
+      "label": "Weather thought",
+      "description": "ThoughtDef added to colonists while they are exposed to this weather.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "maxGlow": {
+      "label": "Max glow",
+      "description": "Maximum outdoor light glow level (0-1) while this weather is active. 1 means full daylight.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "preventSkygaze": {
+      "label": "Prevent skygaze",
+      "description": "If true, colonists will not engage in skygaze recreation while this weather is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventsShuttleLaunch": {
+      "label": "Prevents shuttle launch",
+      "description": "If true, shuttles cannot launch from the map while this weather is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ambientSounds": {
+      "label": "Ambient sounds",
+      "description": "SoundDefs played as ambient audio while this weather is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "eventMakers": {
+      "label": "Event makers",
+      "description": "Objects that fire WeatherEvent subclass instances at random intervals during this weather.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "WeatherEventMaker" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "overlayClasses": {
+      "label": "Overlay classes",
+      "description": "C# SkyOverlay subclass names rendered on top of the map during this weather. Mods can define additional subclasses.",
+      "type": { "kind": "list" },
+      "items": { "kind": "typeName" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "skyColorsNightMid": {
+      "label": "Sky colors night mid",
+      "description": "Sky color set used at midnight.",
+      "type": { "kind": "object", "schemaRef": "SkyColorSet" },
+      "required": false,
+      "xml": "object"
+    },
+    "skyColorsNightEdge": {
+      "label": "Sky colors night edge",
+      "description": "Sky color set used at the edge of night (just before and after midnight transitions).",
+      "type": { "kind": "object", "schemaRef": "SkyColorSet" },
+      "required": false,
+      "xml": "object"
+    },
+    "skyColorsDay": {
+      "label": "Sky colors day",
+      "description": "Sky color set used during daylight hours.",
+      "type": { "kind": "object", "schemaRef": "SkyColorSet" },
+      "required": false,
+      "xml": "object"
+    },
+    "skyColorsDusk": {
+      "label": "Sky colors dusk",
+      "description": "Sky color set used at dusk and dawn.",
+      "type": { "kind": "object", "schemaRef": "SkyColorSet" },
+      "required": false,
+      "xml": "object"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# WeatherWorker subclass that implements this weather's tick-by-tick behavior.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "WeatherWorker",
+      "xml": "element",
+      "examples": ["WeatherWorker", "WeatherWorker_TorrentialRain"]
+    }
+  },
+  "templates": {
+    "basic-weather": {
+      "label": "Basic weather",
+      "description": "A weather type with standard sky colors and a worker class.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "favorability", "workerClass"],
+      "fieldValues": {
+        "isBad": "false",
+        "repeatable": "false",
+        "canOccurAsRandomForcedEvent": "true",
+        "maxGlow": "1"
+      }
+    }
+  }
+}

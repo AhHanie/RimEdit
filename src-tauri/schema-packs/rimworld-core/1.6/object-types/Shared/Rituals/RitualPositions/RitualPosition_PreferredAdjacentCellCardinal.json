@@ -1,0 +1,34 @@
+{
+  "objectType": "RitualPosition_PreferredAdjacentCellCardinal",
+  "label": "Ritual position (preferred adjacent cell cardinal)",
+  "description": "Places the pawn in a cardinal adjacent cell to the ritual target, optionally using a search pattern to find the preferred cell.",
+  "fieldOrder": ["Class", "highlight", "facing", "faceThing", "preferredCellSearchPattern"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "facing": {
+      "label": "Facing",
+      "description": "Cardinal direction the pawn faces after arriving. Rot4.Invalid means no forced facing.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Invalid",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["North", "East", "South", "West", "Invalid"] }
+    },
+    "faceThing": {
+      "label": "Face thing",
+      "description": "If true, the pawn faces toward the ritual target thing instead of using a fixed facing direction. Cannot be combined with facing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preferredCellSearchPattern": {
+      "label": "Preferred cell search pattern",
+      "description": "Optional search pattern used to select the preferred adjacent cardinal cell.",
+      "type": { "kind": "object", "schemaRef": "CellSearchPattern" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

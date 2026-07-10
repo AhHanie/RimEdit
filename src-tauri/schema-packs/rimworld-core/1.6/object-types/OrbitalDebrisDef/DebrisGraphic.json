@@ -1,0 +1,44 @@
+{
+  "objectType": "DebrisGraphic",
+  "label": "Debris graphic",
+  "description": "A single visual layer within an OrbitalDebrisDef graphics list. The renderer combines multiple DebrisGraphic layers at different parallax depths to produce the orbital debris belt effect.",
+  "fieldOrder": [
+    "graphicData",
+    "weighting",
+    "order",
+    "parallaxPer10Cells"
+  ],
+  "fields": {
+    "graphicData": {
+      "label": "Graphic data",
+      "description": "Texture and shader settings for this debris graphic layer.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object"
+    },
+    "weighting": {
+      "label": "Weighting",
+      "description": "Relative probability weight controlling how densely this graphic variant appears in the debris belt. Higher values mean more instances. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "order": {
+      "label": "Order",
+      "description": "Rendering layer order. Lower values draw behind higher values. Shipped data uses 1 (background), 2 (midground), 3 (foreground). Defaults to 0.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "parallaxPer10Cells": {
+      "label": "Parallax per 10 cells",
+      "description": "How many world cells of parallax offset this layer shifts per 10 cells of camera movement. Lower values (0.2) produce slow-moving background elements; higher values (2) produce fast-moving foreground elements. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

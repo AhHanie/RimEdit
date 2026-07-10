@@ -1,0 +1,17 @@
+{
+  "objectType": "ScenPart_AutoActivateMonolith",
+  "label": "Auto activate monolith",
+  "description": "Automatically activates the grey flesh monolith after a delay at the start of the game. Requires the Anomaly DLC.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "delayTicks"],
+  "fields": {
+    "delayTicks": {
+      "label": "Delay (ticks)",
+      "description": "Number of ticks after game start before the monolith is automatically activated. Defaults to 0.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    }
+  }
+}

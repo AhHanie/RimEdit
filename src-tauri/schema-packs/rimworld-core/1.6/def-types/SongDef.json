@@ -1,0 +1,115 @@
+{
+  "defType": "SongDef",
+  "label": "Song",
+  "description": "Defines a music track played by the in-game music system. The game loads the audio clip from clipPath and selects songs based on map state, time of day, season, and royal title.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "clipPath",
+    "volume",
+    "playOnMap",
+    "commonality",
+    "tense",
+    "allowedTimeOfDay",
+    "allowedSeasons",
+    "minRoyalTitle"
+  ],
+  "fields": {
+    "clipPath": {
+      "label": "Clip path",
+      "description": "Content path to the Unity AudioClip for this song. The game appends no extension. Not translated.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Songs/Relax/A_New_Day",
+        "Songs/Relax/Cassandra",
+        "Songs/Tension/Here_It_Comes",
+        "Songs/Tension/Into_The_Dark"
+      ]
+    },
+    "volume": {
+      "label": "Volume",
+      "description": "Multiplier applied to the user music volume setting when this song plays. Defaults to 1. Shipped values are not limited to the 0-1 range.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "playOnMap": {
+      "label": "Play on map",
+      "description": "If true, this song is eligible for ordinary map-level music playback. Set to false for songs played only via music sequences.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Weighted random selection value controlling how often this song is chosen relative to others. Use 0 to make the song sequence-only so it is never randomly selected.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "tense": {
+      "label": "Tense",
+      "description": "If true, this song is treated as danger music and is eligible for selection during combat or other tense situations.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedTimeOfDay": {
+      "label": "Allowed time of day",
+      "description": "Time-of-day constraint controlling when this song is eligible for normal playback. Defaults to Any.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Any",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Night", "Day", "Any"]
+      }
+    },
+    "allowedSeasons": {
+      "label": "Allowed seasons",
+      "description": "Seasons during which this song is eligible for normal playback. If empty or omitted, the song is allowed in any season.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": [
+          "Undefined", "Spring", "Summer", "Fall", "Winter",
+          "PermanentSummer", "PermanentWinter"
+        ]
+      }
+    },
+    "minRoyalTitle": {
+      "label": "Min royal title",
+      "description": "Minimum RoyalTitleDef the pawn must hold for this song to be played. Used to gate prestige music behind Royalty titles.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RoyalTitleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "new-song": {
+      "label": "New song",
+      "description": "Standard ambient or tension song with a clip path and basic playback settings.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "clipPath", "volume", "playOnMap", "tense"],
+      "fieldValues": {
+        "volume": "1",
+        "playOnMap": "true",
+        "commonality": "1",
+        "tense": "false",
+        "allowedTimeOfDay": "Any"
+      }
+    }
+  }
+}

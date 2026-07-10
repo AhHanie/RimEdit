@@ -1,0 +1,8 @@
+{
+  "objectType": "SoundParamSource_AggregateSize",
+  "label": "Sound param source: aggregate size",
+  "description": "Reads the number of aggregated sound sources as the parameter value.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class"],
+  "fields": {}
+}

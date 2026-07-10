@@ -1,0 +1,9 @@
+{
+  "formatVersion": 1,
+  "packId": "test.keyed_value_defaults",
+  "name": "Keyed Value Defaults Test Pack",
+  "version": "0.1.0",
+  "priority": 0,
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": ["object-types"]
+}

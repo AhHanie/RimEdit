@@ -1,0 +1,24 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationSetName",
+  "label": "Set Name",
+  "description": "Sets the Name attribute on the node(s) matched by xpath.",
+  "fieldOrder": ["xpath", "name"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Target node(s) to set the Name attribute on.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    },
+    "name": {
+      "label": "Name",
+      "description": "New Name attribute value.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "objectType": "ScenPart_PlayerPawnsArriveMethod",
+  "label": "Player pawns arrive method",
+  "description": "Controls how starting colonists and equipment arrive on the map at the beginning of the game.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "method"],
+  "fields": {
+    "method": {
+      "label": "Method",
+      "description": "How starting colonists arrive at the start of the game.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "Standing",
+      "validationHints": {
+        "allowedValues": ["Standing", "DropPods", "Gravship"]
+      }
+    }
+  }
+}

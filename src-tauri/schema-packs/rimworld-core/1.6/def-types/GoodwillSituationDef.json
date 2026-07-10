@@ -1,0 +1,106 @@
+{
+  "defType": "GoodwillSituationDef",
+  "label": "Goodwill situation",
+  "description": "Defines a situation that changes a faction's natural goodwill or maximum goodwill toward the player.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "baseMaxGoodwill",
+    "meme",
+    "otherMeme",
+    "naturalGoodwillOffset",
+    "versusAll"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# GoodwillSituationWorker subclass that determines when this situation applies and how it affects goodwill.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "GoodwillSituationWorker",
+      "xml": "element",
+      "examples": [
+        "GoodwillSituationWorker",
+        "GoodwillSituationWorker_PermanentEnemy",
+        "GoodwillSituationWorker_NaturalEnemy",
+        "GoodwillSituationWorker_AttackingSettlement",
+        "GoodwillSituationWorker_SameIdeo",
+        "GoodwillSituationWorker_MemeCompatibility"
+      ]
+    },
+    "baseMaxGoodwill": {
+      "label": "Base max goodwill",
+      "description": "Maximum goodwill this situation permits between the player and the affected faction. Loadable but not read by any shipped worker implementation.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 100,
+      "xml": "element"
+    },
+    "meme": {
+      "label": "Meme",
+      "description": "MemeDef matched against the player faction's or other faction's ideology by the meme-compatibility worker.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MemeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "otherMeme": {
+      "label": "Other meme",
+      "description": "MemeDef matched against the opposing faction's ideology. When omitted with the meme-compatibility worker, the situation applies to any opposing meme.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MemeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "naturalGoodwillOffset": {
+      "label": "Natural goodwill offset",
+      "description": "Flat offset applied to the faction's natural goodwill toward the player while this situation is active. Positive values improve relations; negative values worsen them.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "versusAll": {
+      "label": "Versus all",
+      "description": "If true, the meme-compatibility worker matches the meme field against all opposing memes instead of a specific otherMeme.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-goodwill-situation": {
+      "label": "Basic goodwill situation",
+      "description": "Custom worker-controlled goodwill situation with a fixed offset.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "workerClass", "naturalGoodwillOffset"],
+      "fieldValues": {
+        "workerClass": "GoodwillSituationWorker",
+        "baseMaxGoodwill": "100",
+        "naturalGoodwillOffset": "0",
+        "versusAll": "false"
+      }
+    },
+    "meme-compatibility-situation": {
+      "label": "Meme compatibility situation",
+      "description": "Goodwill offset based on ideology meme agreement or disagreement between factions.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "meme", "otherMeme", "naturalGoodwillOffset"],
+      "fieldValues": {
+        "workerClass": "GoodwillSituationWorker_MemeCompatibility",
+        "baseMaxGoodwill": "100",
+        "naturalGoodwillOffset": "10",
+        "versusAll": "false"
+      }
+    }
+  }
+}

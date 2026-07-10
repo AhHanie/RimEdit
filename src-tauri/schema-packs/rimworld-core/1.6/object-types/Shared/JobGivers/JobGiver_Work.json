@@ -1,0 +1,17 @@
+{
+  "objectType": "JobGiver_Work",
+  "label": "Job giver work",
+  "description": "Directs the pawn to perform colony work based on their work settings and priority assignments.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": ["emergency"],
+  "fields": {
+    "emergency": {
+      "label": "Emergency",
+      "description": "If true, uses the emergency work giver list and respects priority work orders rather than the normal work cycle.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

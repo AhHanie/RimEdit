@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_SeekAllowedArea",
+  "label": "Job giver seek allowed area",
+  "description": "Directs the pawn to move into its allowed area when its current position is forbidden. No XML-loadable fields.",
+  "inherits": ["ThinkNode_JobGiver"]
+}

@@ -1,0 +1,107 @@
+{
+  "defType": "RitualAttachableOutcomeEffectDef",
+  "label": "Ritual attachable outcome effect",
+  "description": "Defines a bonus outcome effect that can be attached to rituals matching the filter criteria.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass", "requiredMemeAny", "allowedRituals", "disallowedRituals",
+    "requiredFaction", "onlyPositiveOutcomes", "onlyBestOutcome",
+    "onlyNegativeOutcomes", "onlyWorstOutcome", "letterInfoText", "effectDesc"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class implementing the attachable outcome effect logic. Defaults to RitualAttachableOutcomeEffectWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "requiredMemeAny": {
+      "label": "Required meme (any)",
+      "description": "The ideo must have at least one of these MemeDefs for this effect to attach.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "allowedRituals": {
+      "label": "Allowed rituals",
+      "description": "If non-empty, this effect can only attach to rituals in this list.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "RitualPatternDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedRituals": {
+      "label": "Disallowed rituals",
+      "description": "This effect cannot attach to any ritual in this list.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "RitualPatternDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "requiredFaction": {
+      "label": "Required faction",
+      "description": "FactionDef that must exist on the map for this effect to attach.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "onlyPositiveOutcomes": {
+      "label": "Only positive outcomes",
+      "description": "If true, this effect only applies when the ritual outcome is positive. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "onlyBestOutcome": {
+      "label": "Only best outcome",
+      "description": "If true, this effect only applies for the best possible outcome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyNegativeOutcomes": {
+      "label": "Only negative outcomes",
+      "description": "If true, this effect only applies when the ritual outcome is negative.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyWorstOutcome": {
+      "label": "Only worst outcome",
+      "description": "If true, this effect only applies for the worst possible outcome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "letterInfoText": {
+      "label": "Letter info text",
+      "description": "Localized text shown in the outcome letter when this attachable effect triggers.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "effectDesc": {
+      "label": "Effect desc",
+      "description": "Short localized description of the attached effect shown in ritual info.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-attachable-outcome-effect": {
+      "label": "New ritual attachable outcome effect",
+      "description": "Minimal attachable outcome effect with a worker class.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "workerClass"],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "objectType": "RoomRequirement",
+  "label": "Room requirement",
+  "description": "Base schema for room requirements. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class", "labelKey", "disablingPrecepts"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RoomRequirement",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "RoomRequirement_AllThingsAnyOfAreGlowing": "RoomRequirement_AllThingsAnyOfAreGlowing",
+      "RoomRequirement_AllThingsAreGlowing": "RoomRequirement_AllThingsAreGlowing",
+      "RoomRequirement_Area": "RoomRequirement_Area",
+      "RoomRequirement_ForbidAltars": "RoomRequirement_ForbidAltars",
+      "RoomRequirement_ForbiddenBuildings": "RoomRequirement_ForbiddenBuildings",
+      "RoomRequirement_HasAssignedThroneAnyOf": "RoomRequirement_HasAssignedThroneAnyOf",
+      "RoomRequirement_Impressiveness": "RoomRequirement_Impressiveness",
+      "RoomRequirement_TerrainWithTags": "RoomRequirement_TerrainWithTags",
+      "RoomRequirement_Thing": "RoomRequirement_Thing",
+      "RoomRequirement_ThingAnyOf": "RoomRequirement_ThingAnyOf",
+      "RoomRequirement_ThingAnyOfCount": "RoomRequirement_ThingAnyOfCount",
+      "RoomRequirement_ThingCount": "RoomRequirement_ThingCount"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoomRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the room requirement label shown in the UI.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "disablingPrecepts": {
+      "label": "Disabling precepts",
+      "description": "Precepts that disable this room requirement when active in the ideology.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

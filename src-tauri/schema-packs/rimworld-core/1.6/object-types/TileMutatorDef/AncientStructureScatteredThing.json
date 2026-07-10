@@ -1,0 +1,23 @@
+{
+  "objectType": "AncientStructureScatteredThing",
+  "label": "Ancient structure scattered thing",
+  "description": "A thing scattered around an ancient structure perimeter. The element name is the ThingDef defName (the 'thingDef' field); scalar text is the chance per 100 cells.",
+  "fieldOrder": ["thingDef", "chancePer100Cells"],
+  "fields": {
+    "thingDef": {
+      "label": "Thing def",
+      "description": "ThingDef to scatter around the structure perimeter. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "chancePer100Cells": {
+      "label": "Chance per 100 cells",
+      "description": "Expected number of instances placed per 100 cells of structure area. Populated from XML scalar text by the keyedObjectList loader.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    }
+  }
+}

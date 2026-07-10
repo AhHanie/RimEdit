@@ -1,0 +1,8 @@
+{
+  "defType": "PsychicRitualDef_SkipAbduction",
+  "label": "Psychic ritual -- skip abduction",
+  "description": "Ritual where an enemy invoker skip-abducts a colonist. No additional fields beyond the invocation circle base.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [],
+  "fields": {}
+}

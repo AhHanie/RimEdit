@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationAdd" MayRequire="SomeMod.PackageId">
+    <xpath>Defs/ThingDef[defName="Wall"]/statBases</xpath>
+    <value>
+      <MoveSpeed>1</MoveSpeed>
+    </value>
+  </Operation>
+</Patch>

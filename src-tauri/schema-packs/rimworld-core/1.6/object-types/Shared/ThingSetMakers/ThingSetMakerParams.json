@@ -1,0 +1,132 @@
+{
+  "objectType": "ThingSetMakerParams",
+  "label": "Thing set maker params",
+  "description": "Generation parameters passed to a ThingSetMaker at runtime or baked into a maker node via fixedParams. Used by ThingSetMakerDef.debugParams and ThingSetMaker.fixedParams.",
+  "fieldOrder": [
+    "techLevel",
+    "countRange",
+    "filter",
+    "qualityGenerator",
+    "maxTotalMass",
+    "maxThingMarketValue",
+    "allowNonStackableDuplicates",
+    "minSingleItemMarketValuePct",
+    "totalMarketValueRange",
+    "totalNutritionRange",
+    "podContentsType",
+    "makingFaction",
+    "traderDef",
+    "tile"
+  ],
+  "fields": {
+    "techLevel": {
+      "label": "Tech level",
+      "description": "Maximum allowed tech level. Things whose tech level exceeds this value are excluded (source keeps x.techLevel <= techLevel).",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Animal", "Neolithic", "Medieval", "Industrial", "Spacer", "Ultra", "Archotech"]
+      }
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "Number of items to generate, selected randomly from this range. Accepts both min~max and single integer.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "filter": {
+      "label": "Filter",
+      "description": "ThingFilter that restricts which ThingDefs are eligible for generation.",
+      "type": { "kind": "object", "schemaRef": "ThingFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "qualityGenerator": {
+      "label": "Quality generator",
+      "description": "Quality distribution curve applied when assigning quality to generated things.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["BaseGen", "Reward", "Gift", "Super", "Trader"]
+      }
+    },
+    "maxTotalMass": {
+      "label": "Max total mass",
+      "description": "Maximum combined mass (kg) of all generated things. Null means unlimited.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxThingMarketValue": {
+      "label": "Max thing market value",
+      "description": "Maximum market value of any single generated thing. Used to exclude high-value items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowNonStackableDuplicates": {
+      "label": "Allow non-stackable duplicates",
+      "description": "Whether the same non-stackable ThingDef may appear more than once in the generated set. Null means game default.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "minSingleItemMarketValuePct": {
+      "label": "Min single item market value pct",
+      "description": "Minimum market value of a single item as a fraction of the total target market value. Prevents generating many tiny cheap items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "totalMarketValueRange": {
+      "label": "Total market value range",
+      "description": "Target total market value range for the generated set. Accepts both min~max and single value.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "totalNutritionRange": {
+      "label": "Total nutrition range",
+      "description": "Target total nutrition range for the generated set. Used by ThingSetMaker_Nutrition.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "podContentsType": {
+      "label": "Pod contents type",
+      "description": "Preset contents type for ancient pod generation. Selects a predefined loot profile.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Empty", "AncientFriendly", "AncientIncapped", "AncientHalfEaten", "AncientHostile", "Slave"]
+      }
+    },
+    "makingFaction": {
+      "label": "Making faction",
+      "description": "FactionDef of the faction that is producing this item set. Affects faction-specific loot restrictions.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "traderDef": {
+      "label": "Trader def",
+      "description": "TraderKindDef context for generating trader stock sets.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TraderKindDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "tile": {
+      "label": "Tile",
+      "description": "Planet tile ID (or tileId,layerId pair) used for biome-aware generation. Leave blank unless biome context is needed.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

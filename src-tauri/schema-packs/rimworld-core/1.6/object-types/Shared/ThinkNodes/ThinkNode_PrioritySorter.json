@@ -1,0 +1,19 @@
+{
+  "objectType": "ThinkNode_PrioritySorter",
+  "label": "Think node priority sorter",
+  "description": "Container node that tries children in descending priority order (highest GetPriority value first). Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "minPriority"
+  ],
+  "fields": {
+    "minPriority": {
+      "label": "Min priority",
+      "description": "Minimum priority value a child must return from GetPriority to be considered. Children below this threshold are skipped.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

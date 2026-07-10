@@ -1,0 +1,28 @@
+{
+  "objectType": "SitePartOption",
+  "label": "Site part option",
+  "description": "QuestNode_GetSitePartDefsByTagsAndFaction nested site part tag option.",
+  "fieldOrder": [
+    "tag",
+    "chance"
+  ],
+  "fields": {
+    "tag": {
+      "description": "Site part tag name.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "chance": {
+      "description": "Underlying float probability 0.0 to 1.0, or a slate variable reference such as $siteThreatChance.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "defaultValue": "1",
+      "xml": "element"
+    }
+  }
+}

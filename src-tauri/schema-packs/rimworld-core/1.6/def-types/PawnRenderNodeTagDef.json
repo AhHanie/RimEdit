@@ -1,0 +1,8 @@
+{
+  "defType": "PawnRenderNodeTagDef",
+  "label": "Pawn render node tag",
+  "description": "Identifies a pawn render node by name. Used as the map key in AnimationDef.keyframeParts and AnimationDef.curveParts, and referenced by PawnRenderNodeProperties.tagDef and PawnRenderNodeProperties.parentTagDef.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,99 @@
+{
+  "defType": "TrainableDef",
+  "label": "Trainable",
+  "description": "Defines one trainable command for animals, such as Tameness, Obedience, or Release. Referenced by PawnColumnDef.trainable for generated trainable columns.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "difficulty",
+    "minBodySize",
+    "prerequisites",
+    "tags",
+    "defaultTrainable",
+    "requiredTrainability",
+    "steps",
+    "listPriority",
+    "icon",
+    "specialTrainable"
+  ],
+  "fields": {
+    "difficulty": {
+      "label": "Difficulty",
+      "description": "Training difficulty. Higher values require more training sessions. Must be set (default -1 triggers a config error).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "minBodySize": {
+      "label": "Min body size",
+      "description": "Minimum body size of an animal before this training step becomes available.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "prerequisites": {
+      "label": "Prerequisites",
+      "description": "TrainableDefs that must be completed before this training step can begin.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "TrainableDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "Free-form string tags used to match this trainable from other defs or filters.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "defaultTrainable": {
+      "label": "Default trainable",
+      "description": "If true, this training step is active by default for newly tamed animals.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiredTrainability": {
+      "label": "Required trainability",
+      "description": "TrainabilityDef that an animal must have before this training step is available.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TrainabilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "steps": {
+      "label": "Steps",
+      "description": "Number of training sessions required to complete this trainable. Default 1.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "listPriority": {
+      "label": "List priority",
+      "description": "Sort order in the trainable list UI. Higher values appear earlier.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "icon": {
+      "label": "Icon",
+      "description": "Texture content path for the icon shown in the trainable column header. Not a def reference.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Icons/Animal/Tameable", "UI/Icons/Animal/Trainable"]
+    },
+    "specialTrainable": {
+      "label": "Special trainable",
+      "description": "If true, this trainable is handled specially by the training system and is not shown in the normal training UI (e.g. Release).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "objectType": "JobGiver_Berserk",
+  "label": "Job giver berserk",
+  "description": "Causes the pawn to alternately wait and melee-attack the nearest valid target when berserk.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": ["maxAttackDistance"],
+  "fields": {
+    "maxAttackDistance": {
+      "label": "Max attack distance",
+      "description": "Maximum distance within which the pawn searches for attack targets while berserk.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 40,
+      "xml": "element"
+    }
+  }
+}

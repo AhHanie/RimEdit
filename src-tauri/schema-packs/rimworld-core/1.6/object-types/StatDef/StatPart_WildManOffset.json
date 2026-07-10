@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_WildManOffset",
+  "label": "Stat part (wild man offset)",
+  "description": "Adds a flat offset to the stat when the pawn is a wild man.",
+  "fieldOrder": ["Class", "priority", "offset"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Flat offset added to the stat for wild man pawns.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "objectType": "StockGenerator_BuySingleDef",
+  "label": "Buy single def generator",
+  "description": "Marks a specific ThingDef as something this trader will buy (Sellable tradeability) but does not generate for sale. Generates no items.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": ["thingDef"],
+  "fields": {
+    "thingDef": {
+      "label": "Thing def",
+      "description": "ThingDef this trader will buy from the player.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

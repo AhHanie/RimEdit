@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationRemove">
+    <xpath>Defs/ThingDef[defName="Wall"]/comps</xpath>
+  </Operation>
+</Patch>
+<Patch>
+  <Operation Class="PatchOperationTest">
+    <xpath>Defs/ThingDef[defName="Wall"]</xpath>
+  </Operation>
+</Patch>

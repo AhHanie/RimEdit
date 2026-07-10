@@ -1,0 +1,24 @@
+{
+  "defType": "PawnGroupKindDef",
+  "label": "Pawn group kind",
+  "description": "Identifies the kind of pawn group a PawnGroupMaker generates (e.g. Combat, Trader, Settlement, Peaceful). The kindDef on each PawnGroupMaker entry must reference one of these.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class deriving from PawnGroupKindWorker. The worker controls how pawn groups of this kind calculate minimum points, validate group makers, and generate pawns. Custom mod worker classes are valid.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "PawnGroupKindWorker",
+      "xml": "element",
+      "examples": [
+        "PawnGroupKindWorker_Normal",
+        "PawnGroupKindWorker_Trader",
+        "PawnGroupKindWorker_Shamblers"
+      ]
+    }
+  }
+}

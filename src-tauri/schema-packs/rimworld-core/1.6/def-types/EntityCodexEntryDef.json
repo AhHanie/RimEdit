@@ -1,0 +1,134 @@
+{
+  "defType": "EntityCodexEntryDef",
+  "label": "Entity codex entry",
+  "description": "Defines an entry in the Anomaly entity codex, linking a discovered entity to its category, description, icon, and related incidents and research.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "category",
+    "startDiscovered",
+    "linkedThings",
+    "linkedIncidents",
+    "discoveredResearchProjects",
+    "provocationIncidents",
+    "discoveryType",
+    "allowDiscoveryWhileMapGenerating",
+    "orderInCategory",
+    "hideInPlaystyles",
+    "useDescriptionFrom",
+    "uiIconPath"
+  ],
+  "fields": {
+    "category": {
+      "label": "Category",
+      "description": "EntityCategoryDef that groups this entry in the entity codex UI. Required: game reports a config error if null.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": { "defType": "EntityCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "startDiscovered": {
+      "label": "Start discovered",
+      "description": "If true, this codex entry is revealed at game start without the player having encountered the entity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "linkedThings": {
+      "label": "Linked things",
+      "description": "ThingDefs associated with this codex entry. ResolveReferences back-links each ThingDef.entityCodexEntry to this def.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "linkedIncidents": {
+      "label": "Linked incidents",
+      "description": "IncidentDefs associated with this codex entry. Private in source but loaded from XML. ResolveReferences back-links each IncidentDef.codexEntry to this def.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "discoveredResearchProjects": {
+      "label": "Discovered research projects",
+      "description": "ResearchProjectDefs that are unlocked automatically when this codex entry is discovered.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ResearchProjectDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "provocationIncidents": {
+      "label": "Provocation incidents",
+      "description": "IncidentDefs that can trigger when this entity is provoked.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "discoveryType": {
+      "label": "Discovery type",
+      "description": "Determines what event triggers discovery of this codex entry.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Spawn",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Spawn", "Unfog", "BecameVisible"] }
+    },
+    "allowDiscoveryWhileMapGenerating": {
+      "label": "Allow discovery while map generating",
+      "description": "If true, this codex entry can be discovered during initial map generation (before the player gains control).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "orderInCategory": {
+      "label": "Order in category",
+      "description": "Sort position of this entry within its category in the entity codex. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 9999999,
+      "xml": "element"
+    },
+    "hideInPlaystyles": {
+      "label": "Hide in playstyles",
+      "description": "AnomalyPlaystyleDefs for which this codex entry is hidden. The entry remains absent from the codex when the active playstyle is in this list.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "AnomalyPlaystyleDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "useDescriptionFrom": {
+      "label": "Use description from",
+      "description": "ThingDef whose description is shown for this codex entry instead of the entry's own description field. Private in source but loaded from XML.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "uiIconPath": {
+      "label": "UI icon path",
+      "description": "Asset path for the codex entry icon texture. PostLoad derives the silhouette texture by appending _Silhouette. Private in source but loaded from XML. Required: game reports a config error if missing.",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-codex-entry": {
+      "label": "Basic codex entry",
+      "description": "Minimal entity codex entry with required fields and a description.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "category", "uiIconPath", "description"],
+      "fieldValues": {}
+    },
+    "linked-thing-codex-entry": {
+      "label": "Linked thing codex entry",
+      "description": "Entity codex entry linked to one or more ThingDefs, with description sourced from a linked thing.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "category", "uiIconPath", "linkedThings", "useDescriptionFrom"],
+      "fieldValues": {}
+    }
+  }
+}

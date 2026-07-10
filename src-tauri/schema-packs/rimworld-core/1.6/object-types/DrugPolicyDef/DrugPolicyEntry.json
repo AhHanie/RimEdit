@@ -1,0 +1,89 @@
+{
+  "objectType": "DrugPolicyEntry",
+  "label": "Drug policy entry",
+  "description": "Per-drug scheduling rule inside a DrugPolicyDef. Controls whether a specific drug is allowed for addiction management, recreational joy, or automatic timed scheduling.",
+  "fieldOrder": [
+    "drug",
+    "allowedForAddiction",
+    "allowedForJoy",
+    "allowScheduled",
+    "daysFrequency",
+    "onlyIfMoodBelow",
+    "onlyIfJoyBelow",
+    "takeToInventory"
+  ],
+  "fields": {
+    "drug": {
+      "label": "Drug",
+      "description": "The ThingDef of the drug this entry controls.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowedForAddiction": {
+      "label": "Allowed for addiction",
+      "description": "Allows taking this drug to satisfy an existing addiction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedForJoy": {
+      "label": "Allowed for joy",
+      "description": "Allows taking this drug for recreational joy.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowScheduled": {
+      "label": "Allow scheduled",
+      "description": "Enables automatic timed scheduling for this drug. When true, activates daysFrequency, onlyIfMoodBelow, and onlyIfJoyBelow.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "daysFrequency": {
+      "label": "Days frequency",
+      "description": "Minimum days between scheduled doses. Only meaningful when allowScheduled is true.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element",
+      "validationHints": { "min": 0 }
+    },
+    "onlyIfMoodBelow": {
+      "label": "Only if mood below",
+      "description": "Scheduled use fires only when pawn mood fraction is below this value (0-1). A value of 1.0 disables the mood gate.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element",
+      "validationHints": { "min": 0, "max": 1 }
+    },
+    "onlyIfJoyBelow": {
+      "label": "Only if joy below",
+      "description": "Scheduled use fires only when pawn joy fraction is below this value (0-1). A value of 1.0 disables the joy gate.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element",
+      "validationHints": { "min": 0, "max": 1 }
+    },
+    "takeToInventory": {
+      "label": "Take to inventory",
+      "description": "Number of drug doses the pawn is directed to carry in inventory. 0 disables inventory stocking.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element",
+      "validationHints": { "min": 0 }
+    }
+  }
+}

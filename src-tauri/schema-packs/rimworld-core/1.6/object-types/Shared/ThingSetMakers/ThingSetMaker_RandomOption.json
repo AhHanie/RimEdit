@@ -1,0 +1,21 @@
+{
+  "objectType": "ThingSetMaker_RandomOption",
+  "label": "Random option maker",
+  "description": "Picks one weighted option from a list and delegates generation to its nested maker. The most common root maker class in shipped data.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "options"
+  ],
+  "fields": {
+    "options": {
+      "label": "Options",
+      "description": "Weighted list of maker options. One entry is chosen randomly on each generation pass.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "items": { "kind": "object", "schemaRef": "ThingSetMaker_RandomOption_Option" }
+    }
+  }
+}

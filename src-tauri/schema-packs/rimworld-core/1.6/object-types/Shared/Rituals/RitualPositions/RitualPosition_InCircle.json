@@ -1,0 +1,27 @@
+{
+  "objectType": "RitualPosition_InCircle",
+  "label": "Ritual position (in circle)",
+  "description": "Places the pawn in a circular arrangement around the ritual target at the given distance range.",
+  "fieldOrder": ["Class", "highlight", "preferredRotation", "distRange"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "preferredRotation": {
+      "label": "Preferred rotation",
+      "description": "Preferred cardinal direction the pawn should face. Omit to use any direction.",
+      "type": {
+        "kind": "enum",
+        "validationHints": { "allowedValues": ["North", "East", "South", "West", "Invalid"] }
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "distRange": {
+      "label": "Distance range",
+      "description": "Min/max cell distance from the target at which the pawn may be placed.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

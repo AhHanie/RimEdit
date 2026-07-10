@@ -1,0 +1,21 @@
+{
+  "objectType": "ScenPart_PermaGameCondition",
+  "label": "Permanent game condition",
+  "description": "Applies a game condition permanently for the entire game. Unlike ScenPart_GameCondition, the condition never expires.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "gameCondition"],
+  "fields": {
+    "gameCondition": {
+      "label": "Game condition",
+      "description": "GameConditionDef to apply permanently.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GameConditionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

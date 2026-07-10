@@ -1,0 +1,19 @@
+{
+  "objectType": "JobGiver_AISapper",
+  "label": "Job giver AI sapper",
+  "description": "Directs a sapper pawn to dig or destroy its way through walls and structures toward the colony. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "canMineNonMineables"
+  ],
+  "fields": {
+    "canMineNonMineables": {
+      "label": "Can mine non-mineables",
+      "description": "If true, the sapper digs through non-mineable structures (walls, doors) in addition to mineable rock.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

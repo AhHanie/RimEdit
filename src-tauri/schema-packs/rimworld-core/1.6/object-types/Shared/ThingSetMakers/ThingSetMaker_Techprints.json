@@ -1,0 +1,29 @@
+{
+  "objectType": "ThingSetMaker_Techprints",
+  "label": "Techprints maker",
+  "description": "Generates techprint items, weighted by the player's current research needs and optionally scaled by a market value factor.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "weightAccordingToPlayerNeeds",
+    "marketValueFactor"
+  ],
+  "fields": {
+    "weightAccordingToPlayerNeeds": {
+      "label": "Weight according to player needs",
+      "description": "When true, techprints for research projects the player still needs are given higher weight.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "marketValueFactor": {
+      "label": "Market value factor",
+      "description": "Multiplier applied to the market value of generated techprints. Private in source but serialized in shipped XML.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

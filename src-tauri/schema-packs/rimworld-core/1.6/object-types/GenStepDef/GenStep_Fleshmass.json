@@ -1,0 +1,89 @@
+{
+  "objectType": "GenStep_Fleshmass",
+  "label": "Fleshmass",
+  "description": "Generates fleshmass terrain and structures using Perlin noise.",
+  "fieldOrder": [
+    "Class",
+    "fleshFrequency",
+    "fleshThreshold",
+    "fleshTerrainThreshold",
+    "fleshmassCanReplaceBuildings",
+    "fleshmassFalloffRadius",
+    "noiseOctaves",
+    "bloodFrequency",
+    "bloodThreshold"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_Fleshmass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "fleshFrequency": {
+      "label": "Flesh frequency",
+      "description": "Perlin noise frequency controlling how densely fleshmass is distributed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.3,
+      "xml": "element"
+    },
+    "fleshThreshold": {
+      "label": "Flesh threshold",
+      "description": "Noise value above which fleshmass edifices are spawned.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.2,
+      "xml": "element"
+    },
+    "fleshTerrainThreshold": {
+      "label": "Flesh terrain threshold",
+      "description": "Noise value above which flesh terrain is painted (lower than fleshThreshold).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.1,
+      "xml": "element"
+    },
+    "fleshmassCanReplaceBuildings": {
+      "label": "Fleshmass can replace buildings",
+      "description": "When true, fleshmass may overwrite existing non-natural-rock buildings.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fleshmassFalloffRadius": {
+      "label": "Fleshmass falloff radius",
+      "description": "When positive, fleshmass intensity fades to zero beyond this distance from the map center. Use -1 for no falloff.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "noiseOctaves": {
+      "label": "Noise octaves",
+      "description": "Number of Perlin noise octaves used for fleshmass distribution.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 6,
+      "xml": "element"
+    },
+    "bloodFrequency": {
+      "label": "Blood frequency",
+      "description": "Perlin noise frequency controlling the density of blood filth spawning.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.3,
+      "xml": "element"
+    },
+    "bloodThreshold": {
+      "label": "Blood threshold",
+      "description": "Noise value above which blood filth is spawned.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.2,
+      "xml": "element"
+    }
+  }
+}

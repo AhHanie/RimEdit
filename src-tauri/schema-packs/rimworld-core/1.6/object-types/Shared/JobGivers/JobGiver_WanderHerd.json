@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_WanderHerd",
+  "label": "Job giver wander herd",
+  "description": "Wanders near herd members of the same race, staying away from humanlike pawns. No additional XML-loadable fields beyond the Wander base.",
+  "inherits": ["JobGiver_Wander"]
+}

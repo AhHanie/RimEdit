@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_WanderNearRoamingExit",
+  "label": "Job giver wander near roaming exit",
+  "description": "Wanders near the roaming mental state's designated exit destination while the pawn is not yet ready to leave. No additional XML-loadable fields beyond the Wander base.",
+  "inherits": ["JobGiver_Wander"]
+}

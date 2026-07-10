@@ -1,0 +1,153 @@
+{
+  "defType": "MapGeneratorDef",
+  "label": "Map generator",
+  "description": "Defines how a map is procedurally generated, including the sequence of gen steps, terrain, roofing, and rendering options.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "isUnderground",
+    "forceCaves",
+    "genSteps",
+    "pocketMapProperties",
+    "customMapComponents",
+    "ignoreAreaRevealedLetter",
+    "roofDef",
+    "disableShadows",
+    "disableCallAid",
+    "disableMapClippers",
+    "renderWorld",
+    "defeatRequiresCantReachUnfogged",
+    "defaultUnderGridTerrain",
+    "validScenarioMap",
+    "mapClipperTexturePath",
+    "mapClipperShader"
+  ],
+  "fields": {
+    "isUnderground": {
+      "label": "Is underground",
+      "description": "If true, the generated map is treated as underground (caves, no sky).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forceCaves": {
+      "label": "Force caves",
+      "description": "If true, cave generation is forced on this map regardless of biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "genSteps": {
+      "label": "Gen steps",
+      "description": "Ordered list of GenStepDefs that are executed during map generation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "GenStepDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "customMapComponents": {
+      "label": "Custom map components",
+      "description": "Additional MapComponent subclasses added to the map at generation time.",
+      "type": { "kind": "list" },
+      "items": { "kind": "typeName" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "pocketMapProperties": {
+      "label": "Pocket map properties",
+      "description": "Configuration for this generator when it creates a pocket map, including biome, temperature, and behavioral flags.",
+      "type": { "kind": "object", "schemaRef": "PocketMapProperties" },
+      "required": false,
+      "xml": "object"
+    },
+    "ignoreAreaRevealedLetter": {
+      "label": "Ignore area revealed letter",
+      "description": "If true, the letter sent when all map areas are revealed is suppressed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "roofDef": {
+      "label": "Roof def",
+      "description": "RoofDef placed over the entire map after generation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RoofDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "disableShadows": {
+      "label": "Disable shadows",
+      "description": "If true, shadow rendering is disabled on this map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disableCallAid": {
+      "label": "Disable call aid",
+      "description": "If true, the call for aid comms option is disabled on this map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disableMapClippers": {
+      "label": "Disable map clippers",
+      "description": "If true, map clipper visuals are not shown on this map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "renderWorld": {
+      "label": "Render world",
+      "description": "If true, the world sphere is rendered behind this map (used for space maps).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "defeatRequiresCantReachUnfogged": {
+      "label": "Defeat requires cant reach unfogged",
+      "description": "If true, the defeat condition also requires that no enemies can reach any unfogged area.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "defaultUnderGridTerrain": {
+      "label": "Default under-grid terrain",
+      "description": "TerrainDef placed beneath the primary terrain layer on this map.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "validScenarioMap": {
+      "label": "Valid scenario map",
+      "description": "If true, this generator can be selected as a starting map by scenario configuration.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mapClipperTexturePath": {
+      "label": "Map clipper texture path",
+      "description": "Texture path for the map clipper visual displayed around the map border.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "mapClipperShader": {
+      "label": "Map clipper shader",
+      "description": "ShaderTypeDef used to render the map clipper texture.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ShaderTypeDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

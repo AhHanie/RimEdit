@@ -1,0 +1,12 @@
+{
+  "objectType": "ListItemObject",
+  "label": "List item object",
+  "fields": {
+    "itemKnown": {
+      "label": "Known item field",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

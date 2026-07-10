@@ -1,0 +1,26 @@
+{
+  "defType": "PsychicRitualDef_Philophagy",
+  "label": "Psychic ritual -- philophagy",
+  "description": "Ritual where the invoker psychically consumes the target's skill experience. May inflict brain damage on the target.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "brainDamageRange",
+    "xpTransferFromQualityCurve"
+  ],
+  "fields": {
+    "brainDamageRange": {
+      "label": "Brain damage range",
+      "description": "Random amount of brain damage inflicted on the target pawn.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "xpTransferFromQualityCurve": {
+      "label": "XP transfer from quality curve",
+      "description": "Curve mapping ritual quality to the fraction of skill XP transferred from target to invoker.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

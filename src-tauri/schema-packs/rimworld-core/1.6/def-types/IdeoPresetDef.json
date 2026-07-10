@@ -1,0 +1,55 @@
+{
+  "defType": "IdeoPresetDef",
+  "label": "Ideo preset",
+  "description": "Defines a preconfigured ideology option shown during new colony setup.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "categoryDef",
+    "memes",
+    "iconPath",
+    "classicPlus"
+  ],
+  "fields": {
+    "categoryDef": {
+      "label": "Category def",
+      "description": "IdeoPresetCategoryDef that groups this preset on the ideology selection screen.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "IdeoPresetCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "memes": {
+      "label": "Memes",
+      "description": "MemeDefs that make up this preset ideology. Each entry is a meme defName and may carry a MayRequire attribute for expansion-gated memes.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path for the icon shown on the preset. Not translated.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/HeroArt/RimWorldLogo"]
+    },
+    "classicPlus": {
+      "label": "Classic plus",
+      "description": "When true, this preset is the classic-like entry shown when Ideology is not enabled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-ideo-preset": {
+      "label": "Basic ideo preset",
+      "description": "Minimal ideology preset with a defName, label, description, category, and meme list.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "description", "categoryDef", "memes"],
+      "fieldValues": {}
+    }
+  }
+}

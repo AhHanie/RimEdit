@@ -1,0 +1,18 @@
+{
+  "objectType": "JobGiver_WanderAnywhere",
+  "label": "Job giver wander anywhere",
+  "description": "Directs the pawn to wander freely within a radius. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "wanderRadius"
+  ],
+  "fields": {
+    "wanderRadius": {
+      "label": "Wander radius",
+      "description": "Radius in cells within which the pawn may wander.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

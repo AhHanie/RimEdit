@@ -1,0 +1,26 @@
+{
+  "objectType": "TankOption",
+  "label": "Tank option",
+  "description": "A weighted gestation tank state option in a RoomPart_GestationTankDef. The element name is the State enum value; text is the weight.",
+  "fieldOrder": ["state", "weight"],
+  "fields": {
+    "state": {
+      "label": "State",
+      "description": "Gestation tank state this option applies to. Populated from the XML element name.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Dormant", "Proximity", "Empty"]
+      }
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative selection weight for this tank state. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    }
+  }
+}

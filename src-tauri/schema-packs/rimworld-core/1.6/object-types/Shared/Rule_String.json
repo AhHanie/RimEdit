@@ -1,0 +1,32 @@
+{
+  "objectType": "Rule_String",
+  "label": "String rule",
+  "description": "A grammar rule that produces a fixed or translated output string. Most string rules are expressed as rulesStrings entries rather than raw Rule_String objects.",
+  "inherits": ["Rule"],
+  "fieldOrder": ["Class", "keyword", "tag", "requiredTag", "usesLimit", "constantConstraints", "output", "weight", "priority"],
+  "fields": {
+    "output": {
+      "label": "Output",
+      "description": "The text this rule produces when selected. May contain grammar references in [keyword] form.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative selection weight. Higher values make this rule more likely to be chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Selection priority. Rules with higher priority are always preferred over lower-priority rules.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

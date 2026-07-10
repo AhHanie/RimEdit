@@ -1,0 +1,24 @@
+{
+  "objectType": "PreceptThingPair",
+  "label": "Precept-thing pair",
+  "description": "A pair of a precept and a thing def used in none-chance selection lists.",
+  "fieldOrder": ["precept", "thing"],
+  "fields": {
+    "precept": {
+      "label": "Precept",
+      "description": "The precept associated with this thing.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thing": {
+      "label": "Thing",
+      "description": "The thing associated with this precept.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

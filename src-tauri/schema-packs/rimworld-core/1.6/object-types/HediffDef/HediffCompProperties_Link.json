@@ -1,0 +1,57 @@
+{
+  "objectType": "HediffCompProperties_Link",
+  "label": "Link comp",
+  "description": "Links this hediff to another pawn with the same hediff.",
+  "fieldOrder": [
+    "Class", "compClass",
+    "drawConnection", "requireConnectedTo", "onlyActiveIfSeverity", "onlyActiveIfBothHaveSameLinkType"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawConnection": {
+      "label": "Draw connection",
+      "description": "If true, a visual line is drawn between linked pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requireConnectedTo": {
+      "label": "Require connected to",
+      "description": "Required linked hediff on another pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "onlyActiveIfSeverity": {
+      "label": "Only active if severity",
+      "description": "Minimum severity on linked pawn to stay active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "onlyActiveIfBothHaveSameLinkType": {
+      "label": "Only active if both have same link type",
+      "description": "Only active if both pawns have the same link type.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

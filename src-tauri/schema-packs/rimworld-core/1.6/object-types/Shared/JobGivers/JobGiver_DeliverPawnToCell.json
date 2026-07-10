@@ -1,0 +1,28 @@
+{
+  "objectType": "JobGiver_DeliverPawnToCell",
+  "label": "Job giver deliver pawn to cell",
+  "description": "Directs a pawn to carry another pawn to a target cell. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "exactCell",
+    "locomotionUrgency"
+  ],
+  "fields": {
+    "exactCell": {
+      "label": "Exact cell",
+      "description": "If true, the carrier must reach the exact destination cell.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "locomotionUrgency": {
+      "label": "Locomotion urgency",
+      "description": "Movement speed mode used while carrying the pawn to the destination.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Amble", "Walk", "Jog", "Sprint"] }
+    }
+  }
+}

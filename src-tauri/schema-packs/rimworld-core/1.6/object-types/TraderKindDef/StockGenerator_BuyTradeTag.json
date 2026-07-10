@@ -1,0 +1,16 @@
+{
+  "objectType": "StockGenerator_BuyTradeTag",
+  "label": "Buy trade tag generator",
+  "description": "Marks all ThingDefs carrying a specific trade tag as buyable (Sellable tradeability) by this trader. Generates no items.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": ["tag"],
+  "fields": {
+    "tag": {
+      "label": "Tag",
+      "description": "Trade tag string. ThingDefs whose tradeTags list contains this value will be bought by this trader.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

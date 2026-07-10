@@ -1,0 +1,119 @@
+{
+  "defType": "StyleItemDef",
+  "label": "Style item",
+  "description": "Abstract base for hair, beard, tattoo, and fur style defs. Provides the texture path, gender filter, category grouping, and prerequisite fields shared by all style item types.",
+  "abstractType": true,
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "styleTags",
+    "styleGender",
+    "category",
+    "noGraphic",
+    "overrideShaderTypeDef",
+    "requiredGene",
+    "requiredMutant",
+    "texPath",
+    "iconPath"
+  ],
+  "fields": {
+    "styleTags": {
+      "label": "Style tags",
+      "description": "String identifiers used by pawns and genes to filter which styles are eligible. Tags are plain strings, not def references. Also loadable from XML as <hairTags>.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi",
+      "xmlAliases": ["hairTags"],
+      "examples": ["Rough", "Formal", "Offworld"]
+    },
+    "styleGender": {
+      "label": "Style gender",
+      "description": "Gender restriction controlling which pawns can use this style. Any allows all pawns; the MaleUsually and FemaleUsually values bias generation without hard-locking. Also loadable from XML as <hairGender>.",
+      "type": {
+        "kind": "enum",
+        "values": ["Male", "MaleUsually", "Any", "FemaleUsually", "Female"]
+      },
+      "required": false,
+      "defaultValue": "Any",
+      "xml": "element",
+      "xmlAliases": ["hairGender"]
+    },
+    "category": {
+      "label": "Category",
+      "description": "StyleItemCategoryDef that groups this style in the pawn editor UI. Defaults to Misc when absent at runtime.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StyleItemCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "noGraphic": {
+      "label": "No graphic",
+      "description": "If true, this style has no texture. The pawn renders without any visual for this slot. Suppresses the texPath config error.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "overrideShaderTypeDef": {
+      "label": "Override shader type",
+      "description": "ShaderTypeDef used when rendering this style's graphic. When absent, styles use their default shader (e.g., CutoutHair for hair).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ShaderTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredGene": {
+      "label": "Required gene",
+      "description": "GeneDef that a pawn must have for this style to be available. Used to restrict styles to xenotype-specific appearances.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GeneDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredMutant": {
+      "label": "Required mutant",
+      "description": "MutantDef that a pawn must be for this style to be available. Used by Anomaly ghoul hair styles.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MutantDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "texPath": {
+      "label": "Texture path",
+      "description": "Content-relative path to the style texture, without directional suffix (e.g., _south). Required by game config validation unless noGraphic is true. The icon falls back to texPath + \"_south\" when iconPath is absent.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Things/Pawn/Humanlike/Hair/Bun",
+        "Things/Pawn/Humanlike/Hair/Punk"
+      ]
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Explicit icon texture path. When absent, the icon is derived from texPath + \"_south\" at runtime.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Things/Pawn/Humanlike/Hair/Bun_south"
+      ]
+    }
+  }
+}

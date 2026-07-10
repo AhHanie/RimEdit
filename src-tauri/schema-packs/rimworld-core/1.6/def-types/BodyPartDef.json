@@ -1,0 +1,224 @@
+{
+  "defType": "BodyPartDef",
+  "label": "Body part",
+  "description": "Defines a discrete body part that can appear in a pawn body tree. Controls hit points, bleeding, skin and solid properties, damage type hit chance overrides, and surgery options.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "labelShort",
+    "tags",
+    "hitPoints",
+    "permanentInjuryChanceFactor",
+    "bleedRate",
+    "frostbiteVulnerability",
+    "skinCovered",
+    "solid",
+    "alive",
+    "delicate",
+    "canScarify",
+    "beautyRelated",
+    "conceptual",
+    "socketed",
+    "spawnThingOnRemoved",
+    "pawnGeneratorCanAmputate",
+    "canSuggestAmputation",
+    "forceAlwaysRemovable",
+    "hitChanceFactors",
+    "destroyableByDamage",
+    "canBeVacuumBurnt",
+    "removeRecipeLabelOverride",
+    "executionPartPriority"
+  ],
+  "fields": {
+    "labelShort": {
+      "label": "Label (short)",
+      "description": "Abbreviated label shown in compact UI contexts such as health cards.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "BodyPartTagDef tags attached to this body part. Tags control vital-organ logic and targeting behaviour.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "BodyPartTagDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "hitPoints": {
+      "label": "Hit points",
+      "description": "Maximum hit points before this body part is destroyed.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    },
+    "permanentInjuryChanceFactor": {
+      "label": "Permanent injury chance factor",
+      "description": "Multiplier on the probability that a healed wound leaves a permanent scar. 0 means wounds on this part never become permanent.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "bleedRate": {
+      "label": "Bleed rate",
+      "description": "Multiplier on bleeding severity from wounds on this part. 0 means this part does not cause bleeding.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "frostbiteVulnerability": {
+      "label": "Frostbite vulnerability",
+      "description": "How quickly this part takes frostbite damage in cold environments. Higher values increase vulnerability.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "skinCovered": {
+      "label": "Skin covered",
+      "description": "Whether this part is covered by skin. Affects heat exchange and skin-specific conditions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "solid": {
+      "label": "Solid",
+      "description": "Whether this part is solid (bone-like). Solid parts interact differently with blunt and sharp damage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "alive": {
+      "label": "Alive",
+      "description": "Whether this part is living tissue. Non-alive parts do not bleed or become infected.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "delicate": {
+      "label": "Delicate",
+      "description": "If true, this part is treated as delicate for apparel coverage and damage calculations.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canScarify": {
+      "label": "Can scarify",
+      "description": "Whether this part can be scarified as an ideological ritual modification.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "beautyRelated": {
+      "label": "Beauty related",
+      "description": "If true, injuries or missing state of this part affect the pawn's beauty stat.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "conceptual": {
+      "label": "Conceptual",
+      "description": "If true, this part exists only to anchor child parts and has no hit points or physical presence.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "socketed": {
+      "label": "Socketed",
+      "description": "If true, this part can receive socketed implants or bionics.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "spawnThingOnRemoved": {
+      "label": "Spawn thing on removed",
+      "description": "ThingDef spawned on the ground when this part is surgically removed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "pawnGeneratorCanAmputate": {
+      "label": "Pawn generator can amputate",
+      "description": "If true, the pawn generator may randomly amputate this part when creating handicapped pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canSuggestAmputation": {
+      "label": "Can suggest amputation",
+      "description": "If true, the doctor AI may suggest amputating this part to stop a life-threatening infection.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "forceAlwaysRemovable": {
+      "label": "Force always removable",
+      "description": "If true, this part always appears in the operation list for amputation regardless of normal removability rules.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hitChanceFactors": {
+      "label": "Hit chance factors",
+      "description": "Per-damage-type multipliers on the probability that an attack targets this body part. Each entry is a <li> with a <key> (DamageDef name) and a <value> (float multiplier).",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DamageDefFloatFactor" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "destroyableByDamage": {
+      "label": "Destroyable by damage",
+      "description": "Whether this part can be permanently destroyed by damage. False means it can only be wounded, not destroyed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canBeVacuumBurnt": {
+      "label": "Can be vacuum burnt",
+      "description": "Whether vacuum exposure can burn this body part.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "removeRecipeLabelOverride": {
+      "label": "Remove recipe label override",
+      "description": "Custom label for the removal or amputation recipe, overriding the auto-generated name.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "executionPartPriority": {
+      "label": "Execution part priority",
+      "description": "Priority for targeting this part during executions. Higher values make this part more likely to be targeted.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

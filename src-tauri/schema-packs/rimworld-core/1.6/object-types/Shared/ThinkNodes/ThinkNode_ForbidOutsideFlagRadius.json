@@ -1,0 +1,19 @@
+{
+  "objectType": "ThinkNode_ForbidOutsideFlagRadius",
+  "label": "Think node forbid outside flag radius",
+  "description": "Sets a maximum squad-flag radius on the pawn's mind state before executing children, then resets it. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "maxDistToSquadFlag"
+  ],
+  "fields": {
+    "maxDistToSquadFlag": {
+      "label": "Max dist to squad flag",
+      "description": "Maximum distance in cells a pawn may wander from the squad flag position. -1 disables the constraint.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    }
+  }
+}

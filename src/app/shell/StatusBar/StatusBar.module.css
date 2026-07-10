@@ -1,0 +1,49 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 10px;
+  background: var(--status-bar-bg);
+  color: var(--status-bar-text);
+  font-size: 11px;
+  overflow: hidden;
+}
+
+.segment {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  height: 100%;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.segmentPath {
+  overflow: hidden;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.segmentPath span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.divider {
+  opacity: 0.4;
+  margin: 0 2px;
+}
+
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.icon {
+  opacity: 0.8;
+}

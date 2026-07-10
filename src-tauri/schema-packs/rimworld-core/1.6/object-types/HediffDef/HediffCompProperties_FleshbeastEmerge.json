@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_FleshbeastEmerge",
+  "label": "Fleshbeast emerge comp",
+  "description": "Causes a fleshbeast to emerge from the pawn after some time.",
+  "fieldOrder": ["Class", "compClass", "fleshbeastKind", "emergeMtbDays"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "fleshbeastKind": {
+      "label": "Fleshbeast kind",
+      "description": "PawnKindDef of the fleshbeast that emerges.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "emergeMtbDays": {
+      "label": "Emerge MTB days",
+      "description": "Mean time in days before the fleshbeast emerges.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

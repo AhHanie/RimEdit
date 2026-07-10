@@ -1,0 +1,42 @@
+{
+  "objectType": "StatPart_GearStatFactor",
+  "label": "Stat part (gear stat factor)",
+  "description": "Multiplies the stat by the product of a specific StatDef across all apparel (and optionally weapons) worn by the pawn.",
+  "fieldOrder": ["Class", "priority", "apparelStat", "includeWeapon"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "apparelStat": {
+      "label": "Apparel stat",
+      "description": "StatDef multiplied across the pawn's worn apparel to produce the factor.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "includeWeapon": {
+      "label": "Include weapon",
+      "description": "If true, the primary weapon is included in the gear stat product.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

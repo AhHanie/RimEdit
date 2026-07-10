@@ -1,0 +1,33 @@
+{
+  "objectType": "CompProperties_Hibernatable",
+  "label": "Hibernatable comp",
+  "description": "Marks a structure as hibernatable. The structure starts hibernating and must be started up before it becomes active. Used by the ship reactor.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": ["startupDays", "incidentTargetWhileStarting", "sustainerActive"],
+  "fields": {
+    "startupDays": {
+      "label": "Startup days",
+      "description": "Number of in-game days the startup countdown runs before the structure becomes fully active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 14,
+      "xml": "element"
+    },
+    "incidentTargetWhileStarting": {
+      "label": "Incident target while starting",
+      "description": "IncidentTargetTagDef assigned to the map while this structure is starting up. Used by the ship reactor to enable raid-beacon incidents during the countdown.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "sustainerActive": {
+      "label": "Sustainer active",
+      "description": "SoundDef looped while the structure is in the Starting or Running state.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

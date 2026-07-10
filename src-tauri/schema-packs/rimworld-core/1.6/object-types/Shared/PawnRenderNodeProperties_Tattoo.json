@@ -1,0 +1,8 @@
+{
+  "objectType": "PawnRenderNodeProperties_Tattoo",
+  "label": "Render node properties (tattoo)",
+  "description": "Render node properties for pawn tattoo rendering. No additional loadable fields beyond the base; ResolveReferences sets skipFlag at runtime.",
+  "inherits": ["PawnRenderNodeProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

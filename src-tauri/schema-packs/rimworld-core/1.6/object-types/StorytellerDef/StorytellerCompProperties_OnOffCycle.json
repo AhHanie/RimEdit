@@ -1,0 +1,180 @@
+{
+  "objectType": "StorytellerCompProperties_OnOffCycle",
+  "label": "On/off cycle comp",
+  "description": "Fires incidents in alternating on/off day windows. The most common comp for pacing threat waves.",
+  "fieldOrder": [
+    "Class",
+    "compClass",
+    "minDaysPassed",
+    "allowedTargetTags",
+    "disallowedTargetTags",
+    "minIncChancePopulationIntentFactor",
+    "enableIfAnyModActive",
+    "disableIfAnyModActive",
+    "onDays",
+    "offDays",
+    "onDaysNoTreeConnectors",
+    "offDaysNoTreeConnectors",
+    "minSpacingDays",
+    "numIncidentsRange",
+    "acceptFractionByDaysPassedCurve",
+    "acceptPercentFactorPerThreatPointsCurve",
+    "acceptPercentFactorPerProgressScoreCurve",
+    "incident",
+    "category",
+    "forceRaidEnemyBeforeDaysPassed"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# StorytellerCompProperties type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime StorytellerComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "minDaysPassed": {
+      "label": "Min days passed",
+      "description": "Earliest in-game day on which this comp can fire.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "allowedTargetTags": {
+      "label": "Allowed target tags",
+      "description": "Restrict this comp to firing at incident targets with one of these tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedTargetTags": {
+      "label": "Disallowed target tags",
+      "description": "Exclude incident targets with any of these tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "minIncChancePopulationIntentFactor": {
+      "label": "Min inc chance population intent factor",
+      "description": "Minimum population-intent multiplier applied to incident chance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.05,
+      "xml": "element"
+    },
+    "enableIfAnyModActive": {
+      "label": "Enable if any mod active",
+      "description": "This comp is active only when at least one mod in this list is loaded.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disableIfAnyModActive": {
+      "label": "Disable if any mod active",
+      "description": "This comp is disabled when any mod in this list is loaded.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "onDays": {
+      "label": "On days",
+      "description": "Duration in days of the active phase when incidents can fire.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "offDays": {
+      "label": "Off days",
+      "description": "Duration in days of the quiet phase when no incidents fire.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "onDaysNoTreeConnectors": {
+      "label": "On days (no tree connectors)",
+      "description": "On-days override used when no Gauranlen tree connectors are present.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "offDaysNoTreeConnectors": {
+      "label": "Off days (no tree connectors)",
+      "description": "Off-days override used when no Gauranlen tree connectors are present.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minSpacingDays": {
+      "label": "Min spacing days",
+      "description": "Minimum days between two incidents from this comp.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "numIncidentsRange": {
+      "label": "Num incidents range",
+      "description": "Number of incidents to fire per on-phase, sampled from this range.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "acceptFractionByDaysPassedCurve": {
+      "label": "Accept fraction by days passed curve",
+      "description": "Probability multiplier based on days elapsed since game start. X = days, Y = fraction.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "acceptPercentFactorPerThreatPointsCurve": {
+      "label": "Accept percent factor per threat points curve",
+      "description": "Probability multiplier based on the incident's threat points. X = points, Y = factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "acceptPercentFactorPerProgressScoreCurve": {
+      "label": "Accept percent factor per progress score curve",
+      "description": "Probability multiplier based on the colony progress score. X = score, Y = factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "incident": {
+      "label": "Incident",
+      "description": "Specific IncidentDef this comp fires. Mutually exclusive with category.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "IncidentDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "category": {
+      "label": "Category",
+      "description": "IncidentCategoryDef from which a random incident is chosen. Mutually exclusive with incident.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "IncidentCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "forceRaidEnemyBeforeDaysPassed": {
+      "label": "Force raid enemy before days passed",
+      "description": "Forces a raid enemy incident if none has fired before this many in-game days.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

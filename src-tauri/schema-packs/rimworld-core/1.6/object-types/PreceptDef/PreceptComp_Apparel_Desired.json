@@ -1,0 +1,30 @@
+{
+  "objectType": "PreceptComp_Apparel_Desired",
+  "label": "Precept comp (apparel desired)",
+  "description": "Makes pawns desire to wear specific apparel as a mild preference.",
+  "fieldOrder": ["Class", "description", "gender"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "gender": {
+      "label": "Gender",
+      "description": "Which gender this apparel desire applies to.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Any", "SupremeGender", "SubordinateGender"] }
+    }
+  }
+}

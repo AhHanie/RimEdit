@@ -1,0 +1,9 @@
+{
+  "objectType": "BedInteractionCellSearchPattern",
+  "label": "Cell search pattern (bed interaction cell)",
+  "description": "Searches for the interaction cell of a bed.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" }
+  }
+}

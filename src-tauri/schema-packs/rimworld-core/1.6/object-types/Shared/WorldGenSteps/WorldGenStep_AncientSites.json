@@ -1,0 +1,22 @@
+{
+  "objectType": "WorldGenStep_AncientSites",
+  "label": "Ancient sites world gen step",
+  "description": "Generates ancient ruin sites scattered across the world map.",
+  "fieldOrder": ["Class", "ancientSitesPer100kTiles"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "ancientSitesPer100kTiles": {
+      "label": "Ancient sites per 100k tiles",
+      "description": "Random range controlling how many ancient sites appear per 100,000 world tiles.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "objectType": "AsymmetricLinkData",
+  "label": "Asymmetric link data",
+  "description": "Settings for asymmetric link rendering. Maps to Verse.AsymmetricLinkData in RimWorld source.",
+  "fieldOrder": [
+    "linkFlags",
+    "linkToDoors",
+    "drawDoorBorderEast",
+    "drawDoorBorderWest"
+  ],
+  "fields": {
+    "linkFlags": {
+      "label": "Link flags",
+      "description": "Flags controlling which adjacent thing types this asymmetric link connects to. Each <li> is one flag value.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "flags": true,
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": [
+          "None",
+          "MapEdge",
+          "Rock",
+          "Wall",
+          "Sandbags",
+          "PowerConduit",
+          "Barricades",
+          "Fences",
+          "Fleshmass",
+          "SolidIce",
+          "BurrowWall",
+          "Custom1",
+          "Custom2",
+          "Custom3",
+          "Custom4",
+          "Custom5",
+          "Custom6",
+          "Custom7",
+          "Custom8",
+          "Custom9",
+          "Custom10"
+        ]
+      },
+      "examples": [
+        "Wall",
+        "Rock",
+        "PowerConduit",
+        "MapEdge"
+      ]
+    },
+    "linkToDoors": {
+      "label": "Link to doors",
+      "description": "Whether this asymmetric link connects to adjacent door things.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawDoorBorderEast": {
+      "label": "Draw door border east",
+      "description": "Border overlay data drawn on the east side of a linked door.",
+      "type": { "kind": "object", "schemaRef": "AsymmetricLinkBorderData" },
+      "required": false,
+      "xml": "object"
+    },
+    "drawDoorBorderWest": {
+      "label": "Draw door border west",
+      "description": "Border overlay data drawn on the west side of a linked door.",
+      "type": { "kind": "object", "schemaRef": "AsymmetricLinkBorderData" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

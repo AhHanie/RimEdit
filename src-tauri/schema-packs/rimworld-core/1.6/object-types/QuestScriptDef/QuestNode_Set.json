@@ -1,0 +1,39 @@
+{
+  "objectType": "QuestNode_Set",
+  "label": "QuestNode Set",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_Set.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "name",
+    "value",
+    "convertTo"
+  ],
+  "fields": {
+    "name": {
+      "description": "Slate variable name to set.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "value": {
+      "description": "SlateRef<object> literal, expression, or $varName value.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "convertTo": {
+      "description": "SlateRef<Type> C# type name or $varName for runtime conversion.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

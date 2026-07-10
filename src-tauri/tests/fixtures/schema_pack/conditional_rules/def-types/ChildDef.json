@@ -1,0 +1,6 @@
+{
+  "defType": "ChildDef",
+  "label": "Child Def",
+  "inherits": ["TestDef"],
+  "fields": {}
+}

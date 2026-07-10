@@ -1,0 +1,11 @@
+{
+  "defType": "BaseChoiceDef",
+  "abstractType": true,
+  "fields": {
+    "defName": {
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "objectType": "SoundParamSource_SourceAge",
+  "label": "Sound param source: source age",
+  "description": "Reads elapsed time since the sound source was created as the parameter value.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class", "timeType"],
+  "fields": {
+    "timeType": {
+      "label": "Time type",
+      "description": "Whether age is measured in game ticks or real-time seconds.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Ticks",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Ticks", "RealtimeSeconds"]
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "objectType": "RitualOutcomeComp",
+  "label": "Ritual outcome comp",
+  "description": "Base schema for RitualOutcomeEffectDef comps. The specific comp schema is selected by the li Class attribute. Unknown Class values fall back to this base schema.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RitualOutcomeComp",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "RitualOutcomeComp_AtLeastOneSpectator": "RitualOutcomeComp_AtLeastOneSpectator",
+      "RitualOutcomeComp_BuildingOfAnyDefPresent": "RitualOutcomeComp_BuildingOfAnyDefPresent",
+      "RitualOutcomeComp_BuildingOfDefPresent": "RitualOutcomeComp_BuildingOfDefPresent",
+      "RitualOutcomeComp_BuildingOfDefUsed": "RitualOutcomeComp_BuildingOfDefUsed",
+      "RitualOutcomeComp_DestroyConsumableBuilding": "RitualOutcomeComp_DestroyConsumableBuilding",
+      "RitualOutcomeComp_DuelistDied": "RitualOutcomeComp_DuelistDied",
+      "RitualOutcomeComp_GravshipFacilities": "RitualOutcomeComp_GravshipFacilities",
+      "RitualOutcomeComp_Indoors": "RitualOutcomeComp_Indoors",
+      "RitualOutcomeComp_LovedOnePresent": "RitualOutcomeComp_LovedOnePresent",
+      "RitualOutcomeComp_NumActiveLoudspeakers": "RitualOutcomeComp_NumActiveLoudspeakers",
+      "RitualOutcomeComp_NumParticipantsWithTag": "RitualOutcomeComp_NumParticipantsWithTag",
+      "RitualOutcomeComp_NumPlayedDrums": "RitualOutcomeComp_NumPlayedDrums",
+      "RitualOutcomeComp_ParticipantCount": "RitualOutcomeComp_ParticipantCount",
+      "RitualOutcomeComp_PawnAge": "RitualOutcomeComp_PawnAge",
+      "RitualOutcomeComp_PawnExpectations": "RitualOutcomeComp_PawnExpectations",
+      "RitualOutcomeComp_PawnSkill": "RitualOutcomeComp_PawnSkill",
+      "RitualOutcomeComp_PawnStatScaled": "RitualOutcomeComp_PawnStatScaled",
+      "RitualOutcomeComp_RitualSeatPresent": "RitualOutcomeComp_RitualSeatPresent",
+      "RitualOutcomeComp_RitualTargetDefs": "RitualOutcomeComp_RitualTargetDefs",
+      "RitualOutcomeComp_RoleChangeParticipants": "RitualOutcomeComp_RoleChangeParticipants",
+      "RitualOutcomeComp_RolePresentNotSubstituted": "RitualOutcomeComp_RolePresentNotSubstituted",
+      "RitualOutcomeComp_RoomStat": "RitualOutcomeComp_RoomStat",
+      "RitualOutcomeComp_TargetThingStat": "RitualOutcomeComp_TargetThingStat",
+      "RitualOutcomeComp_WeaponUsed": "RitualOutcomeComp_WeaponUsed"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI for this comp. Protected field in source but loaded by DirectXml.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available, e.g. in the ideology browser. Protected field in source but loaded by DirectXml.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Fixed quality offset contributed by this comp when it applies. Protected field in source but loaded by DirectXml.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

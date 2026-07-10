@@ -1,0 +1,88 @@
+{
+  "objectType": "QuestNode_End",
+  "label": "QuestNode End",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_End.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignal",
+    "outcome",
+    "signalListenMode",
+    "sendStandardLetter",
+    "goodwillChangeAmount",
+    "goodwillChangeFactionOf",
+    "goodwillChangeReason"
+  ],
+  "fields": {
+    "inSignal": {
+      "description": "Signal name that triggers quest end.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "outcome": {
+      "description": "SlateRef<QuestEndOutcome> literal or $varName. Allowed literals: Unknown, Success, Fail, InvalidPreAcceptance.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Unknown",
+          "Success",
+          "Fail",
+          "InvalidPreAcceptance"
+        ]
+      }
+    },
+    "signalListenMode": {
+      "description": "SlateRef<SignalListenMode?>. Allowed SignalListenMode literals: OngoingOnly, NotYetAcceptedOnly, OngoingOrNotYetAccepted, HistoricalOnly, Always; also accepts $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "sendStandardLetter": {
+      "description": "SlateRef<bool?> literal, expression, or $varName; controls completion letter.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "goodwillChangeAmount": {
+      "description": "SlateRef<int> goodwill change amount.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "goodwillChangeFactionOf": {
+      "description": "Slate variable holding the thing whose faction receives goodwill change.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "goodwillChangeReason": {
+      "description": "HistoryEventDef def name or $varName used as goodwill-change reason.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HistoryEventDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

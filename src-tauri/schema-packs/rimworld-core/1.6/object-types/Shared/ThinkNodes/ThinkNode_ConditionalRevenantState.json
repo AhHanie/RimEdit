@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalRevenantState",
+  "label": "Think node conditional revenant state",
+  "description": "Satisfied when the pawn's CompRevenant is in the specified revenant state (Anomaly DLC).",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["state"],
+  "fields": {
+    "state": {
+      "label": "State",
+      "description": "The revenant state the pawn must be in for this conditional to be satisfied.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Hidden", "Hunting", "Haunting", "Revealed", "Fleeing"] }
+    }
+  }
+}

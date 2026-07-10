@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- header comment -->
+  <ThingDef Abstract="True" Name="BaseMineable">
+    <defName>BaseMineable</defName>
+    <!-- mid comment -->
+    <description><![CDATA[A <mineable> rock & stone resource.]]></description>
+    <label>base mineable</label>
+    <selfClosing attr="val"/>
+  </ThingDef>
+
+</Defs>

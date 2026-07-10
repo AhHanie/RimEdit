@@ -1,0 +1,27 @@
+{
+  "objectType": "TagFilter",
+  "label": "Tag filter",
+  "description": "Filters items by matching string tags. Acts as whitelist or blacklist depending on the whitelist field.",
+  "fieldOrder": [
+    "tags",
+    "whitelist"
+  ],
+  "fields": {
+    "tags": {
+      "label": "Tags",
+      "description": "String tags to match against when filtering.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "whitelist": {
+      "label": "Whitelist",
+      "description": "If true, only items that share a tag with this list are allowed. If false, items that share a tag are blocked.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

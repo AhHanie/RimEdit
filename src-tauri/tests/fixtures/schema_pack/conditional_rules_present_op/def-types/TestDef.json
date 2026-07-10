@@ -1,0 +1,36 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "sourceField": {
+      "label": "Source field",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "target": {
+      "label": "Target",
+      "type": { "kind": "list" },
+      "items": { "kind": "integer" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "validationRules": {
+    "target-required-when-source-present": {
+      "kind": "requiredWhen",
+      "field": "target",
+      "when": {
+        "field": "sourceField",
+        "operator": "present"
+      },
+      "message": "Target is required when sourceField is present."
+    }
+  }
+}

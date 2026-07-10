@@ -1,0 +1,35 @@
+{
+  "defType": "JoyKindDef",
+  "label": "Joy kind",
+  "description": "Classifies a type of joy activity. Referenced by JoyGiverDef, JobDef, and ThingDef ingestible/building properties to categorize how a pawn fulfills its joy need.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "titleRequiredAny",
+    "needsThing"
+  ],
+  "fields": {
+    "titleRequiredAny": {
+      "label": "Title required (any)",
+      "description": "Royal titles of which the pawn must hold at least one for this joy kind to be accessible. Absent means no title restriction.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "RoyalTitleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "needsThing": {
+      "label": "Needs thing",
+      "description": "If true, this joy kind requires an associated thing (building or item) to be accessible before the activity can be assigned.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {}
+}

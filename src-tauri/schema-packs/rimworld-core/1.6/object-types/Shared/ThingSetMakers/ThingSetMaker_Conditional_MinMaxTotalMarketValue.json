@@ -1,0 +1,21 @@
+{
+  "objectType": "ThingSetMaker_Conditional_MinMaxTotalMarketValue",
+  "label": "Min/max market value conditional maker",
+  "description": "Runs the nested maker only when the caller-supplied total market value target falls within minMaxTotalMarketValue.",
+  "inherits": ["ThingSetMaker_Conditional"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "thingSetMaker",
+    "minMaxTotalMarketValue"
+  ],
+  "fields": {
+    "minMaxTotalMarketValue": {
+      "label": "Min/max total market value",
+      "description": "The nested maker runs only if the generation target market value is within this range.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

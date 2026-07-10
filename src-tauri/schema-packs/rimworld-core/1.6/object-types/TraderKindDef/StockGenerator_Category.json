@@ -1,0 +1,52 @@
+{
+  "objectType": "StockGenerator_Category",
+  "label": "Category generator",
+  "description": "Generates items drawn from all ThingDefs that are descendants of a ThingCategoryDef. Supports excluding specific defs or sub-categories.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": ["categoryDef", "thingDefCountRange", "excludedThingDefs", "excludedCategories"],
+  "fields": {
+    "categoryDef": {
+      "label": "Category def",
+      "description": "ThingCategoryDef whose descendant ThingDefs are eligible for generation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "thingDefCountRange": {
+      "label": "Thing def count range",
+      "description": "How many distinct ThingDefs to pick from the category per generation pass. Source default IntRange.One.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "excludedThingDefs": {
+      "label": "Excluded thing defs",
+      "description": "ThingDefs explicitly excluded from generation even if they are descendants of categoryDef.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "excludedCategories": {
+      "label": "Excluded categories",
+      "description": "ThingCategoryDefs whose descendants are excluded from generation.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

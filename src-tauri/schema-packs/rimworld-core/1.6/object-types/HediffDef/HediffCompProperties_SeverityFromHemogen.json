@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_SeverityFromHemogen",
+  "label": "Severity from hemogen comp",
+  "description": "Scales hediff severity based on the pawn's hemogen level.",
+  "fieldOrder": ["Class", "compClass", "severityPerHemogen"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "severityPerHemogen": {
+      "label": "Severity per hemogen",
+      "description": "Severity change per point of hemogen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

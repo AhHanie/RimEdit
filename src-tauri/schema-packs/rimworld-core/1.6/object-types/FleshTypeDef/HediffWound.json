@@ -1,0 +1,40 @@
+{
+  "objectType": "HediffWound",
+  "label": "Hediff wound",
+  "description": "Associates a specific hediff with a list of wound overlays that replace the generic ones when that hediff is present. Nested class inside FleshTypeDef.",
+  "fieldOrder": [
+    "onlyHumanlikes",
+    "hediff",
+    "wounds"
+  ],
+  "fields": {
+    "onlyHumanlikes": {
+      "label": "Only humanlikes",
+      "description": "Only apply these wound overlays to humanlike pawns. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "hediff": {
+      "label": "Hediff",
+      "description": "The hediff this entry matches. When a pawn has this hediff the wound overlays in this group are selected.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "wounds": {
+      "label": "Wounds",
+      "description": "Wound overlays to render when the matched hediff is present on a pawn of this flesh type.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Wound" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

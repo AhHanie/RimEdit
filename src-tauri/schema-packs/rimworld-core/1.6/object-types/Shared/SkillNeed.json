@@ -1,0 +1,46 @@
+{
+  "objectType": "SkillNeed",
+  "label": "Skill need",
+  "description": "Base schema for skill requirements that offset or scale a stat. The specific evaluation strategy is selected by the li Class attribute.",
+  "fieldOrder": ["Class", "skill", "required"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "SkillNeed",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "SkillNeed_BaseBonus": "SkillNeed_BaseBonus",
+      "SkillNeed_Direct": "SkillNeed_Direct",
+      "SkillNeed_Curve": "SkillNeed_Curve"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# SkillNeed subclass used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef that this need evaluates.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "required": {
+      "label": "Required",
+      "description": "If true, the pawn must have this skill for the stat to be enabled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

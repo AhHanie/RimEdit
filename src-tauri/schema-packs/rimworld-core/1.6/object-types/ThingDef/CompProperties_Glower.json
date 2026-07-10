@@ -1,0 +1,54 @@
+{
+  "objectType": "CompProperties_Glower",
+  "label": "Glower comp",
+  "description": "Adds a light source to the thing.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": ["overlightRadius", "glowRadius", "glowColor", "colorPickerEnabled", "darklightToggle", "overrideIsCavePlant"],
+  "fields": {
+    "overlightRadius": {
+      "label": "Overlight radius",
+      "description": "Radius of the area that receives extra lighting beyond the normal glow.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "glowRadius": {
+      "label": "Glow radius",
+      "description": "Radius of the glow in cells. Maximum 40.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 14,
+      "xml": "element",
+      "validationHints": { "max": 40 }
+    },
+    "glowColor": {
+      "label": "Glow color",
+      "description": "RGBA color of the glow as (R,G,B,A) with values 0-255.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(255,255,255,0)", "(252,187,113,0)"]
+    },
+    "colorPickerEnabled": {
+      "label": "Color picker enabled",
+      "description": "Whether colonists can recolor the glow.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "darklightToggle": {
+      "label": "Darklight toggle",
+      "description": "Whether colonists can toggle between normal light and dark light.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "overrideIsCavePlant": {
+      "label": "Override is cave plant",
+      "description": "Whether this overrides the cave plant light check.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

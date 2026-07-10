@@ -1,0 +1,47 @@
+{
+  "defType": "ComplexLayoutDef",
+  "label": "Complex layout",
+  "description": "A structure layout that supports procedural threats, crate rewards, and hostile faction assignment. Inherits from StructureLayoutDef.",
+  "inherits": ["StructureLayoutDef"],
+  "fieldOrder": [
+    "threats", "roomRewardCrateFactor", "fixedHostileFactionChance", "rewardThingSetMakerDef"
+  ],
+  "fields": {
+    "threats": {
+      "label": "Threats",
+      "description": "Weighted threat entries placed in this complex. Each element name is the ComplexThreatDef defName; scalar text is the selection weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ComplexThreat" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "ComplexThreatDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "selectionWeight"
+    },
+    "roomRewardCrateFactor": {
+      "label": "Room reward crate factor",
+      "description": "Multiplier applied to the number of reward crates generated per room.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.5
+    },
+    "fixedHostileFactionChance": {
+      "label": "Fixed hostile faction chance",
+      "description": "Probability that the complex is assigned a fixed hostile faction.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.25,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "rewardThingSetMakerDef": {
+      "label": "Reward thing set maker",
+      "description": "ThingSetMakerDef used to generate reward items placed in the complex.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingSetMakerDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

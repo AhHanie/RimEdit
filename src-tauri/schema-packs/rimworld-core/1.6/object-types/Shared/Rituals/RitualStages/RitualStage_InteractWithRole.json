@@ -1,0 +1,49 @@
+{
+  "objectType": "RitualStage_InteractWithRole",
+  "label": "Ritual stage (interact with role)",
+  "description": "Stage where pawns in one role interact with pawns in another role. Adds targetId and per-pawn target mapping.",
+  "fieldOrder": [
+    "Class", "defaultDuty", "endTriggers", "failTriggers", "preAction", "postAction",
+    "interruptedAction", "pawnLeaveAction", "highlightRolePositions",
+    "highlightRolePawns", "tickActionMaker", "visualEffectDef", "spectatorsRequired",
+    "essential", "ignoreDurationToFinishAfterStage", "allowedSpectateSidesOverride",
+    "spectateDistanceOverride", "showProgressBar", "roleBehaviors",
+    "targetId", "targets"
+  ],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "defaultDuty": { "label": "Default duty", "type": { "kind": "defReference" }, "required": false, "xml": "element", "reference": { "defType": "DutyDef", "allowAbstract": false, "scope": "allSources" } },
+    "endTriggers": { "label": "End triggers", "type": { "kind": "list" }, "items": { "kind": "object", "schemaRef": "StageEndTrigger" }, "required": false, "xml": "listOfLi" },
+    "failTriggers": { "label": "Fail triggers", "type": { "kind": "list" }, "items": { "kind": "object", "schemaRef": "StageFailTrigger" }, "required": false, "xml": "listOfLi" },
+    "preAction": { "label": "Pre-action", "type": { "kind": "object", "schemaRef": "RitualStageAction" }, "required": false, "xml": "object" },
+    "postAction": { "label": "Post-action", "type": { "kind": "object", "schemaRef": "RitualStageAction" }, "required": false, "xml": "object" },
+    "interruptedAction": { "label": "Interrupted action", "type": { "kind": "object", "schemaRef": "RitualStageAction" }, "required": false, "xml": "object" },
+    "pawnLeaveAction": { "label": "Pawn leave action", "type": { "kind": "object", "schemaRef": "RitualStageAction" }, "required": false, "xml": "object" },
+    "highlightRolePositions": { "label": "Highlight role positions", "type": { "kind": "list" }, "items": { "kind": "string" }, "required": false, "xml": "listOfLi" },
+    "highlightRolePawns": { "label": "Highlight role pawns", "type": { "kind": "list" }, "items": { "kind": "string" }, "required": false, "xml": "listOfLi" },
+    "tickActionMaker": { "label": "Tick action maker", "type": { "kind": "object", "schemaRef": "RitualStageTickActionMaker" }, "required": false, "xml": "object" },
+    "visualEffectDef": { "label": "Visual effect def", "type": { "kind": "defReference" }, "required": false, "xml": "element", "reference": { "defType": "RitualVisualEffectDef", "allowAbstract": false, "scope": "allSources" } },
+    "spectatorsRequired": { "label": "Spectators required", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "essential": { "label": "Essential", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "ignoreDurationToFinishAfterStage": { "label": "Ignore duration to finish after stage", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "allowedSpectateSidesOverride": { "label": "Allowed spectate sides override", "type": { "kind": "enum" }, "required": false, "defaultValue": "None", "xml": "element", "validationHints": { "allowedValues": ["None", "Horizontal", "Vertical", "East", "West", "North", "South", "All"] } },
+    "spectateDistanceOverride": { "label": "Spectate distance override", "type": { "kind": "intRange" }, "required": false, "defaultValue": "0~0", "xml": "element" },
+    "showProgressBar": { "label": "Show progress bar", "type": { "kind": "boolean" }, "required": false, "defaultValue": true, "xml": "element" },
+    "roleBehaviors": { "label": "Role behaviors", "type": { "kind": "list" }, "items": { "kind": "object", "schemaRef": "RitualRoleBehavior" }, "required": false, "xml": "listOfLi" },
+    "targetId": {
+      "label": "Target ID",
+      "description": "Role ID of the pawn used as the secondary focus during this stage.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "targets": {
+      "label": "Targets",
+      "description": "List of explicit pawn-to-target mappings for multi-interact stages.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualStage_InteractWithRole_Target" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

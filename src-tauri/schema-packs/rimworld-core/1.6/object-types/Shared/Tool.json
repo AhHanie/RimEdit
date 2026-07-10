@@ -1,0 +1,177 @@
+{
+  "objectType": "Tool",
+  "label": "Tool",
+  "description": "A melee attack capability for a weapon or pawn, defining power, reach, and capacities.",
+  "fieldOrder": [
+    "label",
+    "labelNoLocation",
+    "labelUsedInLogging",
+    "id",
+    "capacities",
+    "power",
+    "armorPenetration",
+    "cooldownTime",
+    "chanceFactor",
+    "linkedBodyPartsGroup",
+    "ensureLinkedBodyPartsGroupAlwaysUsable",
+    "alwaysTreatAsWeapon",
+    "hediff",
+    "hediffSeverity",
+    "extraMeleeDamages",
+    "soundMeleeHit",
+    "soundMeleeMiss",
+    "surpriseAttack",
+    "neverUseMeleeWeapon"
+  ],
+  "fields": {
+    "label": {
+      "label": "Label",
+      "description": "Display name for this tool (e.g. 'stock', 'blade', 'fist').",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelNoLocation": {
+      "label": "Label (no location)",
+      "description": "Alternative label used when the body-part location is not shown.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelUsedInLogging": {
+      "label": "Label used in logging",
+      "description": "Whether this tool's label appears in combat log entries.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "id": {
+      "label": "ID",
+      "description": "Unique string identifier for this tool entry within the def, used by hediff references.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "capacities": {
+      "label": "Capacities",
+      "description": "ToolCapacityDef references for the damage types this tool can inflict.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ToolCapacityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "power": {
+      "label": "Power",
+      "description": "Base damage amount of this melee attack.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "armorPenetration": {
+      "label": "Armor penetration",
+      "description": "Armor penetration factor (0–1). -1 derives a value from power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "cooldownTime": {
+      "label": "Cooldown time",
+      "description": "Seconds between attacks with this tool.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 2,
+      "xml": "element"
+    },
+    "chanceFactor": {
+      "label": "Chance factor",
+      "description": "Multiplier on the relative probability this tool is chosen in a melee exchange.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "linkedBodyPartsGroup": {
+      "label": "Linked body parts group",
+      "description": "BodyPartGroupDef whose parts must be present and usable for this tool to be available.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "BodyPartGroupDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ensureLinkedBodyPartsGroupAlwaysUsable": {
+      "label": "Ensure linked body parts always usable",
+      "description": "If true, the linked body part group is always considered able to use this tool.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "alwaysTreatAsWeapon": {
+      "label": "Always treat as weapon",
+      "description": "If true, this tool counts as a weapon attack regardless of pawn equipment.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hediff": {
+      "label": "Hediff",
+      "description": "HediffDef applied to the target on a successful hit with this tool.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "hediffSeverity": {
+      "label": "Hediff severity",
+      "description": "Severity of the hediff applied on hit. -1 uses the hediff's initial severity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "extraMeleeDamages": {
+      "label": "Extra melee damages",
+      "description": "Additional damage instances fired alongside this tool's primary attack.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ExtraDamage" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "soundMeleeHit": {
+      "label": "Sound melee hit",
+      "description": "SoundDef played when this tool connects with a hit.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundMeleeMiss": {
+      "label": "Sound melee miss",
+      "description": "SoundDef played when this tool misses.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "surpriseAttack": {
+      "label": "Surprise attack",
+      "description": "Extra damage burst applied on the first hit when ambushing an unaware target.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "neverUseMeleeWeapon": {
+      "label": "Never use melee weapon",
+      "description": "If true, this tool is used only when the pawn has no equipped melee weapon.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

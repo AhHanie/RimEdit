@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_Disorientation",
+  "label": "Disorientation comp",
+  "description": "Periodically disorients the pawn.",
+  "fieldOrder": ["Class", "compClass", "maxMtbHours", "minMtbHours"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxMtbHours": {
+      "label": "Max MTB hours",
+      "description": "Maximum mean time between disorientation events in hours.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minMtbHours": {
+      "label": "Min MTB hours",
+      "description": "Minimum mean time between disorientation events in hours.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

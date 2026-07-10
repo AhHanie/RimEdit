@@ -1,0 +1,46 @@
+{
+  "objectType": "ChemicalBiostatOverride",
+  "label": "Chemical biostat override",
+  "description": "Overrides the biostat values from the template for a specific chemical when genes are expanded from a GeneTemplateDef.",
+  "fieldOrder": [
+    "chemical",
+    "biostatCpx",
+    "biostatMet",
+    "biostatArc"
+  ],
+  "fields": {
+    "chemical": {
+      "label": "Chemical",
+      "description": "ChemicalDef whose biostat values are overridden by this entry.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ChemicalDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "biostatCpx": {
+      "label": "Biostat complexity",
+      "description": "Overrides the template-level biostatCpx for this chemical. Omit to inherit the template value.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "biostatMet": {
+      "label": "Biostat metabolism",
+      "description": "Overrides the template-level biostatMet for this chemical. Omit to inherit the template value.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "biostatArc": {
+      "label": "Biostat archite",
+      "description": "Overrides the template-level biostatArc for this chemical. Omit to inherit the template value.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

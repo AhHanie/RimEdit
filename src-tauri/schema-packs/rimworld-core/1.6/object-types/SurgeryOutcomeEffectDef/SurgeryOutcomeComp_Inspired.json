@@ -1,0 +1,21 @@
+{
+  "objectType": "SurgeryOutcomeComp_Inspired",
+  "label": "Surgery outcome comp (inspired)",
+  "description": "Applies a quality factor multiplier when the surgeon is under a specific inspiration.",
+  "inherits": ["SurgeryOutcomeComp_Factor"],
+  "fieldOrder": ["Class", "factor", "inspirationDef"],
+  "fields": {
+    "inspirationDef": {
+      "label": "Inspiration def",
+      "description": "InspirationDef that the surgeon must have active for the factor to apply.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "InspirationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

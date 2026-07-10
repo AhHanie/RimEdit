@@ -1,0 +1,30 @@
+{
+  "objectType": "CompProperties_HeatPusher",
+  "label": "Heat pusher comp",
+  "description": "Pushes heat into the room, raising temperature.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": ["heatPerSecond", "heatPushMaxTemperature", "heatPushMinTemperature"],
+  "fields": {
+    "heatPerSecond": {
+      "label": "Heat per second",
+      "description": "Amount of heat pushed into the room per second.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "heatPushMaxTemperature": {
+      "label": "Heat push max temperature",
+      "description": "The component stops pushing heat when the room is above this temperature.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "heatPushMinTemperature": {
+      "label": "Heat push min temperature",
+      "description": "The component stops pushing heat when the room is below this temperature.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

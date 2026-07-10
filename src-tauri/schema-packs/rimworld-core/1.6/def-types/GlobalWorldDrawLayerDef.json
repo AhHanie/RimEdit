@@ -1,0 +1,33 @@
+{
+  "defType": "GlobalWorldDrawLayerDef",
+  "label": "Global world draw layer",
+  "description": "Defines a global world draw layer. The worldDrawLayer class is instantiated at startup to render a persistent visual layer over the world map.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "worldDrawLayer"
+  ],
+  "fields": {
+    "worldDrawLayer": {
+      "label": "World draw layer",
+      "description": "C# WorldDrawLayerBase subclass instantiated to render this global world layer. Value is a class name resolved by the runtime.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "GlobalDrawLayer_Stars",
+        "GlobalDrawLayer_Sun"
+      ]
+    }
+  },
+  "templates": {
+    "new-global-world-draw-layer": {
+      "label": "New global world draw layer",
+      "description": "Global world draw layer with a renderer class.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "worldDrawLayer"],
+      "fieldValues": {}
+    }
+  }
+}

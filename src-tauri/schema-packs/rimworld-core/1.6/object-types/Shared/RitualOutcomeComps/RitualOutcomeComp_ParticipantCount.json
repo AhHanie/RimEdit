@@ -1,0 +1,44 @@
+{
+  "objectType": "RitualOutcomeComp_ParticipantCount",
+  "label": "Ritual outcome comp (participant count)",
+  "description": "Scores quality based on the number of pawns who participated for at least half the ritual duration. Uses the curve to map participant count to quality offset.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Not used directly; quality is computed from the curve.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "SimpleCurve mapping participant count (X) to quality offset (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

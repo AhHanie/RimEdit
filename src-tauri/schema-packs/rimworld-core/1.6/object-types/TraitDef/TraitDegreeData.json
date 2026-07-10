@@ -1,0 +1,432 @@
+{
+  "objectType": "TraitDegreeData",
+  "label": "Trait degree data",
+  "description": "Effect data for one degree level of a trait, including stat changes, mental state behavior, skill gains, and visual properties.",
+  "fieldOrder": [
+    "label",
+    "labelMale",
+    "labelFemale",
+    "description",
+    "degree",
+    "commonality",
+    "statOffsets",
+    "statFactors",
+    "thinkTree",
+    "randomMentalState",
+    "randomMentalStateMtbDaysMoodCurve",
+    "forcedMentalState",
+    "forcedMentalStateMtbDays",
+    "disallowedMentalStates",
+    "disallowedThoughts",
+    "disallowedThoughtsFromIngestion",
+    "extraThoughtsFromIngestion",
+    "disallowedInspirations",
+    "mentalBreakInspirationGainSet",
+    "mentalBreakInspirationGainReasonText",
+    "allowedMeditationFocusTypes",
+    "disallowedMeditationFocusTypes",
+    "mentalBreakInspirationGainChance",
+    "theOnlyAllowedMentalBreaks",
+    "skillGains",
+    "socialFightChanceFactor",
+    "marketValueFactorOffset",
+    "randomDiseaseMtbDays",
+    "hungerRateFactor",
+    "painOffset",
+    "painFactor",
+    "mentalStateGiverClass",
+    "abilities",
+    "ingestibleModifiers",
+    "aptitudes",
+    "enablesNeeds",
+    "disablesNeeds",
+    "renderNodeProperties",
+    "possessions"
+  ],
+  "fields": {
+    "label": {
+      "label": "Label",
+      "description": "Display name for this trait degree. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelMale": {
+      "label": "Label (male)",
+      "description": "Male-specific label override. Falls back to label when absent. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelFemale": {
+      "label": "Label (female)",
+      "description": "Female-specific label override. Falls back to label when absent. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Tooltip description shown in trait info windows. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "degree": {
+      "label": "Degree",
+      "description": "Integer degree value identifying this entry within the parent TraitDef. Defaults to 0 when the trait has a single degree.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight for random selection of this degree when the trait is chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Flat stat offsets applied to the pawn while this trait degree is active. Keys are StatDef defNames; values are float offsets.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers applied to the pawn while this trait degree is active. Keys are StatDef defNames; values are float factors.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "thinkTree": {
+      "label": "Think tree",
+      "description": "ThinkTreeDef assigned to the pawn when this trait degree is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThinkTreeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "randomMentalState": {
+      "label": "Random mental state",
+      "description": "MentalStateDef that can trigger randomly based on the mood curve.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MentalStateDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "randomMentalStateMtbDaysMoodCurve": {
+      "label": "Random mental state MTB days (mood curve)",
+      "description": "Piecewise linear curve mapping current mood to mean time between mental state triggers in days.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "forcedMentalState": {
+      "label": "Forced mental state",
+      "description": "MentalStateDef that triggers at fixed intervals regardless of mood.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MentalStateDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "forcedMentalStateMtbDays": {
+      "label": "Forced mental state MTB days",
+      "description": "Mean time in days between forced mental state triggers. Negative means disabled.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1.0,
+      "xml": "element"
+    },
+    "disallowedMentalStates": {
+      "label": "Disallowed mental states",
+      "description": "MentalStateDefs that cannot trigger for pawns with this trait degree.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "MentalStateDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disallowedThoughts": {
+      "label": "Disallowed thoughts",
+      "description": "ThoughtDefs that cannot be added to pawns with this trait degree.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disallowedThoughtsFromIngestion": {
+      "label": "Disallowed thoughts from ingestion",
+      "description": "Ingestion thoughts suppressed for pawns with this trait degree, keyed by ingestible or meat source.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitIngestionThoughtsOverride" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "extraThoughtsFromIngestion": {
+      "label": "Extra thoughts from ingestion",
+      "description": "Additional ingestion thoughts granted to pawns with this trait degree, keyed by ingestible or meat source.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitIngestionThoughtsOverride" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedInspirations": {
+      "label": "Disallowed inspirations",
+      "description": "InspirationDefs that cannot trigger for pawns with this trait degree.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "InspirationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "mentalBreakInspirationGainSet": {
+      "label": "Mental break inspiration gain set",
+      "description": "InspirationDefs from which one is randomly selected when a mental break inspiration is triggered.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "InspirationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "mentalBreakInspirationGainReasonText": {
+      "label": "Mental break inspiration gain reason text",
+      "description": "Text shown to explain why a mental break granted an inspiration. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowedMeditationFocusTypes": {
+      "label": "Allowed meditation focus types",
+      "description": "If set, restricts which MeditationFocusDefs are available to pawns with this trait degree to this list.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "MeditationFocusDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disallowedMeditationFocusTypes": {
+      "label": "Disallowed meditation focus types",
+      "description": "MeditationFocusDefs that cannot be used by pawns with this trait degree.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "MeditationFocusDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "mentalBreakInspirationGainChance": {
+      "label": "Mental break inspiration gain chance",
+      "description": "Probability (0-1) of gaining an inspiration from the mental break inspiration set when a mental break ends.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "theOnlyAllowedMentalBreaks": {
+      "label": "The only allowed mental breaks",
+      "description": "If set, only these MentalBreakDefs can trigger for pawns with this trait degree.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "MentalBreakDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "skillGains": {
+      "label": "Skill gains",
+      "description": "Skill level adjustments applied when a pawn has this trait degree. Child element names are SkillDef defNames; text is the integer offset.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillGain" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "skill",
+      "valueField": "amount",
+      "keyReference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "socialFightChanceFactor": {
+      "label": "Social fight chance factor",
+      "description": "Multiplier applied to the chance that a social interaction escalates to a fight.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "marketValueFactorOffset": {
+      "label": "Market value factor offset",
+      "description": "Flat offset added to the pawn's market value factor while this trait degree is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "randomDiseaseMtbDays": {
+      "label": "Random disease MTB days",
+      "description": "Mean time in days between random disease events for pawns with this trait degree. Zero means no random diseases.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "hungerRateFactor": {
+      "label": "Hunger rate factor",
+      "description": "Multiplier applied to the pawn's hunger rate while this trait degree is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "painOffset": {
+      "label": "Pain offset",
+      "description": "Flat offset added to the pawn's perceived pain level while this trait degree is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "painFactor": {
+      "label": "Pain factor",
+      "description": "Multiplier applied to the pawn's perceived pain level while this trait degree is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "mentalStateGiverClass": {
+      "label": "Mental state giver class",
+      "description": "C# TraitMentalStateGiver subclass controlling how random mental states are triggered for this degree.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["TraitMentalStateGiver"]
+    },
+    "abilities": {
+      "label": "Abilities",
+      "description": "AbilityDefs granted to pawns with this trait degree.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "AbilityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "ingestibleModifiers": {
+      "label": "Ingestible modifiers",
+      "description": "Per-item ingestion modifiers applied when a pawn with this trait degree consumes a specific ingestible.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "IngestibleModifiers" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "aptitudes": {
+      "label": "Aptitudes",
+      "description": "Skill aptitude adjustments applied to pawns with this trait degree.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Aptitude" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "enablesNeeds": {
+      "label": "Enables needs",
+      "description": "NeedDefs added to the pawn's needs list when this trait degree is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "NeedDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disablesNeeds": {
+      "label": "Disables needs",
+      "description": "NeedDefs removed from the pawn's needs list when this trait degree is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "NeedDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "renderNodeProperties": {
+      "label": "Render node properties",
+      "description": "Pawn render node properties added to the pawn's visual render tree when this trait degree is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnRenderNodeProperties" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "possessions": {
+      "label": "Possessions",
+      "description": "Items given to pawns with this trait degree when spawned. Child element names are ThingDef defNames; text is an IntRange count.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PossessionThingDefCountClass" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "key",
+      "valueField": "value",
+      "keyReference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

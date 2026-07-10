@@ -1,0 +1,17 @@
+{
+  "objectType": "ScenPart_PawnFilter_Age",
+  "label": "Pawn filter (age)",
+  "description": "Filters starting pawns to only allow those within a specified age range.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "allowedAgeRange"],
+  "fields": {
+    "allowedAgeRange": {
+      "label": "Allowed age range",
+      "description": "Age range (in years) that starting pawns must fall within. Pawns outside this range are rejected.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["20~40", "0~999999"]
+    }
+  }
+}

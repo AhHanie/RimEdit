@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <ThingDef>
+    <defName>FixtureGraphicMulti</defName>
+    <graphicData>
+      <texPath>Things/Fixture/Multi/FixtureMulti</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+    </graphicData>
+  </ThingDef>
+</Defs>

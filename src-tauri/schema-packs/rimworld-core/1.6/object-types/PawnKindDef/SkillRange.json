@@ -1,0 +1,31 @@
+{
+  "objectType": "SkillRange",
+  "label": "Skill range",
+  "description": "Associates a skill with an integer level range used to set the starting level when generating a pawn of this kind.",
+  "fieldOrder": [
+    "skill",
+    "range"
+  ],
+  "fields": {
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef that this range applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "range": {
+      "label": "Range",
+      "description": "Integer range for the starting skill level. Written as min~max, for example 4~8.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["4~8", "0~20", "10~14"]
+    }
+  }
+}

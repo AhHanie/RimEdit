@@ -1,0 +1,115 @@
+{
+  "objectType": "ScatterGroup",
+  "label": "Scatter group",
+  "description": "Defines a weighted group of things to scatter together within a cluster rect.",
+  "fieldOrder": [
+    "things",
+    "stackSizeRange",
+    "spawnForbidden",
+    "weight",
+    "spawnAtCenter",
+    "spawnAtCenterFilthDef",
+    "indoorRuin",
+    "coveredCellsPer10Cells",
+    "filthDef",
+    "filthExpandBy",
+    "filthChance",
+    "clusterRectRadius"
+  ],
+  "fields": {
+    "things": {
+      "label": "Things",
+      "description": "Weighted list of things that can be placed within this group's cluster rect.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ScatterGroupThingWeight" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "stackSizeRange": {
+      "label": "Stack size range",
+      "description": "Random range for the stack count of each placed item.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element"
+    },
+    "spawnForbidden": {
+      "label": "Spawn forbidden",
+      "description": "When true, placed items are forbidden from being hauled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative probability of this group being chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "spawnAtCenter": {
+      "label": "Spawn at center",
+      "description": "ThingDef always placed at the center of the cluster rect.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "spawnAtCenterFilthDef": {
+      "label": "Spawn at center filth def",
+      "description": "Filth ThingDef placed at the cluster center alongside the spawnAtCenter thing.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "indoorRuin": {
+      "label": "Indoor ruin",
+      "description": "When true, this group requires the scatter cell to be inside an existing ruined structure.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "coveredCellsPer10Cells": {
+      "label": "Covered cells per 10 cells",
+      "description": "Random range of cluster rect cells covered with things, expressed as a count per 10 eligible cells.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "filthDef": {
+      "label": "Filth def",
+      "description": "Filth ThingDef spawned around each placed thing in this group.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "filthExpandBy": {
+      "label": "Filth expand by",
+      "description": "Number of cells to expand each thing's occupied rect when spawning filth.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "filthChance": {
+      "label": "Filth chance",
+      "description": "Probability (0-1) that each eligible cell around a placed thing receives filth.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "clusterRectRadius": {
+      "label": "Cluster rect radius",
+      "description": "Random range for the half-size of the square cluster rect centered on the scatter cell.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

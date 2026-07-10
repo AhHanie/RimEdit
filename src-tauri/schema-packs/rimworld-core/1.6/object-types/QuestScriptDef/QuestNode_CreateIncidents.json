@@ -1,0 +1,98 @@
+{
+  "objectType": "QuestNode_CreateIncidents",
+  "label": "QuestNode CreateIncidents",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_CreateIncidents.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignalEnable",
+    "inSignalDisable",
+    "incidentDef",
+    "intervalTicks",
+    "randomIncidents",
+    "startOffsetTicks",
+    "duration",
+    "points",
+    "faction"
+  ],
+  "fields": {
+    "inSignalEnable": {
+      "description": "SlateRef<string> signal name or $varName that enables scheduled incidents.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "inSignalDisable": {
+      "description": "SlateRef<string> signal name or $varName that disables scheduled incidents.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "incidentDef": {
+      "description": "SlateRef<IncidentDef> def name or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "IncidentDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "intervalTicks": {
+      "description": "SlateRef<int?> interval in ticks between repeated incidents, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "randomIncidents": {
+      "description": "SlateRef<int?> count of randomly timed incidents, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "startOffsetTicks": {
+      "description": "SlateRef<int> initial delay in ticks, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "duration": {
+      "description": "SlateRef<int> scheduling duration in ticks, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "points": {
+      "description": "SlateRef<float> incident points override, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "faction": {
+      "description": "SlateRef<Faction> faction variable or def-like literal.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "objectType": "GenStep_TerrainPatches",
+  "label": "Terrain patches",
+  "description": "Paints circular patches of a specified terrain type across the map.",
+  "fieldOrder": ["Class", "terrainDef", "patchesPer10kCellsRange", "patchSizeRange"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_TerrainPatches.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "terrainDef": {
+      "label": "Terrain def",
+      "description": "TerrainDef painted at each patch location.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "patchesPer10kCellsRange": {
+      "label": "Patches per 10k cells range",
+      "description": "Random range of patches to generate per 10,000 map cells.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "patchSizeRange": {
+      "label": "Patch size range",
+      "description": "Random range for the radius of each terrain patch.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

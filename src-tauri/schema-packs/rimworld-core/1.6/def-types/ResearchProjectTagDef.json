@@ -1,0 +1,8 @@
+{
+  "defType": "ResearchProjectTagDef",
+  "label": "Research project tag",
+  "description": "A tag applied to research projects that factions can reference to grant starting research or techprints to colonists of that faction type.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,8 @@
+{
+  "objectType": "WorldObjectCompProperties_DefeatAllEnemiesQuest",
+  "label": "Defeat all enemies quest comp",
+  "description": "Adds a quest objective to defeat all enemies at this world object. Requires a MapParent world object class.",
+  "inherits": ["WorldObjectCompProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

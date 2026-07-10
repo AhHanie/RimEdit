@@ -1,0 +1,79 @@
+{
+  "objectType": "RoadDefGenStep_Place",
+  "label": "Road gen step: place",
+  "description": "Places a terrain or thing along the road path. Inherits bulldoze behavior -- impassable objects are removed before placement.",
+  "fieldOrder": [
+    "Class",
+    "chancePerPositionCurve",
+    "antialiasingMultiplier",
+    "periodicSpacing",
+    "place",
+    "proximitySpacing",
+    "onlyIfOriginAllows",
+    "suppressOnTerrainTag"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoadDefGenStep subclass that implements this generation step.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "chancePerPositionCurve": {
+      "label": "Chance per position curve",
+      "description": "Piecewise linear curve mapping distance from the road center (x) to placement probability (y) for each map cell.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "antialiasingMultiplier": {
+      "label": "Antialiasing multiplier",
+      "description": "Scales how far the placement probability extends past the hard road edge to produce smooth borders. Set to 0 to disable antialiasing for this step.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "periodicSpacing": {
+      "label": "Periodic spacing",
+      "description": "When non-zero, placement is restricted to positions that are multiples of this distance along the road, producing evenly spaced decorations.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "place": {
+      "label": "Place",
+      "description": "BuildableDef (TerrainDef or ThingDef) to place at each eligible road cell.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "BuildableDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "proximitySpacing": {
+      "label": "Proximity spacing",
+      "description": "Minimum distance in cells between placed things of this type. Only applies when placing ThingDefs.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "onlyIfOriginAllows": {
+      "label": "Only if origin allows",
+      "description": "When true, placement is skipped unless an adjacent cell that is also within the road corridor can also accept the placed def. Used to restrict bridge placement to cells adjacent to another bridge.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "suppressOnTerrainTag": {
+      "label": "Suppress on terrain tag",
+      "description": "Terrain tag string (e.g. Water) that blocks placement on cells whose current terrain carries that tag.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Water"]
+    }
+  }
+}

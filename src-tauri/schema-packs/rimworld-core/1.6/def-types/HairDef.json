@@ -1,0 +1,26 @@
+{
+  "defType": "HairDef",
+  "label": "Hair",
+  "description": "Defines a hair style for humanlike pawns. All schema fields are inherited from StyleItemDef.",
+  "inherits": ["StyleItemDef"],
+  "fieldOrder": [],
+  "fields": {},
+  "templates": {
+    "basic-hair": {
+      "label": "Basic hair",
+      "description": "Hair style with a texture, gender restriction, category, and style tags.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "styleGender", "texPath", "category", "styleTags"],
+      "fieldValues": {}
+    },
+    "no-graphic-hair": {
+      "label": "No-graphic hair",
+      "description": "Hair style with no texture, used for styles that suppress the hair slot entirely (e.g., ghoul hair).",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "styleGender", "category", "styleTags"],
+      "fieldValues": {
+        "noGraphic": "true"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "objectType": "CompProperties",
+  "label": "Comp properties",
+  "description": "Base schema for comp properties used by things or pawns. Specific item schemas are selected by the li Class attribute.",
+  "fieldOrder": ["Class", "compClass"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "CompProperties",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "CompProperties_Forbiddable": "CompProperties_Forbiddable",
+      "CompProperties_Glower": "CompProperties_Glower",
+      "CompProperties_HeatPusher": "CompProperties_HeatPusher",
+      "CompProperties_Hibernatable": "CompProperties_Hibernatable",
+      "CompProperties_EquippableAbility": "CompProperties_EquippableAbility",
+      "CompProperties_EquippableAbilityReloadable": "CompProperties_EquippableAbilityReloadable",
+      "CompProperties_UniqueWeapon": "CompProperties_UniqueWeapon",
+      "CompProperties_GravshipFacility": "CompProperties_GravshipFacility",
+      "CompProperties_GravshipThruster": "CompProperties_GravshipThruster",
+      "CompProperties_Transporter": "CompProperties_Transporter",
+      "CompProperties_Shuttle": "CompProperties_Shuttle"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# CompProperties type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime ThingComp class. Usually set by the CompProperties constructor, but some XML uses this field directly.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

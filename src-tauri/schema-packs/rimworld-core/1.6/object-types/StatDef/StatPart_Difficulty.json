@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_Difficulty",
+  "label": "Stat part (difficulty)",
+  "description": "Scales the stat by a per-difficulty factor selected from a list indexed by the current difficulty setting.",
+  "fieldOrder": ["Class", "priority", "factorsPerDifficulty"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factorsPerDifficulty": {
+      "label": "Factors per difficulty",
+      "description": "List of multipliers indexed by difficulty level (peaceful first, extreme last).",
+      "type": { "kind": "list" },
+      "items": { "kind": "float" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

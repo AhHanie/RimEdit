@@ -1,0 +1,2389 @@
+{
+  "defType": "ThingDef",
+  "label": "Thing",
+  "description": "Defines an item, pawn, building, plant, projectile, mote, or other concrete game object.",
+  "inherits": [
+    "BuildableDef"
+  ],
+  "fieldOrder": [
+    "thingClass",
+    "category",
+    "tickerType",
+    "stackLimit",
+    "size",
+    "destroyable",
+    "rotatable",
+    "smallVolume",
+    "useHitPoints",
+    "receivesSignals",
+    "comps",
+    "virtualDefs",
+    "virtualDefParent",
+    "devNote",
+    "killedLeavingsRanges",
+    "killedLeavings",
+    "killedLeavingsPlayerHostile",
+    "killedLeavingsChance",
+    "forceLeavingsAllowed",
+    "butcherProducts",
+    "smeltProducts",
+    "smeltable",
+    "burnableByRecipe",
+    "randomizeRotationOnSpawn",
+    "damageMultipliers",
+    "isTechHediff",
+    "recipeMaker",
+    "minifiedDef",
+    "isUnfinishedThing",
+    "leaveResourcesWhenKilled",
+    "slagDef",
+    "isFrameInt",
+    "multipleInteractionCellOffsets",
+    "interactionCellOffset",
+    "hasInteractionCell",
+    "interactionCellIcon",
+    "interactionCellIconReverse",
+    "filthLeaving",
+    "forceDebugSpawnable",
+    "intricate",
+    "scatterableOnMapGen",
+    "deepCommonality",
+    "deepCountPerCell",
+    "deepCountPerPortion",
+    "deepLumpSizeRange",
+    "generateCommonality",
+    "generateAllowChance",
+    "canOverlapZones",
+    "startingHpRange",
+    "thingSetMakerTags",
+    "alwaysFlee",
+    "recipes",
+    "messageOnDeteriorateInStorage",
+    "deteriorateFromEnvironmentalEffects",
+    "canDeteriorateUnspawned",
+    "canLoadIntoCaravan",
+    "isMechClusterThreat",
+    "displayNumbersBetweenSameDefDistRange",
+    "minRewardCount",
+    "preventSkyfallersLandingOn",
+    "requiresFactionToAcquire",
+    "relicChance",
+    "orderedTakeGroup",
+    "allowedArchonexusCount",
+    "possessionCount",
+    "notifyMapRemoved",
+    "canScatterOver",
+    "genericMarketSellable",
+    "drawHighlight",
+    "highlightColor",
+    "drawHighlightOnlyForHostile",
+    "autoTargetNearbyIdenticalThings",
+    "preventDroppingThingsOn",
+    "hiddenWhileUndiscovered",
+    "disableImpassableShotOverConfigError",
+    "showInSearch",
+    "bringAlongOnGravship",
+    "dropPodFaller",
+    "dropPodActive",
+    "preventSpawningInResourcePod",
+    "pathfinderDangerous",
+    "noRightClickDraftAttack",
+    "gravshipSpawnPriority",
+    "replaceTags",
+    "preventGravshipLandingOn",
+    "canInteractThroughCorners",
+    "graphicData",
+    "drawerType",
+    "drawOffscreen",
+    "colorGenerator",
+    "hideAtSnowOrSandDepth",
+    "drawDamagedOverlay",
+    "castEdgeShadows",
+    "staticSunShadowHeight",
+    "useSameGraphicForGhost",
+    "useBlueprintGraphicAsGhost",
+    "randomStyle",
+    "randomStyleChance",
+    "canEditAnyStyle",
+    "dontPrint",
+    "defaultStuff",
+    "killedLeavingsExpandRect",
+    "minifiedManualDraw",
+    "minifiedDrawScale",
+    "overrideMinifiedRot",
+    "minifiedDrawOffset",
+    "deselectedSelectionBracketFactor",
+    "selectable",
+    "containedPawnsSelectable",
+    "containedItemsSelectable",
+    "neverMultiSelect",
+    "isAutoAttackableMapObject",
+    "hasTooltip",
+    "inspectorTabs",
+    "seeThroughFog",
+    "drawGUIOverlay",
+    "drawGUIOverlayQuality",
+    "resourceReadoutPriority",
+    "resourceReadoutAlwaysShow",
+    "drawPlaceWorkersWhileSelected",
+    "drawPlaceWorkersWhileInstallBlueprintSelected",
+    "storedConceptLearnOpportunity",
+    "uiIconScale",
+    "hasCustomRectForSelector",
+    "hideStats",
+    "hideInspect",
+    "onlyShowInspectString",
+    "hideMainDesc",
+    "alwaysHaulable",
+    "designateHaulable",
+    "thingCategories",
+    "mineable",
+    "socialPropernessMatters",
+    "stealable",
+    "soundSpawned",
+    "soundDrop",
+    "soundPickup",
+    "soundInteract",
+    "soundImpactDefault",
+    "soundPlayInstrument",
+    "soundOpen",
+    "saveCompressible",
+    "isSaveable",
+    "holdsRoof",
+    "fillPercent",
+    "coversFloor",
+    "neverOverlapFloors",
+    "surfaceType",
+    "wipesPlants",
+    "blockPlants",
+    "blockLight",
+    "blockWind",
+    "blockWeather",
+    "tradeability",
+    "tradeTags",
+    "tradeNeverStack",
+    "tradeNeverGenerateStacked",
+    "healthAffectsPrice",
+    "colorGeneratorInTraderStock",
+    "verbs",
+    "tools",
+    "equippedAngleOffset",
+    "equippedDistanceOffset",
+    "equipmentType",
+    "techLevel",
+    "weaponClasses",
+    "weaponTags",
+    "techHediffsTags",
+    "violentTechHediff",
+    "destroyOnDrop",
+    "equippedStatOffsets",
+    "meleeHitSound",
+    "recoilPower",
+    "recoilRelaxation",
+    "rotateInShelves",
+    "mergeVerbGizmos",
+    "entityDefToBuild",
+    "projectileWhenLoaded",
+    "ideoBuildingNamerBase",
+    "entityCodexEntry",
+    "ingestible",
+    "filth",
+    "gas",
+    "building",
+    "race",
+    "apparel",
+    "mote",
+    "plant",
+    "projectile",
+    "stuffProps",
+    "skyfaller",
+    "pawnFlyer",
+    "ritualFocus",
+    "ingredient",
+    "portal",
+    "canBeUsedUnderRoof"
+  ],
+  "fields": {
+    "thingClass": {
+      "label": "Thing class",
+      "description": "Fully qualified C# class name used to instantiate this thing at runtime.",
+      "type": {
+        "kind": "typeName"
+      },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Building_WorkTable",
+        "ThingWithComps",
+        "Pawn"
+      ]
+    },
+    "category": {
+      "label": "Category",
+      "description": "Broad classification controlling how the game treats this thing.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "None",
+          "Pawn",
+          "Item",
+          "Building",
+          "Plant",
+          "Projectile",
+          "Filth",
+          "Gas",
+          "Attachment",
+          "Mote",
+          "Ethereal",
+          "PsychicEmitter"
+        ]
+      },
+      "examples": [
+        "Item",
+        "Building",
+        "Pawn",
+        "Plant",
+        "Projectile",
+        "Mote"
+      ]
+    },
+    "tickerType": {
+      "label": "Ticker type",
+      "description": "Controls how frequently this thing's Tick method is called.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "Never",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Never", "Normal", "Rare", "Long"]
+      },
+      "examples": [
+        "Never",
+        "Normal",
+        "Rare",
+        "Long"
+      ]
+    },
+    "stackLimit": {
+      "label": "Stack limit",
+      "description": "Maximum number of instances that can occupy a single inventory or ground stack.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "size": {
+      "label": "Size",
+      "description": "Footprint in cells as (x, z). Defaults to 1x1.",
+      "type": {
+        "kind": "vector2"
+      },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(1, 1)",
+        "(2, 2)",
+        "(3, 1)"
+      ]
+    },
+    "destroyable": {
+      "label": "Destroyable",
+      "description": "Whether this thing can be destroyed by damage or player action.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "rotatable": {
+      "label": "Rotatable",
+      "description": "Whether the player can rotate this thing during placement.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "smallVolume": {
+      "label": "Small volume",
+      "description": "If true, many of these items fit in a single stack slot when counted for caravan weight.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "useHitPoints": {
+      "label": "Use hit points",
+      "description": "Whether this thing tracks hit points and can be damaged.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "receivesSignals": {
+      "label": "Receives signals",
+      "description": "If true, this thing can receive signals sent by trip wires and other signal sources.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "comps": {
+      "label": "Components",
+      "description": "List of CompProperties objects that attach modular behaviors. Each item usually specifies a Class attribute.",
+      "type": {
+        "kind": "list"
+      },
+      "items": { "kind": "object", "schemaRef": "CompProperties" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "virtualDefs": {
+      "label": "Virtual defs",
+      "description": "ThingDef references that are virtually inherited by this def for XML patching purposes.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": true,
+        "scope": "allSources"
+      }
+    },
+    "virtualDefParent": {
+      "label": "Virtual def parent",
+      "description": "ThingDef reference used as a virtual parent for inheriting XML fields.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": true,
+        "scope": "allSources"
+      }
+    },
+    "devNote": {
+      "label": "Dev note",
+      "description": "Internal developer note attached to this def. Not visible in-game.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "killedLeavingsRanges": {
+      "label": "Killed leavings ranges",
+      "description": "Named map of ThingDef to count range dropped when this thing is killed. Child names are ThingDef defNames.",
+      "type": {
+        "kind": "object"
+      },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "killedLeavings": {
+      "label": "Killed leavings",
+      "description": "Named map of ThingDef to count dropped when this thing is killed. Child names are ThingDef defNames.",
+      "type": {
+        "kind": "object"
+      },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "killedLeavingsPlayerHostile": {
+      "label": "Killed leavings (player hostile)",
+      "description": "Named map of leavings dropped when this thing is killed by a player-hostile faction.",
+      "type": {
+        "kind": "object"
+      },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "killedLeavingsChance": {
+      "label": "Killed leavings chance",
+      "description": "Probability (0–1) that killedLeavings are actually dropped on death.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "forceLeavingsAllowed": {
+      "label": "Force leavings allowed",
+      "description": "If true, leavings are always dropped even when they normally would not be.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "butcherProducts": {
+      "label": "Butcher products",
+      "description": "Named map of ThingDef to count produced when this thing is butchered. Child names are ThingDef defNames.",
+      "type": {
+        "kind": "object"
+      },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "smeltProducts": {
+      "label": "Smelt products",
+      "description": "Named map of ThingDef to count produced when this thing is smelted. Child names are ThingDef defNames.",
+      "type": {
+        "kind": "object"
+      },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "smeltable": {
+      "label": "Smeltable",
+      "description": "Whether this thing can be smelted in a electric smelter for materials.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "burnableByRecipe": {
+      "label": "Burnable by recipe",
+      "description": "Whether this thing can be used as fuel in a campfire or similar recipe.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "randomizeRotationOnSpawn": {
+      "label": "Randomize rotation on spawn",
+      "description": "If true, this thing is given a random rotation when spawned on the map.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "damageMultipliers": {
+      "label": "Damage multipliers",
+      "description": "List of damage type multipliers applied when this thing takes damage of the given category.",
+      "type": {
+        "kind": "list"
+      },
+      "items": { "kind": "object", "schemaRef": "DamageMultiplier" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "isTechHediff": {
+      "label": "Is tech hediff",
+      "description": "If true, this thing is a tech hediff (implant or prosthetic) rather than a standalone item.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "recipeMaker": {
+      "label": "Recipe maker",
+      "description": "Properties controlling how this thing is crafted, including workbench, skill requirements, and research prerequisites.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RecipeMakerProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "minifiedDef": {
+      "label": "Minified def",
+      "description": "ThingDef used for the minified (packaged) form of this thing when carried or stored.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "isUnfinishedThing": {
+      "label": "Is unfinished thing",
+      "description": "If true, this def represents an in-progress construction bill rather than a finished item.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "leaveResourcesWhenKilled": {
+      "label": "Leave resources when killed",
+      "description": "If true, this thing drops its construction materials when destroyed.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "slagDef": {
+      "label": "Slag def",
+      "description": "ThingDef spawned as slag when this thing is destroyed by fire or extreme damage.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "isFrameInt": {
+      "label": "Is frame (internal)",
+      "description": "Internal flag set on automatically generated blueprint and frame defs. Do not set manually.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "multipleInteractionCellOffsets": {
+      "label": "Multiple interaction cell offsets",
+      "description": "List of additional interaction cell offsets when this thing supports more than one interaction position.",
+      "type": {
+        "kind": "list"
+      },
+      "items": { "kind": "vector3" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "interactionCellOffset": {
+      "label": "Interaction cell offset",
+      "description": "Offset from the thing's origin to its primary interaction cell in (x, y, z) coordinates.",
+      "type": {
+        "kind": "vector3"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "hasInteractionCell": {
+      "label": "Has interaction cell",
+      "description": "Whether this thing has a designated cell where pawns stand to interact with it.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "interactionCellIcon": {
+      "label": "Interaction cell icon",
+      "description": "ThingDef whose graphic is drawn at the interaction cell when a pawn selects a job at this thing.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "interactionCellIconReverse": {
+      "label": "Interaction cell icon reverse",
+      "description": "If true, the interaction cell icon is flipped to face the opposite direction.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "filthLeaving": {
+      "label": "Filth leaving",
+      "description": "ThingDef spawned as filth when a pawn walks through or interacts with this thing.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "forceDebugSpawnable": {
+      "label": "Force debug spawnable",
+      "description": "If true, this thing always appears in the dev mode spawn menu even if normally excluded.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "intricate": {
+      "label": "Intricate",
+      "description": "If true, this thing is considered intricate for the purposes of art generation and descriptions.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scatterableOnMapGen": {
+      "label": "Scatterable on map gen",
+      "description": "Whether the map generator can scatter this thing randomly on newly generated maps.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "deepCommonality": {
+      "label": "Deep commonality",
+      "description": "Relative frequency with which this resource appears in deep drill deposits.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "deepCountPerCell": {
+      "label": "Deep count per cell",
+      "description": "Number of this resource found per drill cell when mining a deep deposit.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 300,
+      "xml": "element"
+    },
+    "deepCountPerPortion": {
+      "label": "Deep count per portion",
+      "description": "Number of this resource extracted per drill operation.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "deepLumpSizeRange": {
+      "label": "Deep lump size range",
+      "description": "Integer range for the size of a deep resource lump, expressed as min~max.",
+      "type": {
+        "kind": "intRange"
+      },
+      "required": false,
+      "xml": "element",
+      "examples": ["5~10", "1~3"]
+    },
+    "generateCommonality": {
+      "label": "Generate commonality",
+      "description": "Relative frequency with which this thing appears in world-gen surface scatter.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "generateAllowChance": {
+      "label": "Generate allow chance",
+      "description": "Per-candidate probability that a world-gen scatter attempt actually places this thing.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "canOverlapZones": {
+      "label": "Can overlap zones",
+      "description": "If true, this thing can exist inside zone areas without blocking them. Private in source but present in shipped XML.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "startingHpRange": {
+      "label": "Starting HP range",
+      "description": "FloatRange for the fraction of max hit points this thing starts with when spawned, expressed as min~max.",
+      "type": {
+        "kind": "floatRange"
+      },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.9~1.0", "0.3~0.7"]
+    },
+    "thingSetMakerTags": {
+      "label": "Thing set maker tags",
+      "description": "String tags used by thing set maker rules to include this thing in generated sets (e.g. rewards, caravans).",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "alwaysFlee": {
+      "label": "Always flee",
+      "description": "If true, pawns with this thing as their race always flee from threats rather than fighting.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "recipes": {
+      "label": "Recipes",
+      "description": "RecipeDef references for recipes that can be performed at this building.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "RecipeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "messageOnDeteriorateInStorage": {
+      "label": "Message on deteriorate in storage",
+      "description": "If true, the game shows a deterioration warning message when this item degrades in a stockpile.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "deteriorateFromEnvironmentalEffects": {
+      "label": "Deteriorate from environmental effects",
+      "description": "Whether weather and outdoor conditions cause this thing to degrade over time.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canDeteriorateUnspawned": {
+      "label": "Can deteriorate unspawned",
+      "description": "If true, this thing continues to deteriorate even when it is not placed on the map.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canLoadIntoCaravan": {
+      "label": "Can load into caravan",
+      "description": "Whether this thing can be packed into a caravan.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "isMechClusterThreat": {
+      "label": "Is mech cluster threat",
+      "description": "If true, this thing can appear as part of a mechanoid cluster raid.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayNumbersBetweenSameDefDistRange": {
+      "label": "Display numbers between same def distance range",
+      "description": "FloatRange controlling the distance window within which stack count labels are merged (min~max).",
+      "type": {
+        "kind": "floatRange"
+      },
+      "required": false,
+      "xml": "element",
+      "examples": ["0~10", "0~5"]
+    },
+    "minRewardCount": {
+      "label": "Min reward count",
+      "description": "Minimum count of this thing that must appear when offered as a quest reward.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "preventSkyfallersLandingOn": {
+      "label": "Prevent skyfallers landing on",
+      "description": "If true, skyfallers (drop pods, meteorites) cannot land on this thing's cell.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiresFactionToAcquire": {
+      "label": "Requires faction to acquire",
+      "description": "FactionDef that must be present in the world for traders to offer this thing.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FactionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "relicChance": {
+      "label": "Relic chance",
+      "description": "Relative weight controlling how often this thing is chosen as an ideoligion relic.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "orderedTakeGroup": {
+      "label": "Ordered take group",
+      "description": "OrderedTakeGroupDef that controls the order in which pawns pick up items of this def.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "OrderedTakeGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowedArchonexusCount": {
+      "label": "Allowed archonexus count",
+      "description": "Maximum number of this thing allowed when starting an archonexus mid-game scenario.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "possessionCount": {
+      "label": "Possession count",
+      "description": "Number of this thing a colonist is considered to 'own' for mood and trait purposes.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "notifyMapRemoved": {
+      "label": "Notify map removed",
+      "description": "If true, this thing's comps and extensions are notified when its map is removed.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canScatterOver": {
+      "label": "Can scatter over",
+      "description": "Whether map gen scatter operations can place things on top of this thing's cell.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "genericMarketSellable": {
+      "label": "Generic market sellable",
+      "description": "If true, this thing can appear in generic market listings even without explicit trade tags.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "drawHighlight": {
+      "label": "Draw highlight",
+      "description": "Whether a colored circle is drawn beneath this thing on the map.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "highlightColor": {
+      "label": "Highlight color",
+      "description": "RGBA color of the circle drawn beneath this thing when drawHighlight is true.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1,0,0,0.5)", "(0,1,0,1)"]
+    },
+    "drawHighlightOnlyForHostile": {
+      "label": "Draw highlight only for hostile",
+      "description": "If true, the highlight is only drawn when the viewer's faction is hostile to the thing's faction.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "autoTargetNearbyIdenticalThings": {
+      "label": "Auto-target nearby identical things",
+      "description": "If true, when attacking this thing the game also targets identical nearby things.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventDroppingThingsOn": {
+      "label": "Prevent dropping things on",
+      "description": "If true, items cannot be dropped or placed on this thing's cell.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hiddenWhileUndiscovered": {
+      "label": "Hidden while undiscovered",
+      "description": "If true, this thing is invisible until it has been spotted by a colonist.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disableImpassableShotOverConfigError": {
+      "label": "Disable impassable shot-over config error",
+      "description": "Suppresses the dev-mode error about impassable things not blocking shots.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showInSearch": {
+      "label": "Show in search",
+      "description": "Whether this thing appears in the in-game search results.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "bringAlongOnGravship": {
+      "label": "Bring along on gravship",
+      "description": "If true, this thing is automatically brought aboard a gravship when leaving the map.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "dropPodFaller": {
+      "label": "Drop pod faller",
+      "description": "ThingDef used for the falling skyfaller graphic when this thing arrives via drop pod.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "dropPodActive": {
+      "label": "Drop pod active",
+      "description": "ThingDef used for the active (open) drop pod after landing.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "preventSpawningInResourcePod": {
+      "label": "Prevent spawning in resource pod",
+      "description": "If true, this thing cannot be selected as a resource pod content by the scenario system.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "pathfinderDangerous": {
+      "label": "Pathfinder dangerous",
+      "description": "If true, the pathfinder treats cells containing this thing as dangerous for non-combat pawns.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "noRightClickDraftAttack": {
+      "label": "No right-click draft attack",
+      "description": "If true, right-clicking this thing while drafted does not issue an attack order.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "gravshipSpawnPriority": {
+      "label": "Gravship spawn priority",
+      "description": "Sort priority used when deciding which things to spawn first on a gravship.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "replaceTags": {
+      "label": "Replace tags",
+      "description": "String tags that cause other defs with the same tag to be removed when this def is active.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "preventGravshipLandingOn": {
+      "label": "Prevent gravship landing on",
+      "description": "If true, a gravship cannot land on or directly over this thing's footprint.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canInteractThroughCorners": {
+      "label": "Can interact through corners",
+      "description": "If true, pawns can interact with this thing from a diagonally adjacent cell.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "graphicData": {
+      "label": "Graphic data",
+      "description": "Visual representation settings including texture path, draw size, and shader type.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "GraphicData"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": false
+    },
+    "drawerType": {
+      "label": "Drawer type",
+      "description": "Controls when and how this thing is drawn relative to the map mesh.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "RealtimeOnly",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "RealtimeOnly", "MapMeshOnly", "MapMeshAndRealTime"]
+      },
+      "examples": [
+        "RealtimeOnly",
+        "MapMeshOnly",
+        "MapMeshAndRealTime"
+      ]
+    },
+    "drawOffscreen": {
+      "label": "Draw offscreen",
+      "description": "If true, this thing continues to be drawn even when its cell is outside the visible viewport.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "colorGenerator": {
+      "label": "Color generator",
+      "description": "Color generator that randomizes this thing's tint when it spawns.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "ColorGenerator"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "hideAtSnowOrSandDepth": {
+      "label": "Hide at snow or sand depth",
+      "description": "Snow or sand coverage depth (0–1) above which this thing becomes hidden. 99999 means never hide.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 99999,
+      "xml": "element"
+    },
+    "drawDamagedOverlay": {
+      "label": "Draw damaged overlay",
+      "description": "Whether a damage state overlay is drawn on this thing as its hit points decrease.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "castEdgeShadows": {
+      "label": "Cast edge shadows",
+      "description": "If true, this thing casts soft directional shadows along its edges.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "staticSunShadowHeight": {
+      "label": "Static sun shadow height",
+      "description": "Fixed height used for computing the sun shadow beneath this thing. 0 disables it.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "useSameGraphicForGhost": {
+      "label": "Use same graphic for ghost",
+      "description": "If true, the blueprint and ghost placement graphic uses the same texture as the real thing.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useBlueprintGraphicAsGhost": {
+      "label": "Use blueprint graphic as ghost",
+      "description": "If true, the placement ghost uses the blueprint graphic rather than the constructed graphic.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "randomStyle": {
+      "label": "Random style",
+      "description": "List of ThingStyleChance entries controlling which styles can be randomly applied when spawned.",
+      "type": {
+        "kind": "list"
+      },
+      "items": { "kind": "object", "schemaRef": "ThingStyleChance" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "randomStyleChance": {
+      "label": "Random style chance",
+      "description": "Probability (0–1) that a random style from randomStyle is applied on spawn.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "canEditAnyStyle": {
+      "label": "Can edit any style",
+      "description": "If true, the player can manually assign any available style to this thing regardless of ideology.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "dontPrint": {
+      "label": "Don't print",
+      "description": "If true, this thing is excluded from the map mesh print pass and is always drawn in real-time.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "defaultStuff": {
+      "label": "Default stuff",
+      "description": "ThingDef used as the default stuff material when spawning this thing without explicit stuff specified.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "killedLeavingsExpandRect": {
+      "label": "Killed leavings expand rect",
+      "description": "Number of cells to expand the scatter rect when placing killedLeavings around this thing's footprint.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minifiedManualDraw": {
+      "label": "Minified manual draw",
+      "description": "If true, the minified form of this thing must be drawn manually rather than by the normal draw cycle.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minifiedDrawScale": {
+      "label": "Minified draw scale",
+      "description": "Scale multiplier applied to the graphic when this thing is displayed in minified form.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "overrideMinifiedRot": {
+      "label": "Override minified rotation",
+      "description": "Forces the minified form of this thing to display in a fixed rotation.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Invalid", "North", "East", "South", "West"]
+      }
+    },
+    "minifiedDrawOffset": {
+      "label": "Minified draw offset",
+      "description": "Position offset applied to the graphic when this thing is in minified form.",
+      "type": {
+        "kind": "vector3"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "deselectedSelectionBracketFactor": {
+      "label": "Deselected selection bracket factor",
+      "description": "Scale factor for the selection bracket shown when something nearby (not this thing) is selected.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "selectable": {
+      "label": "Selectable",
+      "description": "Whether the player can click this thing to select it and view its inspect pane.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "containedPawnsSelectable": {
+      "label": "Contained pawns selectable",
+      "description": "If true, pawns inside this thing (e.g. in a bed or transport pod) can be individually selected.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "containedItemsSelectable": {
+      "label": "Contained items selectable",
+      "description": "If true, items stored inside this thing can be individually selected.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "neverMultiSelect": {
+      "label": "Never multi-select",
+      "description": "If true, this thing is excluded from drag-selection and multi-select groups.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isAutoAttackableMapObject": {
+      "label": "Is auto-attackable map object",
+      "description": "If true, hostile pawns automatically target and attack this thing when nearby.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hasTooltip": {
+      "label": "Has tooltip",
+      "description": "Whether hovering over this thing on the map shows a tooltip with its label.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "inspectorTabs": {
+      "label": "Inspector tabs",
+      "description": "C# class names (ITab subclasses) for tabs shown in the inspector panel when this thing is selected.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "seeThroughFog": {
+      "label": "See through fog",
+      "description": "If true, this thing is visible through fog of war.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "drawGUIOverlay": {
+      "label": "Draw GUI overlay",
+      "description": "Whether a GUI overlay (e.g. stack count label) is drawn above this thing.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "drawGUIOverlayQuality": {
+      "label": "Draw GUI overlay quality",
+      "description": "If true, the quality level is shown in the GUI overlay above this thing.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "resourceReadoutPriority": {
+      "label": "Resource readout priority",
+      "description": "Controls where this thing appears in the resource readout panel on the right side of the screen.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "Uncounted",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Uncounted", "Last", "Middle", "First"]
+      }
+    },
+    "resourceReadoutAlwaysShow": {
+      "label": "Resource readout always show",
+      "description": "If true, this resource is shown in the readout even when the count is zero.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "drawPlaceWorkersWhileSelected": {
+      "label": "Draw place workers while selected",
+      "description": "If true, the PlaceWorker overlays for this thing are drawn while it is selected on the map.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "drawPlaceWorkersWhileInstallBlueprintSelected": {
+      "label": "Draw place workers while install blueprint selected",
+      "description": "If true, the PlaceWorker overlays are drawn while the install blueprint for this thing is selected.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "storedConceptLearnOpportunity": {
+      "label": "Stored concept learn opportunity",
+      "description": "ConceptDef that gets marked as learned the first time the player selects this thing.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ConceptDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "uiIconScale": {
+      "label": "UI icon scale",
+      "description": "Scale multiplier applied to this thing's icon in the architect and recipe UIs.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "hasCustomRectForSelector": {
+      "label": "Has custom rect for selector",
+      "description": "If true, this thing uses a custom hit rect for mouse-click selection rather than its full cell footprint.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hideStats": {
+      "label": "Hide stats",
+      "description": "If true, the stats tab is hidden in this thing's inspect pane.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hideInspect": {
+      "label": "Hide inspect",
+      "description": "If true, no inspect pane is shown when this thing is selected.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyShowInspectString": {
+      "label": "Only show inspect string",
+      "description": "If true, only the inspect string is shown in the pane rather than full stats.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hideMainDesc": {
+      "label": "Hide main description",
+      "description": "If true, the main description is hidden from this thing's info card.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "alwaysHaulable": {
+      "label": "Always haulable",
+      "description": "If true, this thing is always eligible for hauling to stockpiles even without explicit hauling designations.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "designateHaulable": {
+      "label": "Designate haulable",
+      "description": "If true, this thing can be manually designated for hauling by the player.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "thingCategories": {
+      "label": "Thing categories",
+      "description": "ThingCategoryDef references listing the inventory categories this thing belongs to.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "mineable": {
+      "label": "Mineable",
+      "description": "Whether this thing (typically rock or ore) can be mined by colonists.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "socialPropernessMatters": {
+      "label": "Social properness matters",
+      "description": "If true, leaving this thing on the ground in a social area negatively affects colonist mood.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "stealable": {
+      "label": "Stealable",
+      "description": "Whether this thing can be stolen by raiders or quests.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "soundSpawned": {
+      "label": "Sound spawned",
+      "description": "SoundDef played when this thing is spawned onto the map.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundDrop": {
+      "label": "Sound drop",
+      "description": "SoundDef played when this thing is dropped by a pawn.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundPickup": {
+      "label": "Sound pickup",
+      "description": "SoundDef played when a pawn picks this thing up.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundInteract": {
+      "label": "Sound interact",
+      "description": "SoundDef played repeatedly while a pawn is using or interacting with this thing.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundImpactDefault": {
+      "label": "Sound impact default",
+      "description": "SoundDef played when a projectile or other object impacts this thing.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundPlayInstrument": {
+      "label": "Sound play instrument",
+      "description": "SoundDef played when a pawn performs a joy activity on this instrument building.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundOpen": {
+      "label": "Sound open",
+      "description": "SoundDef played when this thing (typically a door) opens.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "saveCompressible": {
+      "label": "Save compressible",
+      "description": "If true, this thing's save data can be compressed when many identical instances exist in the same stack.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isSaveable": {
+      "label": "Is saveable",
+      "description": "Whether this thing is written to the save file. Set false for temporary or transient objects.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "holdsRoof": {
+      "label": "Holds roof",
+      "description": "If true, this thing acts as a roof support and prevents nearby cells from losing their roof.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fillPercent": {
+      "label": "Fill percent",
+      "description": "Fraction (0–1) of the cell this thing fills for cover and line-of-sight purposes.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "coversFloor": {
+      "label": "Covers floor",
+      "description": "If true, this thing's graphic covers the floor tile beneath it.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "neverOverlapFloors": {
+      "label": "Never overlap floors",
+      "description": "If true, floor tiles are never drawn overlapping this thing even if they normally would.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "surfaceType": {
+      "label": "Surface type",
+      "description": "Determines what kind of items can be placed on top of this thing.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Item", "Eat"]
+      },
+      "examples": [
+        "None",
+        "Item",
+        "Eat"
+      ]
+    },
+    "wipesPlants": {
+      "label": "Wipes plants",
+      "description": "If true, any plants in this thing's footprint are destroyed when it is placed.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blockPlants": {
+      "label": "Block plants",
+      "description": "If true, plants cannot grow in cells occupied by this thing.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blockLight": {
+      "label": "Block light",
+      "description": "If true, this thing blocks light from passing through its cell.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blockWind": {
+      "label": "Block wind",
+      "description": "If true, this thing reduces wind speed in its immediate vicinity.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blockWeather": {
+      "label": "Block weather",
+      "description": "If true, this thing creates an indoor zone that blocks weather effects.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tradeability": {
+      "label": "Tradeability",
+      "description": "Controls whether traders will buy, sell, or ignore this thing.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "All",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Sellable", "Buyable", "All"]
+      }
+    },
+    "tradeTags": {
+      "label": "Trade tags",
+      "description": "String tags used by trader stock generators to include this thing in specific trade inventories.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tradeNeverStack": {
+      "label": "Trade never stack",
+      "description": "If true, this thing is never stacked when generating trader inventories.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tradeNeverGenerateStacked": {
+      "label": "Trade never generate stacked",
+      "description": "If true, traders always spawn this thing as individual units rather than in stacks.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "healthAffectsPrice": {
+      "label": "Health affects price",
+      "description": "Whether this thing's current hit-point fraction is factored into its market price.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "colorGeneratorInTraderStock": {
+      "label": "Color generator in trader stock",
+      "description": "Color generator applied to instances of this thing when they appear in trader inventories.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "ColorGenerator"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "verbs": {
+      "label": "Verbs",
+      "description": "List of VerbProperties defining the attack modes available for this weapon. Private in source but present in shipped XML.",
+      "type": {
+        "kind": "list"
+      },
+      "items": { "kind": "object", "schemaRef": "VerbProperties" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tools": {
+      "label": "Tools",
+      "description": "List of Tool entries defining the melee attack options for this weapon or pawn body part.",
+      "type": {
+        "kind": "list"
+      },
+      "items": { "kind": "object", "schemaRef": "Tool" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "equippedAngleOffset": {
+      "label": "Equipped angle offset",
+      "description": "Angle in degrees added to the carried graphic rotation when a pawn holds this weapon.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "equippedDistanceOffset": {
+      "label": "Equipped distance offset",
+      "description": "Distance offset applied along the pawn's forward vector when rendering the held weapon.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "equipmentType": {
+      "label": "Equipment type",
+      "description": "Controls how this item is equipped. Primary means it is held in the hands.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Primary"]
+      }
+    },
+    "techLevel": {
+      "label": "Tech level",
+      "description": "Technological era associated with this thing, affecting which factions use and trade it.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "Undefined",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Undefined",
+          "Animal",
+          "Neolithic",
+          "Medieval",
+          "Industrial",
+          "Spacer",
+          "Ultra",
+          "Archotech"
+        ]
+      }
+    },
+    "weaponClasses": {
+      "label": "Weapon classes",
+      "description": "WeaponClassDef references categorizing this weapon for pawn weapon preference traits.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "WeaponClassDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "weaponTags": {
+      "label": "Weapon tags",
+      "description": "String tags used to match this weapon against pawn weapon-generation rules.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "techHediffsTags": {
+      "label": "Tech hediff tags",
+      "description": "String tags used by hediff generation rules to select implants that pair with this weapon.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "violentTechHediff": {
+      "label": "Violent tech hediff",
+      "description": "If true, the implants generated alongside this weapon are considered violent.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "destroyOnDrop": {
+      "label": "Destroy on drop",
+      "description": "If true, this item is immediately destroyed when dropped by its holder.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "equippedStatOffsets": {
+      "label": "Equipped stat offsets",
+      "description": "Named map of StatDef to offset value applied to the carrying pawn's stats while this item is equipped.",
+      "type": {
+        "kind": "statMap"
+      },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "meleeHitSound": {
+      "label": "Melee hit sound",
+      "description": "SoundDef played when this weapon connects with a melee hit.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "recoilPower": {
+      "label": "Recoil power",
+      "description": "Strength of the camera shake applied to the player's view when this weapon fires.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "recoilRelaxation": {
+      "label": "Recoil relaxation",
+      "description": "Speed at which the camera recoil from this weapon returns to center.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    },
+    "rotateInShelves": {
+      "label": "Rotate in shelves",
+      "description": "If true, this item is rotated when placed on display shelves or weapon racks.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "mergeVerbGizmos": {
+      "label": "Merge verb gizmos",
+      "description": "If true, all verb gizmos for this weapon are merged into a single combined gizmo button.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "entityDefToBuild": {
+      "label": "Entity def to build",
+      "description": "BuildableDef placed when a pawn uses this item as a construction order (e.g. a building kit).",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BuildableDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "projectileWhenLoaded": {
+      "label": "Projectile when loaded",
+      "description": "ThingDef used as the projectile when this turret or launcher has been loaded with ammo.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "ideoBuildingNamerBase": {
+      "label": "Ideo building namer base",
+      "description": "RulePackDef used to generate random names for instances of this ideoligion building.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RulePackDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "entityCodexEntry": {
+      "label": "Entity codex entry",
+      "description": "EntityCodexEntryDef describing this thing's entry in the entity codex (Anomaly expansion).",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "EntityCodexEntryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "ingestible": {
+      "label": "Ingestible",
+      "description": "Properties for food, drugs, or other ingestible items including nutrition, drug effects, and joy.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "IngestibleProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "filth": {
+      "label": "Filth",
+      "description": "Properties for filth things controlling how they age, spread, and are cleaned.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "FilthProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "gas": {
+      "label": "Gas",
+      "description": "Properties for gas things controlling dissipation, color, and effects.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "GasProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "building": {
+      "label": "Building",
+      "description": "Building-specific properties such as facility type, storage settings, and bed stats.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "BuildingProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "race": {
+      "label": "Race",
+      "description": "Pawn race properties including body size, life stages, diet, combat, and reproduction.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RaceProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "apparel": {
+      "label": "Apparel",
+      "description": "Apparel properties including body part groups covered, layer, and stat effects.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "ApparelProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "mote": {
+      "label": "Mote",
+      "description": "Mote properties controlling fade speed, size, and movement for transient visual effect things.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "MoteProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "plant": {
+      "label": "Plant",
+      "description": "Plant properties including growth rate, harvest yield, wood drop, and fertility requirements.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "PlantProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "projectile": {
+      "label": "Projectile",
+      "description": "Projectile properties including damage, speed, stopping power, and explosion behavior.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "ProjectileProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "stuffProps": {
+      "label": "Stuff props",
+      "description": "Stuff material properties controlling stat factors, appearance, and which categories this material fills.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "StuffProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "skyfaller": {
+      "label": "Skyfaller",
+      "description": "Skyfaller properties for things that fall from the sky, including shadow, speed, and impact effects.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "SkyfallerProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "pawnFlyer": {
+      "label": "Pawn flyer",
+      "description": "Pawn flyer properties for airborne pawns launched by abilities or other effects.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "PawnFlyerProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "ritualFocus": {
+      "label": "Ritual focus",
+      "description": "Ritual focus properties for buildings used as the focal point of ideoligion rituals.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RitualFocusProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "ingredient": {
+      "label": "Ingredient",
+      "description": "Ingredient properties for things used as recipe inputs, including merge behavior.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "IngredientProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "portal": {
+      "label": "Portal",
+      "description": "Map portal properties for things that act as entry or exit points between maps.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "MapPortalProperties"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "canBeUsedUnderRoof": {
+      "label": "Can be used under roof",
+      "description": "If true, this thing can be placed and used inside roofed areas.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-item": {
+      "label": "Basic item",
+      "description": "Minimal item def with a label and stack limit.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "label"
+      ],
+      "fieldValues": {
+        "category": "Item",
+        "stackLimit": 75
+      }
+    },
+    "basic-building": {
+      "label": "Basic building",
+      "description": "Placeable structure with configurable passability.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "label"
+      ],
+      "fieldValues": {
+        "category": "Building",
+        "altitudeLayer": "Building",
+        "passability": "PassThroughOnly"
+      }
+    }
+  }
+}

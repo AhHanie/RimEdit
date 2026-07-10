@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AddWallEdgeThings",
+  "label": "Sketch resolver: Add wall edge things",
+  "description": "Concrete RimWorld SketchResolver_AddWallEdgeThings resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

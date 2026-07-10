@@ -1,0 +1,88 @@
+{
+  "defType": "NegativeFishingOutcomeDef",
+  "label": "Negative fishing outcome",
+  "description": "Defines a negative outcome that can occur while fishing. The outcome is eligible when the water body's fish list contains the specified fish type. A letter is always sent; damage and hediff application are optional.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "fishType",
+    "letterLabel",
+    "letterText",
+    "letterDef",
+    "damageDef",
+    "damageAmountRange",
+    "addsHediff",
+    "hediffSeverity"
+  ],
+  "fields": {
+    "fishType": {
+      "label": "Fish type",
+      "description": "Fish ThingDef that must be present in the water body's common or uncommon fish list for this outcome to be eligible.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "Title shown on the letter sent when this outcome triggers. Supports grammar tokens.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterText": {
+      "label": "Letter text",
+      "description": "Body text of the letter sent when this outcome triggers. Supports grammar tokens such as {PAWN_nameDef}.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterDef": {
+      "label": "Letter def",
+      "description": "Letter type controlling the icon style and severity shown in the message pane.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LetterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "damageDef": {
+      "label": "Damage def",
+      "description": "Optional damage type applied to the fishing pawn. When absent, no direct damage is dealt.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "damageAmountRange": {
+      "label": "Damage amount range",
+      "description": "Range in the compact min~max format from which the damage amount is drawn. Only meaningful when damageDef is set.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["4~6", "2~4", "1~3"]
+    },
+    "addsHediff": {
+      "label": "Adds hediff",
+      "description": "Optional hediff applied to the fishing pawn after damage. Applied regardless of whether damageDef is set.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "hediffSeverity": {
+      "label": "Hediff severity",
+      "description": "When positive, overwrites the severity of the hediff added by addsHediff. Ignored when addsHediff is not set.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-negative-fishing-outcome": {
+      "label": "Basic negative fishing outcome",
+      "description": "Minimal negative fishing outcome with the fields needed for the runtime to send a letter.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "fishType", "letterLabel", "letterText", "letterDef"],
+      "fieldValues": {}
+    }
+  }
+}

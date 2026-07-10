@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_GetJoy",
+  "label": "Job giver get joy",
+  "description": "Chooses a joy-giving activity for the pawn based on available joy givers and tolerance levels. No XML-loadable fields.",
+  "inherits": ["ThinkNode_JobGiver"]
+}

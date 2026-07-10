@@ -1,0 +1,46 @@
+{
+  "objectType": "StatPart_EnvironmentalEffects",
+  "label": "Stat part (environmental effects)",
+  "description": "Adjusts the stat based on roof and outdoor exposure, with an optional protection reduction from adjacent edifices.",
+  "fieldOrder": ["Class", "priority", "factorOffsetUnroofed", "factorOffsetOutdoors", "protectedByEdificeFactor"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factorOffsetUnroofed": {
+      "label": "Factor offset (unroofed)",
+      "description": "Multiplier offset applied when the pawn or thing is in an unroofed tile.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "factorOffsetOutdoors": {
+      "label": "Factor offset (outdoors)",
+      "description": "Multiplier offset applied when the pawn or thing is outdoors.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "protectedByEdificeFactor": {
+      "label": "Protected by edifice factor",
+      "description": "Fraction by which nearby edifices reduce the outdoor exposure penalty.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "objectType": "TerrainThreshold",
+  "label": "Terrain threshold",
+  "description": "A terrain layer applied when a noise value falls within the specified min-max range.",
+  "fieldOrder": ["terrain", "min", "max"],
+  "fields": {
+    "terrain": {
+      "label": "Terrain",
+      "description": "TerrainDef placed when the sampled noise value is within this threshold range.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "min": {
+      "label": "Min",
+      "description": "Minimum noise value (inclusive) at which this terrain is applied.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": -1000
+    },
+    "max": {
+      "label": "Max",
+      "description": "Maximum noise value (exclusive) at which this terrain is applied.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1000
+    }
+  }
+}

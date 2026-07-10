@@ -1,0 +1,8 @@
+{
+  "objectType": "PawnRenderNodeProperties_BulbfreakTentacle",
+  "label": "Render node properties (bulbfreak tentacle)",
+  "description": "Render node properties for bulbfreak tentacle rendering. Inherits PawnRenderNodeProperties_Spastic; no additional direct fields.",
+  "inherits": ["PawnRenderNodeProperties_Spastic"],
+  "fieldOrder": [],
+  "fields": {}
+}

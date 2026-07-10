@@ -1,0 +1,18 @@
+{
+  "objectType": "StageFailTrigger_NoPoweredLoudspeakers",
+  "label": "Stage fail trigger (no powered loudspeakers)",
+  "description": "Fails the stage when there are no powered loudspeakers nearby.",
+  "fieldOrder": ["Class", "desc", "allowanceTicks"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "desc": { "label": "Description", "type": { "kind": "localizedString" }, "required": false, "xml": "element" },
+    "allowanceTicks": {
+      "label": "Allowance ticks",
+      "description": "Number of ticks the condition is allowed to persist before the stage fails.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

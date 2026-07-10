@@ -1,0 +1,91 @@
+{
+  "objectType": "JobGiver_Wander",
+  "label": "Job giver wander",
+  "description": "Abstract base for wander job givers. Provides wander radius, locomotion, danger tolerance, and timing. Covers JobGiver_WanderNearDutyLocation and subclasses.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": [
+    "wanderRadius",
+    "ticksBetweenWandersRange",
+    "locomotionUrgency",
+    "locomotionUrgencyOutsideRadius",
+    "maxDanger",
+    "expiryInterval",
+    "canBashDoors",
+    "expireOnNearbyEnemy",
+    "canEatMealsFromInventory"
+  ],
+  "fields": {
+    "wanderRadius": {
+      "label": "Wander radius",
+      "description": "Radius in cells within which the pawn wanders around the wander root.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "ticksBetweenWandersRange": {
+      "label": "Ticks between wanders range",
+      "description": "Random range in ticks for the wait pause between wander moves.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "locomotionUrgency": {
+      "label": "Locomotion urgency",
+      "description": "Speed at which the pawn moves during wander goto jobs.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Walk",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Amble", "Walk", "Jog", "Sprint"] }
+    },
+    "locomotionUrgencyOutsideRadius": {
+      "label": "Locomotion urgency outside radius",
+      "description": "Speed override used when the pawn is outside the wander radius and needs to return. Absent means same as locomotionUrgency.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Amble", "Walk", "Jog", "Sprint"] }
+    },
+    "maxDanger": {
+      "label": "Max danger",
+      "description": "Maximum danger level of a wander destination cell the pawn will accept.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Some", "Deadly"] }
+    },
+    "expiryInterval": {
+      "label": "Expiry interval",
+      "description": "Ticks before the issued wander job expires. -1 means never expires.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "canBashDoors": {
+      "label": "Can bash doors",
+      "description": "If true, the pawn may bash doors when wandering.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "expireOnNearbyEnemy": {
+      "label": "Expire on nearby enemy",
+      "description": "If true, the wander job expires quickly when an enemy is nearby so the pawn can react.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canEatMealsFromInventory": {
+      "label": "Can eat meals from inventory",
+      "description": "If true, the pawn may eat carried meals while wandering.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

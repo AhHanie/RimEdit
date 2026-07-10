@@ -1,0 +1,32 @@
+{
+  "objectType": "BiomeDiseaseRecord",
+  "label": "Biome disease record",
+  "description": "Associates a disease incident with a specific biome and a commonality weight for biome-specific disease selection.",
+  "fieldOrder": ["biome", "diseaseInc", "commonality"],
+  "fields": {
+    "biome": {
+      "label": "Biome",
+      "description": "BiomeDef this record applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "BiomeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "diseaseInc": {
+      "label": "Disease incident",
+      "description": "IncidentDef for the disease that can occur in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "IncidentDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Selection weight for this biome-disease combination. Higher values increase frequency.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 999999,
+      "xml": "element"
+    }
+  }
+}

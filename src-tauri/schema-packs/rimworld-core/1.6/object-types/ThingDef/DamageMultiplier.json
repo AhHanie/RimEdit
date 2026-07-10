@@ -1,0 +1,24 @@
+{
+  "objectType": "DamageMultiplier",
+  "label": "Damage multiplier",
+  "description": "Multiplies or nullifies incoming damage of a specific damage type.",
+  "fieldOrder": ["damageDef", "multiplier"],
+  "fields": {
+    "damageDef": {
+      "label": "Damage def",
+      "description": "DamageDef this multiplier applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "multiplier": {
+      "label": "Multiplier",
+      "description": "Factor applied to damage of the given type. 0 means full immunity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationFindMod">
+    <mods>
+      <li>Humanoid Alien Races</li>
+      <li>Alien Vs Predator</li>
+    </mods>
+    <match Class="PatchOperationRemove">
+      <xpath>Defs/ThingDef[defName="Wall"]/comps</xpath>
+    </match>
+    <nomatch Class="PatchOperationTest">
+      <xpath>Defs/ThingDef[defName="Wall"]</xpath>
+    </nomatch>
+  </Operation>
+</Patch>

@@ -1,0 +1,29 @@
+{
+  "objectType": "ScenPart_ForcedHediff",
+  "label": "Forced hediff",
+  "description": "Forces a health condition (hediff) onto starting pawns at a randomised severity.",
+  "inherits": ["ScenPart_PawnModifier"],
+  "fieldOrder": ["def", "visible", "chance", "context", "hideOffMap", "hediff", "severityRange"],
+  "fields": {
+    "hediff": {
+      "label": "Hediff",
+      "description": "HediffDef applied to eligible starting pawns.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "severityRange": {
+      "label": "Severity range",
+      "description": "Range from which the hediff severity is randomly chosen when applied.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.5~1", "1~1"]
+    }
+  }
+}

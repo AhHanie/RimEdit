@@ -1,0 +1,63 @@
+{
+  "objectType": "CompProperties_RitualEffectIntervalSpawn",
+  "label": "Ritual visual effect comp (interval spawn)",
+  "description": "Spawns effects at a regular interval during the ritual stage.",
+  "fieldOrder": [
+    "Class", "compClass", "moteDef", "fleckDef", "effecterDef",
+    "velocity", "velocityDir", "rotation", "rotationRate", "scale",
+    "offset", "roomCheckOffset", "scaleWithRoom", "scalePositionWithRoom",
+    "onlySpawnInSameRoom", "colorOverride", "overrideColors",
+    "spawnIntervalTicks", "spawnCount", "maxBursts", "delay"
+  ],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "compClass": { "label": "Comp class", "type": { "kind": "typeName" }, "required": false, "xml": "element" },
+    "moteDef": { "label": "Mote def", "type": { "kind": "defReference" }, "required": false, "xml": "element", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+    "fleckDef": { "label": "Fleck def", "type": { "kind": "defReference" }, "required": false, "xml": "element", "reference": { "defType": "FleckDef", "allowAbstract": false, "scope": "allSources" } },
+    "effecterDef": { "label": "Effecter def", "type": { "kind": "defReference" }, "required": false, "xml": "element", "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" } },
+    "velocity": { "label": "Velocity", "type": { "kind": "floatRange" }, "required": false, "defaultValue": "0~0", "xml": "element" },
+    "velocityDir": { "label": "Velocity direction", "type": { "kind": "vector3" }, "required": false, "xml": "element" },
+    "rotation": { "label": "Rotation", "type": { "kind": "floatRange" }, "required": false, "defaultValue": "0~0", "xml": "element" },
+    "rotationRate": { "label": "Rotation rate", "type": { "kind": "floatRange" }, "required": false, "defaultValue": "0~0", "xml": "element" },
+    "scale": { "label": "Scale", "type": { "kind": "floatRange" }, "required": false, "defaultValue": "1~1", "xml": "element" },
+    "offset": { "label": "Offset", "type": { "kind": "vector3" }, "required": false, "xml": "element" },
+    "roomCheckOffset": { "label": "Room check offset", "type": { "kind": "vector3" }, "required": false, "xml": "element" },
+    "scaleWithRoom": { "label": "Scale with room", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "scalePositionWithRoom": { "label": "Scale position with room", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "onlySpawnInSameRoom": { "label": "Only spawn in same room", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "colorOverride": { "label": "Color override", "type": { "kind": "color" }, "required": false, "xml": "element" },
+    "overrideColors": { "label": "Override colors", "type": { "kind": "list" }, "items": { "kind": "color" }, "required": false, "xml": "listOfLi" },
+    "spawnIntervalTicks": {
+      "label": "Spawn interval ticks",
+      "description": "Number of ticks between each spawn burst. Defaults to 10.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    },
+    "spawnCount": {
+      "label": "Spawn count",
+      "description": "Number of effects spawned per burst. Defaults to 1.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "maxBursts": {
+      "label": "Max bursts",
+      "description": "Maximum number of bursts before the comp stops spawning. -1 means unlimited.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "delay": {
+      "label": "Delay",
+      "description": "Number of ticks to wait before the first burst. Defaults to 0.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

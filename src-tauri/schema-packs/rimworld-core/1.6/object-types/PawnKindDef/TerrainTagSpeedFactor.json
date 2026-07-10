@@ -1,0 +1,27 @@
+{
+  "objectType": "TerrainTagSpeedFactor",
+  "label": "Terrain tag speed factor",
+  "description": "A move speed multiplier applied when a pawn is on terrain bearing the specified tag.",
+  "fieldOrder": [
+    "tag",
+    "factor"
+  ],
+  "fields": {
+    "tag": {
+      "label": "Terrain tag",
+      "description": "Terrain tag string that triggers this speed factor.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Marsh", "Deep_Water", "Ice"]
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Multiplier applied to the pawn's move speed on matching terrain. Values below 1 slow the pawn.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

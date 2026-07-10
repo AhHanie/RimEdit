@@ -1,0 +1,29 @@
+{
+  "objectType": "ScenPart_StartingMech",
+  "label": "Starting mech",
+  "description": "Adds a starting mechanoid to the colony. Requires the Biotech DLC. The mech may optionally be overseen by a starting colonist.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "mechKind", "overseenByPlayerPawnChance"],
+  "fields": {
+    "mechKind": {
+      "label": "Mech kind",
+      "description": "PawnKindDef for the starting mechanoid.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "overseenByPlayerPawnChance": {
+      "label": "Overseen by player pawn chance",
+      "description": "Probability (0-1) that the mech is assigned to a starting colonist as its overseer. Defaults to 0.5.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.5
+    }
+  }
+}

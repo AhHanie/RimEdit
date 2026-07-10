@@ -1,0 +1,8 @@
+{
+  "objectType": "SurgeryOutcomeSuccess",
+  "label": "Surgery outcome: success",
+  "description": "Successful surgery outcome. Applies when Rand.Chance(quality) returns true.",
+  "inherits": ["SurgeryOutcome"],
+  "fieldOrder": [],
+  "fields": {}
+}

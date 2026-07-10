@@ -1,0 +1,109 @@
+{
+  "objectType": "LifeStageAge",
+  "label": "Life stage age",
+  "description": "Associates a LifeStageDef with a minimum biological age and optional sound overrides, defining when a race transitions into that life stage.",
+  "fieldOrder": [
+    "def",
+    "minAge",
+    "soundCall",
+    "soundAngry",
+    "soundWounded",
+    "soundDeath",
+    "soundAmbience",
+    "soundAttack"
+  ],
+  "fields": {
+    "def": {
+      "label": "Def",
+      "description": "LifeStageDef that applies once the pawn reaches minAge.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "LifeStageDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minAge": {
+      "label": "Min age",
+      "description": "Minimum biological age in years at which this life stage begins.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "soundCall": {
+      "label": "Sound call",
+      "description": "SoundDef played when this animal calls to others at this life stage. Overrides the race-level call sound.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundAngry": {
+      "label": "Sound angry",
+      "description": "SoundDef played when this animal becomes aggressive at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundWounded": {
+      "label": "Sound wounded",
+      "description": "SoundDef played when this animal is injured at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundDeath": {
+      "label": "Sound death",
+      "description": "SoundDef played when this animal dies at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundAmbience": {
+      "label": "Sound ambience",
+      "description": "SoundDef played as an ambient loop for this animal at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundAttack": {
+      "label": "Sound attack",
+      "description": "SoundDef played when this animal performs a melee attack at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

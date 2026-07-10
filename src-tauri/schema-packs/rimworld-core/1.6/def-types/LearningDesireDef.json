@@ -1,0 +1,68 @@
+{
+  "defType": "LearningDesireDef",
+  "label": "Learning desire",
+  "description": "Defines an activity that satisfies a child pawn's learning need. Introduced by the Biotech expansion. The workerClass implements eligibility checks and issues the jobDef when the desire is fulfilled.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "selectionWeight",
+    "xpPerTick",
+    "workerClass",
+    "jobDef"
+  ],
+  "fields": {
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative weight used when selecting which learning desire to assign to a child pawn. Higher values make this desire more likely to be chosen. Source default is 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "xpPerTick": {
+      "label": "XP per tick",
+      "description": "Raw skill XP gain per game tick while this desire is active. Absent on desires that do not grant skill XP, such as Floordrawing.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# LearningGiver subclass that implements eligibility checks and issues the job when this desire is fulfilled.",
+      "type": { "kind": "typeName" },
+      "required": true,
+      "xml": "element",
+      "examples": [
+        "LearningGiver_Workwatching",
+        "LearningGiver_Skydreaming",
+        "LearningGiver_Reading",
+        "LearningGiver_Radiotalking",
+        "LearningGiver_NatureRunning",
+        "LearningGiver_Lessontaking",
+        "LearningGiver_Floordrawing"
+      ]
+    },
+    "jobDef": {
+      "label": "Job def",
+      "description": "JobDef the worker issues when this desire is fulfilled. Required in all shipped defs.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": {
+        "defType": "JobDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "basic-learning-desire": {
+      "label": "Basic learning desire",
+      "description": "Learning desire with a worker class, job, and optional XP gain rate.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "jobDef", "selectionWeight", "xpPerTick"],
+      "fieldValues": {}
+    }
+  }
+}

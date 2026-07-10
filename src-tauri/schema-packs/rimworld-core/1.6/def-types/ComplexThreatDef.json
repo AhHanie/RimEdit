@@ -1,0 +1,154 @@
+{
+  "defType": "ComplexThreatDef",
+  "label": "Complex threat",
+  "description": "Defines a threat that can be selected and resolved while generating a complex layout.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "faction",
+    "postSpawnPassiveThreatFactor",
+    "minPoints",
+    "spawnInOtherRoomChance",
+    "allowPassive",
+    "fallbackToRoomEnteredTrigger",
+    "delayChance",
+    "delayTickOptions",
+    "threatFactorOverDelayTicksCurve",
+    "signalActionAmbushType",
+    "spawnAroundComplex",
+    "useDropPods"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "ComplexThreatWorker subclass used to test and resolve this threat.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "ComplexThreatWorker",
+      "examples": [
+        "ComplexThreatWorker_Ambush",
+        "ComplexThreatWorker_SleepingMechanoids"
+      ]
+    },
+    "faction": {
+      "label": "Faction",
+      "description": "Optional faction definition used by workers that spawn faction-specific threats.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FactionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "postSpawnPassiveThreatFactor": {
+      "label": "Post-spawn passive threat factor",
+      "description": "Multiplier applied to used threat points when the threat resolves passively.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1,
+      "validationHints": { "min": 0 }
+    },
+    "minPoints": {
+      "label": "Minimum points",
+      "description": "Minimum threat-point budget required before the worker can resolve.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0,
+      "validationHints": { "min": 0 }
+    },
+    "spawnInOtherRoomChance": {
+      "label": "Spawn in other room chance",
+      "description": "Chance that a triggered threat resolves in another viable room.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0,
+      "validationHints": { "min": 0, "max": 1 }
+    },
+    "allowPassive": {
+      "label": "Allow passive",
+      "description": "Allows the threat to resolve without an available trigger signal.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "fallbackToRoomEnteredTrigger": {
+      "label": "Fallback to room-entered trigger",
+      "description": "Creates a room-entry trigger when no existing thing can provide one.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "delayChance": {
+      "label": "Delay chance",
+      "description": "Chance that a non-passive threat waits for a randomly selected delay.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0,
+      "validationHints": { "min": 0, "max": 1 }
+    },
+    "delayTickOptions": {
+      "label": "Delay tick options",
+      "description": "Candidate delay durations in game ticks.",
+      "type": { "kind": "list" },
+      "items": { "kind": "integer" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": ["1800", "3600", "7200"]
+    },
+    "threatFactorOverDelayTicksCurve": {
+      "label": "Threat factor over delay ticks curve",
+      "description": "Maps the chosen delay in ticks to the multiplier applied to the threat-point budget.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "signalActionAmbushType": {
+      "label": "Signal action ambush type",
+      "description": "Pawn source used by the ambush worker.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "Normal",
+      "validationHints": {
+        "allowedValues": ["Normal", "Manhunters", "Mechanoids"]
+      }
+    },
+    "spawnAroundComplex": {
+      "label": "Spawn around complex",
+      "description": "Makes the ambush worker spawn around the expanded complex bounds.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "useDropPods": {
+      "label": "Use drop pods",
+      "description": "Makes the ambush worker deliver spawned pawns in drop pods.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  },
+  "validationRules": {
+    "delay-options-when-delay-enabled": {
+      "kind": "requiredWhen",
+      "field": "delayTickOptions",
+      "when": {
+        "field": "delayChance",
+        "operator": "greaterThan",
+        "value": 0
+      },
+      "message": "Delay tick options are required when delay chance is greater than zero."
+    }
+  }
+}

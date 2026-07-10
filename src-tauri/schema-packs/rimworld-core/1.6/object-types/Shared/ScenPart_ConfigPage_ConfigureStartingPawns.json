@@ -1,0 +1,40 @@
+{
+  "objectType": "ScenPart_ConfigPage_ConfigureStartingPawns",
+  "label": "Configure starting pawns",
+  "description": "Configuration page for selecting starting pawns. Controls pawn count, how many candidates are generated, allowed developmental stages, and required skills.",
+  "inherits": ["ScenPart_ConfigPage_ConfigureStartingPawnsBase"],
+  "fieldOrder": ["def", "visible", "pawnChoiceCount", "pawnCount", "allowedDevelopmentalStages", "requiredSkills"],
+  "fields": {
+    "pawnCount": {
+      "label": "Pawn count",
+      "description": "Number of pawns the player starts with. Defaults to 3.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 3
+    },
+    "allowedDevelopmentalStages": {
+      "label": "Allowed developmental stages",
+      "description": "Developmental stages allowed for generated starting pawns.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      }
+    },
+    "requiredSkills": {
+      "label": "Required skills",
+      "description": "SkillDefs that starting pawn candidates must have at a usable level.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "SkillDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

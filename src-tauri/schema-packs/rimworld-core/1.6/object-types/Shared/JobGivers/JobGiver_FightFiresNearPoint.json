@@ -1,0 +1,18 @@
+{
+  "objectType": "JobGiver_FightFiresNearPoint",
+  "label": "Job giver fight fires near point",
+  "description": "Directs the pawn to extinguish fires near a reference point. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "maxDistFromPoint"
+  ],
+  "fields": {
+    "maxDistFromPoint": {
+      "label": "Max dist from point",
+      "description": "Maximum distance in cells from the reference point within which fires are considered for extinguishing.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

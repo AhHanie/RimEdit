@@ -1,0 +1,22 @@
+{
+  "objectType": "StatPart_Genes",
+  "label": "Stat part (genes)",
+  "description": "Contributes gene-based stat modifiers from the pawn's active genes.",
+  "fieldOrder": ["Class", "priority"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "objectType": "SurgeryOutcomeComp_MedicineQuality",
+  "label": "Surgery outcome comp (medicine quality)",
+  "description": "Adjusts surgery quality via a curve evaluated at the medicine quality used during the operation.",
+  "inherits": ["SurgeryOutcomeComp_Curve"],
+  "fieldOrder": [],
+  "fields": {}
+}

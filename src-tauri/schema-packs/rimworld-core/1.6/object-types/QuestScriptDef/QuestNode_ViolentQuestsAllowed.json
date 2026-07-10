@@ -1,0 +1,32 @@
+{
+  "objectType": "QuestNode_ViolentQuestsAllowed",
+  "label": "QuestNode ViolentQuestsAllowed",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_ViolentQuestsAllowed.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "node",
+    "elseNode"
+  ],
+  "fields": {
+    "node": {
+      "description": "QuestNode run when violent quests are allowed.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "elseNode": {
+      "description": "QuestNode run when violent quests are not allowed.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

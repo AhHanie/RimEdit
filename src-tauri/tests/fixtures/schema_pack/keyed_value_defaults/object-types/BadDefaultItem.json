@@ -1,0 +1,17 @@
+{
+  "objectType": "BadDefaultItem",
+  "fieldOrder": ["key", "amount"],
+  "fields": {
+    "key": {
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "amount": {
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": "notanumber",
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "objectType": "StockGenerator_ReinforcedBarrels",
+  "label": "Reinforced barrels generator",
+  "description": "Generates ThingDefOf.ReinforcedBarrel when the difficulty setting does not use classic mortars. Has no extra fields beyond the base StockGenerator.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,46 @@
+{
+  "objectType": "RoomRequirement_ThingAnyOfCount",
+  "label": "Room requirement (any of things, count)",
+  "description": "Requires the room to contain a minimum count of things from a list.",
+  "fieldOrder": ["Class", "labelKey", "disablingPrecepts", "things", "count"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoomRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the room requirement label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "disablingPrecepts": {
+      "label": "Disabling precepts",
+      "description": "Precepts that disable this room requirement.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "things": {
+      "label": "Things",
+      "description": "Things to count in the room.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "count": {
+      "label": "Count",
+      "description": "Minimum number of matching things required.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

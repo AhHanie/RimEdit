@@ -1,0 +1,411 @@
+{
+  "objectType": "VerbProperties",
+  "label": "Verb properties",
+  "description": "Defines one attack mode for a weapon or pawn, covering projectile, melee, beam, and spray verbs.",
+  "fieldOrder": [
+    "verbClass",
+    "label",
+    "defaultVerb",
+    "range",
+    "minRange",
+    "noiseRadius",
+    "projectileDef",
+    "defaultProjectile",
+    "warmupTime",
+    "muzzleFlashScale",
+    "impactFleck",
+    "burstShotCount",
+    "ticksBetweenBurstShots",
+    "soundCast",
+    "soundCastTail",
+    "soundAiming",
+    "soundHit",
+    "soundMiss",
+    "targetParams",
+    "forcedMissRadius",
+    "forcedMissRadiusClassicMortars",
+    "isMortar",
+    "onlyManualCast",
+    "ai_IsIncendiary",
+    "ai_IsBuildingDestroyer",
+    "requiresEquipment",
+    "requiresAnyWeapon",
+    "bodypartTagTarget",
+    "accuracyStat",
+    "manipulationPowerFactor",
+    "linkedBodyPartsGroup",
+    "ensureLinkedGroupUpFront",
+    "meleeDamageDef",
+    "commonality",
+    "minIntelligence",
+    "commonalityVsEdificeFactor",
+    "reactionSpeed",
+    "drawAimPie",
+    "colonistOnly",
+    "damageDef",
+    "damageAmountBase",
+    "armorPenetrationBase",
+    "stopBurstWithoutLos",
+    "fieldOfFire",
+    "targetable"
+  ],
+  "fields": {
+    "verbClass": {
+      "label": "Verb class",
+      "description": "Fully qualified C# class (Verb subclass) that implements the attack logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Verb_Shoot", "Verb_MeleeAttack", "Verb_MeleeAttackDamage", "Verb_LaunchProjectile"]
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display name for this verb in the gizmo bar.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "defaultVerb": {
+      "label": "Default verb",
+      "description": "If true, this is the default attack mode activated when the weapon is equipped.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "range": {
+      "label": "Range",
+      "description": "Maximum attack range in cells.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.42,
+      "xml": "element"
+    },
+    "minRange": {
+      "label": "Min range",
+      "description": "Minimum attack range in cells. Targets closer than this cannot be attacked.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "noiseRadius": {
+      "label": "Noise radius",
+      "description": "Radius in cells within which this attack alerts nearby hostiles.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "projectileDef": {
+      "label": "Projectile def",
+      "description": "ThingDef of the projectile fired. Private in source but used in shipped XML.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "defaultProjectile": {
+      "label": "Default projectile",
+      "description": "ThingDef used as the default projectile when no ammo-specific projectile is loaded.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "warmupTime": {
+      "label": "Warmup time",
+      "description": "Seconds the pawn must aim before firing.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "muzzleFlashScale": {
+      "label": "Muzzle flash scale",
+      "description": "Scale of the muzzle flash effect played on fire.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "impactFleck": {
+      "label": "Impact fleck",
+      "description": "FleckDef spawned at the impact point when this verb hits.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FleckDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "burstShotCount": {
+      "label": "Burst shot count",
+      "description": "Number of projectiles fired per trigger pull.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "ticksBetweenBurstShots": {
+      "label": "Ticks between burst shots",
+      "description": "Game ticks between successive shots in a burst.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 15,
+      "xml": "element"
+    },
+    "soundCast": {
+      "label": "Sound cast",
+      "description": "SoundDef played when this verb fires.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundCastTail": {
+      "label": "Sound cast tail",
+      "description": "SoundDef played after the weapon fires (e.g. a tail crack).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundAiming": {
+      "label": "Sound aiming",
+      "description": "SoundDef looped during the warmup aiming phase.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundHit": {
+      "label": "Sound hit",
+      "description": "SoundDef played when this verb hits a target.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundMiss": {
+      "label": "Sound miss",
+      "description": "SoundDef played when this verb misses.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "targetParams": {
+      "label": "Target parameters",
+      "description": "Constraints on which targets this verb can select.",
+      "type": { "kind": "object", "schemaRef": "TargetingParameters" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "forcedMissRadius": {
+      "label": "Forced miss radius",
+      "description": "Radius within which shots are randomly scattered. Private in source but used in shipped XML (e.g. mortars).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "forcedMissRadiusClassicMortars": {
+      "label": "Forced miss radius (classic mortars)",
+      "description": "Override forced miss radius used when the classic mortars difficulty setting is on. Private in source.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "isMortar": {
+      "label": "Is mortar",
+      "description": "If true, this verb uses mortar targeting rules including minimum range enforcement. Private in source.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyManualCast": {
+      "label": "Only manual cast",
+      "description": "If true, AI pawns will not use this verb; only player-directed attacks are allowed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ai_IsIncendiary": {
+      "label": "AI: is incendiary",
+      "description": "Hint to the AI that this verb sets things on fire.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ai_IsBuildingDestroyer": {
+      "label": "AI: is building destroyer",
+      "description": "Hint to the AI that this verb is effective at destroying structures.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiresEquipment": {
+      "label": "Requires equipment",
+      "description": "If true, the pawn must be holding an equipped item to use this verb.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiresAnyWeapon": {
+      "label": "Requires any weapon",
+      "description": "If true, the pawn must be holding any weapon (not necessarily this one) to use this verb.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "bodypartTagTarget": {
+      "label": "Body part tag target",
+      "description": "BodyPartTagDef that this verb specifically targets on the enemy body.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "BodyPartTagDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "accuracyStat": {
+      "label": "Accuracy stat",
+      "description": "StatDef on the shooter that scales hit probability.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "manipulationPowerFactor": {
+      "label": "Manipulation power factor",
+      "description": "How much the pawn's Manipulation capacity affects this verb's power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "linkedBodyPartsGroup": {
+      "label": "Linked body parts group",
+      "description": "BodyPartGroupDef whose limb health gates whether this verb can be used.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "BodyPartGroupDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ensureLinkedGroupUpFront": {
+      "label": "Ensure linked group up front",
+      "description": "If true, the linked body parts group is always preferred for this verb.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "meleeDamageDef": {
+      "label": "Melee damage def",
+      "description": "DamageDef applied by this melee verb.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight controlling how often this verb is selected in a melee exchange.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "minIntelligence": {
+      "label": "Min intelligence",
+      "description": "Minimum pawn intelligence level required to use this verb.",
+      "type": { "kind": "enum", "enumValues": ["Animal", "ToolUser", "Humanlike"] },
+      "required": false,
+      "xml": "element"
+    },
+    "commonalityVsEdificeFactor": {
+      "label": "Commonality vs edifice factor",
+      "description": "Multiplier on this verb's selection weight when the target is a building or edifice.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "reactionSpeed": {
+      "label": "Reaction speed",
+      "description": "Factor applied to cooldown reductions when this verb counter-attacks.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "drawAimPie": {
+      "label": "Draw aim pie",
+      "description": "Whether the arc aiming indicator is drawn while the pawn aims with this verb.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "colonistOnly": {
+      "label": "Colonist only",
+      "description": "If true, only player-faction colonists can use this verb.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "damageDef": {
+      "label": "Damage def",
+      "description": "DamageDef applied by this melee verb.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "damageAmountBase": {
+      "label": "Damage amount base",
+      "description": "Base damage amount for this melee verb. -1 derives from MeleeDamage stat.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "armorPenetrationBase": {
+      "label": "Armor penetration base",
+      "description": "Base armor penetration factor (0–1) for this melee verb. -1 derives from power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "stopBurstWithoutLos": {
+      "label": "Stop burst without LOS",
+      "description": "If true, burst fire halts when line of sight to the target is lost mid-burst.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "fieldOfFire": {
+      "label": "Field of fire",
+      "description": "Cone half-angle in degrees restricting the directions this verb can fire. 0 means unlimited.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "targetable": {
+      "label": "Targetable",
+      "description": "Whether the player can manually target this verb at a specific location or thing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

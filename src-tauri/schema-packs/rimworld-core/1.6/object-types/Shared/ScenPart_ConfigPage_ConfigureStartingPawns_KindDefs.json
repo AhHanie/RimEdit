@@ -1,0 +1,29 @@
+{
+  "objectType": "ScenPart_ConfigPage_ConfigureStartingPawns_KindDefs",
+  "label": "Configure starting pawns (kind defs)",
+  "description": "Configuration page for selecting starting pawns with specific pawn kind counts. Requires the Biotech DLC.",
+  "inherits": ["ScenPart_ConfigPage_ConfigureStartingPawnsBase"],
+  "fieldOrder": ["def", "visible", "pawnChoiceCount", "kindCounts", "leftBehindPawnKind"],
+  "fields": {
+    "kindCounts": {
+      "label": "Kind counts",
+      "description": "List of pawn kind and count pairs defining the mix of starting pawns.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnKindCount" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "leftBehindPawnKind": {
+      "label": "Left behind pawn kind",
+      "description": "PawnKindDef used for any pawns that are left behind when the scenario starts (Biotech Mechanitor scenario).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

@@ -1,0 +1,271 @@
+{
+  "objectType": "RecipeMakerProperties",
+  "label": "Recipe maker properties",
+  "description": "Controls how and where this thing is crafted, including workbench requirements, skill gates, research prerequisites, and ingredient behavior.",
+  "fieldOrder": [
+    "label",
+    "productCount",
+    "targetCountAdjustment",
+    "bulkRecipeCount",
+    "useIngredientsForColor",
+    "productHasIngredientStuff",
+    "workAmount",
+    "workSpeedStat",
+    "workTableSpeedStat",
+    "workTableEfficiencyStat",
+    "efficiencyStat",
+    "skillRequirements",
+    "workSkill",
+    "workSkillLearnPerTick",
+    "requiredGiverWorkType",
+    "mechanitorWorkType",
+    "mechanitorOnlyRecipe",
+    "mechanitorFixedIngredients",
+    "unfinishedThingDef",
+    "effectWorking",
+    "soundWorking",
+    "recipeUsers",
+    "researchPrerequisite",
+    "researchPrerequisites",
+    "memePrerequisitesAny",
+    "factionPrerequisiteTags",
+    "fromIdeoBuildingPreceptOnly",
+    "displayPriority",
+    "UIIconThing"
+  ],
+  "fields": {
+    "label": {
+      "label": "Label",
+      "description": "Display name override for the recipe in the bills UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "productCount": {
+      "label": "Product count",
+      "description": "Number of items produced per completed recipe run.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "targetCountAdjustment": {
+      "label": "Target count adjustment",
+      "description": "Adjusts the target-count prompt when the player sets a bill quantity.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "bulkRecipeCount": {
+      "label": "Bulk recipe count",
+      "description": "Minimum count at which a bulk (faster per-unit) recipe unlocks. -1 disables bulk recipes.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "useIngredientsForColor": {
+      "label": "Use ingredients for color",
+      "description": "If true, the product's color is derived from the dominant stuff ingredient.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "productHasIngredientStuff": {
+      "label": "Product has ingredient stuff",
+      "description": "If true, the product's stuff type is copied from the primary stuff ingredient.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "workAmount": {
+      "label": "Work amount",
+      "description": "Total work ticks required to complete one run. -1 uses the WorkToMake stat.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "workSpeedStat": {
+      "label": "Work speed stat",
+      "description": "StatDef on the worker pawn that multiplies work speed for this recipe.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workTableSpeedStat": {
+      "label": "Work table speed stat",
+      "description": "StatDef on the worktable that multiplies work speed for this recipe.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workTableEfficiencyStat": {
+      "label": "Work table efficiency stat",
+      "description": "StatDef on the worktable that multiplies ingredient efficiency.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "efficiencyStat": {
+      "label": "Efficiency stat",
+      "description": "StatDef on the worker that controls ingredient efficiency.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "skillRequirements": {
+      "label": "Skill requirements",
+      "description": "Minimum skill levels the worker pawn must have to perform this recipe.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillRequirement" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "skill",
+      "valueField": "minLevel",
+      "keyReference": { "defType": "SkillDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workSkill": {
+      "label": "Work skill",
+      "description": "SkillDef the worker gains XP in while performing this recipe.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SkillDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workSkillLearnPerTick": {
+      "label": "Work skill learn per tick",
+      "description": "XP gained per work tick in the workSkill.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.1,
+      "xml": "element"
+    },
+    "requiredGiverWorkType": {
+      "label": "Required giver work type",
+      "description": "WorkTypeDef the worker pawn must have enabled to perform this recipe.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WorkTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mechanitorWorkType": {
+      "label": "Mechanitor work type",
+      "description": "WorkTypeDef assigned to mechaniods that perform this recipe.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WorkTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mechanitorOnlyRecipe": {
+      "label": "Mechanitor only recipe",
+      "description": "If true, this recipe can only be performed by mechanoids.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mechanitorFixedIngredients": {
+      "label": "Mechanitor fixed ingredients",
+      "description": "If true, the mechaniod uses a fixed ingredient list rather than player-configured filters.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "unfinishedThingDef": {
+      "label": "Unfinished thing def",
+      "description": "ThingDef used for the in-progress item placed on the workbench while the recipe runs.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "effectWorking": {
+      "label": "Effect working",
+      "description": "EffecterDef played at the workbench while the recipe is being worked.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundWorking": {
+      "label": "Sound working",
+      "description": "SoundDef played while the recipe is being worked.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "recipeUsers": {
+      "label": "Recipe users",
+      "description": "ThingDef references for buildings where this recipe can be performed.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "researchPrerequisite": {
+      "label": "Research prerequisite",
+      "description": "Single ResearchProjectDef that must be completed before this recipe is unlocked.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ResearchProjectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "researchPrerequisites": {
+      "label": "Research prerequisites",
+      "description": "All listed ResearchProjectDefs must be completed before this recipe is unlocked.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ResearchProjectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "memePrerequisitesAny": {
+      "label": "Meme prerequisites (any)",
+      "description": "At least one of these MemeDefs must be active in the colony's ideoligion to unlock this recipe.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "factionPrerequisiteTags": {
+      "label": "Faction prerequisite tags",
+      "description": "At least one faction with a matching tag must exist on the world for this recipe to appear.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "fromIdeoBuildingPreceptOnly": {
+      "label": "From ideo building precept only",
+      "description": "If true, this recipe is only available on buildings granted by an ideoligion precept.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayPriority": {
+      "label": "Display priority",
+      "description": "Sort order in the bill list. Lower numbers appear earlier.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 99999,
+      "xml": "element"
+    },
+    "UIIconThing": {
+      "label": "UI icon thing",
+      "description": "ThingDef whose icon is used for this recipe in the bills UI. Defaults to the produced thing.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

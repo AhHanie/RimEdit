@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_PainField",
+  "label": "Pain field comp",
+  "description": "Creates a field of pain around the pawn affecting nearby entities.",
+  "fieldOrder": ["Class", "compClass", "painPerDay", "radius"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "painPerDay": {
+      "label": "Pain per day",
+      "description": "Pain added to nearby pawns per day.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Radius in cells of the pain field.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

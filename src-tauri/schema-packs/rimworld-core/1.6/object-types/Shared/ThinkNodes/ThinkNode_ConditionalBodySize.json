@@ -1,0 +1,28 @@
+{
+  "objectType": "ThinkNode_ConditionalBodySize",
+  "label": "Think node conditional body size",
+  "description": "Conditional node whose condition passes when the pawn's body size is within [min, max]. Inherits ThinkNode_Conditional fields (including invert) and base ThinkNode fields.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": [
+    "min",
+    "max"
+  ],
+  "fields": {
+    "min": {
+      "label": "Min",
+      "description": "Minimum body size (inclusive) for the condition to pass.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "max": {
+      "label": "Max",
+      "description": "Maximum body size (inclusive) for the condition to pass.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 99999,
+      "xml": "element"
+    }
+  }
+}

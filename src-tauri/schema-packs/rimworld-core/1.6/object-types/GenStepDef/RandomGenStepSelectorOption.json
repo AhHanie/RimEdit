@@ -1,0 +1,31 @@
+{
+  "objectType": "RandomGenStepSelectorOption",
+  "label": "Random gen step selector option",
+  "description": "A weighted option for GenStep_RandomSelector. Exactly one of def or genStep should be set.",
+  "fieldOrder": ["def", "genStep", "weight"],
+  "fields": {
+    "def": {
+      "label": "Def",
+      "description": "GenStepDef whose genStep field is executed when this option is chosen.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "GenStepDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "genStep": {
+      "label": "Gen step",
+      "description": "Inline polymorphic gen step executed when this option is chosen.",
+      "type": { "kind": "object", "schemaRef": "GenStep" },
+      "required": false,
+      "xml": "object"
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative probability of this option being chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    }
+  }
+}

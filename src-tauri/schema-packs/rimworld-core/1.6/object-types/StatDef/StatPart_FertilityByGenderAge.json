@@ -1,0 +1,38 @@
+{
+  "objectType": "StatPart_FertilityByGenderAge",
+  "label": "Stat part (fertility by gender and age)",
+  "description": "Scales the stat by a gender-specific age curve, modelling fertility changes over a pawn's lifespan.",
+  "fieldOrder": ["Class", "priority", "maleFertilityAgeFactor", "femaleFertilityAgeFactor"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "maleFertilityAgeFactor": {
+      "label": "Male fertility age factor",
+      "description": "Curve mapping biological age to a fertility factor for male pawns.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "femaleFertilityAgeFactor": {
+      "label": "Female fertility age factor",
+      "description": "Curve mapping biological age to a fertility factor for female pawns.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    }
+  }
+}

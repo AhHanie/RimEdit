@@ -1,0 +1,22 @@
+{
+  "objectType": "ChoiceEntry",
+  "fieldOrder": ["def", "amount"],
+  "fields": {
+    "def": {
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BaseChoiceDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "amount": {
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

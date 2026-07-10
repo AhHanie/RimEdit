@@ -1,0 +1,28 @@
+{
+  "objectType": "CompProperties_UniqueWeapon",
+  "label": "Unique weapon comp",
+  "description": "Comp properties for unique generated weapons. Lists eligible weapon categories and localized base labels used by generated names.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": ["weaponCategories", "namerLabels"],
+  "fields": {
+    "weaponCategories": {
+      "label": "Weapon categories",
+      "description": "WeaponCategoryDef references used to select compatible weapon traits for this unique weapon.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": { "defType": "WeaponCategoryDef", "allowAbstract": false, "scope": "allSources" }
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "namerLabels": {
+      "label": "Namer labels",
+      "description": "Localized base labels used by the unique weapon name generator.",
+      "type": { "kind": "list" },
+      "items": { "kind": "localizedString" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

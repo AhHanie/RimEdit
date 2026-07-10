@@ -1,0 +1,44 @@
+{
+  "objectType": "RitualOutcomeComp_RitualSeatPresent",
+  "label": "Ritual outcome comp (ritual seat present)",
+  "description": "Applies qualityOffset based on the number of ideo-specific ritual seats present relative to the number of spectators.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Quality offset contributed per seat relative to spectator count.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve; not typically used by this variant.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

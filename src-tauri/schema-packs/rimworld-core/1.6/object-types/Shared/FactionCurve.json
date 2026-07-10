@@ -1,0 +1,23 @@
+{
+  "objectType": "FactionCurve",
+  "label": "Faction curve",
+  "description": "Associates a FactionDef with a selection-weight curve, used to override arrival mode or raid strategy selection weight for that specific faction.",
+  "fieldOrder": ["faction", "selectionWeightPerPointsCurve"],
+  "fields": {
+    "faction": {
+      "label": "Faction",
+      "description": "FactionDef this curve applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "selectionWeightPerPointsCurve": {
+      "label": "Selection weight per points curve",
+      "description": "Piecewise linear curve mapping incident points to the selection weight for the associated faction.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "objectType": "RoomRequirement_ThingAnyOf",
+  "label": "Room requirement (any of things)",
+  "description": "Requires the room to contain at least one thing from a list.",
+  "fieldOrder": ["Class", "labelKey", "disablingPrecepts", "things"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoomRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the room requirement label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "disablingPrecepts": {
+      "label": "Disabling precepts",
+      "description": "Precepts that disable this room requirement.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "things": {
+      "label": "Things",
+      "description": "At least one of these things must be present in the room.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

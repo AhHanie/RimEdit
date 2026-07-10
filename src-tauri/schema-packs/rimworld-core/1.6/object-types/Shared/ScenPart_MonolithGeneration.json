@@ -1,0 +1,20 @@
+{
+  "objectType": "ScenPart_MonolithGeneration",
+  "label": "Monolith generation",
+  "description": "Controls how the grey flesh monolith is placed on the starting map. Requires the Anomaly DLC.",
+  "inherits": ["ScenPart_DisableMapGen"],
+  "fieldOrder": ["def", "visible", "method"],
+  "fields": {
+    "method": {
+      "label": "Method",
+      "description": "Where and how the monolith is generated on the starting map.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "Disabled",
+      "validationHints": {
+        "allowedValues": ["Disabled", "NearColonists"]
+      }
+    }
+  }
+}

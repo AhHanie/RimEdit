@@ -1,0 +1,857 @@
+{
+  "defType": "MutantDef",
+  "label": "Mutant",
+  "description": "Defines an Anomaly mutant form (e.g., ghoul, shambler, awoken corpse).",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "hediff",
+    "thinkTree",
+    "thinkTreeConstant",
+    "allowedDevelopmentalStages",
+    "clearMutantStatusOnDeath",
+    "consideredSubhuman",
+    "workDisables",
+    "disablesIdeo",
+    "disableAging",
+    "disableApparel",
+    "disablesGenes",
+    "preventsMentalBreaks",
+    "canOpenDoors",
+    "canOpenAnyDoor",
+    "canCarryPawns",
+    "canTend",
+    "canTravelInCaravan",
+    "respectsAllowedArea",
+    "canGainXP",
+    "disableEatingAtTable",
+    "disableOwnership",
+    "disablePolicies",
+    "disableTitles",
+    "disableFlying",
+    "namePrefix",
+    "hideLabel",
+    "codexEntry",
+    "showInScenarioEditor",
+    "overrideLabel",
+    "overrideInspectString",
+    "showJobReport",
+    "whitelistedFloatMenuProviders",
+    "disableNeeds",
+    "needWhitelist",
+    "overrideFoodType",
+    "foodType",
+    "allowEatingCorpses",
+    "useCorpseGraphics",
+    "skinColorOverride",
+    "skinColorTint",
+    "skinColorTintStrength",
+    "hairColorOverride",
+    "bodyTypeGraphicPaths",
+    "forcedHeadTypes",
+    "hairTagFilter",
+    "beardTagFilter",
+    "renderNodeProperties",
+    "standingAnimation",
+    "makesFootprints",
+    "canBleed",
+    "bloodDef",
+    "bloodSmearDef",
+    "entitledToMedicalCare",
+    "isImmuneToInfections",
+    "canUseDrugs",
+    "drugWhitelist",
+    "woundColor",
+    "preventIllnesses",
+    "removeChronicIllnesses",
+    "removePermanentInjuries",
+    "removeAddictions",
+    "removeAllInjuries",
+    "restoreLegs",
+    "terminatePregnancy",
+    "partsCleanAndDroppable",
+    "clearsEgo",
+    "breathesAir",
+    "givesHediffs",
+    "removesHediffs",
+    "hediffGivers",
+    "deathLetter",
+    "deathLetterExtra",
+    "soundCall",
+    "soundAttack",
+    "soundWounded",
+    "soundDeath",
+    "soundAngry",
+    "soundAttackChance",
+    "verbs",
+    "tools",
+    "abilities",
+    "abilityWhitelist",
+    "passive",
+    "canBeDrafted",
+    "canAttackWhileCrawling",
+    "deathOnDownedChance",
+    "killedLeavings",
+    "psychicShockUntargetable",
+    "disableHostilityResponse",
+    "defaultFaction",
+    "isConsideredCorpse",
+    "relativeTurnedThought",
+    "incapableOfSocialInteractions",
+    "tameable",
+    "canBeCapturedToHoldingPlatform",
+    "producesBioferrite",
+    "anomalyKnowledgeOffset",
+    "knowledgeCategory"
+  ],
+  "fields": {
+    "hediff": {
+      "label": "Hediff",
+      "description": "HediffDef that marks a pawn as this mutant form. Applied on transformation and removed on reversion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thinkTree": {
+      "label": "Think tree",
+      "description": "ThinkTreeDef driving pawn AI in normal circumstances while in this mutant form.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThinkTreeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thinkTreeConstant": {
+      "label": "Think tree (constant)",
+      "description": "ThinkTreeDef evaluated every tick for constant-interval AI decisions.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThinkTreeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "allowedDevelopmentalStages": {
+      "label": "Allowed developmental stages",
+      "description": "Life stages a pawn can occupy while in this mutant form. Flags separated by commas. Default: Baby, Child, Adult.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": { "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"] }
+    },
+    "clearMutantStatusOnDeath": {
+      "label": "Clear mutant status on death",
+      "description": "If true, the mutant hediff is removed when the pawn dies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "consideredSubhuman": {
+      "label": "Considered subhuman",
+      "description": "If true, the pawn is treated as non-sapient for colonist-related mechanics.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "workDisables": {
+      "label": "Work disables",
+      "description": "WorkTags this mutant cannot perform. Each flag is a separate li element.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "disablesIdeo": {
+      "label": "Disables ideo",
+      "description": "If true, the pawn's ideology is suppressed while in this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "disableAging": {
+      "label": "Disable aging",
+      "description": "If true, biological aging is paused while the pawn is in this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "disableApparel": {
+      "label": "Disable apparel",
+      "description": "If true, the pawn cannot wear apparel while in this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "disablesGenes": {
+      "label": "Disables genes",
+      "description": "Genes that are suppressed while the pawn is in this mutant form.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "GeneDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "preventsMentalBreaks": {
+      "label": "Prevents mental breaks",
+      "description": "If true, this mutant form blocks all mental breaks.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canOpenDoors": {
+      "label": "Can open doors",
+      "description": "If true, the pawn can open owned-faction doors while in this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canOpenAnyDoor": {
+      "label": "Can open any door",
+      "description": "If true, the pawn can open any door regardless of faction while in this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canCarryPawns": {
+      "label": "Can carry pawns",
+      "description": "If true, this mutant can carry downed pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canTend": {
+      "label": "Can tend",
+      "description": "If true, this mutant can tend to injured pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canTravelInCaravan": {
+      "label": "Can travel in caravan",
+      "description": "If true, this mutant can be included in caravans.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "respectsAllowedArea": {
+      "label": "Respects allowed area",
+      "description": "If true, this mutant obeys the pawn's allowed area restriction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canGainXP": {
+      "label": "Can gain XP",
+      "description": "If true, this mutant gains skill XP from activities.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "disableEatingAtTable": {
+      "label": "Disable eating at table",
+      "description": "If true, this mutant will not seek a table when eating.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "disableOwnership": {
+      "label": "Disable ownership",
+      "description": "If true, this mutant cannot own items, beds, or slaves.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "disablePolicies": {
+      "label": "Disable policies",
+      "description": "If true, drug and other policies do not apply to this mutant.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "disableTitles": {
+      "label": "Disable titles",
+      "description": "If true, royal titles are not applicable to this mutant.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "disableFlying": {
+      "label": "Disable flying",
+      "description": "If true, this mutant cannot fly even if it otherwise could.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "namePrefix": {
+      "label": "Name prefix",
+      "description": "Localized text prepended to the pawn's name label while in this mutant form.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "hideLabel": {
+      "label": "Hide label",
+      "description": "If true, the pawn's name label is hidden while in this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "codexEntry": {
+      "label": "Codex entry",
+      "description": "EntityCodexEntryDef providing anomaly codex information for this mutant.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EntityCodexEntryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "showInScenarioEditor": {
+      "label": "Show in scenario editor",
+      "description": "If true, this mutant type appears as an option in the scenario editor.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "overrideLabel": {
+      "label": "Override label",
+      "description": "Localized text that replaces the pawn's usual label while in this mutant form.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "overrideInspectString": {
+      "label": "Override inspect string",
+      "description": "Localized text that replaces the pawn's inspect tab description while in this mutant form.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "showJobReport": {
+      "label": "Show job report",
+      "description": "If true, the current job is shown in the inspect tab for this mutant.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "whitelistedFloatMenuProviders": {
+      "label": "Whitelisted float menu providers",
+      "description": "C# types allowed to add float menu options for this mutant. Empty list means none are allowed; omitting this field means all providers are allowed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "typeName" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disableNeeds": {
+      "label": "Disable needs",
+      "description": "If true, all needs are disabled for this mutant unless listed in needWhitelist.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "needWhitelist": {
+      "label": "Need whitelist",
+      "description": "NeedDefs that remain active when disableNeeds is true.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "NeedDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "overrideFoodType": {
+      "label": "Override food type",
+      "description": "If true, the foodType field overrides the pawn's default diet preferences.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "foodType": {
+      "label": "Food type",
+      "description": "Diet restrictions when overrideFoodType is true. Named combined flag value from FoodTypeFlags.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": [
+          "None", "VegetableOrFruit", "Meat", "Fluid", "Corpse", "Seed",
+          "AnimalProduct", "Plant", "Tree", "Meal", "Processed", "Liquor",
+          "Kibble", "Fungus", "VegetarianAnimal", "VegetarianRoughAnimal",
+          "CarnivoreAnimal", "CarnivoreAnimalStrict", "OmnivoreAnimal",
+          "OmnivoreRoughAnimal", "DendrovoreAnimal", "OvivoreAnimal", "OmnivoreHuman"
+        ]
+      }
+    },
+    "allowEatingCorpses": {
+      "label": "Allow eating corpses",
+      "description": "If true, this mutant can eat raw corpses as a food source.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "useCorpseGraphics": {
+      "label": "Use corpse graphics",
+      "description": "If true, the corpse's graphic is used for this mutant's appearance.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "skinColorOverride": {
+      "label": "Skin color override",
+      "description": "Fully overrides the pawn's skin color. Null means no override.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "skinColorTint": {
+      "label": "Skin color tint",
+      "description": "Color multiplied on top of the pawn's natural skin color.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "skinColorTintStrength": {
+      "label": "Skin color tint strength",
+      "description": "How strongly the skinColorTint is blended in (0 = no tint, 1 = full tint).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "hairColorOverride": {
+      "label": "Hair color override",
+      "description": "Fully overrides the pawn's hair color. Null means no override.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "bodyTypeGraphicPaths": {
+      "label": "Body type graphic paths",
+      "description": "Per-body-type texture paths for this mutant form. Child tag name is the BodyTypeDef defName (e.g. Male, Female, Hulk, Fat, Thin); value is the texture asset path.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap"
+    },
+    "forcedHeadTypes": {
+      "label": "Forced head types",
+      "description": "Pool of HeadTypeDefs randomly assigned to this mutant. Overrides normal head-type selection.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "HeadTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "hairTagFilter": {
+      "label": "Hair tag filter",
+      "description": "Restricts which hair styles this mutant can have.",
+      "type": { "kind": "object", "schemaRef": "TagFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "beardTagFilter": {
+      "label": "Beard tag filter",
+      "description": "Restricts which beard styles this mutant can have.",
+      "type": { "kind": "object", "schemaRef": "TagFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "renderNodeProperties": {
+      "label": "Render node properties",
+      "description": "List of render graph node definitions controlling how this mutant's body parts and overlays are drawn. Use the Class attribute on each li to select a subclass.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnRenderNodeProperties" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "standingAnimation": {
+      "label": "Standing animation",
+      "description": "AnimationDef played when this mutant is standing idle.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AnimationDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "makesFootprints": {
+      "label": "Makes footprints",
+      "description": "If true, this mutant leaves footprint decals when walking.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canBleed": {
+      "label": "Can bleed",
+      "description": "If true, this mutant bleeds and leaves blood when wounded.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "bloodDef": {
+      "label": "Blood def",
+      "description": "ThingDef used as the blood filth spawned when this mutant bleeds.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "bloodSmearDef": {
+      "label": "Blood smear def",
+      "description": "ThingDef used as the blood smear decal left by this mutant.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "entitledToMedicalCare": {
+      "label": "Entitled to medical care",
+      "description": "If true, colonists will tend this mutant's wounds.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "isImmuneToInfections": {
+      "label": "Immune to infections",
+      "description": "If true, this mutant cannot contract infections from wounds.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canUseDrugs": {
+      "label": "Can use drugs",
+      "description": "If true, this mutant can use drugs. When false, only drugs listed in drugWhitelist are permitted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "drugWhitelist": {
+      "label": "Drug whitelist",
+      "description": "ThingDefs of drugs this mutant is permitted to use when canUseDrugs is false.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "woundColor": {
+      "label": "Wound color",
+      "description": "Color used for wound graphics on this mutant. Null uses the default wound color.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "preventIllnesses": {
+      "label": "Prevent illnesses",
+      "description": "If true, this mutant cannot contract illnesses.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "removeChronicIllnesses": {
+      "label": "Remove chronic illnesses",
+      "description": "If true, chronic illnesses are removed when the pawn enters this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "removePermanentInjuries": {
+      "label": "Remove permanent injuries",
+      "description": "If true, permanent injuries are removed when the pawn enters this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "removeAddictions": {
+      "label": "Remove addictions",
+      "description": "If true, addictions are removed when the pawn enters this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "removeAllInjuries": {
+      "label": "Remove all injuries",
+      "description": "If true, all injuries are healed when the pawn enters this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "restoreLegs": {
+      "label": "Restore legs",
+      "description": "If true, missing legs are restored when the pawn enters this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "terminatePregnancy": {
+      "label": "Terminate pregnancy",
+      "description": "If true, any active pregnancy is terminated when the pawn enters this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "partsCleanAndDroppable": {
+      "label": "Parts clean and droppable",
+      "description": "If true, worn apparel and equipment is cleanly removed when the pawn transforms.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "clearsEgo": {
+      "label": "Clears ego",
+      "description": "If true, the pawn's ego (identity) is wiped when it enters this mutant form.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "breathesAir": {
+      "label": "Breathes air",
+      "description": "If true, this mutant requires breathable air to survive.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "givesHediffs": {
+      "label": "Gives hediffs",
+      "description": "Hediffs applied to the pawn when it becomes this mutant.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StartingHediff" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "removesHediffs": {
+      "label": "Removes hediffs",
+      "description": "HediffDefs removed from the pawn when it becomes this mutant.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "hediffGivers": {
+      "label": "Hediff givers",
+      "description": "Dynamic hediff givers that can apply hediffs to this mutant pawn over time.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "HediffGiver" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "deathLetter": {
+      "label": "Death letter",
+      "description": "Localized letter title sent when this mutant dies.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "deathLetterExtra": {
+      "label": "Death letter extra",
+      "description": "Additional localized text appended to the death letter body.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "soundCall": {
+      "label": "Sound call",
+      "description": "SoundDef played when this mutant calls out.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundAttack": {
+      "label": "Sound attack",
+      "description": "SoundDef played when this mutant makes a melee attack.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundWounded": {
+      "label": "Sound wounded",
+      "description": "SoundDef played when this mutant is wounded.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundDeath": {
+      "label": "Sound death",
+      "description": "SoundDef played when this mutant dies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundAngry": {
+      "label": "Sound angry",
+      "description": "SoundDef played when this mutant is agitated or aggravated.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundAttackChance": {
+      "label": "Sound attack chance",
+      "description": "Probability (0-1) that the attack sound plays on each melee swing. -1 means the sound always plays.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "verbs": {
+      "label": "Verbs",
+      "description": "Attack verb modes for ranged or special attacks.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "VerbProperties" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tools": {
+      "label": "Tools",
+      "description": "Melee attack tools (body parts used as weapons) for this mutant.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Tool" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "abilities": {
+      "label": "Abilities",
+      "description": "AbilityDefs automatically granted to this mutant pawn.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "abilityWhitelist": {
+      "label": "Ability whitelist",
+      "description": "AbilityDefs this mutant is permitted to use from other sources (e.g. genes, implants).",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "passive": {
+      "label": "Passive",
+      "description": "If true, this mutant will not attack unless directly provoked.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canBeDrafted": {
+      "label": "Can be drafted",
+      "description": "If true, this mutant can be drafted for combat by the player.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canAttackWhileCrawling": {
+      "label": "Can attack while crawling",
+      "description": "If true, this mutant can make melee attacks while downed and crawling.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "deathOnDownedChance": {
+      "label": "Death on downed chance",
+      "description": "Probability (0-1) that this mutant dies when downed instead of going into a downed state. -1 disables this mechanic.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "killedLeavings": {
+      "label": "Killed leavings",
+      "description": "Items spawned when this mutant is killed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ThingDefCountClass" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "psychicShockUntargetable": {
+      "label": "Psychic shock untargetable",
+      "description": "If true, this mutant cannot be targeted by psychic shock abilities.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "disableHostilityResponse": {
+      "label": "Disable hostility response",
+      "description": "If true, this mutant will not automatically retaliate when attacked.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "defaultFaction": {
+      "label": "Default faction",
+      "description": "FactionDef this mutant belongs to by default when spawned without an explicit faction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "isConsideredCorpse": {
+      "label": "Is considered corpse",
+      "description": "If true, this mutant is treated as a reanimated corpse for mechanics that check corpse status.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "relativeTurnedThought": {
+      "label": "Relative turned thought",
+      "description": "ThoughtDef given to colonists who have a relative transformed into this mutant form.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "incapableOfSocialInteractions": {
+      "label": "Incapable of social interactions",
+      "description": "If true, this mutant cannot participate in social interactions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "tameable": {
+      "label": "Tameable",
+      "description": "If true, this mutant can be tamed by a colonist with the Animals work type.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "canBeCapturedToHoldingPlatform": {
+      "label": "Can be captured to holding platform",
+      "description": "If true, this mutant can be captured and placed on an entity holding platform.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "producesBioferrite": {
+      "label": "Produces bioferrite",
+      "description": "If true, this mutant passively produces bioferrite when held on a holding platform.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "anomalyKnowledgeOffset": {
+      "label": "Anomaly knowledge offset",
+      "description": "Amount of anomaly knowledge awarded when this mutant is studied or captured.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "knowledgeCategory": {
+      "label": "Knowledge category",
+      "description": "KnowledgeCategoryDef determining which anomaly knowledge track this mutant contributes to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "KnowledgeCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  },
+  "templates": {
+    "newMutant": {
+      "label": "New mutant",
+      "description": "Minimal MutantDef template with required identification fields.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "hediff"],
+      "fieldValues": {
+        "defName": "MyMutant",
+        "label": "my mutant",
+        "description": "A custom mutant form."
+      }
+    }
+  }
+}

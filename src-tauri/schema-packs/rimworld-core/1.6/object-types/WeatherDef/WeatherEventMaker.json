@@ -1,0 +1,25 @@
+{
+  "objectType": "WeatherEventMaker",
+  "label": "Weather event maker",
+  "description": "Triggers a WeatherEvent subclass at random intervals while the weather is active. Each tick has a 1/averageInterval * strength probability of firing.",
+  "fieldOrder": ["averageInterval", "eventClass"],
+  "fields": {
+    "averageInterval": {
+      "label": "Average interval",
+      "description": "Mean number of ticks between event firings at full weather strength.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 100,
+      "xml": "element",
+      "examples": ["1200", "600", "100"]
+    },
+    "eventClass": {
+      "label": "Event class",
+      "description": "C# WeatherEvent subclass to instantiate and fire. Mods can define additional subclasses.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["WeatherEvent_LightningFlash", "WeatherEvent_LightningStrike"]
+    }
+  }
+}

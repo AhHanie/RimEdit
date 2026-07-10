@@ -1,0 +1,58 @@
+{
+  "objectType": "PreceptComp_UnwillingToDo_Chance",
+  "label": "Precept comp (unwilling to do, chance)",
+  "description": "Makes a pawn sometimes unwilling to perform an action based on a probability.",
+  "fieldOrder": [
+    "Class", "description",
+    "eventDef", "nullifyingTraits", "nullifyingHediffs",
+    "chance"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "eventDef": {
+      "label": "Event def",
+      "description": "The history event that the pawn may be unwilling to perform.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HistoryEventDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "nullifyingTraits": {
+      "label": "Nullifying traits",
+      "description": "Traits that override the unwillingness.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "nullifyingHediffs": {
+      "label": "Nullifying hediffs",
+      "description": "Hediffs that override the unwillingness.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0–1) that the pawn will be unwilling.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    }
+  }
+}

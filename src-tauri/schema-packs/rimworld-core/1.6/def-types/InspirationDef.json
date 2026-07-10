@@ -1,0 +1,277 @@
+{
+  "defType": "InspirationDef",
+  "label": "Inspiration",
+  "description": "Defines a temporary pawn inspiration, including eligibility requirements, duration, stat effects, and start/end text.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "inspirationClass",
+    "workerClass",
+    "baseCommonality",
+    "baseDurationDays",
+    "allowedOnAnimals",
+    "allowedOnNonColonists",
+    "allowedOnDownedPawns",
+    "requiredNonDisabledStats",
+    "requiredSkills",
+    "requiredAnySkill",
+    "requiredNonDisabledWorkTypes",
+    "requiredAnyNonDisabledWorkType",
+    "requiredNonDisabledWorkTags",
+    "requiredCapacities",
+    "associatedSkills",
+    "minAge",
+    "statOffsets",
+    "statFactors",
+    "beginLetter",
+    "beginLetterLabel",
+    "beginLetterDef",
+    "endMessage",
+    "baseInspectLine"
+  ],
+  "fields": {
+    "inspirationClass": {
+      "label": "Inspiration class",
+      "description": "C# Inspiration type instantiated at runtime for this inspiration.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "Inspiration",
+      "xml": "element"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# InspirationWorker type that evaluates pawn eligibility for this inspiration.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "InspirationWorker",
+      "xml": "element"
+    },
+    "baseCommonality": {
+      "label": "Base commonality",
+      "description": "Relative weight for random selection of this inspiration. Higher values increase how often it is chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "baseDurationDays": {
+      "label": "Base duration (days)",
+      "description": "How many in-game days this inspiration lasts before expiring.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "allowedOnAnimals": {
+      "label": "Allowed on animals",
+      "description": "If true, this inspiration can trigger on animal pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedOnNonColonists": {
+      "label": "Allowed on non-colonists",
+      "description": "If true, this inspiration can trigger on non-colonist pawns such as guests or prisoners.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedOnDownedPawns": {
+      "label": "Allowed on downed pawns",
+      "description": "If true, this inspiration can trigger on pawns that are currently downed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "requiredNonDisabledStats": {
+      "label": "Required non-disabled stats",
+      "description": "StatDefs that must not be disabled on the pawn for this inspiration to be eligible.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredSkills": {
+      "label": "Required skills",
+      "description": "All listed skills must meet their minimum level for this inspiration to be eligible. Each entry is a SkillDef name with an integer minLevel.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillRequirement" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "skill",
+      "valueField": "minLevel",
+      "keyReference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredAnySkill": {
+      "label": "Required any skill",
+      "description": "The pawn must meet at least one of these skill requirements for this inspiration to be eligible.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillRequirement" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "skill",
+      "valueField": "minLevel",
+      "keyReference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredNonDisabledWorkTypes": {
+      "label": "Required non-disabled work types",
+      "description": "All listed WorkTypeDefs must be enabled for the pawn for this inspiration to be eligible.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "WorkTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredAnyNonDisabledWorkType": {
+      "label": "Required any non-disabled work type",
+      "description": "The pawn must have at least one of these WorkTypeDefs enabled for this inspiration to be eligible.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "WorkTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredNonDisabledWorkTags": {
+      "label": "Required non-disabled work tags",
+      "description": "WorkTags flags (comma-separated) that must all be enabled for the pawn for this inspiration to be eligible.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "requiredCapacities": {
+      "label": "Required capacities",
+      "description": "PawnCapacityDefs that must be non-zero for the pawn to be eligible for this inspiration.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "PawnCapacityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "associatedSkills": {
+      "label": "Associated skills",
+      "description": "SkillDefs associated with this inspiration. Used for display and for some worker eligibility checks.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minAge": {
+      "label": "Min age",
+      "description": "Minimum biological age in years required for a pawn to receive this inspiration.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Flat stat offsets applied to the pawn while this inspiration is active. Keys are StatDef defNames; values are float offsets.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers applied to the pawn while this inspiration is active. Keys are StatDef defNames; values are float factors.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "beginLetter": {
+      "label": "Begin letter",
+      "description": "Body text of the letter shown when this inspiration begins. Supports RimWorld substitution tokens.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "beginLetterLabel": {
+      "label": "Begin letter label",
+      "description": "Title of the letter shown when this inspiration begins. Supports RimWorld substitution tokens.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "beginLetterDef": {
+      "label": "Begin letter def",
+      "description": "LetterDef controlling the icon, sound, and urgency of the begin-inspiration letter.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "LetterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "endMessage": {
+      "label": "End message",
+      "description": "Message shown when this inspiration expires. Supports RimWorld substitution tokens.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "baseInspectLine": {
+      "label": "Base inspect line",
+      "description": "Text shown in the pawn inspect panel while this inspiration is active. Supports RimWorld substitution tokens.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-inspiration": {
+      "label": "Basic inspiration",
+      "description": "A standard inspiration with duration, letter text, and inspect line.",
+      "includeRequiredFields": true,
+      "promptFields": ["baseDurationDays", "beginLetter", "beginLetterDef", "endMessage", "baseInspectLine"],
+      "fieldValues": {}
+    }
+  }
+}

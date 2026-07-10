@@ -1,0 +1,40 @@
+{
+  "defType": "RitualVisualEffectDef",
+  "label": "Ritual visual effect",
+  "description": "Defines visual effect comps spawned during a ritual stage.",
+  "inherits": ["Def"],
+  "fieldOrder": ["workerClass", "comps", "tintColor"],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class implementing the visual effect logic. Defaults to RitualVisualEffect.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "comps": {
+      "label": "Comps",
+      "description": "List of visual effect comp property objects. Each li selects a comp class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "CompProperties_RitualVisualEffect" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tintColor": {
+      "label": "Tint color",
+      "description": "Color tint applied to all visual effect comps in this def. Defaults to white.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-ritual-visual-effect": {
+      "label": "New ritual visual effect",
+      "description": "Minimal ritual visual effect def.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

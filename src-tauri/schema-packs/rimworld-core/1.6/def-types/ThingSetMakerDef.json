@@ -1,0 +1,26 @@
+{
+  "defType": "ThingSetMakerDef",
+  "label": "Thing set maker",
+  "description": "Defines a procedural generator tree that produces a set of Thing objects for rewards, loot, trader stock, and other game systems. The root field selects the top-level maker class; debugParams lets designers test generation without running a scenario.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "root",
+    "debugParams"
+  ],
+  "fields": {
+    "root": {
+      "label": "Root",
+      "description": "Top-level thing set maker that drives generation. The Class attribute selects the concrete ThingSetMaker subclass.",
+      "type": { "kind": "object", "schemaRef": "ThingSetMaker" },
+      "required": true,
+      "xml": "object"
+    },
+    "debugParams": {
+      "label": "Debug params",
+      "description": "Optional generation parameters used by in-editor debug generation tools. Does not affect runtime generation.",
+      "type": { "kind": "object", "schemaRef": "ThingSetMakerParams" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

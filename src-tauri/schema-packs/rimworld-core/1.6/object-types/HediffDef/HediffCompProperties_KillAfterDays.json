@@ -1,0 +1,29 @@
+{
+  "objectType": "HediffCompProperties_KillAfterDays",
+  "label": "Kill after days comp",
+  "description": "Kills the pawn a set number of days after this hediff is applied.",
+  "fieldOrder": ["Class", "compClass", "days"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "days": {
+      "label": "Days",
+      "description": "Days after which this hediff kills the pawn.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

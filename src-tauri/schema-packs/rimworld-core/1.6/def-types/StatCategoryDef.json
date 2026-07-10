@@ -1,0 +1,27 @@
+{
+  "defType": "StatCategoryDef",
+  "label": "Stat category",
+  "description": "Groups related stats under a shared heading in the pawn and item info card.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "displayOrder",
+    "displayAllByDefault"
+  ],
+  "fields": {
+    "displayOrder": {
+      "label": "Display order",
+      "description": "Sort priority among stat categories in the info card. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "displayAllByDefault": {
+      "label": "Display all by default",
+      "description": "If true, all stats in this category are shown even when they have their default value.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

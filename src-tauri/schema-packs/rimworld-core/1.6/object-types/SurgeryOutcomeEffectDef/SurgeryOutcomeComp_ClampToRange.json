@@ -1,0 +1,16 @@
+{
+  "objectType": "SurgeryOutcomeComp_ClampToRange",
+  "label": "Surgery outcome comp (clamp to range)",
+  "description": "Clamps the running surgery quality score to the specified float range.",
+  "inherits": ["SurgeryOutcomeComp"],
+  "fieldOrder": ["Class", "range"],
+  "fields": {
+    "range": {
+      "label": "Range",
+      "description": "FloatRange that the surgery quality score is clamped to after this comp runs.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "objectType": "PreceptComp_BedThought",
+  "label": "Precept comp (bed thought)",
+  "description": "Gives a thought based on the bed a pawn sleeps in, optionally requiring a linked facility.",
+  "fieldOrder": [
+    "Class", "description",
+    "thought", "thoughtStageDescriptions", "tooltipShowMoodRange",
+    "requireFacility"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "thought": {
+      "label": "Thought",
+      "description": "The thought def triggered by sleeping in a matching bed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thoughtStageDescriptions": {
+      "label": "Thought stage descriptions",
+      "description": "Override descriptions for each thought stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "localizedString" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tooltipShowMoodRange": {
+      "label": "Tooltip show mood range",
+      "description": "If true, the tooltip shows the mood range for each stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requireFacility": {
+      "label": "Require facility",
+      "description": "Facility that must be linked to the bed for this thought to apply.",
+      "type": { "kind": "object", "schemaRef": "FacilityData" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "objectType": "QuestNode_GetSitePartDefsByTagsAndFaction",
+  "label": "QuestNode GetSitePartDefsByTagsAndFaction",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_GetSitePartDefsByTagsAndFaction.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "storeAs",
+    "storeFactionAs",
+    "sitePartsTags",
+    "mustBeHostileToFactionOf"
+  ],
+  "fields": {
+    "storeAs": {
+      "description": "Slate variable name to store selected site part defs.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "storeFactionAs": {
+      "description": "Slate variable name to store selected faction.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "sitePartsTags": {
+      "description": "Site part tag options used to select SitePartDefs.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "object",
+        "schemaRef": "SitePartOption"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "mustBeHostileToFactionOf": {
+      "description": "Slate variable for the thing whose faction must be hostile.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

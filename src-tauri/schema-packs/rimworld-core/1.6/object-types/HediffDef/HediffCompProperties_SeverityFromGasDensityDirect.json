@@ -1,0 +1,37 @@
+{
+  "objectType": "HediffCompProperties_SeverityFromGasDensityDirect",
+  "label": "Severity from gas density direct comp",
+  "description": "Directly scales hediff severity from gas density each tick.",
+  "fieldOrder": ["Class", "compClass", "gasType", "severityPerGasDensity"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "gasType": {
+      "label": "Gas type",
+      "description": "Gas type defName that drives severity change.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "severityPerGasDensity": {
+      "label": "Severity per gas density",
+      "description": "Severity change per unit of gas density.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

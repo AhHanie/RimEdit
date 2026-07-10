@@ -1,0 +1,25 @@
+{
+  "objectType": "CompProperties_Forbiddable",
+  "label": "Forbiddable comp",
+  "description": "Makes the thing forbiddable. Pawns will not pick up or use forbidden things.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": ["allowNonPlayer", "forbidOnMake"],
+  "fields": {
+    "allowNonPlayer": {
+      "label": "Allow non-player",
+      "description": "Whether non-player factions can use the thing even when forbidden.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forbidOnMake": {
+      "label": "Forbid on make",
+      "description": "Whether the thing is automatically forbidden when created.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

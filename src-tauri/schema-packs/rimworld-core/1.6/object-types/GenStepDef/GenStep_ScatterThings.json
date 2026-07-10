@@ -1,0 +1,169 @@
+{
+  "objectType": "GenStep_ScatterThings",
+  "label": "Scatter things",
+  "description": "Scatters individual ThingDef instances across the map with optional quality, filth, and cluster settings.",
+  "inherits": ["GenStep_Scatterer"],
+  "fieldOrder": [
+    "Class",
+    "count",
+    "countPer10kCellsRange",
+    "nearPlayerStart",
+    "nearMapCenter",
+    "minSpacing",
+    "spotMustBeStandable",
+    "minDistToPlayerStart",
+    "minDistToPlayerStartPct",
+    "minEdgeDist",
+    "minEdgeDistPct",
+    "extraNoBuildEdgeDist",
+    "validators",
+    "fallbackValidators",
+    "allowInWaterBiome",
+    "allowFoggedPositions",
+    "allowRoofed",
+    "onlyOnStartingMap",
+    "minPollution",
+    "allowMechanoidDatacoreReadOrLost",
+    "isJunk",
+    "warnOnFail",
+    "thingDef",
+    "stuff",
+    "clearSpaceSize",
+    "clusterSize",
+    "quality",
+    "minify",
+    "avoidUsedRects",
+    "createUsedRect",
+    "skipRoofed",
+    "filthDef",
+    "filthExpandBy",
+    "filthChance",
+    "terrainValidationRadius",
+    "terrainValidationDisallowed",
+    "terrainValidationAllowed"
+  ],
+  "fields": {
+    "thingDef": {
+      "label": "Thing def",
+      "description": "ThingDef to scatter across the map.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "stuff": {
+      "label": "Stuff",
+      "description": "ThingDef used as the material override when spawning the thing.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "clearSpaceSize": {
+      "label": "Clear space size",
+      "description": "Number of cells to clear in an irregular lump around each placement before spawning.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "clusterSize": {
+      "label": "Cluster size",
+      "description": "Number of instances to place in a cluster before moving to the next scatter cell.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "quality": {
+      "label": "Quality",
+      "description": "Quality category forced on spawned items. Absent means quality defaults to Normal.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Awful", "Poor", "Normal", "Good", "Excellent", "Masterwork", "Legendary"]
+      }
+    },
+    "minify": {
+      "label": "Minify",
+      "description": "When true, the thing is minified into an uninstalled form before being placed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "avoidUsedRects": {
+      "label": "Avoid used rects",
+      "description": "When true, placement cells that overlap any used rect are rejected.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "createUsedRect": {
+      "label": "Create used rect",
+      "description": "When true, the occupied rect of each spawned thing is registered as a used rect.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "skipRoofed": {
+      "label": "Skip roofed",
+      "description": "When true, placement cells that are roofed are rejected.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "filthDef": {
+      "label": "Filth def",
+      "description": "ThingDef of filth spawned around each placed thing.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "filthExpandBy": {
+      "label": "Filth expand by",
+      "description": "Number of cells to expand the occupied rect outward when spawning filth.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "filthChance": {
+      "label": "Filth chance",
+      "description": "Probability (0-1) that each eligible cell gets a filth spawn.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "terrainValidationRadius": {
+      "label": "Terrain validation radius",
+      "description": "Radius in cells around the placement cell in which terrain tags are checked.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "terrainValidationDisallowed": {
+      "label": "Terrain validation disallowed",
+      "description": "Terrain tags that must not be present in the terrain validation radius.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "terrainValidationAllowed": {
+      "label": "Terrain validation allowed",
+      "description": "Terrain tags that must all be present in the terrain validation radius.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

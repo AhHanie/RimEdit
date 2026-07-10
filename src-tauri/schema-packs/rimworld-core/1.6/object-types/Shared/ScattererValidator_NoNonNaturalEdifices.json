@@ -1,0 +1,23 @@
+{
+  "objectType": "ScattererValidator_NoNonNaturalEdifices",
+  "label": "No non-natural edifices validator",
+  "description": "Rejects scatter positions where any edifice exists within the given radius.",
+  "fieldOrder": ["Class", "radius"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be ScattererValidator_NoNonNaturalEdifices.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Cell radius around the candidate position to check for edifices.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

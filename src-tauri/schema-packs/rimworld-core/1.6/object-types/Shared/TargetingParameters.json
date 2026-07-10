@@ -1,0 +1,173 @@
+{
+  "objectType": "TargetingParameters",
+  "label": "Targeting parameters",
+  "description": "Constrains which targets a verb or ability can select.",
+  "fieldOrder": [
+    "canTargetLocations",
+    "canTargetSelf",
+    "canTargetPawns",
+    "canTargetHumans",
+    "canTargetAnimals",
+    "canTargetMechs",
+    "canTargetMutants",
+    "canTargetBuildings",
+    "canTargetFires",
+    "canTargetItems",
+    "mapObjectTargetsMustBeAutoAttackable",
+    "targetingRangeOverride",
+    "onlyTargetFlammables",
+    "mustBeSelectable",
+    "neverTargetDowned",
+    "neverTargetIncapacitated",
+    "onlyTargetIncapacitated",
+    "thingCategory"
+  ],
+  "fields": {
+    "canTargetLocations": {
+      "label": "Can target locations",
+      "description": "Whether empty map cells can be targeted (e.g. mortar fire).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canTargetSelf": {
+      "label": "Can target self",
+      "description": "Whether the caster can target themselves.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canTargetPawns": {
+      "label": "Can target pawns",
+      "description": "Whether pawns can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canTargetHumans": {
+      "label": "Can target humans",
+      "description": "Whether human pawns specifically can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canTargetAnimals": {
+      "label": "Can target animals",
+      "description": "Whether animal pawns can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canTargetMechs": {
+      "label": "Can target mechs",
+      "description": "Whether mechanoid pawns can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canTargetMutants": {
+      "label": "Can target mutants",
+      "description": "Whether mutant pawns (Anomaly expansion) can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canTargetBuildings": {
+      "label": "Can target buildings",
+      "description": "Whether buildings can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canTargetFires": {
+      "label": "Can target fires",
+      "description": "Whether fire things can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canTargetItems": {
+      "label": "Can target items",
+      "description": "Whether items on the ground can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mapObjectTargetsMustBeAutoAttackable": {
+      "label": "Map objects must be auto-attackable",
+      "description": "If true, map objects can only be targeted if they are flagged as auto-attackable.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "targetingRangeOverride": {
+      "label": "Targeting range override",
+      "description": "Overrides the verb range for targeting purposes. -1 means use the verb's own range.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "onlyTargetFlammables": {
+      "label": "Only target flammables",
+      "description": "If true, only flammable targets can be selected (used for incendiary attacks).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mustBeSelectable": {
+      "label": "Must be selectable",
+      "description": "If true, only selectable things can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "neverTargetDowned": {
+      "label": "Never target downed",
+      "description": "If true, downed pawns are excluded from valid targets.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "neverTargetIncapacitated": {
+      "label": "Never target incapacitated",
+      "description": "If true, incapacitated pawns are excluded from valid targets.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyTargetIncapacitated": {
+      "label": "Only target incapacitated",
+      "description": "If true, only incapacitated pawns can be targeted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "thingCategory": {
+      "label": "Thing category",
+      "description": "Restricts valid targets to things of this broad category.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Pawn", "Item", "Building", "Plant", "Projectile", "Filth", "Gas", "Attachment", "Mote", "Ethereal", "PsychicEmitter"]
+      }
+    }
+  }
+}

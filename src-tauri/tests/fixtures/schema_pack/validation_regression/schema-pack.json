@@ -1,0 +1,9 @@
+{
+  "formatVersion": 1,
+  "packId": "test.validation_regression",
+  "name": "Validation Regression Tests",
+  "version": "0.1.0",
+  "priority": 0,
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": ["object-types"]
+}

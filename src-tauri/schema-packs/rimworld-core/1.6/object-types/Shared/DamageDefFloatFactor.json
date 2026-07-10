@@ -1,0 +1,27 @@
+{
+  "objectType": "DamageDefFloatFactor",
+  "label": "Damage def float factor",
+  "description": "A float multiplier keyed by damage type. Uses literal key and value child elements, matching the RimWorld Dictionary<DamageDef, float> XML serialization.",
+  "fieldOrder": ["key", "value"],
+  "fields": {
+    "key": {
+      "label": "Damage def",
+      "description": "The damage type this factor applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "DamageDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "value": {
+      "label": "Factor",
+      "description": "Float multiplier applied when the damage type matches. Values below 1 reduce the chance; 0 means this part cannot be targeted by that damage type.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

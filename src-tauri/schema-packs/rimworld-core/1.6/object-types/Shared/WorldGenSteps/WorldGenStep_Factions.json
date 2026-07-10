@@ -1,0 +1,15 @@
+{
+  "objectType": "WorldGenStep_Factions",
+  "label": "Factions world gen step",
+  "description": "Places faction settlements across the world map.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

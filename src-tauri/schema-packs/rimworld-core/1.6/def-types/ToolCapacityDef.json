@@ -1,0 +1,17 @@
+{
+  "defType": "ToolCapacityDef",
+  "label": "Tool capacity",
+  "description": "Defines a melee tool capacity such as cutting, stabbing, biting, or blunt force. Tools reference these capacities, and ManeuverDefs attach verb behavior to them.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {},
+  "templates": {
+    "basic-tool-capacity": {
+      "label": "Basic tool capacity",
+      "description": "Minimal tool capacity with a defName and label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

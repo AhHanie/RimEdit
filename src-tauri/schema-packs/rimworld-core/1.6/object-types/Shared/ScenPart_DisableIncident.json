@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_DisableIncident",
+  "label": "Disable incident",
+  "description": "Permanently disables an incident for the duration of the game, preventing it from ever firing.",
+  "inherits": ["ScenPart_IncidentBase"]
+}

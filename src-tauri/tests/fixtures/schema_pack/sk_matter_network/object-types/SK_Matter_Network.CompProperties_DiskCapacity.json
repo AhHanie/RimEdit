@@ -1,0 +1,17 @@
+{
+  "objectType": "SK_Matter_Network.CompProperties_DiskCapacity",
+  "label": "Disk capacity comp",
+  "description": "Sets the maximum byte capacity of an SK Matter Network disk.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": ["maxBytes"],
+  "fields": {
+    "maxBytes": {
+      "label": "Max bytes",
+      "description": "Maximum storage capacity in bytes.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "min": 0 }
+    }
+  }
+}

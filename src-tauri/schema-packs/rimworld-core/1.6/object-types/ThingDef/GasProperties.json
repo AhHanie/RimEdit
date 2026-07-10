@@ -1,0 +1,36 @@
+{
+  "objectType": "GasProperties",
+  "label": "Gas properties",
+  "description": "Properties for gas things controlling spread rate, roofed behavior, and vacuum requirements.",
+  "fieldOrder": [
+    "dissipationRate",
+    "roofedDissipationRateFactor",
+    "needsVacuumToExist"
+  ],
+  "fields": {
+    "dissipationRate": {
+      "label": "Dissipation rate",
+      "description": "Thickness units removed per game tick as the gas spreads and dissipates.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "roofedDissipationRateFactor": {
+      "label": "Roofed dissipation rate factor",
+      "description": "Multiplier applied to dissipation rate when the gas is in a roofed cell.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "needsVacuumToExist": {
+      "label": "Needs vacuum to exist",
+      "description": "If true, this gas only exists in cells with no atmosphere pressure.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,240 @@
+{
+  "defType": "WeaponTraitDef",
+  "label": "Weapon trait",
+  "description": "Defines a generated or persona weapon trait that modifies weapon stats, damage, appearance, abilities, bonded effects, or wielder effects.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "weaponCategory",
+    "exclusionTags",
+    "commonality",
+    "canGenerateAlone",
+    "damageDefOverride",
+    "extraDamages",
+    "statOffsets",
+    "statFactors",
+    "equippedStatOffsets",
+    "marketValueOffset",
+    "burstShotSpeedMultiplier",
+    "burstShotCountMultiplier",
+    "additionalStoppingPower",
+    "ignoresAccuracyMaluses",
+    "forcedColor",
+    "traitAdjectives",
+    "equippedHediffs",
+    "bondedHediffs",
+    "bondedThought",
+    "killThought",
+    "neverBond",
+    "abilityProps"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# WeaponTraitWorker subclass that implements this trait's runtime behavior.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "WeaponTraitWorker",
+      "xml": "element"
+    },
+    "weaponCategory": {
+      "label": "Weapon category",
+      "description": "WeaponCategoryDef that groups this trait with other traits of the same category.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WeaponCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "exclusionTags": {
+      "label": "Exclusion tags",
+      "description": "String tags that prevent two traits sharing any tag from appearing on the same weapon.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight for trait selection when generating weapon traits. Higher values make this trait more common.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "canGenerateAlone": {
+      "label": "Can generate alone",
+      "description": "If false, this trait can only appear on a weapon that already has at least one other trait.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "damageDefOverride": {
+      "label": "Damage def override",
+      "description": "DamageDef that replaces the weapon's normal damage type when this trait is present.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "extraDamages": {
+      "label": "Extra damages",
+      "description": "Additional damage instances applied alongside the primary damage of each hit.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ExtraDamage" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Flat stat offsets applied to the weapon when this trait is present. Keys are StatDef names; values are float offsets.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers applied to the weapon when this trait is present. Keys are StatDef names; values are float factors.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "equippedStatOffsets": {
+      "label": "Equipped stat offsets",
+      "description": "Flat stat offsets applied to the wielder while this weapon is equipped. Keys are StatDef names; values are float offsets.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "marketValueOffset": {
+      "label": "Market value offset",
+      "description": "Flat silver value added to the weapon's market value when this trait is present.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "burstShotSpeedMultiplier": {
+      "label": "Burst shot speed multiplier",
+      "description": "Multiplier applied to the weapon's burst shot speed (time between shots in a burst).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "burstShotCountMultiplier": {
+      "label": "Burst shot count multiplier",
+      "description": "Multiplier applied to the weapon's number of shots per burst.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "additionalStoppingPower": {
+      "label": "Additional stopping power",
+      "description": "Flat stopping power added to the weapon. Stopping power staggers targets on hit.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "ignoresAccuracyMaluses": {
+      "label": "Ignores accuracy maluses",
+      "description": "If true, this weapon ignores accuracy penalties from range and other sources.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forcedColor": {
+      "label": "Forced color",
+      "description": "ColorDef that overrides the weapon's graphic color when this trait is present.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ColorDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "traitAdjectives": {
+      "label": "Trait adjectives",
+      "description": "Localized adjective strings used to compose the weapon's generated name.",
+      "type": { "kind": "list" },
+      "items": { "kind": "localizedString" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "equippedHediffs": {
+      "label": "Equipped hediffs",
+      "description": "HediffDefs applied to the wielder while this weapon is equipped.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "bondedHediffs": {
+      "label": "Bonded hediffs",
+      "description": "HediffDefs applied to the pawn when this weapon becomes bonded to them.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "bondedThought": {
+      "label": "Bonded thought",
+      "description": "ThoughtDef given to the bonded pawn periodically while carrying the weapon.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "killThought": {
+      "label": "Kill thought",
+      "description": "ThoughtDef given to the bonded pawn each time they kill with this weapon.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "neverBond": {
+      "label": "Never bond",
+      "description": "If true, weapons with this trait can never form a bond with a pawn.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "abilityProps": {
+      "label": "Ability props",
+      "description": "Comp properties that give the weapon a reloadable equippable ability. Applied as a weapon trait ability rather than a ThingDef comp.",
+      "type": { "kind": "object", "schemaRef": "CompProperties_EquippableAbilityReloadable" },
+      "required": false,
+      "xml": "object"
+    }
+  },
+  "templates": {
+    "basic-weapon-trait": {
+      "label": "Basic weapon trait",
+      "description": "A weapon trait with a label and commonality.",
+      "includeRequiredFields": true,
+      "promptFields": ["label"],
+      "fieldValues": { "commonality": 1 }
+    },
+    "stat-offset-trait": {
+      "label": "Stat offset trait",
+      "description": "A weapon trait that applies flat stat offsets to the weapon.",
+      "includeRequiredFields": true,
+      "promptFields": ["label"],
+      "fieldValues": { "commonality": 1, "statOffsets": {} }
+    },
+    "ability-trait": {
+      "label": "Ability trait",
+      "description": "A weapon trait that grants the wielder a reloadable ability.",
+      "includeRequiredFields": true,
+      "promptFields": ["label"],
+      "fieldValues": { "commonality": 1, "abilityProps": {} }
+    }
+  }
+}

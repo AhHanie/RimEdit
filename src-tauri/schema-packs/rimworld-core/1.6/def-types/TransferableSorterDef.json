@@ -1,0 +1,35 @@
+{
+  "defType": "TransferableSorterDef",
+  "label": "Transferable sorter",
+  "description": "Defines a sort criterion for the trade, caravan loading, and similar transferable-item dialogs. Binds a display label to a TransferableComparer implementation class.",
+  "inherits": ["Def"],
+  "fieldOrder": ["comparerClass"],
+  "fields": {
+    "comparerClass": {
+      "label": "Comparer class",
+      "description": "C# TransferableComparer subclass that implements the comparison logic for this sort criterion.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "TransferableComparer_None",
+        "TransferableComparer_Name",
+        "TransferableComparer_MarketValue",
+        "TransferableComparer_Category",
+        "TransferableComparer_Quality",
+        "TransferableComparer_Mass",
+        "TransferableComparer_HitPointsPercentage",
+        "TransferableComparer_Archonexus"
+      ]
+    }
+  },
+  "templates": {
+    "new-transferable-sorter": {
+      "label": "New transferable sorter",
+      "description": "A minimal transferable sorter with a comparer class.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "comparerClass"],
+      "fieldValues": {}
+    }
+  }
+}

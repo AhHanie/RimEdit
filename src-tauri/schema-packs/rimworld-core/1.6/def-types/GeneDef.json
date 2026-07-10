@@ -1,0 +1,915 @@
+{
+  "defType": "GeneDef",
+  "label": "Gene",
+  "description": "Defines a gene that can be present in a pawn's genome. Genes affect appearance, stats, abilities, needs, and behavior.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "geneClass",
+    "labelShortAdj",
+    "customEffectDescriptions",
+    "iconPath",
+    "iconColor",
+    "displayCategory",
+    "displayOrderInCategory",
+    "renderNodeProperties",
+    "neverGrayHair",
+    "skinIsHairColor",
+    "tattoosVisible",
+    "fur",
+    "soundCall",
+    "soundDeath",
+    "soundWounded",
+    "resourceGizmoType",
+    "resourceLossPerDay",
+    "resourceLabel",
+    "resourceDescription",
+    "resourceGizmoThresholds",
+    "showGizmoOnWorldView",
+    "showGizmoWhenDrafted",
+    "showGizmoOnMultiSelect",
+    "abilities",
+    "forcedTraits",
+    "suppressedTraits",
+    "enablesNeeds",
+    "disablesNeeds",
+    "disabledWorkTags",
+    "ignoreDarkness",
+    "endogeneCategory",
+    "dislikesSunlight",
+    "minAgeActive",
+    "lovinMTBFactor",
+    "immuneToToxGasExposure",
+    "immuneToVacuumBurns",
+    "randomChosen",
+    "waterCellCost",
+    "deathHistoryEvent",
+    "aptitudes",
+    "passionMod",
+    "statOffsets",
+    "statFactors",
+    "conditionalStatAffecters",
+    "painOffset",
+    "painFactor",
+    "foodPoisoningChanceFactor",
+    "damageFactors",
+    "biologicalAgeTickFactorFromAgeCurve",
+    "makeImmuneTo",
+    "hediffGiversCannotGive",
+    "chemical",
+    "addictionChanceFactor",
+    "overdoseChanceFactor",
+    "toleranceBuildupFactor",
+    "sterilize",
+    "capMods",
+    "preventPermanentWounds",
+    "dontMindRawFood",
+    "hairColorOverride",
+    "skinColorBase",
+    "skinColorOverride",
+    "randomBrightnessFactor",
+    "hairTagFilter",
+    "beardTagFilter",
+    "bodyType",
+    "forcedHeadTypes",
+    "minMelanin",
+    "forcedHair",
+    "womenCanHaveBeards",
+    "socialFightChanceFactor",
+    "aggroMentalBreakSelectionChanceFactor",
+    "mentalBreakMtbDays",
+    "mentalBreakDef",
+    "missingGeneRomanceChanceFactor",
+    "prisonBreakMTBFactor",
+    "biostatCpx",
+    "biostatMet",
+    "biostatArc",
+    "exclusionTags",
+    "prerequisite",
+    "selectionWeight",
+    "canGenerateInGeneSet",
+    "symbolPack",
+    "marketValueFactor",
+    "removeOnRedress",
+    "passOnDirectly",
+    "selectionWeightFactorDarkSkin",
+    "selectionWeightCultist"
+  ],
+  "fields": {
+    "geneClass": {
+      "label": "Gene class",
+      "description": "C# Gene subclass that implements this gene's runtime behavior. Defaults to Gene.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "Gene",
+      "xml": "element"
+    },
+    "labelShortAdj": {
+      "label": "Label short adjective",
+      "description": "Short adjective label shown in condensed UI contexts. Falls back to the full label when absent.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "customEffectDescriptions": {
+      "label": "Custom effect descriptions",
+      "description": "Additional effect description lines appended to the gene's description in the UI.",
+      "type": { "kind": "list" },
+      "items": { "kind": "localizedString" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Content-relative path to the gene icon texture.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Icons/Genes/Gene_Robust"]
+    },
+    "iconColor": {
+      "label": "Icon color",
+      "description": "Tint color applied to the gene icon. Format: (r, g, b) or (r, g, b, a) with components 0–1 or 0–255.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.75, 0.75, 0.75)", "(242, 237, 224)"]
+    },
+    "displayCategory": {
+      "label": "Display category",
+      "description": "GeneCategoryDef that groups this gene in the gene editor UI. Defaults to Miscellaneous.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GeneCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "displayOrderInCategory": {
+      "label": "Display order in category",
+      "description": "Sort position within the display category. Lower values appear first.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "renderNodeProperties": {
+      "label": "Render node properties",
+      "description": "Pawn render node configurations added to the pawn while this gene is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnRenderNodeProperties" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "neverGrayHair": {
+      "label": "Never gray hair",
+      "description": "If true, the pawn's hair never grays with age while this gene is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "skinIsHairColor": {
+      "label": "Skin is hair color",
+      "description": "If true, the pawn's skin color is derived from their hair color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tattoosVisible": {
+      "label": "Tattoos visible",
+      "description": "If true, tattoos are rendered on the pawn. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "fur": {
+      "label": "Fur",
+      "description": "FurDef applied to the pawn while this gene is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FurDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundCall": {
+      "label": "Sound call",
+      "description": "SoundDef played when the pawn calls out.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundDeath": {
+      "label": "Sound death",
+      "description": "SoundDef played when the pawn dies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundWounded": {
+      "label": "Sound wounded",
+      "description": "SoundDef played when the pawn is wounded.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "resourceGizmoType": {
+      "label": "Resource gizmo type",
+      "description": "C# GeneGizmo subclass used to display the resource bar in the UI.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "GeneGizmo_Resource",
+      "xml": "element"
+    },
+    "resourceLossPerDay": {
+      "label": "Resource loss per day",
+      "description": "Amount of gene resource consumed per in-game day. Negative values mean the resource fills over time.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "resourceLabel": {
+      "label": "Resource label",
+      "description": "Translated label shown in the resource gizmo.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "resourceDescription": {
+      "label": "Resource description",
+      "description": "Translated description shown in the resource gizmo tooltip.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "resourceGizmoThresholds": {
+      "label": "Resource gizmo thresholds",
+      "description": "Threshold values (0–1) drawn as markers on the resource bar.",
+      "type": { "kind": "list" },
+      "items": { "kind": "float" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "showGizmoOnWorldView": {
+      "label": "Show gizmo on world view",
+      "description": "If true, the resource gizmo is shown while the pawn is on the world map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showGizmoWhenDrafted": {
+      "label": "Show gizmo when drafted",
+      "description": "If true, the resource gizmo is shown when the pawn is drafted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showGizmoOnMultiSelect": {
+      "label": "Show gizmo on multi-select",
+      "description": "If true, the resource gizmo is shown when multiple pawns are selected.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "abilities": {
+      "label": "Abilities",
+      "description": "AbilityDefs granted to the pawn while this gene is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "AbilityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "forcedTraits": {
+      "label": "Forced traits",
+      "description": "Traits forced onto the pawn while this gene is active. Each entry specifies a trait and degree.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "GeneticTraitData" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "suppressedTraits": {
+      "label": "Suppressed traits",
+      "description": "Traits suppressed on the pawn while this gene is active. Each entry specifies a trait and degree.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "GeneticTraitData" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "enablesNeeds": {
+      "label": "Enables needs",
+      "description": "NeedDefs enabled on the pawn by this gene.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "NeedDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disablesNeeds": {
+      "label": "Disables needs",
+      "description": "NeedDefs disabled on the pawn by this gene.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "NeedDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disabledWorkTags": {
+      "label": "Disabled work tags",
+      "description": "Work tags disabled by this gene. Each list item is a WorkTags flag value.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "enum",
+        "values": [
+          "None",
+          "ManualDumb",
+          "ManualSkilled",
+          "Violent",
+          "Caring",
+          "Social",
+          "Commoner",
+          "Intellectual",
+          "Animals",
+          "Artistic",
+          "Crafting",
+          "Cooking",
+          "Firefighting",
+          "Cleaning",
+          "Hauling",
+          "PlantWork",
+          "Mining",
+          "Hunting",
+          "Constructing",
+          "Shooting",
+          "AllWork"
+        ]
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "ignoreDarkness": {
+      "label": "Ignore darkness",
+      "description": "If true, the pawn ignores darkness penalties to mood and work speed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "endogeneCategory": {
+      "label": "Endogene category",
+      "description": "Category used when this gene is an endogene. Controls which appearance slot it occupies.",
+      "type": {
+        "kind": "enum",
+        "values": [
+          "None",
+          "Melanin",
+          "HairColor",
+          "Ears",
+          "Nose",
+          "Jaw",
+          "Hands",
+          "Headbone",
+          "Head",
+          "BodyType",
+          "Voice"
+        ]
+      },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element"
+    },
+    "dislikesSunlight": {
+      "label": "Dislikes sunlight",
+      "description": "If true, the pawn suffers mood and potentially health penalties from sunlight exposure.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minAgeActive": {
+      "label": "Min age active",
+      "description": "Minimum biological age in years before this gene takes effect.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "lovinMTBFactor": {
+      "label": "Lovin MTB factor",
+      "description": "Multiplier on the mean time between lovin' events for this pawn.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "immuneToToxGasExposure": {
+      "label": "Immune to tox gas exposure",
+      "description": "If true, the pawn is immune to toxic gas exposure hediffs.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "immuneToVacuumBurns": {
+      "label": "Immune to vacuum burns",
+      "description": "If true, the pawn does not receive vacuum burn hediffs in airless environments.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "randomChosen": {
+      "label": "Random chosen",
+      "description": "If true, this gene is eligible for random selection even when it has no biostat cost.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "waterCellCost": {
+      "label": "Water cell cost",
+      "description": "Additional pathfinding cost when moving through water cells.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "deathHistoryEvent": {
+      "label": "Death history event",
+      "description": "HistoryEventDef fired when a pawn with this gene dies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HistoryEventDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "aptitudes": {
+      "label": "Aptitudes",
+      "description": "Skill aptitude adjustments granted by this gene.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Aptitude" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "passionMod": {
+      "label": "Passion mod",
+      "description": "Modifies a pawn's passion for a skill while this gene is active.",
+      "type": { "kind": "object", "schemaRef": "PassionMod" },
+      "required": false,
+      "xml": "object"
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Flat stat offsets applied by this gene. Keys are StatDef names; values are float offsets.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers applied by this gene. Keys are StatDef names; values are float factors.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "conditionalStatAffecters": {
+      "label": "Conditional stat affecters",
+      "description": "Stat offsets and factors that apply only when a specific condition is met.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ConditionalStatAffecter" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "painOffset": {
+      "label": "Pain offset",
+      "description": "Flat offset added to the pawn's pain level (0–1 scale).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "painFactor": {
+      "label": "Pain factor",
+      "description": "Multiplier on the pawn's pain level. Values below 1 reduce pain; above 1 increase it.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "foodPoisoningChanceFactor": {
+      "label": "Food poisoning chance factor",
+      "description": "Multiplier on the pawn's chance of getting food poisoning. 0 means immune.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "damageFactors": {
+      "label": "Damage factors",
+      "description": "Multipliers applied to incoming damage of specific types.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DamageFactor" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "biologicalAgeTickFactorFromAgeCurve": {
+      "label": "Biological age tick factor from age curve",
+      "description": "Curve mapping chronological age (x) to a biological age tick rate multiplier (y). Used for genes that age at different rates.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "makeImmuneTo": {
+      "label": "Make immune to",
+      "description": "HediffDefs that the pawn is immune to while this gene is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "hediffGiversCannotGive": {
+      "label": "Hediff givers cannot give",
+      "description": "HediffDefs that hediff givers are prevented from applying to this pawn.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chemical": {
+      "label": "Chemical",
+      "description": "ChemicalDef associated with this gene for addiction and tolerance calculations.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ChemicalDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "addictionChanceFactor": {
+      "label": "Addiction chance factor",
+      "description": "Multiplier on the pawn's chance of becoming addicted to the associated chemical. 0 means immune.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "overdoseChanceFactor": {
+      "label": "Overdose chance factor",
+      "description": "Multiplier on the pawn's chance of overdosing on the associated chemical.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "toleranceBuildupFactor": {
+      "label": "Tolerance buildup factor",
+      "description": "Multiplier on how quickly the pawn builds tolerance to the associated chemical.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "sterilize": {
+      "label": "Sterilize",
+      "description": "If true, the pawn cannot reproduce while this gene is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "capMods": {
+      "label": "Capacity modifiers",
+      "description": "Pawn capacity adjustments applied by this gene.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnCapacityModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "preventPermanentWounds": {
+      "label": "Prevent permanent wounds",
+      "description": "If true, injuries on this pawn never become permanent wounds.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "dontMindRawFood": {
+      "label": "Don't mind raw food",
+      "description": "If true, the pawn does not receive mood penalties for eating raw food.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hairColorOverride": {
+      "label": "Hair color override",
+      "description": "Replaces the pawn's hair color. Format: (r, g, b) or (r, g, b, a) with components 0–1 or 0–255.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.1, 0.1, 0.1)", "(255, 255, 255)"]
+    },
+    "skinColorBase": {
+      "label": "Skin color base",
+      "description": "Base skin color used when this gene controls the pawn's melanin appearance. Format: (r, g, b) or (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.9, 0.8, 0.7)", "(242, 214, 185)"]
+    },
+    "skinColorOverride": {
+      "label": "Skin color override",
+      "description": "Directly overrides the pawn's skin color. Format: (r, g, b) or (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.3, 0.8, 0.3)", "(0.6, 0.4, 0.2)"]
+    },
+    "randomBrightnessFactor": {
+      "label": "Random brightness factor",
+      "description": "If nonzero, skin brightness is randomized up to this fraction above and below the base color.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "hairTagFilter": {
+      "label": "Hair tag filter",
+      "description": "Tag filter controlling which hair styles are available to pawns with this gene.",
+      "type": { "kind": "object", "schemaRef": "TagFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "beardTagFilter": {
+      "label": "Beard tag filter",
+      "description": "Tag filter controlling which beard styles are available to pawns with this gene.",
+      "type": { "kind": "object", "schemaRef": "TagFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "bodyType": {
+      "label": "Body type",
+      "description": "Forces the pawn to use a specific body type. Leave empty to use the pawn's normal body type.",
+      "type": {
+        "kind": "enum",
+        "values": ["Fat", "Thin", "Hulk", "Standard"]
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "forcedHeadTypes": {
+      "label": "Forced head types",
+      "description": "HeadTypeDefs the pawn can be assigned. One is chosen randomly if multiple are listed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HeadTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minMelanin": {
+      "label": "Min melanin",
+      "description": "Minimum melanin value (0–1) allowed for this pawn. -1 means no minimum.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "forcedHair": {
+      "label": "Forced hair",
+      "description": "HairDef forced onto the pawn while this gene is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HairDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "womenCanHaveBeards": {
+      "label": "Women can have beards",
+      "description": "If true, female pawns with this gene are eligible for beard styles.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "socialFightChanceFactor": {
+      "label": "Social fight chance factor",
+      "description": "Multiplier on the pawn's chance of initiating a social fight.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "aggroMentalBreakSelectionChanceFactor": {
+      "label": "Aggro mental break selection chance factor",
+      "description": "Multiplier on how likely this pawn is to have an aggressive mental break selected when one occurs.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "mentalBreakMtbDays": {
+      "label": "Mental break MTB days",
+      "description": "Mean time between gene-triggered mental breaks in days. Requires mentalBreakDef.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "mentalBreakDef": {
+      "label": "Mental break def",
+      "description": "MentalBreakDef triggered by this gene's mentalBreakMtbDays timer.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MentalBreakDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "missingGeneRomanceChanceFactor": {
+      "label": "Missing gene romance chance factor",
+      "description": "Multiplier on the romance chance when the other pawn is missing this gene.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "prisonBreakMTBFactor": {
+      "label": "Prison break MTB factor",
+      "description": "Multiplier on the mean time between prison break attempts. Negative values prevent prison breaks entirely.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "biostatCpx": {
+      "label": "Biostat complexity",
+      "description": "Gene complexity cost. Higher values make the xenotype harder to maintain.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "biostatMet": {
+      "label": "Biostat metabolism",
+      "description": "Metabolism impact. Negative values increase food consumption; positive values reduce it.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "biostatArc": {
+      "label": "Biostat architech",
+      "description": "Number of Archite capsules required to unlock this gene in the gene assembler.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "exclusionTags": {
+      "label": "Exclusion tags",
+      "description": "Genes sharing any exclusion tag cannot be active simultaneously in the same xenotype.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "prerequisite": {
+      "label": "Prerequisite",
+      "description": "GeneDef that must be present in the xenotype for this gene to take effect.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GeneDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative probability that this gene is chosen during random xenotype generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "canGenerateInGeneSet": {
+      "label": "Can generate in gene set",
+      "description": "If false, this gene is excluded from random xenotype generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "symbolPack": {
+      "label": "Symbol pack",
+      "description": "Weighted name symbol lists used when generating gene-based xenotype names.",
+      "type": { "kind": "object", "schemaRef": "GeneSymbolPack" },
+      "required": false,
+      "xml": "object"
+    },
+    "marketValueFactor": {
+      "label": "Market value factor",
+      "description": "Multiplier on the market value of genepacks containing this gene.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "removeOnRedress": {
+      "label": "Remove on redress",
+      "description": "If true, this gene is removed from the pawn when they change apparel.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "passOnDirectly": {
+      "label": "Pass on directly",
+      "description": "If true, this gene is directly inherited by offspring without going through germ cells.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "selectionWeightFactorDarkSkin": {
+      "label": "Selection weight factor dark skin",
+      "description": "Multiplier on the selection weight when generating a dark-skinned xenotype.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "selectionWeightCultist": {
+      "label": "Selection weight cultist",
+      "description": "Multiplier on the selection weight when generating a cultist xenotype.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

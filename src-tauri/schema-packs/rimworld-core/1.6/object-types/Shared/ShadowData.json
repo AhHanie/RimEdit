@@ -1,0 +1,36 @@
+{
+  "objectType": "ShadowData",
+  "label": "Shadow data",
+  "description": "Drop shadow shape and position settings. Maps to Verse.ShadowData in RimWorld source.",
+  "fieldOrder": [
+    "volume",
+    "offset"
+  ],
+  "fields": {
+    "volume": {
+      "label": "Volume",
+      "description": "Size of the shadow ellipsoid as (x, y, z). Defaults to (1, 1, 1).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(1, 1, 1)",
+      "xml": "element",
+      "examples": [
+        "(1, 1, 1)",
+        "(1, 0.5, 1)",
+        "(0.8, 0.3, 0.8)"
+      ]
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "World-space offset of the shadow from the thing's origin as (x, y, z). Defaults to (0, 0, 0).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0, 0, 0)",
+      "xml": "element",
+      "examples": [
+        "(0, 0, 0)",
+        "(0, 0, -0.1)"
+      ]
+    }
+  }
+}

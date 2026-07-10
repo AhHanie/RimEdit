@@ -1,0 +1,41 @@
+{
+  "defType": "RitualTargetFilterDef",
+  "label": "Ritual target filter",
+  "description": "Defines logic for filtering valid ritual targets when a player initiates a ritual.",
+  "inherits": ["Def"],
+  "fieldOrder": ["workerClass", "fallBackToGatherSpot", "fallbackToRitualSpot"],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class implementing the target filter logic. Must extend RitualTargetFilter.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "fallBackToGatherSpot": {
+      "label": "Fall back to gather spot",
+      "description": "If true, falls back to a gather spot when no valid target is found.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fallbackToRitualSpot": {
+      "label": "Fallback to ritual spot",
+      "description": "If true, falls back to a ritual spot building when no valid target is found.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-ritual-target-filter": {
+      "label": "New ritual target filter",
+      "description": "Minimal ritual target filter with a worker class.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "workerClass"],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "defType": "SubcameraDef",
+  "label": "Subcamera",
+  "description": "Defines an auxiliary Unity camera and render target used internally by SubcameraDriver, such as the water-depth mask or the gravship silhouette mask.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "layer",
+    "depth",
+    "format",
+    "startEnabled",
+    "doNotUpdate",
+    "backgroundColor"
+  ],
+  "fields": {
+    "layer": {
+      "label": "Layer",
+      "description": "Name of the Unity layer this camera's culling mask is resolved from. Empty or missing means the camera renders nothing.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "depth": {
+      "label": "Depth",
+      "description": "Render-queue depth/priority of the generated camera. Higher values render on top of lower ones.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "format": {
+      "label": "Format",
+      "description": "Render texture format used for the camera's render target. Falls back to a simpler supported format at runtime if the platform does not support the requested one.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "ARGB32",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "ARGB32",
+          "Depth",
+          "ARGBHalf",
+          "Shadowmap",
+          "RGB565",
+          "ARGB4444",
+          "ARGB1555",
+          "Default",
+          "ARGB2101010",
+          "DefaultHDR",
+          "ARGB64",
+          "ARGBFloat",
+          "RGFloat",
+          "RGHalf",
+          "RFloat",
+          "RHalf",
+          "R8",
+          "ARGBInt",
+          "RGInt",
+          "RInt",
+          "BGRA32",
+          "RGB111110Float",
+          "RG32",
+          "RGBAUShort",
+          "RG16",
+          "BGRA10101010_XR",
+          "BGR101010_XR",
+          "R16"
+        ]
+      }
+    },
+    "startEnabled": {
+      "label": "Start enabled",
+      "description": "Whether the generated Unity camera starts enabled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "doNotUpdate": {
+      "label": "Do not update",
+      "description": "If true, the render texture is captured once and never refreshed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "backgroundColor": {
+      "label": "Background color",
+      "description": "Camera clear color, RGBA in the 0-1 float range.",
+      "type": { "kind": "color" },
+      "required": false,
+      "defaultValue": "(0, 0, 0, 0)",
+      "xml": "element"
+    }
+  }
+}

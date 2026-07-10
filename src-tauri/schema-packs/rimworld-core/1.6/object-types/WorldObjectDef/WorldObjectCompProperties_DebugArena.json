@@ -1,0 +1,8 @@
+{
+  "objectType": "WorldObjectCompProperties_DebugArena",
+  "label": "Debug arena comp",
+  "description": "Adds the debug arena behavior to this world object. Used only for developer testing.",
+  "inherits": ["WorldObjectCompProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

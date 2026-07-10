@@ -1,0 +1,33 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationFindMod",
+  "label": "Find Mod",
+  "description": "Runs match if any of the listed mod names is currently active, otherwise runs nomatch. Checks mod names, not package IDs.",
+  "fieldOrder": ["mods", "match", "nomatch"],
+  "fields": {
+    "mods": {
+      "label": "Mods",
+      "description": "Mod names to check for.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "xml": "listOfLi",
+      "required": true
+    },
+    "match": {
+      "label": "Match",
+      "description": "Operation to run when one of the listed mods is active.",
+      "type": { "kind": "object" },
+      "xml": "object",
+      "role": "operation",
+      "required": false
+    },
+    "nomatch": {
+      "label": "No Match",
+      "description": "Operation to run when none of the listed mods is active.",
+      "type": { "kind": "object" },
+      "xml": "object",
+      "role": "operation",
+      "required": false
+    }
+  }
+}

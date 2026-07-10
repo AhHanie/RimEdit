@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_ChanceToRemove",
+  "label": "Chance to remove comp",
+  "description": "Gives this hediff a per-day chance to remove itself.",
+  "fieldOrder": ["Class", "compClass", "chance", "maxSeverity"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Per-day chance to remove this hediff.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxSeverity": {
+      "label": "Max severity",
+      "description": "Only triggers removal at or below this severity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

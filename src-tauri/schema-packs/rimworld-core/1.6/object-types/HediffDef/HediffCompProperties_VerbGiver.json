@@ -1,0 +1,40 @@
+{
+  "objectType": "HediffCompProperties_VerbGiver",
+  "label": "Verb giver comp",
+  "description": "Grants verbs and tools to the pawn while this hediff is active.",
+  "fieldOrder": ["Class", "compClass", "verbs", "tools"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "verbs": {
+      "label": "Verbs",
+      "description": "List of verbs granted by this hediff.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "VerbProperties" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "tools": {
+      "label": "Tools",
+      "description": "List of melee tools granted by this hediff.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Tool" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    }
+  }
+}

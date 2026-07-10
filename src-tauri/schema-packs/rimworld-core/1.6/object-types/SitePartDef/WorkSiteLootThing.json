@@ -1,0 +1,24 @@
+{
+  "objectType": "WorkSiteLootThing",
+  "label": "Work site loot thing",
+  "description": "One entry in a site part's loot table. Defines a ThingDef that can be looted from the site and a relative selection weight.",
+  "fieldOrder": ["thing", "weight"],
+  "fields": {
+    "thing": {
+      "label": "Thing",
+      "description": "ThingDef that may be awarded as loot from this site part.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative selection weight for this loot entry. Higher values make this item more likely to be chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

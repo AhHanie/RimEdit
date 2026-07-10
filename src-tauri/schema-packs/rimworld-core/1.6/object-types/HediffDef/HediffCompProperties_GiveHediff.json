@@ -1,0 +1,72 @@
+{
+  "objectType": "HediffCompProperties_GiveHediff",
+  "label": "Give hediff comp",
+  "description": "Periodically applies another hediff to the pawn.",
+  "fieldOrder": [
+    "Class", "compClass",
+    "hediffDef", "mtbDays", "onlyIfHasHediff", "partsToAffect", "minSeverity", "maxSeverity"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "hediffDef": {
+      "label": "Hediff def",
+      "description": "Hediff to give.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mtbDays": {
+      "label": "MTB days",
+      "description": "Mean time between hediff applications in days.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "onlyIfHasHediff": {
+      "label": "Only if has hediff",
+      "description": "Only give if the pawn already has this hediff.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "partsToAffect": {
+      "label": "Parts to affect",
+      "description": "Body parts to apply to.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "BodyPartDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "minSeverity": {
+      "label": "Min severity",
+      "description": "Minimum severity before this comp activates.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxSeverity": {
+      "label": "Max severity",
+      "description": "Maximum severity before this comp stops activating.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 999,
+      "xml": "element"
+    }
+  }
+}

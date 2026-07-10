@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AddCornerThings",
+  "label": "Sketch resolver: Add corner things",
+  "description": "Concrete RimWorld SketchResolver_AddCornerThings resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,44 @@
+{
+  "objectType": "RitualOutcomeComp_Quality",
+  "label": "Ritual outcome comp (quality curve)",
+  "description": "Abstract intermediate comp that maps a runtime count to a quality offset via a SimpleCurve. Not used directly as a Class value; use concrete subclasses.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Fixed quality offset when this comp applies. Not used by Quality subclasses that compute offset from the curve.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "SimpleCurve mapping a runtime count (X) to a quality offset (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

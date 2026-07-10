@@ -1,0 +1,22 @@
+{
+  "objectType": "RitualStage_InteractWithRole_Target",
+  "label": "Ritual stage interact-with-role target mapping",
+  "description": "Maps a pawn role ID to a target role ID for explicit pawn-to-target interaction assignments.",
+  "fieldOrder": ["pawnId", "targetId"],
+  "fields": {
+    "pawnId": {
+      "label": "Pawn ID",
+      "description": "Role ID of the pawn performing the interaction.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "targetId": {
+      "label": "Target ID",
+      "description": "Role ID of the pawn being interacted with.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

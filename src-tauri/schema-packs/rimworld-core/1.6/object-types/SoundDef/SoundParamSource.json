@@ -1,0 +1,34 @@
+{
+  "objectType": "SoundParamSource",
+  "label": "Sound parameter source",
+  "description": "Base schema for sound parameter input sources. The Class attribute on the element selects the specific variant.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "SoundParamSource",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "SoundParamSource_AggregateSize": "SoundParamSource_AggregateSize",
+      "SoundParamSource_AmbientVolume": "SoundParamSource_AmbientVolume",
+      "SoundParamSource_CameraAltitude": "SoundParamSource_CameraAltitude",
+      "SoundParamSource_External": "SoundParamSource_External",
+      "SoundParamSource_MusicPlayingFadeOut": "SoundParamSource_MusicPlayingFadeOut",
+      "SoundParamSource_OutdoorTemperature": "SoundParamSource_OutdoorTemperature",
+      "SoundParamSource_Perlin": "SoundParamSource_Perlin",
+      "SoundParamSource_Random": "SoundParamSource_Random",
+      "SoundParamSource_SourceAge": "SoundParamSource_SourceAge",
+      "SoundParamSource_TimeOfDay": "SoundParamSource_TimeOfDay",
+      "SoundParamSource_Underground": "SoundParamSource_Underground"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Source class",
+      "description": "C# SoundParamSource subclass used by RimWorld DirectXmlLoader for this parameter source element.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

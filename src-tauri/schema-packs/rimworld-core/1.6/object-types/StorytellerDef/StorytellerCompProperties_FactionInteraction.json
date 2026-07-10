@@ -1,0 +1,132 @@
+{
+  "objectType": "StorytellerCompProperties_FactionInteraction",
+  "label": "Faction interaction comp",
+  "description": "Schedules faction interaction incidents (trade caravans, visitors, allied assistance) at a yearly rate.",
+  "fieldOrder": [
+    "Class",
+    "compClass",
+    "minDaysPassed",
+    "allowedTargetTags",
+    "disallowedTargetTags",
+    "minIncChancePopulationIntentFactor",
+    "enableIfAnyModActive",
+    "disableIfAnyModActive",
+    "incident",
+    "baseIncidentsPerYear",
+    "minSpacingDays",
+    "minDanger",
+    "fullAlliesOnly",
+    "minWealth"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# StorytellerCompProperties type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime StorytellerComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "minDaysPassed": {
+      "label": "Min days passed",
+      "description": "Earliest in-game day on which this comp can fire.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "allowedTargetTags": {
+      "label": "Allowed target tags",
+      "description": "Restrict this comp to firing at incident targets with one of these tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedTargetTags": {
+      "label": "Disallowed target tags",
+      "description": "Exclude incident targets with any of these tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "minIncChancePopulationIntentFactor": {
+      "label": "Min inc chance population intent factor",
+      "description": "Minimum population-intent multiplier applied to incident chance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.05,
+      "xml": "element"
+    },
+    "enableIfAnyModActive": {
+      "label": "Enable if any mod active",
+      "description": "This comp is active only when at least one mod in this list is loaded.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disableIfAnyModActive": {
+      "label": "Disable if any mod active",
+      "description": "This comp is disabled when any mod in this list is loaded.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "incident": {
+      "label": "Incident",
+      "description": "IncidentDef to fire for this faction interaction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "IncidentDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "baseIncidentsPerYear": {
+      "label": "Base incidents per year",
+      "description": "Average number of times per in-game year this incident fires.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "minSpacingDays": {
+      "label": "Min spacing days",
+      "description": "Minimum in-game days between firings of this comp.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "minDanger": {
+      "label": "Min danger",
+      "description": "Minimum colony danger level required for this comp to fire.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Low",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Low", "Medium", "High"] }
+    },
+    "fullAlliesOnly": {
+      "label": "Full allies only",
+      "description": "If true, only factions with full ally status are eligible.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minWealth": {
+      "label": "Min wealth",
+      "description": "Minimum colony wealth required for this comp to fire.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "objectType": "SoundParamTarget_PropertyReverb",
+  "label": "Sound param target: reverb property",
+  "description": "Interpolates between two reverb setups using the mapped parameter value.",
+  "inherits": ["SoundParamTarget"],
+  "fieldOrder": ["Class", "baseSetup", "targetSetup"],
+  "fields": {
+    "baseSetup": {
+      "label": "Base setup",
+      "description": "Reverb setup used when the parameter value is 0.",
+      "type": { "kind": "object", "schemaRef": "ReverbSetup" },
+      "required": false,
+      "xml": "object"
+    },
+    "targetSetup": {
+      "label": "Target setup",
+      "description": "Reverb setup used when the parameter value is 1.",
+      "type": { "kind": "object", "schemaRef": "ReverbSetup" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

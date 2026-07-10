@@ -1,0 +1,225 @@
+{
+  "defType": "StructureLayoutDef",
+  "label": "Structure layout",
+  "description": "A layout that generates a fully-walled structure with doors, terrain, and optional exterior prefab scatter. Inherits from LayoutDef.",
+  "inherits": ["LayoutDef"],
+  "fieldOrder": [
+    "wallDef", "wallStuffDef", "doorDef", "doorStuffDef",
+    "wallLampDef", "wallLampChancePerPosition",
+    "exteriorDoorDef", "exteriorDoorStuffDef",
+    "terrainDef", "defaultAffordanceTerrainDef",
+    "importantRoomDef", "roomToExteriorDoorRatio",
+    "spawnDoors", "clearDoorFaction", "canConnectRoomsExternally",
+    "areaPrunePercent", "canDisconnectRooms", "ensureOneDoorUnlocked",
+    "corridorDef", "corridorShapes", "wallDamageRange",
+    "surroundingTerrainDef", "surroundingScatterTerrainDef", "surroundingScatterRange",
+    "scatteredPrefabs"
+  ],
+  "fields": {
+    "wallDef": {
+      "label": "Wall def",
+      "description": "ThingDef used for the structure's interior walls.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "wallStuffDef": {
+      "label": "Wall stuff",
+      "description": "Material (ThingDef) used for wall construction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "doorDef": {
+      "label": "Door def",
+      "description": "ThingDef used for interior doors.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "doorStuffDef": {
+      "label": "Door stuff",
+      "description": "Material (ThingDef) used for door construction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "wallLampDef": {
+      "label": "Wall lamp def",
+      "description": "ThingDef used for wall-mounted lights.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "wallLampChancePerPosition": {
+      "label": "Wall lamp chance per position",
+      "description": "Probability that each eligible wall position receives a lamp.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.6,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "exteriorDoorDef": {
+      "label": "Exterior door def",
+      "description": "ThingDef used for doors leading to the exterior.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "exteriorDoorStuffDef": {
+      "label": "Exterior door stuff",
+      "description": "Material (ThingDef) used for exterior door construction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "terrainDef": {
+      "label": "Terrain def",
+      "description": "TerrainDef placed as the default floor across the structure.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "defaultAffordanceTerrainDef": {
+      "label": "Default affordance terrain",
+      "description": "TerrainDef used where the base terrain lacks required affordances for building placement.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "importantRoomDef": {
+      "label": "Important room def",
+      "description": "LayoutRoomDef that must always be included in the generated layout.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LayoutRoomDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "roomToExteriorDoorRatio": {
+      "label": "Room to exterior door ratio",
+      "description": "Fraction of rooms that receive exterior-facing doors.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.33,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "spawnDoors": {
+      "label": "Spawn doors",
+      "description": "Whether doors are placed in room openings during generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "clearDoorFaction": {
+      "label": "Clear door faction",
+      "description": "Whether door faction ownership is cleared after placement.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "canConnectRoomsExternally": {
+      "label": "Can connect rooms externally",
+      "description": "Whether rooms can connect through exterior walls.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "areaPrunePercent": {
+      "label": "Area prune percent",
+      "description": "Fraction of the generated area pruned away to create irregular layouts.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.3,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "canDisconnectRooms": {
+      "label": "Can disconnect rooms",
+      "description": "Whether rooms are allowed to become disconnected from the main layout.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "ensureOneDoorUnlocked": {
+      "label": "Ensure one door unlocked",
+      "description": "When true, at least one door in the structure is guaranteed to be unlocked.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "corridorDef": {
+      "label": "Corridor def",
+      "description": "LayoutRoomDef used for generated corridors connecting rooms.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LayoutRoomDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "corridorShapes": {
+      "label": "Corridor shapes",
+      "description": "Allowed corridor intersection shapes as flags. Defaults to All.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["Straight", "Cross", "T", "H", "AsymmetricCross", "All"]
+      },
+      "defaultValue": "All"
+    },
+    "wallDamageRange": {
+      "label": "Wall damage range",
+      "description": "Random HP damage range applied to walls after generation. IntRange.Invalid means no damage.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "surroundingTerrainDef": {
+      "label": "Surrounding terrain def",
+      "description": "TerrainDef placed around the exterior of the structure.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "surroundingScatterTerrainDef": {
+      "label": "Surrounding scatter terrain",
+      "description": "TerrainDef scattered around the structure exterior.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "surroundingScatterRange": {
+      "label": "Surrounding scatter range",
+      "description": "Range in cells for how far surrounding scatter terrain extends from the structure.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "2~6"
+    },
+    "scatteredPrefabs": {
+      "label": "Scattered prefabs",
+      "description": "Groups of prefabs scattered around the structure exterior.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ScatteredPrefabs" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

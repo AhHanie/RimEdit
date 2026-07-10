@@ -1,0 +1,51 @@
+{
+  "defType": "PathGridDef",
+  "label": "Path grid",
+  "description": "Defines a pathfinding grid variant used by the RimWorld movement system. Each variant controls which terrain and structures pawns can traverse.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "workerType",
+    "fencePassable",
+    "flying"
+  ],
+  "fields": {
+    "workerType": {
+      "label": "Worker type",
+      "description": "The PathGrid subclass to instantiate for this grid variant; the game validates at startup that the named class is a subclass of PathGrid.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "default": "PathGrid"
+    },
+    "fencePassable": {
+      "label": "Fence passable",
+      "description": "When true, units using this path grid can pass through fence-type buildings; the shipped Normal grid explicitly sets this to true, while FenceBlocked leaves it at false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "default": "false"
+    },
+    "flying": {
+      "label": "Flying",
+      "description": "When true, this grid is for flying-movement units that ignore terrain costs and fence obstacles.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "default": "false"
+    }
+  },
+  "templates": {
+    "new-path-grid": {
+      "label": "New path grid",
+      "description": "A new path grid definition.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "fencePassable": "false",
+        "flying": "false"
+      }
+    }
+  }
+}

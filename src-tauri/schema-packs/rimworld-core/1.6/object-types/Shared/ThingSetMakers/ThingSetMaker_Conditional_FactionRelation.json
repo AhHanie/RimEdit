@@ -1,0 +1,49 @@
+{
+  "objectType": "ThingSetMaker_Conditional_FactionRelation",
+  "label": "Faction relation conditional maker",
+  "description": "Runs the nested maker only when the player's relation with the specified faction matches the allowed relation flags.",
+  "inherits": ["ThingSetMaker_Conditional"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "thingSetMaker",
+    "factionDef",
+    "allowHostile",
+    "allowNeutral",
+    "allowAlly"
+  ],
+  "fields": {
+    "factionDef": {
+      "label": "Faction def",
+      "description": "FactionDef whose relation to the player is checked.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "allowHostile": {
+      "label": "Allow hostile",
+      "description": "Whether the condition passes when the player is hostile with this faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowNeutral": {
+      "label": "Allow neutral",
+      "description": "Whether the condition passes when the player is neutral with this faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowAlly": {
+      "label": "Allow ally",
+      "description": "Whether the condition passes when the player is allied with this faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

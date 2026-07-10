@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_RemoveIfOtherHediff",
+  "label": "Remove if other hediff comp",
+  "description": "Removes this hediff when another hediff is absent or below a severity threshold.",
+  "fieldOrder": ["Class", "compClass", "otherHediff", "onlyIfOtherHediffSeverityBelow"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "otherHediff": {
+      "label": "Other hediff",
+      "description": "Hediff whose absence causes removal of this hediff.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "onlyIfOtherHediffSeverityBelow": {
+      "label": "Only if other hediff severity below",
+      "description": "Only remove if other hediff severity is below this.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_WanderInPen",
+  "label": "Job giver wander in pen",
+  "description": "Wanders within the pawn's current pen enclosure. No additional XML-loadable fields beyond the Wander base.",
+  "inherits": ["JobGiver_Wander"]
+}

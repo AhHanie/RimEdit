@@ -1,0 +1,26 @@
+{
+  "objectType": "JobGiver_AIJumpToJobTarget",
+  "label": "Job giver AI jump to job target",
+  "description": "Uses a jump ability to land closer to the pawn's current job target when the target is in range.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": ["ability", "targetIndex"],
+  "fields": {
+    "ability": {
+      "label": "Ability",
+      "description": "The jump ability used to close distance to the job target.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "targetIndex": {
+      "label": "Target index",
+      "description": "Which job target slot (A, B, or C) to jump toward.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "A",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "A", "B", "C"] }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "objectType": "RitualCancellationTrigger_CannotScarify",
+  "label": "Ritual cancellation trigger (cannot scarify)",
+  "description": "Cancels the ritual when the target pawn cannot receive scarification.",
+  "fieldOrder": ["Class", "roleId"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "roleId": {
+      "label": "Role ID",
+      "description": "ID of the role whose assigned pawn is checked for scarification eligibility.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

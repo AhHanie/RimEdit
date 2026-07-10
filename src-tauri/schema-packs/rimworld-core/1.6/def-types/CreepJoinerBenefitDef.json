@@ -1,0 +1,78 @@
+{
+  "defType": "CreepJoinerBenefitDef",
+  "label": "Creep joiner benefit",
+  "description": "Defines a benefit offered by a creep joiner pawn when they join the colony. Inherits selection-weight and compatibility fields from CreepJoinerBaseDef.",
+  "inherits": ["CreepJoinerBaseDef"],
+  "fieldOrder": [
+    "letterExtra",
+    "traits",
+    "skills",
+    "hediffs",
+    "abilities"
+  ],
+  "fields": {
+    "letterExtra": {
+      "label": "Letter extra",
+      "description": "Additional formatted text shown in the creep joiner arrival letter. Supports pawn grammar arguments such as {PAWN_nameDef}, {PAWN_pronoun}, {PAWN_possessive}, {PAWN_objective}. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "traits": {
+      "label": "Traits",
+      "description": "Traits forced onto the pawn when this benefit is active. Loaded via BackstoryTrait.LoadDataFromXmlCustom: element name is the TraitDef defName; text is the integer degree (omitted text resolves to degree 0).",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BackstoryTrait" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "def",
+      "valueField": "degree",
+      "keyReference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "repeatable": true
+    },
+    "skills": {
+      "label": "Skills",
+      "description": "Skill ranges applied to the pawn. Loaded via SkillValue.LoadDataFromXmlCustom: element name is the SkillDef defName; text is an IntRange (omitted text resolves to IntRange.Zero = 0~0).",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillValue" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "skill",
+      "valueField": "range",
+      "keyReference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "repeatable": true
+    },
+    "hediffs": {
+      "label": "Hediffs",
+      "description": "HediffDefs applied to the pawn when this benefit is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "abilities": {
+      "label": "Abilities",
+      "description": "AbilityDefs granted to the pawn when this benefit is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "AbilityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

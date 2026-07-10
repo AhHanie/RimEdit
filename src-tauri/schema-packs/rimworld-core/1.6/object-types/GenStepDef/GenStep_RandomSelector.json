@@ -1,0 +1,23 @@
+{
+  "objectType": "GenStep_RandomSelector",
+  "label": "Random selector",
+  "description": "Picks one gen step option from a weighted list and executes it.",
+  "fieldOrder": ["Class", "options"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_RandomSelector.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "options": {
+      "label": "Options",
+      "description": "Weighted list of gen step options. One is chosen randomly at generation time.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RandomGenStepSelectorOption" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

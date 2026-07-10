@@ -1,0 +1,352 @@
+{
+  "defType": "WorldObjectDef",
+  "label": "World object",
+  "description": "Defines a world object type: settlements, caravans, sites, space platforms, and other entities that exist on the world map.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "worldObjectClass",
+    "canHaveFaction",
+    "saved",
+    "canBePlayerHome",
+    "treatAsPlayerHome",
+    "canResizeToGravship",
+    "requiresSignalJammerToReach",
+    "overrideMapSize",
+    "comps",
+    "canHaveMap",
+    "validLaunchTarget",
+    "allowCaravanIncidentsWhichGenerateMap",
+    "isTempIncidentMapOwner",
+    "IncidentTargetTags",
+    "selectable",
+    "neverMultiSelect",
+    "mapGenerator",
+    "inspectorTabs",
+    "useDynamicDrawer",
+    "expandingIcon",
+    "expandingIconTexture",
+    "expandingIconMaskTexture",
+    "expandingIconPriority",
+    "texture",
+    "mapEdgeTexture",
+    "mapEdgeShader",
+    "expandMore",
+    "rotateGraphicWhenTraveling",
+    "expandingIconColor",
+    "expandingIconDrawSize",
+    "fullyExpandedInSpace",
+    "shader",
+    "expandingShader",
+    "drawAltitudeOffset",
+    "blockExitGridUntilBattleIsWon",
+    "nameMaker"
+  ],
+  "fields": {
+    "worldObjectClass": {
+      "label": "World object class",
+      "description": "C# WorldObject subclass that implements runtime behavior for this world object type. Common values include Caravan, Site, Settlement, MapParent, SpaceMapParent.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "canHaveFaction": {
+      "label": "Can have faction",
+      "description": "If true, this world object can be owned by a faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "saved": {
+      "label": "Saved",
+      "description": "If true, this world object is persisted to the save file. Set to false for transient objects such as route planner waypoints.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canBePlayerHome": {
+      "label": "Can be player home",
+      "description": "If true, the player can designate this world object as a home base.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "treatAsPlayerHome": {
+      "label": "Treat as player home",
+      "description": "If true, this world object is always treated as a player home for incident targeting and storyteller logic, regardless of player designation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canResizeToGravship": {
+      "label": "Can resize to gravship",
+      "description": "If true, the map generated for this world object can be resized to match the gravship footprint.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiresSignalJammerToReach": {
+      "label": "Requires signal jammer to reach",
+      "description": "If true, a ship with an active signal jammer is required to approach this world object.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "overrideMapSize": {
+      "label": "Override map size",
+      "description": "Overrides the default map size for this world object. Written as '(200, 1, 200)'. Source type is IntVec3?.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(200, 1, 200)", "(250, 1, 250)"]
+    },
+    "comps": {
+      "label": "Comps",
+      "description": "World object comp properties list. Each entry is discriminated by the Class attribute and must extend WorldObjectCompProperties.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "WorldObjectCompProperties" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "canHaveMap": {
+      "label": "Can have map",
+      "description": "If true, a map can be generated for this world object.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "validLaunchTarget": {
+      "label": "Valid launch target",
+      "description": "If true, this world object can be targeted by transport pods and shuttles.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowCaravanIncidentsWhichGenerateMap": {
+      "label": "Allow caravan incidents which generate map",
+      "description": "If true, incidents that generate a temporary map can occur at this world object while a caravan is present.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isTempIncidentMapOwner": {
+      "label": "Is temp incident map owner",
+      "description": "If true, this world object hosts temporary incident maps and is removed after the caravan leaves.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "IncidentTargetTags": {
+      "label": "Incident target tags",
+      "description": "Tags that mark this world object as a valid target for incidents. Each tag references an IncidentTargetTagDef.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "selectable": {
+      "label": "Selectable",
+      "description": "If true, the player can click to select this world object.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "neverMultiSelect": {
+      "label": "Never multi-select",
+      "description": "If true, this world object is excluded from multi-selection.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mapGenerator": {
+      "label": "Map generator",
+      "description": "MapGeneratorDef used to generate the map when entering this world object.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "MapGeneratorDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "inspectorTabs": {
+      "label": "Inspector tabs",
+      "description": "List of WITab class names shown in the inspect pane when this world object is selected.",
+      "type": { "kind": "list" },
+      "items": { "kind": "typeName" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "useDynamicDrawer": {
+      "label": "Use dynamic drawer",
+      "description": "If true, this world object uses a dynamic drawer for rendering (e.g. animated caravans).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "expandingIcon": {
+      "label": "Expanding icon",
+      "description": "If true, this world object shows an expanding icon in the world view.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "expandingIconTexture": {
+      "label": "Expanding icon texture",
+      "description": "Texture path for the expanding world view icon. Relative to the RimWorld content root.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["World/WorldObjects/Expanding/Caravan", "World/WorldObjects/Expanding/Settlement"]
+    },
+    "expandingIconMaskTexture": {
+      "label": "Expanding icon mask texture",
+      "description": "Texture path for the expanding icon mask, used with cutout-complex shaders.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["World/WorldObjects/Expanding/ResourceAsteroid_m"]
+    },
+    "expandingIconPriority": {
+      "label": "Expanding icon priority",
+      "description": "Draw priority of the expanding icon. Higher values are drawn on top when icons overlap.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "texture": {
+      "label": "Texture",
+      "description": "Texture path for the world map icon of this object. Relative to the RimWorld content root.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["World/WorldObjects/Caravan", "World/WorldObjects/PeaceTalks"]
+    },
+    "mapEdgeTexture": {
+      "label": "Map edge texture",
+      "description": "Texture path shown at the edge of the map when this world object is adjacent.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "mapEdgeShader": {
+      "label": "Map edge shader",
+      "description": "ShaderTypeDef used to render the map edge texture. Private field in source; include here as it may be read by the XML loader via reflection.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ShaderTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "expandMore": {
+      "label": "Expand more",
+      "description": "If true, the expanding icon grows further when moused over. Requires expandingIcon to be true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "rotateGraphicWhenTraveling": {
+      "label": "Rotate graphic when traveling",
+      "description": "If true, the world object graphic rotates to face the direction of travel.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "expandingIconColor": {
+      "label": "Expanding icon color",
+      "description": "Tint color for the expanding icon. Written as '(R,G,B)' or '(R,G,B,A)' with 0-255 values. Source type is Color?; use IsNull=\"True\" to represent null.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(162,164,149)", "(255,255,255,255)"]
+    },
+    "expandingIconDrawSize": {
+      "label": "Expanding icon draw size",
+      "description": "Scale multiplier for the expanding icon texture.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "fullyExpandedInSpace": {
+      "label": "Fully expanded in space",
+      "description": "If true, the expanding icon is always shown at full size when the world view is zoomed out to space.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "shader": {
+      "label": "Shader",
+      "description": "ShaderTypeDef used to render the primary world object texture.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ShaderTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "expandingShader": {
+      "label": "Expanding shader",
+      "description": "ShaderTypeDef used to render the expanding icon texture.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ShaderTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "drawAltitudeOffset": {
+      "label": "Draw altitude offset",
+      "description": "Vertical draw offset for the world object icon, used to layer overlapping icons.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "blockExitGridUntilBattleIsWon": {
+      "label": "Block exit grid until battle is won",
+      "description": "If true, the map exit grid is blocked until all enemies are defeated.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "nameMaker": {
+      "label": "Name maker",
+      "description": "RulePackDef used to generate a procedural name for this world object.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  },
+  "templates": {
+    "basic-world-object": {
+      "label": "Basic world object",
+      "description": "Minimal world object with a label and runtime class.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "worldObjectClass"],
+      "fieldValues": {}
+    },
+    "player-home-world-object": {
+      "label": "Player home world object",
+      "description": "World object that can serve as a player home base.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "worldObjectClass", "mapGenerator"],
+      "fieldValues": {
+        "canBePlayerHome": "true",
+        "canHaveMap": "true"
+      }
+    }
+  }
+}

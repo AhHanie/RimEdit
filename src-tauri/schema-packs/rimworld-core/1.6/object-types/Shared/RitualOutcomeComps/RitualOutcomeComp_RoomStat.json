@@ -1,0 +1,56 @@
+{
+  "objectType": "RitualOutcomeComp_RoomStat",
+  "label": "Ritual outcome comp (room stat)",
+  "description": "Scores quality based on a room stat (e.g. Impressiveness) at the ritual location, evaluated via a curve.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "statDef"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Not used directly; quality is computed from the curve evaluated at the room stat value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "SimpleCurve mapping the room stat value (X) to quality offset (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "statDef": {
+      "label": "Stat def",
+      "description": "RoomStatDef evaluated at the ritual location.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RoomStatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

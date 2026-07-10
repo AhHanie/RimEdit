@@ -1,0 +1,8 @@
+{
+  "objectType": "SoundParamSource_Random",
+  "label": "Sound param source: random",
+  "description": "Generates a random value in [0, 1] each time the parameter is sampled.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class"],
+  "fields": {}
+}

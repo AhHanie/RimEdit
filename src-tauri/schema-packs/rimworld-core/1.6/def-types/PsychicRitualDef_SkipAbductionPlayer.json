@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualDef_SkipAbductionPlayer",
+  "label": "Psychic ritual -- skip abduction (player)",
+  "description": "Player-castable ritual that skip-abducts a target pawn. The abducted pawn enters a coma whose duration scales with ritual quality.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "comaDurationDaysFromQualityCurve"
+  ],
+  "fields": {
+    "comaDurationDaysFromQualityCurve": {
+      "label": "Coma duration days from quality curve",
+      "description": "Curve mapping ritual quality to the coma duration in days inflicted on the abducted pawn.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

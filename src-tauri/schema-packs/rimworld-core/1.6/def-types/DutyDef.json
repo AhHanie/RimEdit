@@ -1,0 +1,90 @@
+{
+  "defType": "DutyDef",
+  "label": "Duty",
+  "description": "Defines a pawn AI duty - the think-tree program that runs while a pawn is assigned this duty by a lord or other game system.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "thinkNode",
+    "constantThinkNode",
+    "alwaysShowWeapon",
+    "hook",
+    "socialModeMax",
+    "threatDisabled",
+    "ritualSpectateTarget",
+    "forceFaceUpPosture",
+    "drawBodyOverride"
+  ],
+  "fields": {
+    "thinkNode": {
+      "label": "Think node",
+      "description": "Root think-tree node executed while this duty is active. The Class attribute on the element selects the concrete ThinkNode subclass.",
+      "type": { "kind": "object", "schemaRef": "ThinkNode" },
+      "required": false,
+      "xml": "object"
+    },
+    "constantThinkNode": {
+      "label": "Constant think node",
+      "description": "Optional secondary think-tree node that runs every tick regardless of the main think tree. The Class attribute on the element selects the concrete ThinkNode subclass.",
+      "type": { "kind": "object", "schemaRef": "ThinkNode" },
+      "required": false,
+      "xml": "object"
+    },
+    "alwaysShowWeapon": {
+      "label": "Always show weapon",
+      "description": "If true, the pawn's equipped weapon is always rendered while this duty is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hook": {
+      "label": "Hook",
+      "description": "Slot in the pawn's think-tree hierarchy where this duty's think node inserts.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "HighPriority",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "HighPriority", "MediumPriority"] }
+    },
+    "socialModeMax": {
+      "label": "Social mode max",
+      "description": "Maximum social interaction level the pawn is allowed while this duty is active.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "SuperActive",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Off", "Quiet", "Normal", "SuperActive"] }
+    },
+    "threatDisabled": {
+      "label": "Threat disabled",
+      "description": "If true, the pawn is not considered a threat while this duty is active (affects targeting logic).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ritualSpectateTarget": {
+      "label": "Ritual spectate target",
+      "description": "If true, this duty marks the pawn as a spectator target in ritual camera framing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forceFaceUpPosture": {
+      "label": "Force face-up posture",
+      "description": "If true, the pawn is forced to render in the face-up (lying) posture while this duty is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "drawBodyOverride": {
+      "label": "Draw body override",
+      "description": "Nullable bool that overrides whether the pawn's body is drawn. Absent means no override; the engine's default rendering is used.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

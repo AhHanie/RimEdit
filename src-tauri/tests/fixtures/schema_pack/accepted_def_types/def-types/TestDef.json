@@ -1,0 +1,61 @@
+{
+  "defType": "TestDef",
+  "fields": {
+    "defName": {
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "directRef": {
+      "label": "Direct reference - no acceptedDefTypes (backward compat)",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BaseChoiceDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "scalarRef": {
+      "label": "Scalar reference with accepted types",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BaseChoiceDef",
+        "allowAbstract": false,
+        "scope": "allSources",
+        "acceptedDefTypes": ["ChoiceDefA", "ChoiceDefB"]
+      }
+    },
+    "listRef": {
+      "label": "List reference with accepted types including unknown",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "BaseChoiceDef",
+        "allowAbstract": false,
+        "scope": "allSources",
+        "acceptedDefTypes": ["ChoiceDefA", "ChoiceDefB", "UnknownFutureDef"]
+      }
+    },
+    "keyedRef": {
+      "label": "Keyed list with key reference and accepted types",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ChoiceEntry" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "def",
+      "valueField": "amount",
+      "keyReference": {
+        "defType": "BaseChoiceDef",
+        "allowAbstract": false,
+        "scope": "allSources",
+        "acceptedDefTypes": ["ChoiceDefA", "ChoiceDefB"]
+      },
+      "repeatable": true
+    }
+  }
+}

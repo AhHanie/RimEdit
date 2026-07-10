@@ -1,0 +1,1044 @@
+{
+  "defType": "FactionDef",
+  "label": "Faction",
+  "description": "Defines a faction - a political group with its own name, tech level, pawn composition, ideology preferences, diplomatic stance, and world presence.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "isPlayer",
+    "factionNameMaker",
+    "settlementNameMaker",
+    "playerInitialSettlementNameMaker",
+    "fixedName",
+    "humanlikeFaction",
+    "hidden",
+    "listOrderPriority",
+    "pawnGroupMakers",
+    "raidCommonalityFromPointsCurve",
+    "autoFlee",
+    "attackersDownPercentageRangeForAutoFlee",
+    "canSiege",
+    "canStageAttacks",
+    "canUseAvoidGrid",
+    "canPsychicRitualSiege",
+    "earliestRaidDays",
+    "allowedArrivalTemperatureRange",
+    "minSettlementTemperatureChanceCurve",
+    "basicMemberKind",
+    "startingResearchTags",
+    "startingTechprintsResearchTags",
+    "recipePrerequisiteTags",
+    "rescueesCanJoin",
+    "pawnSingular",
+    "pawnsPlural",
+    "leaderTitle",
+    "leaderTitleFemale",
+    "royalFavorLabel",
+    "royalFavorIconPath",
+    "fixedLeaderKinds",
+    "leaderForceGenerateNewPawn",
+    "forageabilityFactor",
+    "maxPawnCostPerTotalPointsCurve",
+    "royalTitleTags",
+    "categoryTag",
+    "hostileToFactionlessHumanlikes",
+    "dropPodActive",
+    "dropPodIncoming",
+    "raidsForbidden",
+    "animalsFleeDanger",
+    "canRequestTraders",
+    "canRequestMilitaryAid",
+    "canRequestOrbitalTrader",
+    "canGenerateQuestSites",
+    "hideGiftingInHostilityText",
+    "arrivalModeWhitelist",
+    "arrivalModeBlacklist",
+    "layerWhitelist",
+    "layerBlacklist",
+    "arrivalLayerWhitelist",
+    "arrivalLayerBlacklist",
+    "neutralArrivalLayerWhitelist",
+    "neutralArrivalLayerBlacklist",
+    "raidArrivalLayerWhitelist",
+    "raidArrivalLayerBlacklist",
+    "requiredCountAtGameStart",
+    "settlementGenerationWeight",
+    "generateNewLeaderFromMapMembersOnly",
+    "maxConfigurableAtWorldCreation",
+    "startingCountAtWorldCreation",
+    "configurationListOrderPriority",
+    "replacesFaction",
+    "displayInFactionSelection",
+    "techLevel",
+    "backstoryFilters",
+    "backstoryCategories",
+    "apparelStuffFilter",
+    "settlementLootMaker",
+    "raidLootMaker",
+    "raidLootValueFromPointsCurve",
+    "caravanTraderKinds",
+    "orbitalTraderKinds",
+    "visitorTraderKinds",
+    "baseTraderKinds",
+    "xenotypeSet",
+    "melaninRange",
+    "disallowedRaidStrategies",
+    "disallowedRaidAgeRestrictions",
+    "mustStartOneEnemy",
+    "naturalEnemy",
+    "permanentEnemy",
+    "permanentEnemyToEveryoneExceptPlayer",
+    "permanentEnemyToEveryoneExcept",
+    "settlementTexturePath",
+    "factionIconPath",
+    "colorSpectrum",
+    "royalTitleInheritanceRelations",
+    "royalTitleInheritanceWorkerClass",
+    "royalImplantRules",
+    "renounceTitleMessage",
+    "allowedCultures",
+    "requiredMemes",
+    "allowedMemes",
+    "disallowedMemes",
+    "disallowedPrecepts",
+    "structureMemeWeights",
+    "classicIdeo",
+    "fixedIdeo",
+    "ideoName",
+    "hiddenIdeo",
+    "ideoDescription",
+    "styles",
+    "deityPresets",
+    "forcedMemes",
+    "requiredPreceptsOnly",
+    "maxCountAtGameStart",
+    "canMakeRandomly",
+    "dialogFactionGreetingHostile",
+    "dialogFactionGreetingHostileAppreciative",
+    "dialogFactionGreetingWary",
+    "dialogFactionGreetingWarm",
+    "dialogMilitaryAidSent",
+    "messageDefendersAttacking"
+  ],
+  "fields": {
+    "isPlayer": {
+      "label": "Is player",
+      "description": "If true, this is the player's own faction. Only one faction should have this set.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "factionNameMaker": {
+      "label": "Faction name maker",
+      "description": "RulePackDef used to generate random faction names.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "settlementNameMaker": {
+      "label": "Settlement name maker",
+      "description": "RulePackDef used to generate random settlement names for this faction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "playerInitialSettlementNameMaker": {
+      "label": "Player initial settlement name maker",
+      "description": "RulePackDef used to name the player's first settlement when this faction is the player faction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "fixedName": {
+      "label": "Fixed name",
+      "description": "A fixed faction name used instead of a generated one.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "humanlikeFaction": {
+      "label": "Humanlike faction",
+      "description": "If true, this faction generates humanlike pawns and is subject to backstory, ideology, and social rules.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "hidden": {
+      "label": "Hidden",
+      "description": "If true, this faction is hidden from the world map and faction overview UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "listOrderPriority": {
+      "label": "List order priority",
+      "description": "Sort order in the faction list UI. Higher values appear later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "pawnGroupMakers": {
+      "label": "Pawn group makers",
+      "description": "List of PawnGroupMaker templates this faction uses to generate raids, settlements, and trader groups.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnGroupMaker" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "raidCommonalityFromPointsCurve": {
+      "label": "Raid commonality from points curve",
+      "description": "SimpleCurve mapping raid point budget to a relative chance of this faction raiding. Factions without this curve always have commonality 1.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "autoFlee": {
+      "label": "Auto flee",
+      "description": "If true, raiders from this faction will flee when enough attackers are downed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "attackersDownPercentageRangeForAutoFlee": {
+      "label": "Attackers down percentage range for auto flee",
+      "description": "FloatRange of attacker-down percentages at which auto-flee can trigger. Evaluated as a random draw in this range each check.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.4~0.7"]
+    },
+    "canSiege": {
+      "label": "Can siege",
+      "description": "If true, this faction may use siege raid strategies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canStageAttacks": {
+      "label": "Can stage attacks",
+      "description": "If true, this faction may stage raids that build up before attacking.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canUseAvoidGrid": {
+      "label": "Can use avoid grid",
+      "description": "If true, pawns of this faction use the danger-avoidance pathfinding grid.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canPsychicRitualSiege": {
+      "label": "Can psychic ritual siege",
+      "description": "If true, this faction may use psychic ritual siege attacks (Anomaly expansion).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "earliestRaidDays": {
+      "label": "Earliest raid days",
+      "description": "The earliest game day on which this faction may launch a raid.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "allowedArrivalTemperatureRange": {
+      "label": "Allowed arrival temperature range",
+      "description": "FloatRange of tile temperatures at which this faction's raids and visits can arrive. Raids outside this range are suppressed.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["-40~45"]
+    },
+    "minSettlementTemperatureChanceCurve": {
+      "label": "Min settlement temperature chance curve",
+      "description": "SimpleCurve mapping tile temperature to the probability that this faction places a settlement there. Lower temperatures reduce settlement placement.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "basicMemberKind": {
+      "label": "Basic member kind",
+      "description": "PawnKindDef representing a generic member of this faction used for non-combat generation contexts.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "startingResearchTags": {
+      "label": "Starting research tags",
+      "description": "ResearchProjectTagDefs marking research projects that colonists from this faction start the game having already completed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ResearchProjectTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "startingTechprintsResearchTags": {
+      "label": "Starting techprints research tags",
+      "description": "ResearchProjectTagDefs marking research projects for which colonists from this faction start with techprints.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ResearchProjectTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "recipePrerequisiteTags": {
+      "label": "Recipe prerequisite tags",
+      "description": "String tags that gate which recipes require membership in this faction type as a prerequisite.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "rescueesCanJoin": {
+      "label": "Rescuees can join",
+      "description": "If true, captured or rescued pawns from this faction may be recruited.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "pawnSingular": {
+      "label": "Pawn singular",
+      "description": "Singular noun used in UI text to refer to a single member of this faction (e.g. outlander, tribesman).",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "member",
+      "xml": "element"
+    },
+    "pawnsPlural": {
+      "label": "Pawns plural",
+      "description": "Plural noun used in UI text to refer to multiple members of this faction (e.g. outlanders, tribespeople).",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "members",
+      "xml": "element"
+    },
+    "leaderTitle": {
+      "label": "Leader title",
+      "description": "Title used for the faction leader (e.g. chief, boss, prime councilor).",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "leader",
+      "xml": "element"
+    },
+    "leaderTitleFemale": {
+      "label": "Leader title (female)",
+      "description": "Female-gendered version of the leader title, if different from the default.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "royalFavorLabel": {
+      "label": "Royal favor label",
+      "description": "Label for the royal favor resource granted by this faction (Royalty expansion).",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "royalFavorIconPath": {
+      "label": "Royal favor icon path",
+      "description": "Texture path for the royal favor icon shown in the UI.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "fixedLeaderKinds": {
+      "label": "Fixed leader kinds",
+      "description": "PawnKindDefs that must be used when generating this faction's leader. If empty, the leader kind is chosen freely.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "leaderForceGenerateNewPawn": {
+      "label": "Leader force generate new pawn",
+      "description": "If true, a new pawn is always generated for the leader role rather than promoting an existing faction member.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forageabilityFactor": {
+      "label": "Forageability factor",
+      "description": "Multiplier on how much food pawns of this faction gather when foraging.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "maxPawnCostPerTotalPointsCurve": {
+      "label": "Max pawn cost per total points curve",
+      "description": "SimpleCurve mapping total raid points to the maximum cost of a single pawn in that raid, preventing cheap high-point groups from being filled with one expensive pawn.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "royalTitleTags": {
+      "label": "Royal title tags",
+      "description": "Tags matching RoyalTitleDefs that belong to this faction's title hierarchy.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "categoryTag": {
+      "label": "Category tag",
+      "description": "String tag grouping this faction into a broad category (e.g. Outlander, Tribal, Pirate) used by incidents and scenario filters.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "hostileToFactionlessHumanlikes": {
+      "label": "Hostile to factionless humanlikes",
+      "description": "If true, this faction attacks humanlikes who belong to no faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "dropPodActive": {
+      "label": "Drop pod active",
+      "description": "ThingDef for the active drop pod used when this faction delivers pawns by drop pod.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "dropPodIncoming": {
+      "label": "Drop pod incoming",
+      "description": "ThingDef for the incoming (falling) drop pod used by this faction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "raidsForbidden": {
+      "label": "Raids forbidden",
+      "description": "If true, this faction never launches raids.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "animalsFleeDanger": {
+      "label": "Animals flee danger",
+      "description": "If true, animals affiliated with this faction flee from danger.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canRequestTraders": {
+      "label": "Can request traders",
+      "description": "If true, the player can request a caravan trader from this faction via comms console.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canRequestMilitaryAid": {
+      "label": "Can request military aid",
+      "description": "If true, the player can call for military aid from this faction via comms console.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canRequestOrbitalTrader": {
+      "label": "Can request orbital trader",
+      "description": "If true, the player can call an orbital trader from this faction via comms console.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canGenerateQuestSites": {
+      "label": "Can generate quest sites",
+      "description": "If true, quest sites can be generated that belong to this faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "hideGiftingInHostilityText": {
+      "label": "Hide gifting in hostility text",
+      "description": "If true, the gifting option is hidden in hostility explanation tooltips for this faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "arrivalModeWhitelist": {
+      "label": "Arrival mode whitelist",
+      "description": "If non-empty, only these PawnsArrivalModeDefs can be used by this faction.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PawnsArrivalModeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "arrivalModeBlacklist": {
+      "label": "Arrival mode blacklist",
+      "description": "PawnsArrivalModeDefs that this faction may never use.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PawnsArrivalModeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerWhitelist": {
+      "label": "Layer whitelist",
+      "description": "If non-empty, this faction only exists on these PlanetLayerDefs.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerBlacklist": {
+      "label": "Layer blacklist",
+      "description": "PlanetLayerDefs that this faction cannot exist on.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "arrivalLayerWhitelist": {
+      "label": "Arrival layer whitelist",
+      "description": "PlanetLayerDefs that this faction's pawns may arrive on (all arrival types).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "arrivalLayerBlacklist": {
+      "label": "Arrival layer blacklist",
+      "description": "PlanetLayerDefs that this faction's pawns may not arrive on (all arrival types).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "neutralArrivalLayerWhitelist": {
+      "label": "Neutral arrival layer whitelist",
+      "description": "PlanetLayerDefs that this faction's neutral (non-raid) pawns may arrive on.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "neutralArrivalLayerBlacklist": {
+      "label": "Neutral arrival layer blacklist",
+      "description": "PlanetLayerDefs that this faction's neutral pawns may not arrive on.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "raidArrivalLayerWhitelist": {
+      "label": "Raid arrival layer whitelist",
+      "description": "PlanetLayerDefs that this faction's raids may arrive on.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "raidArrivalLayerBlacklist": {
+      "label": "Raid arrival layer blacklist",
+      "description": "PlanetLayerDefs that this faction's raids may not arrive on.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "requiredCountAtGameStart": {
+      "label": "Required count at game start",
+      "description": "How many instances of this faction are guaranteed to exist at game start.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "settlementGenerationWeight": {
+      "label": "Settlement generation weight",
+      "description": "Relative weight controlling how many settlements this faction places on the world map.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "generateNewLeaderFromMapMembersOnly": {
+      "label": "Generate new leader from map members only",
+      "description": "If true, a replacement leader is selected from existing map members rather than generated fresh.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "maxConfigurableAtWorldCreation": {
+      "label": "Max configurable at world creation",
+      "description": "Maximum number of this faction the player may configure during world creation. -1 means no cap.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "startingCountAtWorldCreation": {
+      "label": "Starting count at world creation",
+      "description": "Default number of this faction added during world creation.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "configurationListOrderPriority": {
+      "label": "Configuration list order priority",
+      "description": "Sort order in the world-creation faction configuration list.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "replacesFaction": {
+      "label": "Replaces faction",
+      "description": "FactionDef that this faction replaces when active. The replaced faction will not appear at world creation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "displayInFactionSelection": {
+      "label": "Display in faction selection",
+      "description": "If true, this faction appears in the world-creation faction selection list.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "techLevel": {
+      "label": "Tech level",
+      "description": "Technology era of this faction, governing available buildings, weapons, and research.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Undefined", "Animal", "Neolithic", "Medieval", "Industrial", "Spacer", "Ultra", "Archotech"] }
+    },
+    "backstoryFilters": {
+      "label": "Backstory filters",
+      "description": "Filters controlling which backstory categories apply to pawn generation for this faction.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BackstoryCategoryFilter" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "backstoryCategories": {
+      "label": "Backstory categories",
+      "description": "Legacy list of backstory category strings. Folded into backstoryFilters on PostLoad for XML compatibility with older mods.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "apparelStuffFilter": {
+      "label": "Apparel stuff filter",
+      "description": "ThingFilter that restricts which stuff materials this faction may use for apparel.",
+      "type": { "kind": "object", "schemaRef": "ThingFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "settlementLootMaker": {
+      "label": "Settlement loot maker",
+      "description": "ThingSetMakerDef controlling what loot is found in settlements of this faction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingSetMakerDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "raidLootMaker": {
+      "label": "Raid loot maker",
+      "description": "ThingSetMakerDef controlling what loot raiders from this faction leave behind.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingSetMakerDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "raidLootValueFromPointsCurve": {
+      "label": "Raid loot value from points curve",
+      "description": "SimpleCurve mapping raid point budget to the total market value of loot dropped. Required -- a config error is reported if missing.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "caravanTraderKinds": {
+      "label": "Caravan trader kinds",
+      "description": "TraderKindDefs for caravan traders that visit from this faction.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "TraderKindDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "orbitalTraderKinds": {
+      "label": "Orbital trader kinds",
+      "description": "TraderKindDefs for orbital traders that belong to this faction.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "TraderKindDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "visitorTraderKinds": {
+      "label": "Visitor trader kinds",
+      "description": "TraderKindDefs for visiting trader groups from this faction.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "TraderKindDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "baseTraderKinds": {
+      "label": "Base trader kinds",
+      "description": "TraderKindDefs for traders stationed at this faction's settlements.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "TraderKindDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "xenotypeSet": {
+      "label": "Xenotype set",
+      "description": "Weighted set of xenotypes that can appear among pawns generated for this faction.",
+      "type": { "kind": "object", "schemaRef": "XenotypeSet" },
+      "required": false,
+      "xml": "object"
+    },
+    "melaninRange": {
+      "label": "Melanin range",
+      "description": "FloatRange controlling the skin melanin level of generated pawns. Defaults to 0~1.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0~1", "0.3~0.7"]
+    },
+    "disallowedRaidStrategies": {
+      "label": "Disallowed raid strategies",
+      "description": "RaidStrategyDefs that this faction may never use.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "RaidStrategyDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedRaidAgeRestrictions": {
+      "label": "Disallowed raid age restrictions",
+      "description": "RaidAgeRestrictionDefs that this faction may never use during raid generation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "RaidAgeRestrictionDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "mustStartOneEnemy": {
+      "label": "Must start one enemy",
+      "description": "If true, at least one instance of this faction will start the game hostile to the player.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "naturalEnemy": {
+      "label": "Natural enemy",
+      "description": "If true, this faction starts at a reduced goodwill and is predisposed to hostility.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "permanentEnemy": {
+      "label": "Permanent enemy",
+      "description": "If true, this faction is always hostile to everyone and cannot be allied or traded with normally.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "permanentEnemyToEveryoneExceptPlayer": {
+      "label": "Permanent enemy to everyone except player",
+      "description": "If true, this faction is always hostile to all other factions except the player faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "permanentEnemyToEveryoneExcept": {
+      "label": "Permanent enemy to everyone except",
+      "description": "FactionDefs that this faction does not treat as permanent enemies. All other factions are treated as permanent enemies.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "settlementTexturePath": {
+      "label": "Settlement texture path",
+      "description": "Texture path for the world map icon representing settlements of this faction.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["World/WorldObjects/DefaultSettlement", "World/WorldObjects/TribalSettlement"]
+    },
+    "factionIconPath": {
+      "label": "Faction icon path",
+      "description": "Texture path for the faction icon shown in the UI and world map.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["World/WorldObjects/Expanding/Town", "World/WorldObjects/Expanding/Village"]
+    },
+    "colorSpectrum": {
+      "label": "Color spectrum",
+      "description": "List of colors defining the color range for this faction. The first color is the faction's default display color.",
+      "type": { "kind": "list" },
+      "items": { "kind": "color" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "royalTitleInheritanceRelations": {
+      "label": "Royal title inheritance relations",
+      "description": "PawnRelationDefs that qualify a pawn as an heir for royal title inheritance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PawnRelationDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "royalTitleInheritanceWorkerClass": {
+      "label": "Royal title inheritance worker class",
+      "description": "Type name of the RoyalTitleInheritanceWorker subclass controlling how titles are passed on.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "royalImplantRules": {
+      "label": "Royal implant rules",
+      "description": "Rules specifying which implants are permitted at each royal title tier.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RoyalImplantRule" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "renounceTitleMessage": {
+      "label": "Renounce title message",
+      "description": "Message shown when a pawn renounces their royal title from this faction.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowedCultures": {
+      "label": "Allowed cultures",
+      "description": "CultureDefs that ideologies for this faction may draw from.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "CultureDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "requiredMemes": {
+      "label": "Required memes",
+      "description": "MemeDefs that the ideology of this faction must include.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "allowedMemes": {
+      "label": "Allowed memes",
+      "description": "Whitelist of MemeDefs permitted in this faction's ideology. Cannot be used together with disallowedMemes.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedMemes": {
+      "label": "Disallowed memes",
+      "description": "MemeDefs forbidden from this faction's ideology. Cannot be used together with allowedMemes.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedPrecepts": {
+      "label": "Disallowed precepts",
+      "description": "PreceptDefs that cannot appear in this faction's ideology.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "structureMemeWeights": {
+      "label": "Structure meme weights",
+      "description": "Weighted selection table for this faction's ideology structure meme. Child element names are MemeDef defNames; text is the float weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "MemeWeight" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "meme",
+      "valueField": "selectionWeight",
+      "keyReference": {
+        "defType": "MemeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "classicIdeo": {
+      "label": "Classic ideo",
+      "description": "If true, factions of this type use the classic ideology mode that existed before Ideology was fully integrated.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fixedIdeo": {
+      "label": "Fixed ideo",
+      "description": "If true, this faction always generates with the same ideology rather than a randomized one.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ideoName": {
+      "label": "Ideo name",
+      "description": "Fixed name for the ideology when fixedIdeo is true.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "hiddenIdeo": {
+      "label": "Hidden ideo",
+      "description": "If true, this faction's ideology is hidden from the player.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ideoDescription": {
+      "label": "Ideo description",
+      "description": "Fixed description for the ideology when fixedIdeo is true.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "styles": {
+      "label": "Styles",
+      "description": "StyleCategoryDefs that this faction's ideology may use.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "StyleCategoryDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "deityPresets": {
+      "label": "Deity presets",
+      "description": "Fixed deity definitions used when this faction generates an ideology with deities.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DeityPreset" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "forcedMemes": {
+      "label": "Forced memes",
+      "description": "MemeDefs that must appear in this faction's ideology in addition to any randomly chosen memes.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "requiredPreceptsOnly": {
+      "label": "Required precepts only",
+      "description": "If true, this faction's ideology contains only the precepts required by its memes, with no additional random ones.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "maxCountAtGameStart": {
+      "label": "Max count at game start",
+      "description": "Obsolete. Use maxConfigurableAtWorldCreation instead.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "canMakeRandomly": {
+      "label": "Can make randomly",
+      "description": "Obsolete. Faction generation is now controlled by world creation settings.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "dialogFactionGreetingHostile": {
+      "label": "Dialog faction greeting (hostile)",
+      "description": "Greeting text shown in the comms console when this faction is hostile.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "dialogFactionGreetingHostileAppreciative": {
+      "label": "Dialog faction greeting (hostile, appreciative)",
+      "description": "Greeting text shown when this faction is hostile but appreciative.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "dialogFactionGreetingWary": {
+      "label": "Dialog faction greeting (wary)",
+      "description": "Greeting text shown when this faction is wary.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "dialogFactionGreetingWarm": {
+      "label": "Dialog faction greeting (warm)",
+      "description": "Greeting text shown when this faction is friendly.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "dialogMilitaryAidSent": {
+      "label": "Dialog military aid sent",
+      "description": "Message shown when this faction dispatches military aid to the player.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "messageDefendersAttacking": {
+      "label": "Message defenders attacking",
+      "description": "Message shown when defenders from this faction attack. Supports {0} (pawn type), {1} (faction name), {2} (target name) placeholders.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element",
+      "examples": ["{0} from {1} are attacking your {2}."]
+    }
+  },
+  "templates": {
+    "basic-faction": {
+      "label": "Basic faction",
+      "description": "A humanlike faction with tech level, pawn singular/plural labels, and an icon.",
+      "includeRequiredFields": true,
+      "promptFields": ["techLevel", "pawnSingular", "pawnsPlural", "factionIconPath"],
+      "fieldValues": {
+        "humanlikeFaction": "True"
+      }
+    },
+    "permanent-enemy": {
+      "label": "Permanent enemy faction",
+      "description": "A faction that is always hostile to everyone.",
+      "includeRequiredFields": true,
+      "promptFields": ["techLevel", "pawnSingular", "pawnsPlural", "factionIconPath"],
+      "fieldValues": {
+        "humanlikeFaction": "True",
+        "permanentEnemy": "True"
+      }
+    }
+  }
+}

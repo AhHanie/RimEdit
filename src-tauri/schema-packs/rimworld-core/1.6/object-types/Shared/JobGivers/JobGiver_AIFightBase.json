@@ -1,0 +1,73 @@
+{
+  "objectType": "JobGiver_AIFightBase",
+  "label": "Job giver AI fight base",
+  "description": "Base combat job giver that acquires and engages enemy targets. Covers AIDefendPoint, AIDefendSelf, AIDefendEscortee, AIFightEnemies, and HiveDefense. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "targetAcquireRadius",
+    "targetKeepRadius",
+    "needLOSToAcquireNonPawnTargets",
+    "chaseTarget",
+    "allowTurrets",
+    "ignoreNonCombatants",
+    "humanlikesOnly"
+  ],
+  "fields": {
+    "targetAcquireRadius": {
+      "label": "Target acquire radius",
+      "description": "Search radius in cells within which the pawn looks for hostile targets.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 56,
+      "xml": "element"
+    },
+    "targetKeepRadius": {
+      "label": "Target keep radius",
+      "description": "Maximum distance in cells the pawn is willing to chase a target it has already engaged.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 65,
+      "xml": "element"
+    },
+    "needLOSToAcquireNonPawnTargets": {
+      "label": "Need LOS to acquire non-pawn targets",
+      "description": "If true, the pawn requires line of sight to acquire non-pawn hostile targets (buildings, turrets).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "chaseTarget": {
+      "label": "Chase target",
+      "description": "If true, the pawn pursues fleeing targets beyond sight range rather than dropping them.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowTurrets": {
+      "label": "Allow turrets",
+      "description": "If true, the pawn may man turrets to fight enemies in addition to direct combat.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreNonCombatants": {
+      "label": "Ignore non-combatants",
+      "description": "If true, non-combatant pawns are excluded from target consideration.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "humanlikesOnly": {
+      "label": "Humanlikes only",
+      "description": "If true, only humanlike pawns are valid combat targets.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

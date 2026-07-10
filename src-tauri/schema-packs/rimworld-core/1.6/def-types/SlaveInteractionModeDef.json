@@ -1,0 +1,28 @@
+{
+  "defType": "SlaveInteractionModeDef",
+  "label": "Slave Interaction Mode",
+  "description": "Defines a slave interaction mode that wardens can be assigned to perform on enslaved colonists (suppression, imprisonment, emancipation, execution, etc.).",
+  "inherits": ["Def"],
+  "fieldOrder": ["listOrder"],
+  "fields": {
+    "listOrder": {
+      "label": "List order",
+      "description": "Controls the order in which this mode appears in the warden assignment UI. The five shipped modes use multiples of 10 (0, 10, 20, 30, 40) to leave room for modded entries.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-slave-interaction-mode": {
+      "label": "New slave interaction mode",
+      "description": "Minimal slave interaction mode with a def name, label, and list order.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "listOrder": "0"
+      }
+    }
+  }
+}

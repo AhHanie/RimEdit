@@ -1,0 +1,23 @@
+{
+  "objectType": "SoundFilterHighPass",
+  "label": "Sound filter: high-pass",
+  "description": "Unity AudioHighPassFilter applied to this sub-sound.",
+  "inherits": ["SoundFilter"],
+  "fieldOrder": ["Class", "cutoffFrequency", "highpassResonanceQ"],
+  "fields": {
+    "cutoffFrequency": {
+      "label": "Cutoff frequency",
+      "description": "High-pass cutoff frequency in Hz (10–22000).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "highpassResonanceQ": {
+      "label": "Highpass resonance Q",
+      "description": "Resonance quality factor for the high-pass filter. Higher values produce a sharper peak at the cutoff.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

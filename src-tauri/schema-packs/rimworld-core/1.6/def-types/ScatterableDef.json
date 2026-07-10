@@ -1,0 +1,50 @@
+{
+  "defType": "ScatterableDef",
+  "label": "Scatterable",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "texturePath",
+    "minSize",
+    "maxSize",
+    "scatterChance",
+    "scatterType",
+    "placeUnderNaturalRoofs"
+  ],
+  "fields": {
+    "texturePath": {
+      "label": "Texture path",
+      "type": { "kind": "string" },
+      "xml": "element"
+    },
+    "minSize": {
+      "label": "Min size",
+      "type": { "kind": "float" },
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "maxSize": {
+      "label": "Max size",
+      "type": { "kind": "float" },
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "scatterChance": {
+      "label": "Scatter chance",
+      "type": { "kind": "float" },
+      "xml": "element",
+      "defaultValue": 0.5
+    },
+    "scatterType": {
+      "label": "Scatter type",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "defaultValue": ""
+    },
+    "placeUnderNaturalRoofs": {
+      "label": "Place under natural roofs",
+      "type": { "kind": "boolean" },
+      "xml": "element",
+      "defaultValue": true
+    }
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "defType": "BackstoryDef",
+  "label": "Backstory",
+  "description": "Defines a pawn childhood or adulthood backstory, including title text, skill offsets, work restrictions, traits, spawn categories, and starting possessions.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "baseDesc",
+    "identifier",
+    "slot",
+    "title",
+    "titleFemale",
+    "titleShort",
+    "titleShortFemale",
+    "skillGains",
+    "workDisables",
+    "requiredWorkTags",
+    "spawnCategories",
+    "bodyTypeGlobal",
+    "bodyTypeFemale",
+    "bodyTypeMale",
+    "forcedTraits",
+    "disallowedTraits",
+    "nameMaker",
+    "possessions",
+    "shuffleable",
+    "requiresSpawnCategory"
+  ],
+  "fields": {
+    "baseDesc": {
+      "label": "Base description",
+      "description": "Fallback description used when no translated description is available. Loaded during PostLoad as a source for the inherited description field.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "identifier": {
+      "label": "Identifier",
+      "description": "Legacy identifier used by old translation paths. Not translated. Installed data uses this on 600 of 845 backstories.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "slot": {
+      "label": "Slot",
+      "description": "Whether this backstory occupies the Childhood or Adulthood slot on a pawn.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Childhood", "Adulthood"]
+      }
+    },
+    "title": {
+      "label": "Title",
+      "description": "Short title shown as the backstory name. Required by the game for config validation. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "titleFemale": {
+      "label": "Title (female)",
+      "description": "Female-specific title override. Falls back to title when absent. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "titleShort": {
+      "label": "Title (short)",
+      "description": "Abbreviated title shown in compact UI contexts. Required by the game for config validation. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "titleShortFemale": {
+      "label": "Title short (female)",
+      "description": "Female-specific short title override. Falls back to titleShort then title when absent. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "skillGains": {
+      "label": "Skill gains",
+      "description": "Skill level adjustments applied when this backstory is assigned to a pawn. Child element names are SkillDef defNames; text is the integer offset (may be negative).",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillGain" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "skill",
+      "valueField": "amount",
+      "keyReference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "workDisables": {
+      "label": "Work disables",
+      "description": "Work tag flags that this backstory permanently disables on the pawn. Each flag is a separate li child element.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "flags": true,
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "requiredWorkTags": {
+      "label": "Required work tags",
+      "description": "Work tag flags that must be enabled for the pawn to receive this backstory during random generation. Each flag is a separate li child element.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "flags": true,
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "spawnCategories": {
+      "label": "Spawn categories",
+      "description": "String category tags controlling which random backstory pools include this entry. Common values include Offworld, Pirate, Child, ImperialFighter. Open-ended; mods may add new categories.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "bodyTypeGlobal": {
+      "label": "Body type (global)",
+      "description": "BodyTypeDef applied regardless of pawn gender. Overrides the gender-specific body type fields when set.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "bodyTypeFemale": {
+      "label": "Body type (female)",
+      "description": "BodyTypeDef applied to female pawns when bodyTypeGlobal is not set.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "bodyTypeMale": {
+      "label": "Body type (male)",
+      "description": "BodyTypeDef applied to male and gender-unspecified pawns when bodyTypeGlobal is not set.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "forcedTraits": {
+      "label": "Forced traits",
+      "description": "Traits always given to pawns with this backstory. Child element names are TraitDef defNames; text is the integer degree (defaults to 0 when omitted). Duplicate trait entries are allowed for different degrees.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BackstoryTrait" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "def",
+      "valueField": "degree",
+      "repeatable": true,
+      "keyReference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disallowedTraits": {
+      "label": "Disallowed traits",
+      "description": "Traits that cannot be randomly assigned alongside this backstory. Child element names are TraitDef defNames; text is the integer degree (defaults to 0 when omitted). Duplicate trait entries are allowed for different degrees.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BackstoryTrait" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "def",
+      "valueField": "degree",
+      "repeatable": true,
+      "keyReference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nameMaker": {
+      "label": "Name maker",
+      "description": "RulePackDef used to generate pawn names for pawns with this backstory.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RulePackDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "possessions": {
+      "label": "Possessions",
+      "description": "Items given to pawns with this backstory when spawned. Child element names are ThingDef defNames; text is an IntRange count (defaults to 1~1 when omitted). Entries may include MayRequire or MayRequireAnyOf attributes.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PossessionThingDefCountClass" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "key",
+      "valueField": "value",
+      "keyReference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "shuffleable": {
+      "label": "Shuffleable",
+      "description": "Whether this backstory can be randomly assigned during pawn generation. Set to false for named/solid backstories that should only be assigned explicitly.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "requiresSpawnCategory": {
+      "label": "Requires spawn category",
+      "description": "If true, this backstory is only assigned to pawns whose spawn category matches one of the spawnCategories entries.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

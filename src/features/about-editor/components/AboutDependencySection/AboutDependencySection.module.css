@@ -1,0 +1,141 @@
+.section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.headingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.heading {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-editor);
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.addButton:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.empty {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.row {
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-hover);
+}
+
+.rowGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.input {
+  padding: 4px 8px;
+  font-size: 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+}
+
+.input:read-only {
+  opacity: 0.7;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.removeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-editor);
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.removeBtn:hover {
+  color: var(--text-error);
+  border-color: var(--text-error);
+}
+
+.newRowActions {
+  display: flex;
+  gap: 6px;
+}
+
+.saveBtn {
+  padding: 4px 10px;
+  font-size: 11px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--surface-editor);
+  cursor: pointer;
+}
+
+.saveBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  padding: 4px 10px;
+  font-size: 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-editor);
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.diagnostics {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.diagError {
+  font-size: 10px;
+  color: var(--text-error);
+}
+
+.diagWarning {
+  font-size: 10px;
+  color: var(--text-warning, #c9820a);
+}

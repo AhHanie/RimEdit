@@ -1,0 +1,23 @@
+{
+  "objectType": "SoundFilterLowPass",
+  "label": "Sound filter: low-pass",
+  "description": "Unity AudioLowPassFilter applied to this sub-sound.",
+  "inherits": ["SoundFilter"],
+  "fieldOrder": ["Class", "cutoffFrequency", "lowpassResonaceQ"],
+  "fields": {
+    "cutoffFrequency": {
+      "label": "Cutoff frequency",
+      "description": "Low-pass cutoff frequency in Hz (10–22000).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "lowpassResonaceQ": {
+      "label": "Lowpass resonance Q",
+      "description": "Resonance quality factor for the low-pass filter. Note: source field name has a typo ('Resonace'), preserved here to match XML.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

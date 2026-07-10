@@ -1,0 +1,35 @@
+{
+  "objectType": "DeityPreset",
+  "label": "Deity preset",
+  "description": "A preset deity definition used when a faction generates an ideology with fixed or seeded deities.",
+  "fieldOrder": [
+    "nameType",
+    "gender",
+    "iconPath"
+  ],
+  "fields": {
+    "nameType": {
+      "label": "Name type",
+      "description": "DeityNameType object specifying the name and type label for this preset deity.",
+      "type": { "kind": "object", "schemaRef": "DeityNameType" },
+      "required": false,
+      "xml": "object"
+    },
+    "gender": {
+      "label": "Gender",
+      "description": "Gender assigned to this deity for pronoun and title selection.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Male", "Female"] }
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path for the deity icon shown in the ideology editor.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

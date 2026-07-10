@@ -1,0 +1,992 @@
+{
+  "defType": "PreceptDef",
+  "label": "Precept",
+  "description": "Defines a single ideological precept - a belief, ritual role, taboo, or behavior rule - that belongs to an ideology.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "preceptClass",
+    "issue",
+    "comps",
+    "abilityStatFactors",
+    "statOffsets",
+    "statFactors",
+    "conditionalStatAffecters",
+    "selectionWeight",
+    "opposedWorkTypes",
+    "impact",
+    "associatedMemes",
+    "conflictingMemes",
+    "requiredMemes",
+    "visible",
+    "visibleOnAddFloatMenu",
+    "listedForRoles",
+    "takeNameFrom",
+    "alsoAdds",
+    "maxCount",
+    "isNonIdeoRitual",
+    "exclusionTags",
+    "allowDuplicates",
+    "ignoreLimitsInEditMode",
+    "canUseAlreadyUsedThingDef",
+    "classic",
+    "classicExtra",
+    "defaultSelectionWeight",
+    "enabledForNPCFactions",
+    "countsTowardsPreceptLimit",
+    "canGenerateAsSpecialPrecept",
+    "nameMaker",
+    "nameMaxLength",
+    "preceptInstanceCountCurve",
+    "ritualPatternBase",
+    "receivesExpectationsQualityOffset",
+    "usesIdeoVisualEffects",
+    "mergeRitualGizmosFromAllIdeos",
+    "allowSpectatorsFromOtherIdeos",
+    "allowOptionalRitualObligations",
+    "classicModeOnly",
+    "buildingDefChances",
+    "buildingMinExpectations",
+    "buildingRoomRequirements",
+    "buildingRoomRequirementsFixed",
+    "roomRequirementCountCurve",
+    "leaderRole",
+    "activationBelieverCount",
+    "deactivationBelieverCount",
+    "roleRequirements",
+    "roleDisabledWorkTags",
+    "roleRequiredWorkTags",
+    "roleRequiredWorkTagAny",
+    "roleApparelRequirements",
+    "roleApparelRequirementCountCurve",
+    "grantedAbilities",
+    "roleEffects",
+    "roleTags",
+    "iconPath",
+    "restrictToSupremeGenderChance",
+    "certaintyLossFactor",
+    "convertPowerFactor",
+    "expectationsOffset",
+    "createsRoleEmptyThought",
+    "roleCanBeChild",
+    "disallowLoggingCamps",
+    "disallowMiningCamps",
+    "disallowHuntingCamps",
+    "disallowFarmingCamps",
+    "approvesOfSlavery",
+    "prefersNudity",
+    "genderPrefersNudity",
+    "useChoicesFromBuildingDefs",
+    "displayOrderInImpact",
+    "displayOrderInIssue",
+    "proselytizes",
+    "requiredScars",
+    "approvesOfCharity",
+    "blindPawnChance",
+    "approvesOfBlindness",
+    "canRemoveInUI",
+    "prefersDarkness",
+    "enablesNeeds",
+    "disablesNeeds",
+    "blindPsychicSensitivityOffset",
+    "defaultDrugPolicyOverride",
+    "warnPlayerOnDesignateChopTree",
+    "warnPlayerOnDesignateMine",
+    "willingToConstructOtherIdeoBuildables",
+    "biosculpterPodCycleSpeedFactor",
+    "growthVatSpeedFactor",
+    "prefersSlabBed",
+    "useRepeatPenalty",
+    "showRitualFloatMenuOption",
+    "tipLabelOverride",
+    "capitalizeAsTitle",
+    "ignoreNameUniqueness",
+    "extraTextPawnDeathLetter",
+    "apparelPreceptSwapDef",
+    "useCooldownFromAbilityGroupDef",
+    "iconIgnoresIdeoColor",
+    "sourcePawnRoleDef",
+    "sourceAbilityDef",
+    "likesHumanLeatherApparel",
+    "approvesOfRaiding",
+    "skipOpportunityLettersBeforeDay",
+    "notifyPlayerOnOpportunity",
+    "workerClass"
+  ],
+  "fields": {
+    "preceptClass": {
+      "label": "Precept class",
+      "description": "C# Precept subclass instantiated at runtime for this precept.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Precept", "Precept_Role", "Precept_Ritual", "Precept_Building"]
+    },
+    "issue": {
+      "label": "Issue",
+      "description": "The ideological issue this precept belongs to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "IssueDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "comps": {
+      "label": "Comps",
+      "description": "List of PreceptComp objects that attach modular behaviors to this precept.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PreceptComp" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "abilityStatFactors": {
+      "label": "Ability stat factors",
+      "description": "Stat multipliers applied per ability the pawn possesses.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "AbilityStatModifiers" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Flat stat offsets granted by this precept.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers granted by this precept.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "conditionalStatAffecters": {
+      "label": "Conditional stat affecters",
+      "description": "Stat offsets and factors that apply only when a specific condition is met.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ConditionalStatAffecter" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Weight used when randomly selecting this precept for an ideology.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "opposedWorkTypes": {
+      "label": "Opposed work types",
+      "description": "Work types this precept's followers are unwilling to perform.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "WorkTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "impact": {
+      "label": "Impact",
+      "description": "How strongly this precept affects ideology uniqueness and selection rules.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Low", "Medium", "High"] }
+    },
+    "associatedMemes": {
+      "label": "Associated memes",
+      "description": "Memes that make this precept more likely to be selected.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "conflictingMemes": {
+      "label": "Conflicting memes",
+      "description": "Memes that prevent this precept from being selected.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "requiredMemes": {
+      "label": "Required memes",
+      "description": "All of these memes must be present for this precept to be selectable.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "visible": {
+      "label": "Visible",
+      "description": "Whether this precept is visible in the ideology editor.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "visibleOnAddFloatMenu": {
+      "label": "Visible on add float menu",
+      "description": "Whether this precept appears in the add-precept float menu.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "listedForRoles": {
+      "label": "Listed for roles",
+      "description": "Whether this precept is listed as a role precept in UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "takeNameFrom": {
+      "label": "Take name from",
+      "description": "Another precept whose name this precept inherits.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "alsoAdds": {
+      "label": "Also adds",
+      "description": "Another precept automatically added alongside this one.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "maxCount": {
+      "label": "Max count",
+      "description": "Maximum number of times this precept can be added to an ideology.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "isNonIdeoRitual": {
+      "label": "Is non-ideo ritual",
+      "description": "If true, this precept is treated as a non-ideology ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "exclusionTags": {
+      "label": "Exclusion tags",
+      "description": "Only one precept with the same exclusion tag can be in an ideology.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "allowDuplicates": {
+      "label": "Allow duplicates",
+      "description": "If true, multiple copies of this precept can exist in the same ideology.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreLimitsInEditMode": {
+      "label": "Ignore limits in edit mode",
+      "description": "If true, placement limits are ignored in the ideology editor.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canUseAlreadyUsedThingDef": {
+      "label": "Can use already used thing def",
+      "description": "If true, this precept can reference a ThingDef already used by another precept in the ideology.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "classic": {
+      "label": "Classic",
+      "description": "If true, this precept is a classic precept available in classic ideology creation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "classicExtra": {
+      "label": "Classic extra",
+      "description": "If true, this precept is treated as an extra classic precept.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "defaultSelectionWeight": {
+      "label": "Default selection weight",
+      "description": "Selection weight used as a default when no other weight is specified.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "enabledForNPCFactions": {
+      "label": "Enabled for NPC factions",
+      "description": "If true, NPC factions can have ideologies with this precept.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "countsTowardsPreceptLimit": {
+      "label": "Counts towards precept limit",
+      "description": "If false, this precept does not count toward the ideology's precept slot limit.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canGenerateAsSpecialPrecept": {
+      "label": "Can generate as special precept",
+      "description": "If true, this precept can be generated as a special precept during world generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "nameMaker": {
+      "label": "Name maker",
+      "description": "Grammar rule pack used to generate names for this precept's instances.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "nameMaxLength": {
+      "label": "Name max length",
+      "description": "Maximum character length for generated precept names.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 16,
+      "xml": "element"
+    },
+    "preceptInstanceCountCurve": {
+      "label": "Precept instance count curve",
+      "description": "Curve that maps ideology size to the number of this precept's instances.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "ritualPatternBase": {
+      "label": "Ritual pattern base",
+      "description": "Base ritual pattern def this precept's ritual follows.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RitualPatternDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "receivesExpectationsQualityOffset": {
+      "label": "Receives expectations quality offset",
+      "description": "If true, ritual quality offsets are applied based on expectations.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "usesIdeoVisualEffects": {
+      "label": "Uses ideo visual effects",
+      "description": "If true, the ritual uses the ideology's visual effects.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "mergeRitualGizmosFromAllIdeos": {
+      "label": "Merge ritual gizmos from all ideos",
+      "description": "If true, ritual gizmos from all ideologies are merged into one.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowSpectatorsFromOtherIdeos": {
+      "label": "Allow spectators from other ideos",
+      "description": "If true, pawns from other ideologies can spectate this ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowOptionalRitualObligations": {
+      "label": "Allow optional ritual obligations",
+      "description": "If true, optional obligations can be added to this ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "classicModeOnly": {
+      "label": "Classic mode only",
+      "description": "If true, this precept only appears in classic ideology creation mode.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "buildingDefChances": {
+      "label": "Building def chances",
+      "description": "Maps ThingDef names to selection weights for ideology buildings. Each child element name is a ThingDef defName and its text is the weight.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "valueType": { "kind": "float" }
+    },
+    "buildingMinExpectations": {
+      "label": "Building min expectations",
+      "description": "Minimum expectation levels at which ideology buildings are required.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ExpectationDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "buildingRoomRequirements": {
+      "label": "Building room requirements",
+      "description": "Room requirements the ideology building's room must meet.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RoomRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "buildingRoomRequirementsFixed": {
+      "label": "Building room requirements (fixed)",
+      "description": "Fixed room requirements that always apply regardless of other conditions.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RoomRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "roomRequirementCountCurve": {
+      "label": "Room requirement count curve",
+      "description": "Curve controlling how many room requirements are active at a given expectation level.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "leaderRole": {
+      "label": "Leader role",
+      "description": "If true, this precept defines the ideology's leader role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "activationBelieverCount": {
+      "label": "Activation believer count",
+      "description": "Minimum number of believers needed to activate this role. -1 means always active.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "deactivationBelieverCount": {
+      "label": "Deactivation believer count",
+      "description": "Believer count below which this role deactivates. -1 means never deactivates.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "roleRequirements": {
+      "label": "Role requirements",
+      "description": "Requirements a pawn must meet to hold this role.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RoleRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "roleDisabledWorkTags": {
+      "label": "Role disabled work tags",
+      "description": "Work tags the role pawn is forbidden from performing. Each <li> is one WorkTags flag name.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring", "Social",
+          "Commoner", "Intellectual", "Animals", "Artistic", "Crafting", "Cooking",
+          "Firefighting", "Cleaning", "Hauling", "PlantWork", "Mining", "Hunting",
+          "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "roleRequiredWorkTags": {
+      "label": "Role required work tags",
+      "description": "Work tags the role pawn must be capable of performing. Each <li> is one WorkTags flag name.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring", "Social",
+          "Commoner", "Intellectual", "Animals", "Artistic", "Crafting", "Cooking",
+          "Firefighting", "Cleaning", "Hauling", "PlantWork", "Mining", "Hunting",
+          "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "roleRequiredWorkTagAny": {
+      "label": "Role required work tag (any)",
+      "description": "Role pawn must be capable of at least one of these work tags. Each <li> is one WorkTags flag name.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring", "Social",
+          "Commoner", "Intellectual", "Animals", "Artistic", "Crafting", "Cooking",
+          "Firefighting", "Cleaning", "Hauling", "PlantWork", "Mining", "Hunting",
+          "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "roleApparelRequirements": {
+      "label": "Role apparel requirements",
+      "description": "Apparel requirements the role pawn must satisfy.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PreceptApparelRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "roleApparelRequirementCountCurve": {
+      "label": "Role apparel requirement count curve",
+      "description": "Curve mapping colonist wealth or count to the number of apparel requirements enforced.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "grantedAbilities": {
+      "label": "Granted abilities",
+      "description": "Abilities granted to the role pawn.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "roleEffects": {
+      "label": "Role effects",
+      "description": "Effects applied to the pawn holding this role.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RoleEffect" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "roleTags": {
+      "label": "Role tags",
+      "description": "Tags used to filter or match this role in game systems.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path for the precept icon.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "restrictToSupremeGenderChance": {
+      "label": "Restrict to supreme gender chance",
+      "description": "Probability that this role is restricted to the ideology's supreme gender.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "certaintyLossFactor": {
+      "label": "Certainty loss factor",
+      "description": "Multiplier on certainty loss for believers with this precept.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "convertPowerFactor": {
+      "label": "Convert power factor",
+      "description": "Multiplier on this precept's effectiveness during ideological conversion.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "expectationsOffset": {
+      "label": "Expectations offset",
+      "description": "Integer offset applied to colonist expectations.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "createsRoleEmptyThought": {
+      "label": "Creates role empty thought",
+      "description": "If true, a negative thought is given when the role has no assigned pawn.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "roleCanBeChild": {
+      "label": "Role can be child",
+      "description": "If true, a child pawn can hold this role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disallowLoggingCamps": {
+      "label": "Disallow logging camps",
+      "description": "If true, followers of this precept disapprove of logging camps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disallowMiningCamps": {
+      "label": "Disallow mining camps",
+      "description": "If true, followers of this precept disapprove of mining camps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disallowHuntingCamps": {
+      "label": "Disallow hunting camps",
+      "description": "If true, followers of this precept disapprove of hunting camps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disallowFarmingCamps": {
+      "label": "Disallow farming camps",
+      "description": "If true, followers of this precept disapprove of farming camps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "approvesOfSlavery": {
+      "label": "Approves of slavery",
+      "description": "If true, this precept indicates approval of slavery.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "prefersNudity": {
+      "label": "Prefers nudity",
+      "description": "If true, followers prefer to go without clothing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "genderPrefersNudity": {
+      "label": "Gender prefers nudity",
+      "description": "Only this gender prefers nudity when prefersNudity is set.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Male", "Female"] }
+    },
+    "useChoicesFromBuildingDefs": {
+      "label": "Use choices from building defs",
+      "description": "If true, building selection uses the choices defined in building defs rather than buildingDefChances.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayOrderInImpact": {
+      "label": "Display order in impact",
+      "description": "Sort order of this precept within its impact tier in the ideology editor.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "displayOrderInIssue": {
+      "label": "Display order in issue",
+      "description": "Sort order of this precept within its issue in the ideology editor.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "proselytizes": {
+      "label": "Proselytizes",
+      "description": "If true, followers actively try to convert others to this ideology.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiredScars": {
+      "label": "Required scars",
+      "description": "Number of scars required for the role pawn.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "approvesOfCharity": {
+      "label": "Approves of charity",
+      "description": "If true, this precept indicates approval of charitable acts.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blindPawnChance": {
+      "label": "Blind pawn chance",
+      "description": "Chance (0–1) that the role pawn is blind. -1 disables this.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "approvesOfBlindness": {
+      "label": "Approves of blindness",
+      "description": "If true, this precept indicates approval of blindness.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canRemoveInUI": {
+      "label": "Can remove in UI",
+      "description": "If true, this precept can be removed in the ideology editor.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "prefersDarkness": {
+      "label": "Prefers darkness",
+      "description": "If true, followers prefer to live and work in darkness.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "enablesNeeds": {
+      "label": "Enables needs",
+      "description": "Needs enabled for believers when this precept is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "NeedDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "disablesNeeds": {
+      "label": "Disables needs",
+      "description": "Needs disabled for believers when this precept is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "NeedDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "blindPsychicSensitivityOffset": {
+      "label": "Blind psychic sensitivity offset",
+      "description": "Psychic sensitivity offset applied to blind pawns following this precept.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "defaultDrugPolicyOverride": {
+      "label": "Default drug policy override",
+      "description": "Drug policy assigned by default to believers of this precept.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DrugPolicyDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "warnPlayerOnDesignateChopTree": {
+      "label": "Warn player on designate chop tree",
+      "description": "If true, a warning is shown when the player orders tree chopping.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "warnPlayerOnDesignateMine": {
+      "label": "Warn player on designate mine",
+      "description": "If true, a warning is shown when the player designates mining.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "willingToConstructOtherIdeoBuildables": {
+      "label": "Willing to construct other ideo buildables",
+      "description": "If true, followers will construct buildings belonging to other ideologies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "biosculpterPodCycleSpeedFactor": {
+      "label": "Biosculpter pod cycle speed factor",
+      "description": "Multiplier on biosculpter pod cycle speed for this precept's followers.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "growthVatSpeedFactor": {
+      "label": "Growth vat speed factor",
+      "description": "Multiplier on growth vat speed for this precept's followers.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "prefersSlabBed": {
+      "label": "Prefers slab bed",
+      "description": "If true, followers prefer sleeping on slab beds.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useRepeatPenalty": {
+      "label": "Use repeat penalty",
+      "description": "If true, a penalty is applied for performing the same ritual repeatedly.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showRitualFloatMenuOption": {
+      "label": "Show ritual float menu option",
+      "description": "If true, this ritual appears in the float menu.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "tipLabelOverride": {
+      "label": "Tip label override",
+      "description": "Override label shown in tooltips for this precept.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "capitalizeAsTitle": {
+      "label": "Capitalize as title",
+      "description": "If true, the precept label is capitalized as a proper title.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ignoreNameUniqueness": {
+      "label": "Ignore name uniqueness",
+      "description": "If true, generated names do not need to be unique.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "extraTextPawnDeathLetter": {
+      "label": "Extra text pawn death letter",
+      "description": "Additional text appended to the letter sent when the role pawn dies.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "apparelPreceptSwapDef": {
+      "label": "Apparel precept swap def",
+      "description": "Precept that replaces this one when nudity-related apparel preferences change.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "useCooldownFromAbilityGroupDef": {
+      "label": "Use cooldown from ability group def",
+      "description": "Ability group whose cooldown this precept's ability shares.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityGroupDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "iconIgnoresIdeoColor": {
+      "label": "Icon ignores ideo color",
+      "description": "If true, the precept icon is not tinted by the ideology color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "sourcePawnRoleDef": {
+      "label": "Source pawn role def",
+      "description": "Precept that acts as the role source for this precept's ability.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "sourceAbilityDef": {
+      "label": "Source ability def",
+      "description": "Ability def that is the source of this precept.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "likesHumanLeatherApparel": {
+      "label": "Likes human leather apparel",
+      "description": "If true, followers appreciate wearing human leather apparel.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "approvesOfRaiding": {
+      "label": "Approves of raiding",
+      "description": "If true, this precept indicates approval of raiding other factions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "skipOpportunityLettersBeforeDay": {
+      "label": "Skip opportunity letters before day",
+      "description": "Number of days after colonist arrival before opportunity letters are shown.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    },
+    "notifyPlayerOnOpportunity": {
+      "label": "Notify player on opportunity",
+      "description": "If true, the player is notified when an opportunity arises for this precept.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# PreceptWorker subclass used to implement custom precept behavior.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["PreceptWorker", "PreceptWorker_Ritual"]
+    }
+  }
+}

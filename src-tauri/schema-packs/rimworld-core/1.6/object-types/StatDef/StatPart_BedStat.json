@@ -1,0 +1,34 @@
+{
+  "objectType": "StatPart_BedStat",
+  "label": "Stat part (bed stat)",
+  "description": "Scales the stat based on a StatDef read from the pawn's current bed.",
+  "fieldOrder": ["Class", "priority", "stat"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "stat": {
+      "label": "Stat",
+      "description": "StatDef evaluated on the pawn's current bed to produce the modifier.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

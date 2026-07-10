@@ -1,0 +1,30 @@
+{
+  "objectType": "StatModifierBySeverity",
+  "label": "Stat modifier by severity",
+  "description": "A stat and curve pair that scales a stat offset or factor based on the hediff's current severity.",
+  "fieldOrder": [
+    "stat",
+    "curve"
+  ],
+  "fields": {
+    "stat": {
+      "label": "Stat",
+      "description": "StatDef that this severity-scaled modifier targets.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Piecewise linear curve mapping severity (x) to stat modifier value (y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "objectType": "PreceptComp_DevelopmentPoints",
+  "label": "Precept comp (development points)",
+  "description": "Awards ideology development points when a history event occurs.",
+  "fieldOrder": ["Class", "description", "eventDef", "points", "eventLabel"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "eventDef": {
+      "label": "Event def",
+      "description": "The history event that awards development points.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HistoryEventDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "points": {
+      "label": "Points",
+      "description": "Number of development points awarded per event.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "eventLabel": {
+      "label": "Event label",
+      "description": "Label shown for this event in the development points log.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

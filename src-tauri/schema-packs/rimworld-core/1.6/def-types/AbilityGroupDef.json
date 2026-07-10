@@ -1,0 +1,42 @@
+{
+  "defType": "AbilityGroupDef",
+  "label": "Ability group",
+  "description": "Links a set of abilities under a shared cooldown timer. Used by Ideology to enforce a cooldown across the leader's or moralist's abilities.",
+  "inherits": ["Def"],
+  "fieldOrder": ["cooldownTicks", "sendMessageOnCooldownComplete", "ritualRoleIds"],
+  "fields": {
+    "cooldownTicks": {
+      "label": "Cooldown ticks",
+      "description": "Shared cooldown duration in ticks for all abilities in this group.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "sendMessageOnCooldownComplete": {
+      "label": "Send message on cooldown complete",
+      "description": "If true, sends a UI message to the player when this group's shared cooldown expires.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ritualRoleIds": {
+      "label": "Ritual role IDs",
+      "description": "Ritual role IDs (free strings) whose ability users share this group's cooldown timer.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "basic-ability-group": {
+      "label": "Basic ability group",
+      "description": "A new ability group that links shared cooldown across related abilities.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "cooldownTicks"],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "objectType": "IntValueItem",
+  "fieldOrder": ["key", "amount"],
+  "fields": {
+    "key": {
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "amount": {
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

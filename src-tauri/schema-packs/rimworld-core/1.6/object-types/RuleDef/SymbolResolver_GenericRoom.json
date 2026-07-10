@@ -1,0 +1,38 @@
+{
+  "objectType": "SymbolResolver_GenericRoom",
+  "label": "Generic room resolver",
+  "description": "Generates a generic room using configurable interior symbol, carpet, and roof settings.",
+  "inherits": ["SymbolResolver"],
+  "fieldOrder": [
+    "Class",
+    "minRectSize",
+    "selectionWeight",
+    "interior",
+    "useRandomCarpet",
+    "allowRoof"
+  ],
+  "fields": {
+    "interior": {
+      "label": "Interior symbol",
+      "description": "BaseGen symbol name resolved against RuleDef.symbol at generation time to populate the room interior. This is not a defName - multiple RuleDefs may share the same symbol for weighted selection.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "useRandomCarpet": {
+      "label": "Use random carpet",
+      "description": "Whether a random carpet floor is applied to the room interior.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowRoof": {
+      "label": "Allow roof",
+      "description": "Whether a roof may be placed over the generated room.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

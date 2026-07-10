@@ -1,0 +1,44 @@
+{
+  "objectType": "HediffCompProperties_Discoverable",
+  "label": "Discoverable comp",
+  "description": "Allows this hediff to be discovered and optionally send a letter on discovery.",
+  "fieldOrder": ["Class", "compClass", "sendLetterWhenDiscovered", "discoverLetterLabel", "discoverLetterText"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "sendLetterWhenDiscovered": {
+      "label": "Send letter when discovered",
+      "description": "Send a letter when this hediff is discovered.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "discoverLetterLabel": {
+      "label": "Discover letter label",
+      "description": "Letter label on discovery.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "discoverLetterText": {
+      "label": "Discover letter text",
+      "description": "Letter body on discovery.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

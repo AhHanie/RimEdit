@@ -1,0 +1,546 @@
+{
+  "defType": "ThoughtDef",
+  "label": "Thought",
+  "description": "Defines a mood effect, memory, or situational opinion modifier that can be applied to a pawn.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "thoughtClass",
+    "workerClass",
+    "stages",
+    "stackLimit",
+    "stackedEffectMultiplier",
+    "stagesStack",
+    "durationDays",
+    "invert",
+    "validWhileDespawned",
+    "nextThought",
+    "producesMemoryThought",
+    "nullifyingTraits",
+    "neverNullifyIfAnyTrait",
+    "nullifyingTraitDegrees",
+    "nullifyingOwnTales",
+    "nullifyingPrecepts",
+    "nullifyingHediffs",
+    "nullifyingGenes",
+    "requiredTraits",
+    "requiredGenes",
+    "requiredTraitsDegree",
+    "requiredHediffs",
+    "effectMultiplyingStat",
+    "effectMultiplyingStatCurve",
+    "hediff",
+    "mentalState",
+    "gameCondition",
+    "nullifiedIfNotColonist",
+    "thoughtToMake",
+    "icon",
+    "showBubble",
+    "minExpectation",
+    "minExpectationForNegativeThought",
+    "replaceThoughts",
+    "developmentalStageFilter",
+    "chemicalDef",
+    "lerpMoodToZero",
+    "stackLimitForSameOtherPawn",
+    "lerpOpinionToZeroAfterDurationPct",
+    "socialTargetDevelopmentalStageFilter",
+    "ignoreSubhumans",
+    "doNotApplyToQuestLodgers",
+    "maxCumulatedOpinionOffset",
+    "taleDef",
+    "gender",
+    "labelInBracketsExtraForHediff"
+  ],
+  "fields": {
+    "thoughtClass": {
+      "label": "Thought class",
+      "description": "C# type used to instantiate the thought object. Defaults to Thought_Memory for memories or Thought_Situational for situational thoughts.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Thought_MemorySocial", "Thought_MemorySocialCumulative", "Thought_Situational"]
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# ThoughtWorker type that evaluates when this situational thought applies. Required for situational thoughts; omit for memories.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["ThoughtWorker_NeedFood", "ThoughtWorker_Hediff", "ThoughtWorker_Precept"]
+    },
+    "stages": {
+      "label": "Stages",
+      "description": "Ordered list of thought stages. The active stage index is determined by the thought worker or memory state.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ThoughtStage" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "stackLimit": {
+      "label": "Stack limit",
+      "description": "Maximum number of identical thought instances that can stack on the same pawn.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "stackedEffectMultiplier": {
+      "label": "Stacked effect multiplier",
+      "description": "Mood multiplier applied to each stacked thought beyond the first.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.75,
+      "xml": "element"
+    },
+    "stagesStack": {
+      "label": "Stages stack",
+      "description": "If true, stacking multiple instances advances the stage index rather than multiplying effects.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "durationDays": {
+      "label": "Duration (days)",
+      "description": "How many in-game days a memory thought lasts before expiring. Zero means it does not expire automatically.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "invert": {
+      "label": "Invert",
+      "description": "If true, the thought worker's current-state result is inverted (active becomes inactive and vice versa).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "validWhileDespawned": {
+      "label": "Valid while despawned",
+      "description": "If true, memory thoughts remain active even when the pawn is not on the map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "nextThought": {
+      "label": "Next thought",
+      "description": "ThoughtDef given to the pawn after this memory expires.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "producesMemoryThought": {
+      "label": "Produces memory thought",
+      "description": "ThoughtDef added as a memory when this situational thought becomes active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nullifyingTraits": {
+      "label": "Nullifying traits",
+      "description": "TraitDefs that prevent this thought from being applied when present on the pawn.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "neverNullifyIfAnyTrait": {
+      "label": "Never nullify if any trait",
+      "description": "TraitDefs that prevent any other nullifying trait from suppressing this thought. The thought is kept if the pawn has any of these.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nullifyingTraitDegrees": {
+      "label": "Nullifying trait degrees",
+      "description": "Trait-and-degree pairs that nullify this thought. Each child element is named by the TraitDef and contains the degree value. Duplicate trait entries are allowed for different degrees.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitRequirement" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "def",
+      "valueField": "degree",
+      "repeatable": true,
+      "keyReference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nullifyingOwnTales": {
+      "label": "Nullifying own tales",
+      "description": "TaleDefs that suppress this thought when present in the pawn's tale recorder.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "TaleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nullifyingPrecepts": {
+      "label": "Nullifying precepts",
+      "description": "PreceptDefs from the pawn's ideo that nullify this thought when held.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "PreceptDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nullifyingHediffs": {
+      "label": "Nullifying hediffs",
+      "description": "HediffDefs that suppress this thought when active on the pawn.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nullifyingGenes": {
+      "label": "Nullifying genes",
+      "description": "GeneDefs that suppress this thought when present on the pawn.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "GeneDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredTraits": {
+      "label": "Required traits",
+      "description": "TraitDefs that must all be present on the pawn for this thought to apply.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredGenes": {
+      "label": "Required genes",
+      "description": "GeneDefs that must all be present on the pawn for this thought to apply.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "GeneDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredTraitsDegree": {
+      "label": "Required traits degree",
+      "description": "Exact trait degree all requiredTraits entries must match. When set to int.MinValue (the default), any degree is accepted.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "requiredHediffs": {
+      "label": "Required hediffs",
+      "description": "HediffDefs that must all be active on the pawn for this thought to apply.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "effectMultiplyingStat": {
+      "label": "Effect multiplying stat",
+      "description": "StatDef whose value on the pawn is fed into effectMultiplyingStatCurve to scale mood/opinion effects.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "effectMultiplyingStatCurve": {
+      "label": "Effect multiplying stat curve",
+      "description": "Piecewise linear curve mapping the effectMultiplyingStat value to a mood/opinion multiplier.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "hediff": {
+      "label": "Hediff",
+      "description": "HediffDef associated with this thought. Used by some worker classes to check hediff presence or severity.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "mentalState": {
+      "label": "Mental state",
+      "description": "MentalStateDef associated with this thought. Used to query or apply mental break conditions.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MentalStateDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "gameCondition": {
+      "label": "Game condition",
+      "description": "GameConditionDef that must be active on the map for this thought to apply.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GameConditionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nullifiedIfNotColonist": {
+      "label": "Nullified if not colonist",
+      "description": "If true, this thought is suppressed for non-colonist pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "thoughtToMake": {
+      "label": "Thought to make",
+      "description": "ThoughtDef added to the pawn under specific trigger conditions defined by the thought worker.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "icon": {
+      "label": "Icon",
+      "description": "Texture path for the icon shown next to this thought in the mood breakdown.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "showBubble": {
+      "label": "Show bubble",
+      "description": "If true, a speech bubble is displayed above the pawn when this thought is gained.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minExpectation": {
+      "label": "Min expectation",
+      "description": "ExpectationDef that must be active for this thought to apply. Only used for positive thoughts gated on expectation level.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ExpectationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minExpectationForNegativeThought": {
+      "label": "Min expectation (negative thought)",
+      "description": "ExpectationDef that must be active for this negative thought to apply.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ExpectationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "replaceThoughts": {
+      "label": "Replace thoughts",
+      "description": "ThoughtDefs removed from the pawn when this thought is added.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "developmentalStageFilter": {
+      "label": "Developmental stage filter",
+      "description": "DevelopmentalStage flags (comma-separated) controlling which life stages this thought applies to. Defaults to Child and Adult.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "Child, Adult",
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      },
+      "examples": ["Adult", "Child, Adult", "None, Newborn, Baby, Child, Adult"]
+    },
+    "chemicalDef": {
+      "label": "Chemical",
+      "description": "ChemicalDef associated with this thought. Used by addiction and drug-related thought workers.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ChemicalDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "lerpMoodToZero": {
+      "label": "Lerp mood to zero",
+      "description": "If true, the mood effect fades linearly to zero as the memory approaches its expiry.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "stackLimitForSameOtherPawn": {
+      "label": "Stack limit (same other pawn)",
+      "description": "Maximum stacks allowed when multiple instances reference the same other pawn. -1 means no separate limit.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "lerpOpinionToZeroAfterDurationPct": {
+      "label": "Lerp opinion to zero after duration pct",
+      "description": "Fraction of durationDays after which the opinion offset begins fading linearly to zero.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.7,
+      "xml": "element"
+    },
+    "socialTargetDevelopmentalStageFilter": {
+      "label": "Social target developmental stage filter",
+      "description": "DevelopmentalStage flags (comma-separated) controlling which life stages are valid social targets for this thought. Defaults to Child and Adult.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "Child, Adult",
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      },
+      "examples": ["Adult", "Child, Adult", "None, Newborn, Baby, Child, Adult"]
+    },
+    "ignoreSubhumans": {
+      "label": "Ignore subhumans",
+      "description": "If true, this thought does not apply to subhuman pawns (hussar-type entities without full pawn cognition).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "doNotApplyToQuestLodgers": {
+      "label": "Do not apply to quest lodgers",
+      "description": "If true, this thought is not applied to temporary guest colonists from quests.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "maxCumulatedOpinionOffset": {
+      "label": "Max cumulated opinion offset",
+      "description": "Upper bound on the total opinion offset that can accumulate from all stacks of this thought.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "taleDef": {
+      "label": "Tale",
+      "description": "TaleDef associated with this thought, used for tale-triggered memory conditions.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TaleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "gender": {
+      "label": "Gender",
+      "description": "If set to Male or Female, this thought only applies to pawns of that gender.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Male", "Female"]
+      }
+    },
+    "labelInBracketsExtraForHediff": {
+      "label": "Label in brackets (hediff extra)",
+      "description": "Extra bracketed text appended to the thought label when the thought is associated with a hediff. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-memory-thought": {
+      "label": "Basic memory thought",
+      "description": "A memory thought with a duration and one stage.",
+      "includeRequiredFields": true,
+      "promptFields": ["durationDays"],
+      "fieldValues": {
+        "durationDays": 5,
+        "stages": [{}]
+      }
+    },
+    "basic-situational-thought": {
+      "label": "Basic situational thought",
+      "description": "A situational thought evaluated each tick by a worker class.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass"],
+      "fieldValues": {
+        "stages": [{}]
+      }
+    }
+  }
+}

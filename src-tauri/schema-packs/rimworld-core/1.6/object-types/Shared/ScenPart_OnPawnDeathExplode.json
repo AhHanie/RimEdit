@@ -1,0 +1,29 @@
+{
+  "objectType": "ScenPart_OnPawnDeathExplode",
+  "label": "On pawn death explode",
+  "description": "Causes pawns to explode when they die, dealing area damage around their corpse.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "radius", "damage"],
+  "fields": {
+    "radius": {
+      "label": "Radius",
+      "description": "Radius of the explosion triggered when a pawn dies.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "examples": ["3", "5", "10"]
+    },
+    "damage": {
+      "label": "Damage",
+      "description": "DamageDef used for the death explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "DamageDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

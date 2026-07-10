@@ -1,0 +1,8 @@
+{
+  "objectType": "WorldObjectCompProperties_TimedMakeFactionHostile",
+  "label": "Timed make faction hostile comp",
+  "description": "Makes the owning faction hostile after the player stays at this world object for too long. Requires a MapParent world object class.",
+  "inherits": ["WorldObjectCompProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

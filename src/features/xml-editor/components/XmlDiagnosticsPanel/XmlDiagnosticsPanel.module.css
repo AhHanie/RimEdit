@@ -1,0 +1,80 @@
+.root {
+  flex-shrink: 0;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-panel);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 5px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-error);
+  text-align: left;
+}
+
+.header:hover {
+  background: var(--surface-hover);
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.count {
+  flex: 1;
+  font-weight: 500;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0 12px 8px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 2px 0;
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+.badge {
+  flex-shrink: 0;
+  padding: 1px 4px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 10px;
+}
+
+.location {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.message {
+  color: var(--text-error);
+}
+
+.severityWarning .message {
+  color: var(--status-warn);
+}
+
+.severityInfo .message {
+  color: var(--text-muted);
+}
+
+.context {
+  color: var(--text-muted);
+}

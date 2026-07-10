@@ -1,0 +1,60 @@
+{
+  "defType": "CreepjoinerRejectionDef",
+  "label": "Creep joiner rejection",
+  "description": "Defines the action taken when the player rejects a creep joiner pawn. Inherits selection-weight and compatibility fields from CreepJoinerBaseDef.",
+  "inherits": ["CreepJoinerBaseDef"],
+  "fieldOrder": [
+    "hasLetter",
+    "letterLabel",
+    "letterDesc",
+    "letterDef",
+    "workerType"
+  ],
+  "fields": {
+    "hasLetter": {
+      "label": "Has letter",
+      "description": "When true, a letter is sent to the player when the creep joiner is rejected. Requires letterLabel, letterDesc, and letterDef.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "Title of the letter sent when the creep joiner is rejected. Supports pawn grammar arguments such as {PAWN_nameDef}. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterDesc": {
+      "label": "Letter description",
+      "description": "Body text of the letter sent when the creep joiner is rejected. Supports pawn grammar arguments such as {PAWN_nameDef}. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterDef": {
+      "label": "Letter def",
+      "description": "LetterDef controlling the letter type (icon, sound, and pin behavior) used when the creep joiner is rejected.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "LetterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "workerType": {
+      "label": "Worker type",
+      "description": "C# class deriving from BaseCreepJoinerWorker that executes this rejection action when triggered.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "CreepJoinerWorker_DoDepart",
+        "CreepJoinerWorker_AggressiveRejection"
+      ]
+    }
+  }
+}

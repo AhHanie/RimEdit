@@ -1,0 +1,53 @@
+{
+  "objectType": "HediffCompProperties_CauseMentalState",
+  "label": "Cause mental state comp",
+  "description": "Periodically inflicts a mental state on the pawn.",
+  "fieldOrder": ["Class", "compClass", "mentalState", "mtbDays", "recoveryMtbDays", "minSeverity"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "mentalState": {
+      "label": "Mental state",
+      "description": "Mental state to inflict.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "MentalStateDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mtbDays": {
+      "label": "MTB days",
+      "description": "Mean time between mental state inflictions in days.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "recoveryMtbDays": {
+      "label": "Recovery MTB days",
+      "description": "Mean time to recover from the mental state. -1 to disable.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "minSeverity": {
+      "label": "Min severity",
+      "description": "Minimum severity before this comp activates.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

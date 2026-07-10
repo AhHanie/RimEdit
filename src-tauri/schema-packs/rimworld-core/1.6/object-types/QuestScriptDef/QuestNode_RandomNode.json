@@ -1,0 +1,25 @@
+{
+  "objectType": "QuestNode_RandomNode",
+  "label": "QuestNode RandomNode",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_RandomNode.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "nodes"
+  ],
+  "fields": {
+    "nodes": {
+      "description": "Weighted QuestNode children; child selectionWeight controls probability.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

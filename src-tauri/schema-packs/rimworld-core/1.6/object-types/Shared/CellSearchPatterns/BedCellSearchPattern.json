@@ -1,0 +1,9 @@
+{
+  "objectType": "BedCellSearchPattern",
+  "label": "Cell search pattern (bed)",
+  "description": "Searches for a cell at a bed location.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" }
+  }
+}

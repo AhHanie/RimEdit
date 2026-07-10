@@ -1,0 +1,38 @@
+{
+  "objectType": "RoomRequirement_AllThingsAnyOfAreGlowing",
+  "label": "Room requirement (all things any-of are glowing)",
+  "description": "Requires all instances of any of the specified things in the room to be glowing.",
+  "fieldOrder": ["Class", "labelKey", "disablingPrecepts", "things"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoomRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the room requirement label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "disablingPrecepts": {
+      "label": "Disabling precepts",
+      "description": "Precepts that disable this room requirement.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "things": {
+      "label": "Things",
+      "description": "All instances of any of these things in the room must be glowing.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

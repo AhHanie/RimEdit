@@ -1,0 +1,8 @@
+{
+  "formatVersion": 1,
+  "packId": "conditional_rules_numeric_ops",
+  "name": "Conditional Rules Numeric Operators",
+  "version": "1.0.0",
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": []
+}

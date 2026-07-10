@@ -1,0 +1,22 @@
+{
+  "objectType": "RoomStatScoreStage",
+  "label": "Room stat score stage",
+  "description": "A quality stage for a room stat, with a label and minimum score threshold.",
+  "fieldOrder": ["minScore", "label"],
+  "fields": {
+    "minScore": {
+      "label": "Min score",
+      "description": "Minimum raw score for this stage to apply. Source default is float.MinValue; omit on the lowest stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Stage label shown in the room stat UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

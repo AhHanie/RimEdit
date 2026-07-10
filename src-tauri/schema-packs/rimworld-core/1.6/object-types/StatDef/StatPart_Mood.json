@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_Mood",
+  "label": "Stat part (mood)",
+  "description": "Scales the stat by a curve evaluated against the pawn's current mood level.",
+  "fieldOrder": ["Class", "priority", "factorFromMoodCurve"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factorFromMoodCurve": {
+      "label": "Factor from mood curve",
+      "description": "Piecewise linear curve mapping mood level to the stat factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    }
+  }
+}

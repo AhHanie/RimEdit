@@ -1,0 +1,570 @@
+{
+  "defType": "AbilityDef",
+  "label": "Ability",
+  "description": "Defines an activated ability usable by a pawn, including psycasts, ideology abilities, gene abilities, and anomaly powers.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "abilityClass",
+    "gizmoClass",
+    "comps",
+    "category",
+    "displayOrder",
+    "statBases",
+    "verbProperties",
+    "hotKey",
+    "jobDef",
+    "warmupMote",
+    "warmupEffecter",
+    "emittedFleck",
+    "emissionInterval",
+    "warmupMoteSocialSymbol",
+    "warmupStartSound",
+    "warmupSound",
+    "warmupPreEndSound",
+    "warmupPreEndSoundSeconds",
+    "moteDrawOffset",
+    "moteOffsetAmountTowardsTarget",
+    "canUseAoeToGetTargets",
+    "useAverageTargetPositionForWarmupEffecter",
+    "targetRequired",
+    "targetWorldCell",
+    "showGizmoOnWorldView",
+    "aiCanUse",
+    "ai_SearchAOEForTargets",
+    "ai_IsOffensive",
+    "ai_IsIncendiary",
+    "groupAbility",
+    "level",
+    "cooldownTicksRange",
+    "cooldownPerCharge",
+    "hasExternallyHandledCooldown",
+    "charges",
+    "groupDef",
+    "overrideGroupCooldown",
+    "requiredMemes",
+    "sendLetterOnCooldownComplete",
+    "sendMessageOnCooldownComplete",
+    "displayGizmoWhileUndrafted",
+    "disableGizmoWhileUndrafted",
+    "writeCombatLog",
+    "stunTargetWhileCasting",
+    "showPsycastEffects",
+    "showCastingProgressBar",
+    "detectionChanceOverride",
+    "uiOrder",
+    "waitForJobEnd",
+    "showWhenDrafted",
+    "showOnCharacterCard",
+    "hostile",
+    "casterMustBeCapableOfViolence",
+    "confirmationDialogText",
+    "iconPath"
+  ],
+  "fields": {
+    "abilityClass": {
+      "label": "Ability class",
+      "description": "C# class (Ability subclass) used to instantiate this ability at runtime.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "Ability",
+      "xml": "element",
+      "examples": ["Ability", "Ability_Jump", "Ability_WithDestination"]
+    },
+    "gizmoClass": {
+      "label": "Gizmo class",
+      "description": "C# class (Command_Ability subclass) used to create the gizmo button for this ability.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "Command_Ability",
+      "xml": "element",
+      "examples": ["Command_Ability", "Command_VerbTarget"]
+    },
+    "comps": {
+      "label": "Components",
+      "description": "List of AbilityCompProperties objects that attach modular behaviors. Each item specifies a Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "AbilityCompProperties" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "category": {
+      "label": "Category",
+      "description": "AbilityCategoryDef grouping this ability in the UI.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "AbilityCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "displayOrder": {
+      "label": "Display order",
+      "description": "Sort order within the ability category. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "statBases": {
+      "label": "Stat bases",
+      "description": "Map of stat names to their base values for this ability. Child element names are StatDef defNames.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "defaultCollapsed": true,
+      "examples": [
+        "<Ability_PsyfocusCost>0.2</Ability_PsyfocusCost>",
+        "<Ability_EntropyGain>0.15</Ability_EntropyGain>",
+        "<Ability_EffectRadius>5</Ability_EffectRadius>"
+      ]
+    },
+    "verbProperties": {
+      "label": "Verb properties",
+      "description": "Attack verb configuration for this ability, including range and targeting parameters.",
+      "type": { "kind": "object", "schemaRef": "VerbProperties" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "hotKey": {
+      "label": "Hot key",
+      "description": "KeyBindingDef used to activate this ability via keyboard shortcut.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "KeyBindingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "jobDef": {
+      "label": "Job def",
+      "description": "JobDef given to the caster pawn when this ability is activated.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "JobDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "warmupMote": {
+      "label": "Warmup mote",
+      "description": "ThingDef for the mote spawned around the caster during the warmup phase.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "warmupEffecter": {
+      "label": "Warmup effecter",
+      "description": "EffecterDef played on the caster during the warmup phase.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "EffecterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "emittedFleck": {
+      "label": "Emitted fleck",
+      "description": "FleckDef spawned repeatedly at the caster during the warmup phase.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FleckDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "emissionInterval": {
+      "label": "Emission interval",
+      "description": "Ticks between each emittedFleck spawn during warmup.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "warmupMoteSocialSymbol": {
+      "label": "Warmup mote social symbol",
+      "description": "Texture atlas path for the symbol drawn above the caster's head during warmup.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "warmupStartSound": {
+      "label": "Warmup start sound",
+      "description": "SoundDef played once when the warmup phase begins.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "warmupSound": {
+      "label": "Warmup sound",
+      "description": "SoundDef looped during the warmup phase.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "warmupPreEndSound": {
+      "label": "Warmup pre-end sound",
+      "description": "SoundDef played a fixed number of seconds before the warmup phase ends.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "warmupPreEndSoundSeconds": {
+      "label": "Warmup pre-end sound seconds",
+      "description": "Seconds before warmup completion at which warmupPreEndSound is played.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "moteDrawOffset": {
+      "label": "Mote draw offset",
+      "description": "World-space offset (x, y, z) applied when drawing the warmup mote relative to the caster.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0, 0, 0)",
+      "xml": "element",
+      "examples": ["(0, 0, 0)", "(0, 0.5, 0)"]
+    },
+    "moteOffsetAmountTowardsTarget": {
+      "label": "Mote offset amount towards target",
+      "description": "Distance the warmup mote is shifted along the vector towards the selected target.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "canUseAoeToGetTargets": {
+      "label": "Can use AoE to get targets",
+      "description": "If true, the ability may derive its target list from the AoE radius rather than a single selected target.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "useAverageTargetPositionForWarmupEffecter": {
+      "label": "Use average target position for warmup effecter",
+      "description": "If true, the warmup effecter is positioned at the average of all selected targets rather than the primary target.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "targetRequired": {
+      "label": "Target required",
+      "description": "If true, the player must select a target before the ability can be activated.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "targetWorldCell": {
+      "label": "Target world cell",
+      "description": "If true, the ability targets a world map cell rather than a local map cell.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showGizmoOnWorldView": {
+      "label": "Show gizmo on world view",
+      "description": "If true, the ability gizmo is visible while the player is on the world map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "aiCanUse": {
+      "label": "AI can use",
+      "description": "If true, AI-controlled pawns are allowed to activate this ability.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ai_SearchAOEForTargets": {
+      "label": "AI: search AoE for targets",
+      "description": "AI hint: if true, the AI searches within the ability's AoE radius for valid targets.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ai_IsOffensive": {
+      "label": "AI: is offensive",
+      "description": "AI hint: if true, the AI treats this ability as an offensive action.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ai_IsIncendiary": {
+      "label": "AI: is incendiary",
+      "description": "AI hint: if true, the AI knows this ability can set things on fire.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "groupAbility": {
+      "label": "Group ability",
+      "description": "If true, all pawns in the caster's group use this ability simultaneously.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "level": {
+      "label": "Level",
+      "description": "Psycast tier required to unlock this ability. 0 means no level requirement.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "cooldownTicksRange": {
+      "label": "Cooldown ticks range",
+      "description": "Randomized cooldown duration in ticks drawn from this range each use.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element",
+      "examples": ["600~1200", "3600~3600", "1800~2400"]
+    },
+    "cooldownPerCharge": {
+      "label": "Cooldown per charge",
+      "description": "If true, the cooldown applies per charge consumed rather than per cast.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hasExternallyHandledCooldown": {
+      "label": "Has externally handled cooldown",
+      "description": "If true, the cooldown is managed by external logic rather than the standard ability cooldown system.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "charges": {
+      "label": "Charges",
+      "description": "Number of charges available before the ability goes on cooldown. -1 means unlimited.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "groupDef": {
+      "label": "Group def",
+      "description": "AbilityGroupDef that links this ability's cooldown with other abilities in the same group.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "AbilityGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "overrideGroupCooldown": {
+      "label": "Override group cooldown",
+      "description": "If true, this ability's own cooldown overrides the shared group cooldown on use.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiredMemes": {
+      "label": "Required memes",
+      "description": "List of MemeDef references. The caster's ideo must contain all listed memes for this ability to be available.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "MemeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "sendLetterOnCooldownComplete": {
+      "label": "Send letter on cooldown complete",
+      "description": "If true, a letter is sent to the player when this ability finishes its cooldown.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "sendMessageOnCooldownComplete": {
+      "label": "Send message on cooldown complete",
+      "description": "If true, a UI message is displayed when this ability finishes its cooldown.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayGizmoWhileUndrafted": {
+      "label": "Display gizmo while undrafted",
+      "description": "If true, the ability gizmo is shown even when the pawn is not drafted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disableGizmoWhileUndrafted": {
+      "label": "Disable gizmo while undrafted",
+      "description": "If true, the ability gizmo is greyed out when the pawn is not drafted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "writeCombatLog": {
+      "label": "Write combat log",
+      "description": "If true, ability use is recorded in the combat log.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "stunTargetWhileCasting": {
+      "label": "Stun target while casting",
+      "description": "If true, the primary target is stunned for the duration of the warmup phase.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showPsycastEffects": {
+      "label": "Show psycast effects",
+      "description": "If true, the standard psycast visual and sound effects are played on cast.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showCastingProgressBar": {
+      "label": "Show casting progress bar",
+      "description": "If true, a progress bar is drawn above the caster during the warmup phase.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "detectionChanceOverride": {
+      "label": "Detection chance override",
+      "description": "Override for the probability (0–1) of this ability being detected by enemies. -1 means derive from the Ability_DetectChancePerEntropy stat.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "uiOrder": {
+      "label": "UI order",
+      "description": "Sort order within the ability gizmo bar. Lower values appear first.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "waitForJobEnd": {
+      "label": "Wait for job end",
+      "description": "If true, the ability waits until the pawn's current job is finished before activating.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showWhenDrafted": {
+      "label": "Show when drafted",
+      "description": "If true, the ability gizmo is visible in the drafted state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnCharacterCard": {
+      "label": "Show on character card",
+      "description": "If true, this ability is listed on the pawn's character card.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "hostile": {
+      "label": "Hostile",
+      "description": "If true, using this ability counts as a hostile action and can trigger faction relations changes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "casterMustBeCapableOfViolence": {
+      "label": "Caster must be capable of violence",
+      "description": "If true, pacifist pawns cannot use this ability.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "confirmationDialogText": {
+      "label": "Confirmation dialog text",
+      "description": "Localized text shown in a confirmation dialog before the ability activates. Leave empty to skip the dialog.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture atlas path for the ability's gizmo icon.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Abilities/WordOfLove", "UI/Abilities/Farskip"]
+    }
+  },
+  "templates": {
+    "basic-ability": {
+      "label": "Basic Ability",
+      "description": "Minimal ability def with a label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"]
+    }
+  }
+}

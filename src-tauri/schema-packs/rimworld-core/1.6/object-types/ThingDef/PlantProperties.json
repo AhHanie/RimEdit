@@ -1,0 +1,302 @@
+{
+  "objectType": "PlantProperties",
+  "label": "Plant properties",
+  "description": "Properties for plant things covering growth, harvesting, sowing, wild generation, visual variants, and terrain requirements.",
+  "fieldOrder": [
+    "growDays",
+    "visualSizeRange",
+    "growMinGlow",
+    "growOptimalGlow",
+    "minFertility",
+    "fertilitySensitivity",
+    "harvestWork",
+    "harvestYield",
+    "harvestedThingDef",
+    "harvestTag",
+    "harvestYieldTag",
+    "sowTags",
+    "sowMinSkill",
+    "sowResearchPrerequisites",
+    "wildClusterRadius",
+    "wildClusterWeight",
+    "wildOrder",
+    "wildEqualLocalDistribution",
+    "topWindExposure",
+    "immatureGraphicPath",
+    "leaflessGraphicPath",
+    "cavePlant",
+    "cavePlantWeight",
+    "neverBlightable",
+    "dieIfLeafless",
+    "reproduces",
+    "reproductionRadius",
+    "treeLoversCareIfChopped",
+    "interferesWithRoof",
+    "humanFoodPlant",
+    "maxMeshCount",
+    "blockAdjacentSow",
+    "allowAutoCut"
+  ],
+  "fields": {
+    "growDays": {
+      "label": "Grow days",
+      "description": "Game days to reach full growth from a seed or cutting.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 2,
+      "xml": "element"
+    },
+    "visualSizeRange": {
+      "label": "Visual size range",
+      "description": "FloatRange controlling the random size multiplier applied to the plant graphic (min~max).",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.7~1.0", "1.2~1.5"]
+    },
+    "growMinGlow": {
+      "label": "Grow min glow",
+      "description": "Minimum light level (0–1) required for any growth to occur.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.3,
+      "xml": "element"
+    },
+    "growOptimalGlow": {
+      "label": "Grow optimal glow",
+      "description": "Light level at which growth rate is maximised.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.7,
+      "xml": "element"
+    },
+    "minFertility": {
+      "label": "Min fertility",
+      "description": "Minimum terrain fertility required for this plant to grow.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.1,
+      "xml": "element"
+    },
+    "fertilitySensitivity": {
+      "label": "Fertility sensitivity",
+      "description": "How strongly terrain fertility affects growth rate (0 = insensitive, 1 = linear).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "harvestWork": {
+      "label": "Harvest work",
+      "description": "Work ticks required to harvest this plant.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 200,
+      "xml": "element"
+    },
+    "harvestYield": {
+      "label": "Harvest yield",
+      "description": "Expected number of harvestedThingDef items produced from one plant.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "harvestedThingDef": {
+      "label": "Harvested thing def",
+      "description": "ThingDef produced when this plant is harvested.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "harvestTag": {
+      "label": "Harvest tag",
+      "description": "String tag used by harvest designator logic to group plants of the same harvest type.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "harvestYieldTag": {
+      "label": "Harvest yield tag",
+      "description": "String tag for identifying the type of yield (used by research and stats).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "sowTags": {
+      "label": "Sow tags",
+      "description": "String tags controlling which grow zones or bills can sow this plant.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": ["Ground", "Hydroponic"]
+    },
+    "sowMinSkill": {
+      "label": "Sow min skill",
+      "description": "Minimum Plants skill level required to sow this plant.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "sowResearchPrerequisites": {
+      "label": "Sow research prerequisites",
+      "description": "All listed ResearchProjectDefs must be completed before this plant can be sown.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ResearchProjectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "wildClusterRadius": {
+      "label": "Wild cluster radius",
+      "description": "Radius in cells of wild clusters generated during map creation.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 7,
+      "xml": "element"
+    },
+    "wildClusterWeight": {
+      "label": "Wild cluster weight",
+      "description": "Relative frequency weight for wild cluster generation on map gen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "wildOrder": {
+      "label": "Wild order",
+      "description": "Generation order for wild plants; lower values generate first and block later entries.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "wildEqualLocalDistribution": {
+      "label": "Wild equal local distribution",
+      "description": "If true, each tile gets an equal portion of this plant rather than clustering.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "topWindExposure": {
+      "label": "Top wind exposure",
+      "description": "Factor controlling how strongly wind sway affects the top of this plant's graphic.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.1,
+      "xml": "element"
+    },
+    "immatureGraphicPath": {
+      "label": "Immature graphic path",
+      "description": "Texture path used when this plant is still growing (below full maturity).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "leaflessGraphicPath": {
+      "label": "Leafless graphic path",
+      "description": "Texture path used during the cold/dormant season when the plant has shed its leaves.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "cavePlant": {
+      "label": "Cave plant",
+      "description": "If true, this plant can only grow in underground (cave) environments.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "cavePlantWeight": {
+      "label": "Cave plant weight",
+      "description": "Relative frequency weight for cave generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "neverBlightable": {
+      "label": "Never blightable",
+      "description": "If true, this plant is immune to blight events.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "dieIfLeafless": {
+      "label": "Die if leafless",
+      "description": "If true, this plant dies when it enters the leafless (dormant) state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "reproduces": {
+      "label": "Reproduces",
+      "description": "Whether this plant can spread seeds to adjacent fertile cells.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "reproductionRadius": {
+      "label": "Reproduction radius",
+      "description": "Maximum radius in cells for seed dispersal when reproduces is true.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 3,
+      "xml": "element"
+    },
+    "treeLoversCareIfChopped": {
+      "label": "Tree lovers care if chopped",
+      "description": "If true, chopping this plant triggers a mood penalty for tree-loving traits.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "interferesWithRoof": {
+      "label": "Interferes with roof",
+      "description": "If true, this plant cannot grow under a constructed roof.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "humanFoodPlant": {
+      "label": "Human food plant",
+      "description": "If true, colonists with plant-eating behaviors consider this plant edible.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "maxMeshCount": {
+      "label": "Max mesh count",
+      "description": "Maximum number of individual plant sprites drawn per cell at full density.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "blockAdjacentSow": {
+      "label": "Block adjacent sow",
+      "description": "If true, adjacent cells cannot be sown while this plant is present.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowAutoCut": {
+      "label": "Allow auto-cut",
+      "description": "Whether the auto-cut designation can target this plant.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

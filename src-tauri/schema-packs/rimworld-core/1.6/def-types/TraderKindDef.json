@@ -1,0 +1,109 @@
+{
+  "defType": "TraderKindDef",
+  "label": "Trader kind",
+  "description": "Defines a type of trader (caravan, orbital, visitor, or base trader) and the stock it carries. Referenced by FactionDef trader kind lists.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "stockGenerators",
+    "orbital",
+    "requestable",
+    "hideThingsNotWillingToTrade",
+    "commonality",
+    "category",
+    "tradeCurrency",
+    "commonalityMultFromPopulationIntent",
+    "faction",
+    "permitRequiredForTrading"
+  ],
+  "fields": {
+    "stockGenerators": {
+      "label": "Stock generators",
+      "description": "List of stock generators that define what this trader carries and buys. Each entry uses a Class attribute to select the generator strategy.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StockGenerator" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "orbital": {
+      "label": "Orbital",
+      "description": "If true, this trader operates from orbit rather than visiting on foot. Affects generated stock and warm-layer pawn generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requestable": {
+      "label": "Requestable",
+      "description": "If true, the player can call this trader to visit via comms console.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "hideThingsNotWillingToTrade": {
+      "label": "Hide things not willing to trade",
+      "description": "If true, items the trader is unwilling to trade are hidden in the trade UI rather than shown as unavailable.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight for how often this trader kind is chosen when spawning traders. Default 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "category": {
+      "label": "Category",
+      "description": "Free-form category label grouping related trader kinds. Not displayed to players.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Slaver", "Exotic", "Bulk"]
+    },
+    "tradeCurrency": {
+      "label": "Trade currency",
+      "description": "Currency accepted by this trader. Silver is the default; Favor is used by Empire traders that accept imperial favor instead of silver.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Silver", "Favor"]
+      }
+    },
+    "commonalityMultFromPopulationIntent": {
+      "label": "Commonality mult from population intent",
+      "description": "Curve that multiplies this trader's commonality based on the current population intent value. Allows rarer traders to appear more often when colony population is low.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "faction": {
+      "label": "Faction",
+      "description": "FactionDef that this trader kind belongs to. Used for permit-based trading gates and faction-specific trader stock.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FactionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "permitRequiredForTrading": {
+      "label": "Permit required for trading",
+      "description": "RoyalTitlePermitDef the player must hold before this trader will trade with them. Used for high-tier Empire traders.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RoyalTitlePermitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

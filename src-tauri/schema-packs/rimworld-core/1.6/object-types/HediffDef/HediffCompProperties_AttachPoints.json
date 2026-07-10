@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_AttachPoints",
+  "label": "Attach points comp",
+  "description": "Defines named attach points for visual attachments on this hediff.",
+  "fieldOrder": ["Class", "compClass", "attachPoints"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "attachPoints": {
+      "label": "Attach points",
+      "description": "Named attach points for visual attachments.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

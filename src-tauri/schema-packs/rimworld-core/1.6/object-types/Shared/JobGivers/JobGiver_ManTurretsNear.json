@@ -1,0 +1,18 @@
+{
+  "objectType": "JobGiver_ManTurretsNear",
+  "label": "Job giver man turrets near",
+  "description": "Directs the pawn to man nearby unmanned turrets. Covers ManTurretsNearPoint and ManTurretsNearSelf. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "maxDistFromPoint"
+  ],
+  "fields": {
+    "maxDistFromPoint": {
+      "label": "Max dist from point",
+      "description": "Maximum distance in cells from the reference point within which turrets are considered for manning.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

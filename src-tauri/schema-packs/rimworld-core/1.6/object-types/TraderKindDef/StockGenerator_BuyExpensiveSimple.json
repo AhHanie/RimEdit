@@ -1,0 +1,17 @@
+{
+  "objectType": "StockGenerator_BuyExpensiveSimple",
+  "label": "Buy expensive simple generator",
+  "description": "Marks generic market-sellable items above a minimum market value per unit as buyable. Generates no items; only establishes buy interest for high-value goods.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": ["minValuePerUnit"],
+  "fields": {
+    "minValuePerUnit": {
+      "label": "Min value per unit",
+      "description": "Minimum market value per volume unit required for a ThingDef to be accepted as a buy target. Source default 15.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 15,
+      "xml": "element"
+    }
+  }
+}

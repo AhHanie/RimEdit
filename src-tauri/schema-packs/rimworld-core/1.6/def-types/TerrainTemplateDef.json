@@ -1,0 +1,145 @@
+{
+  "defType": "TerrainTemplateDef",
+  "label": "Terrain Template Def",
+  "description": "Procedural template that generates one TerrainDef per paired structure-type ColorDef at startup. The primary use case is carpet flooring, where each color variant becomes an implied terrain type.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "texturePath",
+    "tags",
+    "researchPrerequisites",
+    "burnedDef",
+    "costList",
+    "designatorDropdown",
+    "statBases",
+    "uiOrder",
+    "renderPrecedenceStart",
+    "constructionSkillPrerequisite",
+    "canGenerateDefaultDesignator",
+    "dominantStyleCategory"
+  ],
+  "fields": {
+    "texturePath": {
+      "label": "Texture path",
+      "description": "Asset path to the terrain texture shared by all generated color variants.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "Categorization strings applied to all generated terrain variants, such as Floor or FineFloor.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "researchPrerequisites": {
+      "label": "Research prerequisites",
+      "description": "Research projects that must be completed before any generated terrain from this template can be built.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ResearchProjectDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "burnedDef": {
+      "label": "Burned def",
+      "description": "Terrain that each generated variant becomes when burned.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TerrainDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "costList": {
+      "label": "Cost list",
+      "description": "Materials consumed when constructing a generated terrain. Each child element name is a ThingDef defName and the text content is the integer count.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap"
+    },
+    "designatorDropdown": {
+      "label": "Designator dropdown",
+      "description": "Architect panel dropdown group that the generated designators are placed under.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "DesignatorDropdownGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "statBases": {
+      "label": "Stat bases",
+      "description": "Base stat values applied to all generated terrain variants. Each child element name is a StatDef defName.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap"
+    },
+    "uiOrder": {
+      "label": "UI order",
+      "description": "Sort order of the generated designators in the Architect panel.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "renderPrecedenceStart": {
+      "label": "Render precedence start",
+      "description": "Starting render priority for generated terrain variants. Each color variant is offset from this value by its index.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "constructionSkillPrerequisite": {
+      "label": "Construction skill prerequisite",
+      "description": "Minimum construction skill level required to build any terrain generated from this template.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "canGenerateDefaultDesignator": {
+      "label": "Can generate default designator",
+      "description": "Whether the generator creates a default designator for each color variant. Set to false to suppress designator generation entirely.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "dominantStyleCategory": {
+      "label": "Dominant style category",
+      "description": "Ideological style category applied to all generated terrain variants.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StyleCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "basic-terrain-template": {
+      "label": "Basic terrain template",
+      "description": "Minimal carpet-style terrain template with a texture, construction cost, stat bases, and UI order. Maps to the structure of Carpet and CarpetFine in the base game.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "texturePath"],
+      "fieldValues": {
+        "costList": "",
+        "statBases": "",
+        "uiOrder": ""
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "objectType": "PreceptComp_Thought",
+  "label": "Precept comp (thought)",
+  "description": "Base comp that attaches a thought to a precept. Used as a direct comp class or as a base for more specific thought comps.",
+  "fieldOrder": [
+    "Class", "description",
+    "thought", "thoughtStageDescriptions", "tooltipShowMoodRange"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor for this comp.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "thought": {
+      "label": "Thought",
+      "description": "The thought def triggered by this comp.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thoughtStageDescriptions": {
+      "label": "Thought stage descriptions",
+      "description": "Override descriptions for each thought stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "localizedString" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tooltipShowMoodRange": {
+      "label": "Tooltip show mood range",
+      "description": "If true, the tooltip shows the mood range for each stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

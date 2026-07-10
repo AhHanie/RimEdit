@@ -1,0 +1,54 @@
+{
+  "objectType": "DrawDataRotationalData",
+  "label": "Draw data rotational data",
+  "description": "Per-direction render parameters: layer offset, position offset, rotation offset, flip, and pivot. Directional containers (dataNorth, dataEast, dataSouth, dataWest) imply their own rotation direction without requiring an explicit rotation child.",
+  "fieldOrder": ["rotation", "pivot", "offset", "rotationOffset", "flip", "layer"],
+  "fields": {
+    "rotation": {
+      "label": "Rotation",
+      "description": "Cardinal direction this data applies to. Usually absent in directional blocks (dataNorth/dataEast/dataSouth/dataWest) because the container name implies the direction.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["North", "East", "South", "West"] }
+    },
+    "pivot": {
+      "label": "Pivot",
+      "description": "Rotation pivot point as a Vector2 in local draw space. Accepts forms: (x, y), x,y, or a single uniform value.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "World-space position offset (x, y, z) for this rotational state.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "rotationOffset": {
+      "label": "Rotation offset",
+      "description": "Additional rotation angle in degrees applied on top of the base rotation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "flip": {
+      "label": "Flip",
+      "description": "If true, the graphic is horizontally mirrored for this rotational state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "layer": {
+      "label": "Layer",
+      "description": "Layer depth offset added to the node's base layer for this rotational state.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

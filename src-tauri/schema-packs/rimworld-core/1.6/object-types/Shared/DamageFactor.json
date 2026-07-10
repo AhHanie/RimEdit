@@ -1,0 +1,31 @@
+{
+  "objectType": "DamageFactor",
+  "label": "Damage factor",
+  "description": "A multiplier applied to incoming damage of a specific damage type.",
+  "fieldOrder": [
+    "damageDef",
+    "factor"
+  ],
+  "fields": {
+    "damageDef": {
+      "label": "Damage def",
+      "description": "DamageDef that this factor applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "DamageDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Multiplier applied to incoming damage of this type. Values below 1 reduce damage; above 1 increase it.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

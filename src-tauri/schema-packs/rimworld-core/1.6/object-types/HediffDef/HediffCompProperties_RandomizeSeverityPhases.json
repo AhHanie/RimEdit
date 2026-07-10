@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_RandomizeSeverityPhases",
+  "label": "Randomize severity phases comp",
+  "description": "Randomly transitions between severity phases over time.",
+  "fieldOrder": ["Class", "compClass", "severityPhases", "minSeverityChange"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "severityPhases": {
+      "label": "Severity phases",
+      "description": "Number of severity phases to randomize between.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "minSeverityChange": {
+      "label": "Min severity change",
+      "description": "Minimum severity change per phase transition.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

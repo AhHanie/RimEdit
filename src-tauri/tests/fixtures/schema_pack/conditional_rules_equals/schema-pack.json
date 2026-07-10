@@ -1,0 +1,8 @@
+{
+  "formatVersion": 1,
+  "packId": "conditional_rules_equals",
+  "name": "Conditional Rules Equals",
+  "version": "1.0.0",
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": []
+}

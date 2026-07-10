@@ -1,0 +1,10 @@
+{
+  "objectType": "StageEndTrigger_PawnDeliveredOrNotValid",
+  "label": "Stage end trigger (pawn delivered or not valid)",
+  "description": "Ends the stage when a pawn has been delivered to the target position or is no longer a valid participant.",
+  "fieldOrder": ["Class", "countsTowardsProgress"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" }
+  }
+}

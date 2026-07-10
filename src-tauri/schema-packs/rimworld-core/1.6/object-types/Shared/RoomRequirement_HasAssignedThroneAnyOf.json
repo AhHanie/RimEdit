@@ -1,0 +1,38 @@
+{
+  "objectType": "RoomRequirement_HasAssignedThroneAnyOf",
+  "label": "Room requirement (has assigned throne, any of)",
+  "description": "Requires the room to contain a throne of any of the listed types that is assigned to the role pawn.",
+  "fieldOrder": ["Class", "labelKey", "disablingPrecepts", "things"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoomRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the room requirement label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "disablingPrecepts": {
+      "label": "Disabling precepts",
+      "description": "Precepts that disable this room requirement.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "things": {
+      "label": "Things",
+      "description": "Throne things; the pawn must have one of these assigned in the room.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

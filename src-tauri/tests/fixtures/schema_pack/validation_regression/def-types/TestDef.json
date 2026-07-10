@@ -1,0 +1,31 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "abstractType": false,
+  "fields": {
+    "requiredTarget": {
+      "label": "Required target",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "strictComps": {
+      "label": "Strict comps",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StrictCompProperties" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "singleObject": {
+      "label": "Single object",
+      "type": { "kind": "object", "schemaRef": "StrictCompProperties" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "objectType": "GenStep_OrbitalRelay",
+  "label": "Gen step orbital relay",
+  "description": "Generates an orbital relay platform with a central prefab, satellite arms, and scattered prefabs.",
+  "fieldOrder": [
+    "Class",
+    "orbitalDebrisDef",
+    "centerPrefabs",
+    "satellitePrefabs",
+    "scatterPrefabs",
+    "satelliteRange",
+    "scatterRange"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_OrbitalRelay.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "orbitalDebrisDef": {
+      "label": "Orbital debris def",
+      "description": "OrbitalDebrisDef assigned to the map.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "OrbitalDebrisDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "centerPrefabs": {
+      "label": "Center prefabs",
+      "description": "Weighted list of prefabs from which the central relay structure is chosen.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PrefabParms" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "satellitePrefabs": {
+      "label": "Satellite prefabs",
+      "description": "Weighted list of prefabs used for the satellite arms extending from the relay.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PrefabParms" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "scatterPrefabs": {
+      "label": "Scatter prefabs",
+      "description": "Weighted list of prefabs scattered around the relay structure.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PrefabParms" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "satelliteRange": {
+      "label": "Satellite range",
+      "description": "Random range for the number of satellite arms to generate.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "2~4",
+      "xml": "element"
+    },
+    "scatterRange": {
+      "label": "Scatter range",
+      "description": "Random range for the number of scattered prefabs to place.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "2~3",
+      "xml": "element"
+    }
+  }
+}

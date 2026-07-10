@@ -1,0 +1,46 @@
+{
+  "objectType": "RoadDefGenStep_DryWithFallback",
+  "label": "Road gen step: dry with fallback",
+  "description": "Dries wet terrain along the road path, replacing it with a fallback terrain when it cannot be dried.",
+  "fieldOrder": ["Class", "chancePerPositionCurve", "antialiasingMultiplier", "periodicSpacing", "fallback"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoadDefGenStep subclass that implements this generation step.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "chancePerPositionCurve": {
+      "label": "Chance per position curve",
+      "description": "Piecewise linear curve mapping distance from the road center (x) to placement probability (y) for each map cell.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "antialiasingMultiplier": {
+      "label": "Antialiasing multiplier",
+      "description": "Scales how far the placement probability extends past the hard road edge to produce smooth borders. Set to 0 to disable antialiasing for this step.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "periodicSpacing": {
+      "label": "Periodic spacing",
+      "description": "When non-zero, placement is restricted to positions that are multiples of this distance along the road, producing evenly spaced decorations.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "fallback": {
+      "label": "Fallback terrain",
+      "description": "TerrainDef placed when the cell cannot be dried -- i.e. when it is impassable or a river tile after the drying pass.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

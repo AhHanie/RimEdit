@@ -1,0 +1,19 @@
+{
+  "defType": "EntityCategoryDef",
+  "label": "Entity category",
+  "description": "Defines a top-level category used to group entries in the Anomaly entity codex.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "listOrder"
+  ],
+  "fields": {
+    "listOrder": {
+      "label": "List order",
+      "description": "Sort order of this category in the entity codex UI. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 999999,
+      "xml": "element"
+    }
+  }
+}

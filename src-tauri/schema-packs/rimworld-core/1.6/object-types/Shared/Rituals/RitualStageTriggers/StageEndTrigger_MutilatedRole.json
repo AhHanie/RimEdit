@@ -1,0 +1,17 @@
+{
+  "objectType": "StageEndTrigger_MutilatedRole",
+  "label": "Stage end trigger (mutilated role)",
+  "description": "Ends the stage when the specified role pawn has been mutilated.",
+  "fieldOrder": ["Class", "countsTowardsProgress", "roleId"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "roleId": {
+      "label": "Role ID",
+      "description": "ID of the role whose assigned pawn must be mutilated to fire this trigger.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

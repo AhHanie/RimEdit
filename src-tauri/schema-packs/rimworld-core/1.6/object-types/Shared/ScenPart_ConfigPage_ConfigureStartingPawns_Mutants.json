@@ -1,0 +1,24 @@
+{
+  "objectType": "ScenPart_ConfigPage_ConfigureStartingPawns_Mutants",
+  "label": "Configure starting pawns (mutants)",
+  "description": "Configuration page for selecting starting pawns as specific mutant types. Requires the Anomaly DLC.",
+  "inherits": ["ScenPart_ConfigPage_ConfigureStartingPawnsBase"],
+  "fieldOrder": ["def", "visible", "pawnChoiceCount", "customSummary", "mutantCounts"],
+  "fields": {
+    "customSummary": {
+      "label": "Custom summary",
+      "description": "Optional override text shown in the scenario summary for this starting pawn configuration. Translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "mutantCounts": {
+      "label": "Mutant counts",
+      "description": "List of mutant type and count pairs defining the mix of starting pawns by mutant type.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "MutantCount" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

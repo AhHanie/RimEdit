@@ -1,0 +1,4 @@
+{
+  "defType": "ChoiceDefA",
+  "inherits": ["BaseChoiceDef"]
+}

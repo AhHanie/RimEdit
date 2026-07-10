@@ -1,0 +1,83 @@
+{
+  "objectType": "JobGiver_ExitMap",
+  "label": "Job giver exit map",
+  "description": "Abstract base job giver that directs the pawn to exit the map. Covers ExitMapRandom, ExitMapBest, and ExitMapNearDutyTarget.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": [
+    "defaultLocomotion",
+    "canFlyOutOfMap",
+    "jobMaxDuration",
+    "canBash",
+    "failIfCantJoinOrCreateCaravan",
+    "forceCanDig",
+    "forceCanDigIfCantReachMapEdge",
+    "forceCanDigIfAnyHostileActiveThreat"
+  ],
+  "fields": {
+    "defaultLocomotion": {
+      "label": "Default locomotion",
+      "description": "Locomotion urgency used for the exit path.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Amble", "Walk", "Jog", "Sprint"] }
+    },
+    "canFlyOutOfMap": {
+      "label": "Can fly out of map",
+      "description": "If true, flying pawns may exit the map by flying rather than walking to the edge.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "jobMaxDuration": {
+      "label": "Job max duration",
+      "description": "Maximum ticks before the exit job expires.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 999999,
+      "xml": "element"
+    },
+    "canBash": {
+      "label": "Can bash",
+      "description": "If true, the pawn may bash doors and fences on the exit path.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "failIfCantJoinOrCreateCaravan": {
+      "label": "Fail if can't join or create caravan",
+      "description": "If true, the job fails when the pawn cannot join or create a caravan on exit.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forceCanDig": {
+      "label": "Force can dig",
+      "description": "If true, the pawn always digs through blocking structures on its exit path.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forceCanDigIfCantReachMapEdge": {
+      "label": "Force can dig if can't reach map edge",
+      "description": "If true, the pawn digs through blockers only when it cannot reach the map edge by normal pathing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forceCanDigIfAnyHostileActiveThreat": {
+      "label": "Force can dig if any hostile active threat",
+      "description": "If true, the pawn digs through blockers when any hostile active threat is present on the map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

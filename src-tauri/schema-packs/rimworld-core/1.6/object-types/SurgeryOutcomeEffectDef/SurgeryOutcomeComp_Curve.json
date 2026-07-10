@@ -1,0 +1,16 @@
+{
+  "objectType": "SurgeryOutcomeComp_Curve",
+  "label": "Surgery outcome comp (curve)",
+  "description": "Abstract intermediate comp that maps a runtime value to a quality offset via a SimpleCurve. Not used directly as a Class value; use concrete subclasses such as MedicineQuality, PatientAge, or XenogermComplexity.",
+  "inherits": ["SurgeryOutcomeComp"],
+  "fieldOrder": ["Class", "curve"],
+  "fields": {
+    "curve": {
+      "label": "Curve",
+      "description": "SimpleCurve mapping a runtime value (X) to a quality offset or multiplier (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

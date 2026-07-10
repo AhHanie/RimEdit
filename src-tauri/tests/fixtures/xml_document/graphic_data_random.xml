@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <ThingDef>
+    <defName>FixtureGraphicRandom</defName>
+    <graphicData>
+      <texPath>Things/Fixture/Random</texPath>
+      <graphicClass>Graphic_Random</graphicClass>
+    </graphicData>
+  </ThingDef>
+</Defs>

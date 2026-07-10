@@ -1,0 +1,8 @@
+{
+  "objectType": "GameSetupStep_Grids",
+  "label": "Game setup step: Grids",
+  "description": "Initializes the world grid and path grid. No loadable XML fields.",
+  "inherits": ["GameSetupStep"],
+  "fieldOrder": [],
+  "fields": {}
+}

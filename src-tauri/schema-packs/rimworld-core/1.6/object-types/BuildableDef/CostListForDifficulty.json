@@ -1,0 +1,46 @@
+{
+  "objectType": "CostListForDifficulty",
+  "label": "Cost list for difficulty",
+  "description": "A conditional cost list and stuff count that applies when a named difficulty variable matches.",
+  "fieldOrder": ["difficultyVar", "costList", "costStuffCount", "invert"],
+  "fields": {
+    "difficultyVar": {
+      "label": "Difficulty var",
+      "description": "Name of the difficulty variable evaluated to decide whether this cost list applies.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "costList": {
+      "label": "Cost list",
+      "description": "Materials consumed when this difficulty-conditional cost applies. Child element names are ThingDef defNames.",
+      "type": {
+        "kind": "object"
+      },
+      "required": false,
+      "xml": "namedChildrenMap"
+    },
+    "costStuffCount": {
+      "label": "Cost stuff count",
+      "description": "Amount of stuff required when this difficulty-conditional cost applies.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "invert": {
+      "label": "Invert",
+      "description": "If true, the cost list applies when the difficulty variable does NOT match rather than when it does.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

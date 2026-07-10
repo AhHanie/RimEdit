@@ -1,0 +1,66 @@
+{
+  "objectType": "PreceptComp_UnwillingToDo_Gendered",
+  "label": "Precept comp (unwilling to do, gendered)",
+  "description": "Makes a pawn of a specific gender unwilling to perform an action.",
+  "fieldOrder": [
+    "Class", "description",
+    "eventDef", "nullifyingTraits", "nullifyingHediffs",
+    "gender", "displayDescription"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "eventDef": {
+      "label": "Event def",
+      "description": "The history event that the pawn is unwilling to perform.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HistoryEventDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "nullifyingTraits": {
+      "label": "Nullifying traits",
+      "description": "Traits that override the unwillingness.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "nullifyingHediffs": {
+      "label": "Nullifying hediffs",
+      "description": "Hediffs that override the unwillingness.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "gender": {
+      "label": "Gender",
+      "description": "Gender the unwillingness applies to.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Male", "Female"] }
+    },
+    "displayDescription": {
+      "label": "Display description",
+      "description": "Whether to show the description for this comp in the UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

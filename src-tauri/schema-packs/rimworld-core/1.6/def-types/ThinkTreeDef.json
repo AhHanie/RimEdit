@@ -1,0 +1,31 @@
+{
+  "defType": "ThinkTreeDef",
+  "label": "Think tree",
+  "description": "Defines a pawn AI decision tree rooted at a recursive ThinkNode graph.",
+  "inherits": ["Def"],
+  "fieldOrder": ["thinkRoot", "insertTag", "insertPriority"],
+  "fields": {
+    "thinkRoot": {
+      "label": "Think root",
+      "description": "Root ThinkNode for this AI tree. The Class attribute selects the concrete node type.",
+      "type": { "kind": "object", "schemaRef": "ThinkNode" },
+      "required": false,
+      "xml": "object"
+    },
+    "insertTag": {
+      "label": "Insert tag",
+      "description": "Tag used by ThinkNode_SubtreesByTag insertion hooks to select this tree.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "insertPriority": {
+      "label": "Insert priority",
+      "description": "Sort priority for trees matched by an insertion tag. Higher values run earlier.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

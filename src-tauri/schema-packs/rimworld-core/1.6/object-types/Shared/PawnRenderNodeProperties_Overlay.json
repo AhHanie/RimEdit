@@ -1,0 +1,8 @@
+{
+  "objectType": "PawnRenderNodeProperties_Overlay",
+  "label": "Render node properties (overlay)",
+  "description": "Render node properties for pawn overlay rendering. No additional fields beyond the base; constructor sets defaults.",
+  "inherits": ["PawnRenderNodeProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,127 @@
+{
+  "defType": "CultureDef",
+  "label": "Culture",
+  "description": "Defines a named culture that shapes an ideology's name generation, visual style preferences, and weapon class affinities.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "pawnNameMaker",
+    "pawnNameMakerFemale",
+    "ideoNameMaker",
+    "deityNameMaker",
+    "deityTypeMaker",
+    "leaderTitleMaker",
+    "festivalNameMaker",
+    "thingStyleCategories",
+    "styleItemTags",
+    "preferredWeaponClasses",
+    "allowedPlaceTags",
+    "iconPath",
+    "iconColor"
+  ],
+  "fields": {
+    "pawnNameMaker": {
+      "label": "Pawn name maker",
+      "description": "RulePackDef used to generate pawn names for this culture.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "pawnNameMakerFemale": {
+      "label": "Pawn name maker (female)",
+      "description": "RulePackDef used to generate female pawn names. Overrides pawnNameMaker for female pawns when present.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ideoNameMaker": {
+      "label": "Ideo name maker",
+      "description": "RulePackDef used to generate ideology names for this culture.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "deityNameMaker": {
+      "label": "Deity name maker",
+      "description": "RulePackDef used to generate deity names for this culture.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "deityTypeMaker": {
+      "label": "Deity type maker",
+      "description": "RulePackDef used to generate deity type labels (e.g. 'god', 'spirit') for this culture.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "leaderTitleMaker": {
+      "label": "Leader title maker",
+      "description": "RulePackDef used to generate ideology leader titles for this culture.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "festivalNameMaker": {
+      "label": "Festival name maker",
+      "description": "RulePackDef used to generate festival and ritual names for this culture.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thingStyleCategories": {
+      "label": "Thing style categories",
+      "description": "Weighted list of style categories that influence which visual theme is chosen for ideologies using this culture.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ThingStyleCategoryWithPriority" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "styleItemTags": {
+      "label": "Style item tags",
+      "description": "Weighted style item tags influencing hair, beard, and body decoration selection during pawn generation for this culture.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StyleItemTagWeighted" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "preferredWeaponClasses": {
+      "label": "Preferred weapon classes",
+      "description": "Noble and despised weapon class pair for this culture.",
+      "type": { "kind": "object", "schemaRef": "IdeoWeaponClassPair" },
+      "required": false,
+      "xml": "object"
+    },
+    "allowedPlaceTags": {
+      "label": "Allowed place tags",
+      "description": "Origin tags (e.g. OriginTribal, OriginSpacer) that allow this culture to be assigned during world generation. Not translated.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": ["OriginTribal", "OriginSpacer", "OriginOutlander"]
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path for the culture icon.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Cultures/Astropolitan", "World/WorldObjects/Expanding/Village"]
+    },
+    "iconColor": {
+      "label": "Icon color",
+      "description": "RGBA tint applied to the culture icon. Defaults to white (no tint).",
+      "type": { "kind": "color" },
+      "required": false,
+      "defaultValue": "(1, 1, 1)",
+      "xml": "element"
+    }
+  }
+}

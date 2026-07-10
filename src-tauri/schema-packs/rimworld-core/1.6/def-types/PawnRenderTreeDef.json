@@ -1,0 +1,17 @@
+{
+  "defType": "PawnRenderTreeDef",
+  "label": "Pawn render tree",
+  "description": "Defines the recursive render-node tree used to draw a pawn race.",
+  "inherits": ["Def"],
+  "fieldOrder": ["root"],
+  "fields": {
+    "root": {
+      "label": "Root",
+      "description": "Root recursive render-node properties object for this pawn render tree. Required at runtime.",
+      "type": { "kind": "object", "schemaRef": "PawnRenderNodeProperties" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": false
+    }
+  }
+}

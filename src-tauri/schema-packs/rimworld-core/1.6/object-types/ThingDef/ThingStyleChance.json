@@ -1,0 +1,24 @@
+{
+  "objectType": "ThingStyleChance",
+  "label": "Thing style chance",
+  "description": "Associates a style with a probability weight for random style selection on spawn.",
+  "fieldOrder": ["styleDef", "chance"],
+  "fields": {
+    "styleDef": {
+      "label": "Style def",
+      "description": "ThingStyleDef to apply.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingStyleDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Relative weight of this style in the random selection pool.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

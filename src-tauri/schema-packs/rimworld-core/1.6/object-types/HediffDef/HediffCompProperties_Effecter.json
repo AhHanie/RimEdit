@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_Effecter",
+  "label": "Effecter comp",
+  "description": "Plays an effecter while this hediff is active.",
+  "fieldOrder": ["Class", "compClass", "effecterDef", "scale"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "effecterDef": {
+      "label": "Effecter def",
+      "description": "Effecter played while this hediff is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "If true, effecter scale is tied to severity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

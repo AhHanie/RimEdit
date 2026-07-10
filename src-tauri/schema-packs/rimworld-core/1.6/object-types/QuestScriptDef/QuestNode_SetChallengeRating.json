@@ -1,0 +1,21 @@
+{
+  "objectType": "QuestNode_SetChallengeRating",
+  "label": "QuestNode SetChallengeRating",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_SetChallengeRating.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "challengeRating"
+  ],
+  "fields": {
+    "challengeRating": {
+      "description": "SlateRef<int> challenge rating, usually 1 through 3.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

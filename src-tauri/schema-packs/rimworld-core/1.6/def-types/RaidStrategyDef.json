@@ -1,0 +1,190 @@
+{
+  "defType": "RaidStrategyDef",
+  "label": "Raid strategy",
+  "description": "Defines a tactical approach used by raids (e.g. immediate attack, siege, breach). Referenced by arrival mode and incident logic to determine how a raid is structured and scored.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "selectionWeightPerPointsCurve",
+    "minPawns",
+    "selectionWeightCurvesPerFaction",
+    "layerWhitelist",
+    "layerBlacklist",
+    "arrivalTextFriendly",
+    "arrivalTextEnemy",
+    "letterLabelEnemy",
+    "letterLabelFriendly",
+    "pointsFactorCurve",
+    "pawnsCanBringFood",
+    "arriveModes",
+    "raidLootValueFactor"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# RaidStrategyWorker subclass that implements the raid strategy behavior and eligibility logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "RaidStrategyWorker",
+      "xml": "element",
+      "examples": [
+        "RaidStrategyWorker_ImmediateAttack",
+        "RaidStrategyWorker_ImmediateAttackFriendly",
+        "RaidStrategyWorker_ImmediateAttackSmart",
+        "RaidStrategyWorker_StageThenAttack",
+        "RaidStrategyWorker_ImmediateAttackSappers",
+        "RaidStrategyWorker_Siege",
+        "RaidStrategyWorker_ImmediateAttackBreaching",
+        "RaidStrategyWorker_ImmediateAttackBreachingSmart",
+        "RaidStrategyWorker_PsychicRitualSiege",
+        "RaidStrategyWorker_ShamblerAssault"
+      ]
+    },
+    "selectionWeightPerPointsCurve": {
+      "label": "Selection weight per points curve",
+      "description": "Piecewise linear curve mapping incident points to the base selection weight for this strategy. Used as the fallback when no per-faction curve applies.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "minPawns": {
+      "label": "Min pawns",
+      "description": "Minimum number of pawns this strategy requires. Raid points are divided by this value to compute the maximum pawn option cost, ensuring enough pawns can be generated.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "selectionWeightCurvesPerFaction": {
+      "label": "Selection weight curves per faction",
+      "description": "Per-faction overrides for the selection weight curve. When the raiding faction matches an entry, that faction's curve is used instead of selectionWeightPerPointsCurve.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "FactionCurve" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerWhitelist": {
+      "label": "Layer whitelist",
+      "description": "If non-empty, this strategy can only be used on tiles with one of these PlanetLayerDefs (Odyssey). Checked by RaidStrategyWorker.CanUseWith.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerBlacklist": {
+      "label": "Layer blacklist",
+      "description": "PlanetLayerDefs on which this strategy may not be used (Odyssey). Checked by RaidStrategyWorker.CanUseWith.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "arrivalTextFriendly": {
+      "label": "Arrival text (friendly)",
+      "description": "Flavor text shown when a friendly group arrives using this strategy. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "arrivalTextEnemy": {
+      "label": "Arrival text (enemy)",
+      "description": "Flavor text shown in the raid letter when a hostile group arrives using this strategy. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterLabelEnemy": {
+      "label": "Letter label (enemy)",
+      "description": "Label for the raid-alert letter shown when a hostile group raids using this strategy. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterLabelFriendly": {
+      "label": "Letter label (friendly)",
+      "description": "Label for the letter shown when a friendly group arrives using this strategy. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "pointsFactorCurve": {
+      "label": "Points factor curve",
+      "description": "Piecewise linear curve mapping incident points to a raid-points multiplier. Applied by IncidentWorker_Raid.AdjustedRaidPoints after the arrival mode points factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "pawnsCanBringFood": {
+      "label": "Pawns can bring food",
+      "description": "If true, generated pawns may carry food items. Read during pawn group generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "arriveModes": {
+      "label": "Arrive modes",
+      "description": "PawnsArrivalModeDefs eligible for this strategy. Used for strategy eligibility checks and arrival mode selection during the raid incident.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PawnsArrivalModeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "raidLootValueFactor": {
+      "label": "Raid loot value factor",
+      "description": "Float multiplier applied to the total loot value generated for this raid strategy. Default 1 gives standard loot.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "immediate-attack": {
+      "label": "Immediate attack",
+      "description": "Raid strategy where attackers move in and assault the colony right away.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "workerClass",
+        "selectionWeightPerPointsCurve",
+        "pointsFactorCurve",
+        "arriveModes",
+        "letterLabelEnemy",
+        "arrivalTextEnemy"
+      ],
+      "fieldValues": {}
+    },
+    "staged-attack": {
+      "label": "Staged attack",
+      "description": "Raid strategy where attackers stage before assaulting -- useful for sieges or delayed strike patterns.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "workerClass",
+        "selectionWeightPerPointsCurve",
+        "pointsFactorCurve",
+        "arriveModes",
+        "letterLabelEnemy",
+        "arrivalTextEnemy",
+        "letterLabelFriendly",
+        "arrivalTextFriendly"
+      ],
+      "fieldValues": {}
+    },
+    "siege-like": {
+      "label": "Siege-like",
+      "description": "Raid strategy requiring a minimum pawn count and typically restricted to specific planet layers.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "workerClass",
+        "minPawns",
+        "raidLootValueFactor",
+        "arriveModes",
+        "pointsFactorCurve",
+        "layerWhitelist",
+        "letterLabelEnemy",
+        "arrivalTextEnemy"
+      ],
+      "fieldValues": {}
+    }
+  }
+}

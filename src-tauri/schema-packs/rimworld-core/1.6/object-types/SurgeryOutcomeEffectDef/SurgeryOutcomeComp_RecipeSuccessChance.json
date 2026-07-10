@@ -1,0 +1,8 @@
+{
+  "objectType": "SurgeryOutcomeComp_RecipeSuccessChance",
+  "label": "Surgery outcome comp (recipe success chance)",
+  "description": "Adjusts surgery quality based on the recipe's configured success chance.",
+  "inherits": ["SurgeryOutcomeComp"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,48 @@
+{
+  "objectType": "StartingHediff",
+  "label": "Starting hediff",
+  "description": "A hediff applied to a pawn at spawn time with a configurable severity, probability, and optional duration.",
+  "fieldOrder": [
+    "def",
+    "severity",
+    "chance",
+    "durationTicksRange"
+  ],
+  "fields": {
+    "def": {
+      "label": "Hediff",
+      "description": "HediffDef applied at spawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "severity": {
+      "label": "Severity",
+      "description": "Severity applied when the hediff is added. Defaults to the hediff's initialSeverity when omitted.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0–1) that this hediff is applied during generation. Defaults to 1 when omitted.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "durationTicksRange": {
+      "label": "Duration ticks range",
+      "description": "Optional integer tick range for the hediff duration. When absent the hediff uses its own duration rules.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["30000~90000", "60000~120000"]
+    }
+  }
+}

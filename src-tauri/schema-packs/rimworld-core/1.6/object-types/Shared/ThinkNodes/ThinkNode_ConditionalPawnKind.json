@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalPawnKind",
+  "label": "Think node conditional pawn kind",
+  "description": "Satisfied when the pawn's kindDef equals the specified PawnKindDef.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["pawnKind"],
+  "fields": {
+    "pawnKind": {
+      "label": "Pawn kind",
+      "description": "The pawn kind the pawn must belong to for this conditional to be satisfied.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

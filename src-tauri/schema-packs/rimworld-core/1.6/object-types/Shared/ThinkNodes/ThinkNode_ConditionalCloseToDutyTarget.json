@@ -1,0 +1,19 @@
+{
+  "objectType": "ThinkNode_ConditionalCloseToDutyTarget",
+  "label": "Think node conditional close to duty target",
+  "description": "Conditional node whose condition passes when the pawn is within maxDistToDutyTarget cells of its duty focus. Private in source but maxDistToDutyTarget is XML-backed. Inherits ThinkNode_Conditional fields (including invert) and base ThinkNode fields.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": [
+    "maxDistToDutyTarget"
+  ],
+  "fields": {
+    "maxDistToDutyTarget": {
+      "label": "Max dist to duty target",
+      "description": "Maximum distance in cells from the pawn's duty focus for the condition to pass. Private in C# source but loaded from XML.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    }
+  }
+}

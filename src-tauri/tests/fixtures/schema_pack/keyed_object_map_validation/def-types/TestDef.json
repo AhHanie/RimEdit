@@ -1,0 +1,21 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "abstractType": false,
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "keyedMap": {
+      "label": "Keyed map",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PartValue" },
+      "required": false,
+      "xml": "keyedObjectMap",
+      "keyReference": { "defType": "TagDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

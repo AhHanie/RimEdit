@@ -1,0 +1,25 @@
+{
+  "objectType": "RitualStageAction_StunPawns",
+  "label": "Ritual stage action (stun pawns)",
+  "description": "Stuns the pawns assigned to the specified roles for a given number of ticks.",
+  "fieldOrder": ["Class", "roleIds", "stunDurationTicks"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "roleIds": {
+      "label": "Role IDs",
+      "description": "IDs of roles whose assigned pawns will be stunned.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "stunDurationTicks": {
+      "label": "Stun duration ticks",
+      "description": "Number of ticks for which the pawns will be stunned. Defaults to 10.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    }
+  }
+}

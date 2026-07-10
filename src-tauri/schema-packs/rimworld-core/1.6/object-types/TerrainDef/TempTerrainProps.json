@@ -1,0 +1,45 @@
+{
+  "objectType": "TempTerrainProps",
+  "label": "Temp terrain props",
+  "description": "Properties controlling what happens when temporary terrain is removed.",
+  "fieldOrder": [
+    "terrainOnRemoved",
+    "destroysFloors",
+    "removedByExplosions",
+    "replaceableByBridge"
+  ],
+  "fields": {
+    "terrainOnRemoved": {
+      "label": "Terrain on removed",
+      "description": "TerrainDef that replaces this terrain when it is removed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "destroysFloors": {
+      "label": "Destroys floors",
+      "description": "If true, removing this terrain also destroys any constructed floor underneath.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "removedByExplosions": {
+      "label": "Removed by explosions",
+      "description": "If true, explosions can remove this temporary terrain.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "replaceableByBridge": {
+      "label": "Replaceable by bridge",
+      "description": "If true, a bridge can be built on top of this temporary terrain, replacing it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

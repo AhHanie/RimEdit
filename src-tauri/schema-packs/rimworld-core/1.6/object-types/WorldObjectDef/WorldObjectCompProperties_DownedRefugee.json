@@ -1,0 +1,8 @@
+{
+  "objectType": "WorldObjectCompProperties_DownedRefugee",
+  "label": "Downed refugee comp",
+  "description": "Marks this world object as containing a downed refugee that the player can rescue.",
+  "inherits": ["WorldObjectCompProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

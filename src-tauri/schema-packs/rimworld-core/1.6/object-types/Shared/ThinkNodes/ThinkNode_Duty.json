@@ -1,0 +1,6 @@
+{
+  "objectType": "ThinkNode_Duty",
+  "label": "Think node duty",
+  "description": "Dispatches to the think node defined by the pawn's current DutyDef.thinkNode. Populated at runtime by resolving all DutyDef records.",
+  "inherits": ["ThinkNode"]
+}

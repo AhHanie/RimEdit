@@ -1,0 +1,46 @@
+{
+  "objectType": "StageFailTrigger",
+  "label": "Stage fail trigger",
+  "description": "Base schema for ritual stage fail triggers. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class", "desc", "allowanceTicks"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "StageFailTrigger",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "StageFailTrigger_NoPoweredLoudspeakers": "StageFailTrigger_NoPoweredLoudspeakers",
+      "StageFailTrigger_NoThingPresent": "StageFailTrigger_NoThingPresent",
+      "StageFailTrigger_PawnAlive": "StageFailTrigger_PawnAlive",
+      "StageFailTrigger_PawnAsleep": "StageFailTrigger_PawnAsleep",
+      "StageFailTrigger_TargetNotLit": "StageFailTrigger_TargetNotLit",
+      "StageFailTrigger_TargetPawnUnreachable": "StageFailTrigger_TargetPawnUnreachable",
+      "StageFailTrigger_TargetThingMissing": "StageFailTrigger_TargetThingMissing",
+      "StageFailTrigger_TargetUnpowered": "StageFailTrigger_TargetUnpowered"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StageFailTrigger subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "desc": {
+      "label": "Desc",
+      "description": "Localized reason text shown when this trigger fails the ritual.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowanceTicks": {
+      "label": "Allowance ticks",
+      "description": "Number of ticks the fail condition may be active before it actually fails the ritual.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

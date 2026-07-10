@@ -1,0 +1,38 @@
+{
+  "objectType": "XenotypeCount",
+  "label": "Xenotype count",
+  "description": "A starting pawn count entry that specifies a xenotype. Used in ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes to define how many pawns of each xenotype are generated.",
+  "inherits": ["StartingPawnCount"],
+  "fieldOrder": ["xenotype", "allowedDevelopmentalStages", "description", "count", "requiredAtStart"],
+  "fields": {
+    "xenotype": {
+      "label": "Xenotype",
+      "description": "XenotypeDef used when generating pawns for this entry.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "XenotypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowedDevelopmentalStages": {
+      "label": "Allowed developmental stages",
+      "description": "Developmental stages allowed for pawns generated from this entry. Defaults to Baby, Child, and Adult.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      }
+    },
+    "description": {
+      "label": "Description",
+      "description": "Optional custom label for this xenotype count entry, used in the UI instead of the xenotype label. Translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

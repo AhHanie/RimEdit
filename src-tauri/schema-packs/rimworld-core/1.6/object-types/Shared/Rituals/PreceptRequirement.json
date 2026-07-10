@@ -1,0 +1,24 @@
+{
+  "objectType": "PreceptRequirement",
+  "label": "Precept requirement",
+  "description": "Base schema for precept requirements checked before a ritual can start. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "PreceptRequirement",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "PreceptRequirement_Altar": "PreceptRequirement_Altar"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptRequirement subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

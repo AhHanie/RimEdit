@@ -1,0 +1,74 @@
+{
+  "objectType": "HediffCompProperties_ReactOnDamage",
+  "label": "React on damage comp",
+  "description": "Triggers a reaction when the pawn takes or deals certain damage types.",
+  "fieldOrder": [
+    "Class", "compClass",
+    "reactDamageTypes", "reactOnDamageTaken", "reactOnDamageDealt",
+    "minSeverityToReact", "reactionHediff", "reactionHediffSeverity"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "reactDamageTypes": {
+      "label": "React damage types",
+      "description": "Damage types that trigger the reaction.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "reactOnDamageTaken": {
+      "label": "React on damage taken",
+      "description": "React when damage is received.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "reactOnDamageDealt": {
+      "label": "React on damage dealt",
+      "description": "React when damage is dealt.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minSeverityToReact": {
+      "label": "Min severity to react",
+      "description": "Minimum hediff severity before reaction triggers.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "reactionHediff": {
+      "label": "Reaction hediff",
+      "description": "Hediff applied on reaction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "reactionHediffSeverity": {
+      "label": "Reaction hediff severity",
+      "description": "Severity of the reaction hediff.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

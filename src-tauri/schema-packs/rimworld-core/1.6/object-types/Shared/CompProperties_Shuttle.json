@@ -1,0 +1,17 @@
+{
+  "objectType": "CompProperties_Shuttle",
+  "label": "Shuttle comp",
+  "description": "Comp properties that link a shuttle ThingDef to its governing TransportShipDef archetype.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": ["shipDef"],
+  "fields": {
+    "shipDef": {
+      "label": "Ship def",
+      "description": "TransportShipDef that defines the archetype for this shuttle.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TransportShipDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

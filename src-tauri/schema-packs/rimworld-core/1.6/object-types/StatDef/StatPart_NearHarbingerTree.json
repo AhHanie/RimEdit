@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_NearHarbingerTree",
+  "label": "Stat part (near harbinger tree)",
+  "description": "Scales the stat by a multiplier when the pawn is near a harbinger tree.",
+  "fieldOrder": ["Class", "priority", "multiplier"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "multiplier": {
+      "label": "Multiplier",
+      "description": "Stat multiplier applied when the pawn is within range of a harbinger tree.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

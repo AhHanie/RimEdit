@@ -1,0 +1,17 @@
+{
+  "defType": "ClamorDef",
+  "label": "Clamor",
+  "description": "Defines a named type of sound event used by pawn hearing AI. Pawns within range of a clamor receive a HearClamor call carrying this def, and branch their alert response based on which ClamorDef was raised. Well-known types are Movement, Harm, Construction, Impact, Ability, and BabyCry.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {},
+  "templates": {
+    "new-clamor": {
+      "label": "New clamor type",
+      "description": "Minimal clamor def. Only a defName is needed; all behavior is driven by code that branches on this def's identity.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName"],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_Slave",
+  "label": "Stat part (slave)",
+  "description": "Scales the stat by a factor when the pawn is enslaved.",
+  "fieldOrder": ["Class", "priority", "factor"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Stat multiplier applied to enslaved pawns.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.75,
+      "xml": "element"
+    }
+  }
+}

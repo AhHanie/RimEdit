@@ -1,0 +1,39 @@
+{
+  "objectType": "ThingSetMaker_Conditional_MakingFaction",
+  "label": "Making faction conditional maker",
+  "description": "Runs the nested maker only when the making faction matches the specified faction def or faction category tags.",
+  "inherits": ["ThingSetMaker_Conditional"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "thingSetMaker",
+    "makingFaction",
+    "makingFactionCategories",
+    "requireNonNull"
+  ],
+  "fields": {
+    "makingFaction": {
+      "label": "Making faction",
+      "description": "FactionDef that must match the making faction for the condition to pass.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "makingFactionCategories": {
+      "label": "Making faction categories",
+      "description": "List of faction categoryTag strings. The condition passes if the making faction has any of these category tags.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "requireNonNull": {
+      "label": "Require non-null",
+      "description": "When true, the condition fails if no making faction is present at all.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

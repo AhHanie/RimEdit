@@ -1,0 +1,8 @@
+{
+  "defType": "WeaponCategoryDef",
+  "label": "Weapon category",
+  "description": "Defines a named weapon category used to group weapon traits and constrain which generated traits can apply to persona or unique weapons.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {}
+}

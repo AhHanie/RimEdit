@@ -1,0 +1,43 @@
+{
+  "defType": "IdeoStoryPatternDef",
+  "label": "Ideo story pattern",
+  "description": "Defines a pattern for generating ideoligion description text. Each pattern names grammar segments that the description system expands in sequence, with optional inline grammar rules.",
+  "inherits": ["Def"],
+  "fieldOrder": ["segments", "noCapitalizeFirstSentence", "rules"],
+  "fields": {
+    "segments": {
+      "label": "Segments",
+      "description": "Ordered list of grammar slot names (e.g. intro, creation, episode) that the description resolver expands in sequence. At least one segment is required. Entries are grammar keyword names, not translated text.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": true,
+      "xml": "listOfLi",
+      "examples": ["intro", "creation", "episode", "conflict"]
+    },
+    "noCapitalizeFirstSentence": {
+      "label": "No capitalize first sentence",
+      "description": "Segment keyword names drawn from segments whose expanded text should not have its first character capitalized. Optional.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "rules": {
+      "label": "Rules",
+      "description": "Inline grammar rules available when expanding this pattern's segments. Reuses the shared RulePack schema.",
+      "type": { "kind": "object", "schemaRef": "RulePack" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": false
+    }
+  },
+  "templates": {
+    "basic-ideo-story-pattern": {
+      "label": "Basic ideo story pattern",
+      "description": "Minimal IdeoStoryPatternDef with defName, label, description, and a segments list containing one placeholder segment.",
+      "includeRequiredFields": true,
+      "promptFields": ["segments"],
+      "fieldValues": {}
+    }
+  }
+}

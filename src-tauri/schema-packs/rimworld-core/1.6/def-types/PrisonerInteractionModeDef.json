@@ -1,0 +1,127 @@
+{
+  "defType": "PrisonerInteractionModeDef",
+  "label": "Prisoner interaction mode",
+  "description": "Defines a prisoner interaction mode shown in the prisoner guest tab, including ordering and visibility gates for recruitment, release, execution, ideology, bloodfeeding, study, and interrogation modes.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "listOrder",
+    "allowOnWildMan",
+    "hideIfNoBloodfeeders",
+    "hideOnHemogenicPawns",
+    "mustBeAwake",
+    "allowInClassicIdeoMode",
+    "hideIfNotRecruitable",
+    "hideIfNotStudiableAsPrisoner",
+    "hideIfGrayFleshNotAppeared",
+    "isNonExclusiveInteraction",
+    "isChildInteraction"
+  ],
+  "fields": {
+    "listOrder": {
+      "label": "List order",
+      "description": "Sort order among prisoner interaction modes in the UI. Lower values appear earlier.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "allowOnWildMan": {
+      "label": "Allow on wild man",
+      "description": "If true, this interaction mode is available for wild men (non-humanlike-intelligence pawns caught and imprisoned).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "hideIfNoBloodfeeders": {
+      "label": "Hide if no bloodfeeders",
+      "description": "If true, this mode is hidden when there are no bloodfeeder pawns in the colony.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hideOnHemogenicPawns": {
+      "label": "Hide on hemogenic pawns",
+      "description": "If true, this mode is hidden for pawns that have hemogen-related genes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mustBeAwake": {
+      "label": "Must be awake",
+      "description": "If true, this interaction mode is only available when the prisoner is awake.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowInClassicIdeoMode": {
+      "label": "Allow in classic ideo mode",
+      "description": "If true, this mode remains available when ideology is running in classic (non-fluid) mode.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "hideIfNotRecruitable": {
+      "label": "Hide if not recruitable",
+      "description": "If true, this mode is hidden for prisoners that cannot be recruited.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hideIfNotStudiableAsPrisoner": {
+      "label": "Hide if not studiable as prisoner",
+      "description": "If true, this mode is hidden when the prisoner is not eligible for anomaly study.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hideIfGrayFleshNotAppeared": {
+      "label": "Hide if gray flesh not appeared",
+      "description": "If true, this mode is hidden until the gray flesh anomaly event has occurred in the current game.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isNonExclusiveInteraction": {
+      "label": "Is non-exclusive interaction",
+      "description": "If true, this mode can be toggled alongside an exclusive prisoner interaction mode rather than replacing it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isChildInteraction": {
+      "label": "Is child interaction",
+      "description": "If true, this mode is treated as a child-specific prisoner interaction and is only shown for child pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "exclusive-prisoner-interaction": {
+      "label": "Exclusive prisoner interaction",
+      "description": "Prisoner interaction mode that replaces other exclusive modes when selected.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "description", "listOrder"],
+      "fieldValues": {}
+    },
+    "non-exclusive-prisoner-interaction": {
+      "label": "Non-exclusive prisoner interaction",
+      "description": "Prisoner interaction mode that can be toggled alongside an exclusive mode.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "description", "listOrder"],
+      "fieldValues": {
+        "isNonExclusiveInteraction": "true"
+      }
+    }
+  }
+}

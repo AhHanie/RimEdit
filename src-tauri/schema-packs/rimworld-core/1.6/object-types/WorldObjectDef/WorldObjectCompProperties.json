@@ -1,0 +1,44 @@
+{
+  "objectType": "WorldObjectCompProperties",
+  "label": "World object comp properties",
+  "description": "Base schema for WorldObjectDef comps. Specific item schemas are selected by the li Class attribute.",
+  "fieldOrder": ["Class", "compClass"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "WorldObjectCompProperties",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "WorldObjectCompProperties_Abandon": "WorldObjectCompProperties_Abandon",
+      "WorldObjectCompProperties_DebugArena": "WorldObjectCompProperties_DebugArena",
+      "WorldObjectCompProperties_DefeatAllEnemiesQuest": "WorldObjectCompProperties_DefeatAllEnemiesQuest",
+      "WorldObjectCompProperties_DownedRefugee": "WorldObjectCompProperties_DownedRefugee",
+      "WorldObjectCompProperties_EscapeShip": "WorldObjectCompProperties_EscapeShip",
+      "WorldObjectCompProperties_FormCaravan": "WorldObjectCompProperties_FormCaravan",
+      "WorldObjectCompProperties_ItemStashContents": "WorldObjectCompProperties_ItemStashContents",
+      "WorldObjectCompProperties_PrisonerWillingToJoin": "WorldObjectCompProperties_PrisonerWillingToJoin",
+      "WorldObjectCompProperties_Timeout": "WorldObjectCompProperties_Timeout",
+      "WorldObjectCompProperties_TimedDetectionRaids": "WorldObjectCompProperties_TimedDetectionRaids",
+      "WorldObjectCompProperties_TimedForcedExit": "WorldObjectCompProperties_TimedForcedExit",
+      "WorldObjectCompProperties_TimedMakeFactionHostile": "WorldObjectCompProperties_TimedMakeFactionHostile",
+      "WorldObjectCompProperties_TradeRequest": "WorldObjectCompProperties_TradeRequest",
+      "WorldObjectCompProperties_EnterCooldown": "WorldObjectCompProperties_EnterCooldown"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# WorldObjectCompProperties type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime WorldObjectComp class. Usually set by the WorldObjectCompProperties constructor.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

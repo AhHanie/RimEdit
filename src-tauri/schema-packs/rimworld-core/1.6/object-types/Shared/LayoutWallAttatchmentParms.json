@@ -1,0 +1,47 @@
+{
+  "objectType": "LayoutWallAttatchmentParms",
+  "label": "Layout wall attachment parms",
+  "description": "Parameters for attaching things to the walls of a room. The element name is the ThingDef defName (the 'def' field). Note: source class name 'LayoutWallAttatchmentParms' preserves the original spelling.",
+  "fieldOrder": ["def", "stuff", "countRange", "thingsPer10EdgeCells", "spawnChancePerPosition"],
+  "fields": {
+    "def": {
+      "label": "Thing",
+      "description": "ThingDef to attach to walls. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "stuff": {
+      "label": "Stuff",
+      "description": "Material (ThingDef) used when the attached thing is stuffable.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "Fixed count range override. Uses IntRange.Invalid to derive count from thingsPer10EdgeCells instead.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "thingsPer10EdgeCells": {
+      "label": "Things per 10 edge cells",
+      "description": "Random range for how many attachments appear per 10 edge cells.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "1~1"
+    },
+    "spawnChancePerPosition": {
+      "label": "Spawn chance per position",
+      "description": "Probability that each eligible wall position receives an attachment.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    }
+  }
+}

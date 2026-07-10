@@ -1,0 +1,51 @@
+{
+  "objectType": "RitualOutcomeComp_AtLeastOneSpectator",
+  "label": "Ritual outcome comp (at least one spectator)",
+  "description": "Applies qualityOffset when at least one non-role pawn attended as a spectator for at least half the ritual.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "labelNotMet"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown when the spectator condition is met.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Quality offset applied when at least one spectator is present.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve inherited from ParticipantCount.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "labelNotMet": {
+      "label": "Label (not met)",
+      "description": "Label shown in the UI when no spectator is present.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

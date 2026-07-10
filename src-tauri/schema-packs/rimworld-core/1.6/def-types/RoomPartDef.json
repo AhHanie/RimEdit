@@ -1,0 +1,16 @@
+{
+  "defType": "RoomPartDef",
+  "label": "Room part",
+  "description": "Defines a reusable room part applied during layout content resolution. Subclasses add specific placement parameters.",
+  "inherits": ["Def"],
+  "fieldOrder": ["workerClass"],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# RoomPartWorker subclass that implements this part's content resolution behavior.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

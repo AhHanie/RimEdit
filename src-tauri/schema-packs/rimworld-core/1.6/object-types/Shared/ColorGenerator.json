@@ -1,0 +1,7 @@
+{
+  "objectType": "ColorGenerator",
+  "label": "Color generator",
+  "description": "Polymorphic color generator. Use the Class XML attribute to select a subclass (e.g. ColorGenerator_Single, ColorGenerator_HSVRange, ColorGenerator_Options, ColorGenerator_White).",
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,16 @@
+{
+  "objectType": "AudioGrain_Silence",
+  "label": "Audio grain (silence)",
+  "description": "A grain that produces silence for a random duration, used as a placeholder or delay.",
+  "inherits": ["AudioGrain"],
+  "fieldOrder": ["Class", "durationRange"],
+  "fields": {
+    "durationRange": {
+      "label": "Duration range",
+      "description": "Random range of silence duration in seconds.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

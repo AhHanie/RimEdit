@@ -1,0 +1,31 @@
+{
+  "objectType": "MemeWeight",
+  "label": "Meme weight",
+  "description": "Pairs a MemeDef with a selection weight used when randomly choosing structure memes for a faction's ideology.",
+  "fieldOrder": [
+    "meme",
+    "selectionWeight"
+  ],
+  "fields": {
+    "meme": {
+      "label": "Meme",
+      "description": "MemeDef to select.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MemeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative weight for selecting this meme.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

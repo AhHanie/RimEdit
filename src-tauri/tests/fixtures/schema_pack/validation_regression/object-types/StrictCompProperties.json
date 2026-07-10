@@ -1,0 +1,20 @@
+{
+  "objectType": "StrictCompProperties",
+  "label": "Strict comp properties",
+  "discriminator": {
+    "attribute": "Class",
+    "allowUnknown": false,
+    "allowMissing": false,
+    "variants": {
+      "KnownComp": "KnownComp"
+    }
+  },
+  "fields": {
+    "baseField": {
+      "label": "Base field",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

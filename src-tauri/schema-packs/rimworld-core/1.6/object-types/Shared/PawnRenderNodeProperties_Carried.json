@@ -1,0 +1,8 @@
+{
+  "objectType": "PawnRenderNodeProperties_Carried",
+  "label": "Render node properties (carried)",
+  "description": "Render node properties for pawns being carried. No additional fields beyond the base; constructor sets defaults.",
+  "inherits": ["PawnRenderNodeProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

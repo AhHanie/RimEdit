@@ -1,0 +1,24 @@
+{
+  "objectType": "SkillRequirement",
+  "label": "Skill requirement",
+  "description": "Minimum skill level a pawn must have to perform a recipe or construction.",
+  "fieldOrder": ["skill", "minLevel"],
+  "fields": {
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef the pawn must have.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SkillDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "minLevel": {
+      "label": "Min level",
+      "description": "Minimum skill level required (0–20).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

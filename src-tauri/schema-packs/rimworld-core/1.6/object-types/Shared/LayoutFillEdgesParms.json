@@ -1,0 +1,73 @@
+{
+  "objectType": "LayoutFillEdgesParms",
+  "label": "Layout fill edges parms",
+  "description": "Parameters for placing things along the interior edges of a room. The element name is the ThingDef defName (the 'def' field).",
+  "fieldOrder": ["def", "stuff", "padding", "contractedBy", "countRange", "groupsPerTenEdgeCells", "groupCountRange", "rotOffset"],
+  "fields": {
+    "def": {
+      "label": "Thing",
+      "description": "ThingDef to place along room edges. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "stuff": {
+      "label": "Stuff",
+      "description": "Material (ThingDef) used when the placed thing is stuffable.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "padding": {
+      "label": "Padding",
+      "description": "Gap in cells between placed edge things.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "contractedBy": {
+      "label": "Contracted by",
+      "description": "How many cells the placement area is contracted inward from the room edge.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "Fixed count range override. Uses IntRange.Invalid to derive count from groupsPerTenEdgeCells instead.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "groupsPerTenEdgeCells": {
+      "label": "Groups per ten edge cells",
+      "description": "Random range for how many placement groups appear per 10 edge cells.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "1~1"
+    },
+    "groupCountRange": {
+      "label": "Group count range",
+      "description": "Random range for how many items appear in each placement group.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "1~2"
+    },
+    "rotOffset": {
+      "label": "Rotation offset",
+      "description": "Rotation applied to placed things relative to the wall they face.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "Opposite",
+      "validationHints": {
+        "allowedValues": ["None", "Clockwise", "Opposite", "Counterclockwise"]
+      }
+    }
+  }
+}

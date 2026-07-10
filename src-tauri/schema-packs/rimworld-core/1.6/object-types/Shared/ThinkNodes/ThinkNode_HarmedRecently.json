@@ -1,0 +1,19 @@
+{
+  "objectType": "ThinkNode_HarmedRecently",
+  "label": "Think node harmed recently",
+  "description": "Conditional node whose condition passes when the pawn has taken damage within the threshold window. Extends ThinkNode_Conditional; inherits invert and base ThinkNode fields.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": [
+    "thresholdTicks"
+  ],
+  "fields": {
+    "thresholdTicks": {
+      "label": "Threshold ticks",
+      "description": "Number of game ticks after the last harm event during which the condition is satisfied.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 2500,
+      "xml": "element"
+    }
+  }
+}

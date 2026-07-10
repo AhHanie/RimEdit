@@ -1,0 +1,38 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "enabled": {
+      "label": "Enabled",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "options": {
+      "label": "Options",
+      "type": { "kind": "list" },
+      "items": { "kind": "integer" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "validationRules": {
+    "options-required-when-enabled": {
+      "kind": "requiredWhen",
+      "field": "options",
+      "when": {
+        "field": "enabled",
+        "operator": "equals",
+        "value": true
+      },
+      "message": "Options required when enabled is true."
+    }
+  }
+}

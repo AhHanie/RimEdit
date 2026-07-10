@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AncientRechargeRoom",
+  "label": "Sketch resolver: Ancient recharge room",
+  "description": "Concrete RimWorld SketchResolver_AncientRechargeRoom resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,27 @@
+{
+  "defType": "PsychicRitualDef_SummonAnimals",
+  "label": "Psychic ritual -- summon animals",
+  "description": "Ritual that summons wild animals from the biome. Some may be manhunters depending on ritual quality.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "manhunterSpawnChanceFromQualityCurve",
+    "animalsAllowed"
+  ],
+  "fields": {
+    "manhunterSpawnChanceFromQualityCurve": {
+      "label": "Manhunter spawn chance from quality curve",
+      "description": "Curve mapping ritual quality to the chance that summoned animals are manhunters.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "animalsAllowed": {
+      "label": "Animals allowed",
+      "description": "Runtime flag overwritten by InitializeCast -- not meaningful to set in XML. Tracks whether the current biome has eligible wild animals.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  }
+}

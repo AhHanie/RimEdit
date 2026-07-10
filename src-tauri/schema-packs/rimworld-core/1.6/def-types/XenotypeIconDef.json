@@ -1,0 +1,29 @@
+{
+  "defType": "XenotypeIconDef",
+  "label": "Xenotype icon",
+  "description": "Defines an icon available for custom xenotypes and xenogerms.",
+  "inherits": ["Def"],
+  "fieldOrder": ["texPath"],
+  "fields": {
+    "texPath": {
+      "label": "Texture path",
+      "description": "Content-relative path to the icon texture. The game loads this path directly and reports a config error when it is empty. Not translated - use the raw asset path.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "UI/Icons/Xenotypes/Other",
+        "UI/Icons/Xenotypes/Custom/MyXenotypeIcon"
+      ]
+    }
+  },
+  "templates": {
+    "basic-xenotype-icon": {
+      "label": "Basic xenotype icon",
+      "description": "A custom xenotype icon with a def name and texture path.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "texPath"],
+      "fieldValues": {}
+    }
+  }
+}

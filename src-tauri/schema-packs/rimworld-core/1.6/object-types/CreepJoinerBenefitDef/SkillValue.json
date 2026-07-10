@@ -1,0 +1,31 @@
+{
+  "objectType": "SkillValue",
+  "label": "Skill value",
+  "description": "A skill and range pair used in CreepJoinerBenefitDef.skills. Loaded via SkillValue.LoadDataFromXmlCustom: the keyed child element name provides the SkillDef defName (skill field); the element text provides the IntRange (range field). Omitted text resolves to IntRange.Zero (0~0).",
+  "fieldOrder": [
+    "skill",
+    "range"
+  ],
+  "fields": {
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef whose level range is set by this entry.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "range": {
+      "label": "Range",
+      "description": "IntRange for the skill level, e.g. 14~18. Omitted text in the XML resolves to IntRange.Zero (0~0).",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "objectType": "QuestNode_GetSiteTile",
+  "label": "QuestNode GetSiteTile",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_GetSiteTile.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "storeAs",
+    "preferCloserTiles",
+    "allowCaravans",
+    "canSelectSpace",
+    "clampRangeBySiteParts",
+    "sitePartDefs",
+    "allowedLandmarks",
+    "selectLandmarkChance",
+    "canSelectComboLandmarks"
+  ],
+  "fields": {
+    "storeAs": {
+      "description": "SlateRef<string> variable name to store the selected tile.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "preferCloserTiles": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowCaravans": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "canSelectSpace": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "clampRangeBySiteParts": {
+      "description": "SlateRef<bool?> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "sitePartDefs": {
+      "description": "SlateRef<IEnumerable<SitePartDef>> site part defs variable or expression.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowedLandmarks": {
+      "description": "SlateRef<List<LandmarkDef>> LandmarkDef names; li elements may carry generic MayRequire attributes.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "selectLandmarkChance": {
+      "description": "SlateRef<float?> landmark selection chance, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "canSelectComboLandmarks": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "objectType": "SoundParamTarget_PropertyLowPass",
+  "label": "Sound param target: low-pass filter property",
+  "description": "Applies the mapped parameter value to a property of the low-pass audio filter.",
+  "inherits": ["SoundParamTarget"],
+  "fieldOrder": ["Class", "filterProperty"],
+  "fields": {
+    "filterProperty": {
+      "label": "Filter property",
+      "description": "Which low-pass filter property to modulate.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Cutoff", "Resonance"]
+      }
+    }
+  }
+}

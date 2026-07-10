@@ -1,0 +1,26 @@
+{
+  "defType": "IdeoSymbolPartDef",
+  "label": "Ideo symbol part",
+  "description": "Abstract base for ideology symbol defs. Provides meme and culture filter lists that control which ideologies can use the symbol.",
+  "abstractType": true,
+  "inherits": ["Def"],
+  "fieldOrder": ["memes", "cultures"],
+  "fields": {
+    "memes": {
+      "label": "Memes",
+      "description": "MemeDefs that permit this symbol. When set, the symbol is only available to ideologies that contain at least one of the listed memes.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "cultures": {
+      "label": "Cultures",
+      "description": "CultureDefs that permit this symbol. When set, the symbol is only available to ideologies whose culture matches one of the listed cultures.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "CultureDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "defType": "MentalFitDef",
+  "label": "Mental fit",
+  "description": "Defines a mental fit that baby or child pawns can experience, specifying the triggered mental state and the mood-based probability curve.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "mentalState",
+    "mtbDaysMoodCurve",
+    "developmentalStageFilter"
+  ],
+  "fields": {
+    "mentalState": {
+      "label": "Mental state",
+      "description": "MentalStateDef that is triggered when this mental fit fires.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": {
+        "defType": "MentalStateDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "mtbDaysMoodCurve": {
+      "label": "MTB days mood curve",
+      "description": "Piecewise linear curve mapping mood percentage (0.0 to 1.0) to mean time between fits in in-game days. The fit engine evaluates this curve at the pawn's current mood each tick.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": true,
+      "xml": "object"
+    },
+    "developmentalStageFilter": {
+      "label": "Developmental stage filter",
+      "description": "DevelopmentalStage flags (space-separated) restricting which life stages can have this mental fit. Defaults to Child and Adult.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "Child Adult",
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["Newborn", "Baby", "Child", "Adult"]
+      },
+      "examples": ["Baby", "Child Adult", "Newborn Baby Child Adult"]
+    }
+  },
+  "templates": {
+    "new-mental-fit": {
+      "label": "New mental fit",
+      "description": "Minimal mental fit with a state reference and the default developmental stage filter.",
+      "includeRequiredFields": true,
+      "promptFields": ["mentalState"],
+      "fieldValues": {
+        "developmentalStageFilter": "Child Adult"
+      }
+    }
+  }
+}

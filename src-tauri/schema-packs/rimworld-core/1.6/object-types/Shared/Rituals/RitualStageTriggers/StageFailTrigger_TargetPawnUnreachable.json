@@ -1,0 +1,32 @@
+{
+  "objectType": "StageFailTrigger_TargetPawnUnreachable",
+  "label": "Stage fail trigger (target pawn unreachable)",
+  "description": "Fails the stage when the taker pawn cannot reach the takee pawn.",
+  "fieldOrder": ["Class", "desc", "allowanceTicks", "takerId", "takeeId"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "desc": { "label": "Description", "type": { "kind": "localizedString" }, "required": false, "xml": "element" },
+    "allowanceTicks": {
+      "label": "Allowance ticks",
+      "description": "Number of ticks the condition is allowed to persist before the stage fails.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "takerId": {
+      "label": "Taker ID",
+      "description": "Role ID of the pawn doing the taking/moving.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "takeeId": {
+      "label": "Takee ID",
+      "description": "Role ID of the pawn that must be reachable.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

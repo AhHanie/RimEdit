@@ -1,0 +1,30 @@
+{
+  "objectType": "LifeStageWorkSettings",
+  "label": "Life stage work settings",
+  "description": "Minimum biological age at which a pawn may perform a work type. Loaded via LoadDataFromXmlCustom: the XML element name is the WorkTypeDef defName and the text content is the minimum age in years.",
+  "fieldOrder": [
+    "workType",
+    "minAge"
+  ],
+  "fields": {
+    "workType": {
+      "label": "Work type",
+      "description": "WorkTypeDef that these age restrictions apply to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "WorkTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minAge": {
+      "label": "Min age",
+      "description": "Minimum biological age in years at which the pawn may perform this work type.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

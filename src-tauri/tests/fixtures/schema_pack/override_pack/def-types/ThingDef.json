@@ -1,0 +1,14 @@
+{
+  "defType": "ThingDef",
+  "label": "Thing (overridden)",
+  "description": "Overridden description from override pack.",
+  "fieldOrder": ["defName"],
+  "fields": {
+    "defName": {
+      "label": "Def name (overridden)",
+      "type": { "kind": "string" },
+      "required": true,
+      "examples": ["Steel", "ExtraExample"]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationSequence">
+    <success>Always</success>
+    <operations>
+      <li Class="PatchOperationTest">
+        <xpath>Defs/ThingDef[defName="Wall"]</xpath>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="Wall"]/statBases</xpath>
+        <value>
+          <MoveSpeed>1</MoveSpeed>
+        </value>
+      </li>
+    </operations>
+  </Operation>
+</Patch>

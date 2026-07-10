@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_PlanetLayerFixed",
+  "label": "Planet layer (fixed)",
+  "description": "Fixed planet layer that cannot be removed or reordered. Used for the mandatory surface layer in the scenario.",
+  "inherits": ["ScenPart_PlanetLayer"]
+}

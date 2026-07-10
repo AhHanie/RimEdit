@@ -1,0 +1,48 @@
+{
+  "objectType": "QuestNode_Clamp",
+  "label": "QuestNode Clamp",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_Clamp.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "value",
+    "storeAs",
+    "min",
+    "max"
+  ],
+  "fields": {
+    "value": {
+      "description": "SlateRef<double> numeric value to clamp; accepts literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "storeAs": {
+      "description": "SlateRef<string> variable name for the clamped result.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "min": {
+      "description": "SlateRef<double?> optional numeric minimum; accepts literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "max": {
+      "description": "SlateRef<double?> optional numeric maximum; accepts literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

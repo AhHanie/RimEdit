@@ -1,0 +1,107 @@
+{
+  "defType": "ConceptDef",
+  "label": "Concept",
+  "description": "Defines a tutorial, learning readout, or modal help concept taught to the player.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "priority",
+    "noteTeaches",
+    "needsOpportunity",
+    "opportunityDecays",
+    "gameMode",
+    "helpText",
+    "helpTextController",
+    "highlightTags"
+  ],
+  "fields": {
+    "priority": {
+      "label": "Priority",
+      "description": "Sort priority used by LessonAutoActivator to select which concept to teach next. Lower values are higher priority. Negative or zero means the concept is triggered directly and never auto-activated. The source default is float.MaxValue; the game logs a config error when the value exceeds 9999999.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "examples": ["-1000", "50", "500"]
+    },
+    "noteTeaches": {
+      "label": "Note teaches",
+      "description": "Whether completing a reading note triggers this concept as learned. Used by Lesson_Note. Not present in shipped XML but supported for mods.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "needsOpportunity": {
+      "label": "Needs opportunity",
+      "description": "If true, the auto-activator waits for an opportunity signal before teaching this concept. Concepts that inherit from NotedOpportunisticBase set this to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "opportunityDecays": {
+      "label": "Opportunity decays",
+      "description": "If true, the opportunity signal is consumed after activation so the concept is not re-triggered. Set to false for concepts that should remain available until explicitly dismissed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "gameMode": {
+      "label": "Game mode",
+      "description": "ProgramState in which this concept can be auto-activated. Entry is the main menu state; Playing is normal gameplay. Defaults to Playing.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Playing",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Entry", "MapInitializing", "Playing"] }
+    },
+    "helpText": {
+      "label": "Help text",
+      "description": "Localized body text shown to the player when this concept is taught. Supports input binding tokens such as {Key:TogglePause} and positional format placeholders such as {0}.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Press {Key:TogglePause} to pause.",
+        "Click a colonist to select them, then right-click to give orders."
+      ]
+    },
+    "helpTextController": {
+      "label": "Help text (controller)",
+      "description": "Optional controller- or Steam Deck-specific alternative to helpText, shown when the player is using a gamepad.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "highlightTags": {
+      "label": "Highlight tags",
+      "description": "UI element highlight tag strings pulsed while this concept's lesson is active. These are plain string identifiers, not def references.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": ["MainTab-Architect", "DesignatorDrill"]
+    }
+  },
+  "templates": {
+    "noted-opportunistic": {
+      "label": "Noted opportunistic concept",
+      "description": "Concept that fires when the player encounters the relevant situation, inheriting from NotedOpportunisticBase.",
+      "includeRequiredFields": true,
+      "promptFields": ["priority", "helpText"],
+      "fieldValues": {
+        "needsOpportunity": "true",
+        "opportunityDecays": "true"
+      }
+    },
+    "modal-concept": {
+      "label": "Modal concept",
+      "description": "Directly triggered modal help concept with a negative priority so it is never auto-activated.",
+      "includeRequiredFields": true,
+      "promptFields": ["helpText"],
+      "fieldValues": {
+        "priority": "-1000"
+      }
+    }
+  }
+}

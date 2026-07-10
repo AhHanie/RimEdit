@@ -1,0 +1,55 @@
+{
+  "objectType": "QuestNode_AnySignal",
+  "label": "QuestNode AnySignal",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_AnySignal.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignals",
+    "outSignals",
+    "node",
+    "signalListenMode"
+  ],
+  "fields": {
+    "inSignals": {
+      "description": "Any input signal name may fire.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "outSignals": {
+      "description": "Signals emitted after this listener fires.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "node": {
+      "description": "QuestNode run when the signal condition fires.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "signalListenMode": {
+      "description": "SlateRef<SignalListenMode?>. Allowed SignalListenMode literals: OngoingOnly, NotYetAcceptedOnly, OngoingOrNotYetAccepted, HistoricalOnly, Always; also accepts $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

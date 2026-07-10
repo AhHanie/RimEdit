@@ -1,0 +1,49 @@
+{
+  "objectType": "PreceptComp_UnwillingToDo",
+  "label": "Precept comp (unwilling to do)",
+  "description": "Makes a pawn unwilling to perform a specific action based on a history event.",
+  "fieldOrder": [
+    "Class", "description",
+    "eventDef", "nullifyingTraits", "nullifyingHediffs"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "eventDef": {
+      "label": "Event def",
+      "description": "The history event that the pawn is unwilling to perform.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HistoryEventDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "nullifyingTraits": {
+      "label": "Nullifying traits",
+      "description": "Traits that override the unwillingness for this pawn.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "nullifyingHediffs": {
+      "label": "Nullifying hediffs",
+      "description": "Hediffs that override the unwillingness for this pawn.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

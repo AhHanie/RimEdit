@@ -1,0 +1,36 @@
+{
+  "defType": "SketchResolverDef",
+  "label": "Sketch resolver",
+  "description": "Defines a sketch generation resolver used to build map-generation sketches.",
+  "inherits": ["Def"],
+  "fieldOrder": ["resolver", "isRoot"],
+  "fields": {
+    "resolver": {
+      "label": "Resolver",
+      "description": "SketchResolver object that performs the generation work. The Class attribute selects the concrete C# resolver class.",
+      "type": { "kind": "object", "schemaRef": "SketchResolver" },
+      "required": true,
+      "xml": "object"
+    },
+    "isRoot": {
+      "label": "Is root",
+      "description": "Whether this resolver can be used as a top-level sketch generation root.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic": {
+      "label": "Basic sketch resolver",
+      "description": "Creates a SketchResolverDef with a resolver class and optional root flag.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "isRoot"],
+      "fieldValues": {
+        "resolver": { "Class": "SketchResolver_Monument" },
+        "isRoot": false
+      }
+    }
+  }
+}

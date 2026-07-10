@@ -1,0 +1,72 @@
+{
+  "objectType": "LayoutFillInteriorParms",
+  "label": "Layout fill interior parms",
+  "description": "Parameters for filling the interior of a room with things. The element name is the ThingDef defName (the 'def' field).",
+  "fieldOrder": ["def", "stuff", "fixedRot", "alignWithRect", "contractedBy", "snapToGrid", "countRange", "thingsPerHundredCells"],
+  "fields": {
+    "def": {
+      "label": "Thing",
+      "description": "ThingDef to place in the room interior. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "stuff": {
+      "label": "Stuff",
+      "description": "Material (ThingDef) used when the placed thing is stuffable.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "fixedRot": {
+      "label": "Fixed rotation",
+      "description": "Forces placed things to a specific rotation. Omit to use random or default rotation.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["North", "East", "South", "West"]
+      }
+    },
+    "alignWithRect": {
+      "label": "Align with rect",
+      "description": "When true, things are aligned to the room rectangle rather than placed freely.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "contractedBy": {
+      "label": "Contracted by",
+      "description": "How many cells the placement area is contracted inward from the room edge.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 2
+    },
+    "snapToGrid": {
+      "label": "Snap to grid",
+      "description": "When true, placement positions are snapped to a grid.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "Fixed count range override. Uses IntRange.Invalid to derive count from thingsPerHundredCells instead.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "thingsPerHundredCells": {
+      "label": "Things per hundred cells",
+      "description": "Random range for how many things are placed per 100 room cells.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "2~3"
+    }
+  }
+}

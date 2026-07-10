@@ -1,0 +1,58 @@
+{
+  "objectType": "RitualOutcomeComp_LovedOnePresent",
+  "label": "Ritual outcome comp (loved one present)",
+  "description": "Applies qualityOffset when a pawn with opinion >= 20 of the specified role pawn is participating.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "labelNotMet", "lovedOneOfRole"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown when the loved one is present.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Quality offset applied when a loved one is present.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve; not typically used by this variant.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "labelNotMet": {
+      "label": "Label (not met)",
+      "description": "Label displayed when no loved one is present.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "lovedOneOfRole": {
+      "label": "Loved one of role",
+      "description": "Ritual role ID of the pawn whose loved ones are checked among participants.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

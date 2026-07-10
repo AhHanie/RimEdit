@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_ResourcePod",
+  "label": "Resource pod maker",
+  "description": "Generates resource pod contents using the built-in resource pod loot table.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

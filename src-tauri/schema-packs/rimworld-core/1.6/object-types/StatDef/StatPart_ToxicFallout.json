@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_ToxicFallout",
+  "label": "Stat part (toxic fallout)",
+  "description": "Scales the stat by a multiplier during active toxic fallout.",
+  "fieldOrder": ["Class", "priority", "multiplier"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "multiplier": {
+      "label": "Multiplier",
+      "description": "Stat multiplier applied when toxic fallout is active on the map.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

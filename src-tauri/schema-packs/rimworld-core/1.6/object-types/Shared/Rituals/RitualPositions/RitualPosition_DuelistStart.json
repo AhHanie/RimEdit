@@ -1,0 +1,26 @@
+{
+  "objectType": "RitualPosition_DuelistStart",
+  "label": "Ritual position (duelist start)",
+  "description": "Places the pawn at one of the two duelist starting positions offset from the ritual target.",
+  "fieldOrder": ["Class", "highlight", "distFromTarget", "duelistIndex"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "distFromTarget": {
+      "label": "Distance from target",
+      "description": "Cell distance from the ritual target at which to place the duelist.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "duelistIndex": {
+      "label": "Duelist index",
+      "description": "0 or 1 -- selects which of the two duelist start positions to use.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

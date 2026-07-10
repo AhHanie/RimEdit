@@ -1,0 +1,23 @@
+{
+  "objectType": "RitualStageAction_ClearTag",
+  "label": "Ritual stage action (clear tag)",
+  "description": "Removes a pawn tag from the assigned pawn of a role when the stage action fires.",
+  "fieldOrder": ["Class", "roleId", "tag"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "roleId": {
+      "label": "Role ID",
+      "description": "ID of the role whose assigned pawn will have the tag removed.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "tag": {
+      "label": "Tag",
+      "description": "Pawn tag to remove.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

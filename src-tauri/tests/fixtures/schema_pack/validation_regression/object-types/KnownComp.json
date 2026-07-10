@@ -1,0 +1,13 @@
+{
+  "objectType": "KnownComp",
+  "label": "Known comp",
+  "inherits": ["StrictCompProperties"],
+  "fields": {
+    "extraField": {
+      "label": "Extra field",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

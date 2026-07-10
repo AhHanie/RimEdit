@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_MechhiveGuardOutpost",
+  "label": "Sketch resolver: Mechhive guard outpost",
+  "description": "Concrete RimWorld SketchResolver_MechhiveGuardOutpost resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

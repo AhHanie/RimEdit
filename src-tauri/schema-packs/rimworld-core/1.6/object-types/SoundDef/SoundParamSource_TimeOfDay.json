@@ -1,0 +1,8 @@
+{
+  "objectType": "SoundParamSource_TimeOfDay",
+  "label": "Sound param source: time of day",
+  "description": "Reads the current in-game hour (0–24) as the parameter value.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class"],
+  "fields": {}
+}

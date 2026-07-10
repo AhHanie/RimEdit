@@ -1,0 +1,153 @@
+{
+  "defType": "RitualBehaviorDef",
+  "label": "Ritual behavior",
+  "description": "Defines the roles, stages, duration, and spectator settings for a ritual. Referenced by RitualPatternDef via ritualBehavior.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass", "roles", "stages", "durationTicks", "preceptRequirements",
+    "cancellationTriggers", "displayCompletedMessage", "useVisualEffectsFromRoleIdIdeo",
+    "displayOrder", "letterTitle", "letterText", "spectatorsLabel", "spectatorGerund",
+    "spectatorsIgnoreBleeding", "soundDefsPerEnhancerCount", "maxEnhancerDistance",
+    "spectatorFilter"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class that implements ritual behavior logic. Must extend RitualBehaviorWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "roles": {
+      "label": "Roles",
+      "description": "List of pawn roles required or optional for this ritual. Each li selects a role class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualRole" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "stages": {
+      "label": "Stages",
+      "description": "Ordered list of ritual stages. Each li selects a stage class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualStage" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "durationTicks": {
+      "label": "Duration ticks",
+      "description": "IntRange controlling the minimum and maximum duration of the ritual in ticks. Defaults to 7500~7500.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "7500~7500",
+      "xml": "element"
+    },
+    "preceptRequirements": {
+      "label": "Precept requirements",
+      "description": "List of precept requirements that must be met for this ritual to start. Each li selects a class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PreceptRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "cancellationTriggers": {
+      "label": "Cancellation triggers",
+      "description": "List of triggers that cancel the ritual if activated. Each li selects a class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualCancellationTrigger" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "displayCompletedMessage": {
+      "label": "Display completed message",
+      "description": "If true, a completion letter is sent when this ritual finishes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "useVisualEffectsFromRoleIdIdeo": {
+      "label": "Use visual effects from role ID ideo",
+      "description": "Role ID whose pawn's ideology visual effects are used for this ritual.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "displayOrder": {
+      "label": "Display order",
+      "description": "Sort order for this ritual behavior in UI lists.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "letterTitle": {
+      "label": "Letter title",
+      "description": "Title of the completion letter sent when this ritual finishes.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterText": {
+      "label": "Letter text",
+      "description": "Body text of the completion letter sent when this ritual finishes.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "spectatorsLabel": {
+      "label": "Spectators label",
+      "description": "Label for the spectator role shown in the ritual UI. Must be set together with spectatorGerund.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "spectatorGerund": {
+      "label": "Spectator gerund",
+      "description": "Gerund form of the spectator action shown in duty status. Must be set together with spectatorsLabel.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "spectatorsIgnoreBleeding": {
+      "label": "Spectators ignore bleeding",
+      "description": "If true, bleeding spectators do not interrupt or fail the ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "soundDefsPerEnhancerCount": {
+      "label": "Sound defs per enhancer count",
+      "description": "List of SoundDefs indexed by the number of active enhancer buildings. Index 0 = 0 enhancers.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "maxEnhancerDistance": {
+      "label": "Max enhancer distance",
+      "description": "Maximum distance from the ritual spot at which enhancer buildings are counted.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "spectatorFilter": {
+      "label": "Spectator filter",
+      "description": "Singleton filter object controlling which pawns may spectate this ritual. Class attribute selects the subclass.",
+      "type": { "kind": "object", "schemaRef": "RitualSpectatorFilter" },
+      "required": false,
+      "xml": "object"
+    }
+  },
+  "templates": {
+    "new-ritual-behavior": {
+      "label": "New ritual behavior",
+      "description": "Minimal ritual behavior with roles and stages.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

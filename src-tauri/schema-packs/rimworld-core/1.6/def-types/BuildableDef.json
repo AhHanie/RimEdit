@@ -1,0 +1,720 @@
+{
+  "defType": "BuildableDef",
+  "label": "Buildable Def",
+  "description": "Intermediate abstract type for defs that can be placed or built. Inherits from Def.",
+  "abstractType": true,
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "statBases",
+    "passability",
+    "pathCost",
+    "pathCostIgnoreRepeat",
+    "fertility",
+    "costList",
+    "costStuffCount",
+    "stuffCategories",
+    "stuffCategorySummary",
+    "costListForDifficulty",
+    "drawStyleCategory",
+    "clearBuildingArea",
+    "defaultPlacingRot",
+    "resourcesFractionWhenDeconstructed",
+    "blocksAltitudes",
+    "dominantStyleCategory",
+    "forcePassableByFlyingPawns",
+    "forceMoveItemsBeforeConstruction",
+    "isAltar",
+    "useStuffTerrainAffordance",
+    "terrainAffordanceNeeded",
+    "buildingPrerequisites",
+    "discoveryPrerequisites",
+    "researchPrerequisites",
+    "minMonolithLevel",
+    "constructionSkillPrerequisite",
+    "artisticSkillPrerequisite",
+    "minTechLevelToBuild",
+    "maxTechLevelToBuild",
+    "requireInspectedGravEngine",
+    "altitudeLayer",
+    "repairEffect",
+    "constructEffect",
+    "colorPerStuff",
+    "canGenerateDefaultDesignator",
+    "ideoBuilding",
+    "specialDisplayRadius",
+    "placeWorkers",
+    "designationCategory",
+    "designatorDropdown",
+    "designationHotKey",
+    "uiOrder",
+    "uiIconPath",
+    "uiIconPathsStuff",
+    "uiIconOffset",
+    "uiIconColor",
+    "uiIconColorTwo",
+    "uiIconForStackCount"
+  ],
+  "fields": {
+    "statBases": {
+      "label": "Stat bases",
+      "description": "Map of stat names to their base values. Child element names are stat defNames.",
+      "type": {
+        "kind": "statMap"
+      },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "examples": [
+        "<MarketValue>100</MarketValue>",
+        "<MaxHitPoints>200</MaxHitPoints>"
+      ]
+    },
+    "passability": {
+      "label": "Passability",
+      "description": "Controls whether pawns and projectiles can pass through the thing.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "Standable",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Standable", "PassThroughOnly", "Impassable"]
+      },
+      "examples": [
+        "Impassable",
+        "PassThroughOnly",
+        "Standable"
+      ]
+    },
+    "pathCost": {
+      "label": "Path cost",
+      "description": "Additional movement cost applied when a pawn walks through the thing's cell.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "pathCostIgnoreRepeat": {
+      "label": "Path cost ignore repeat",
+      "description": "If true, the path cost is not applied when a pawn passes through the same type of thing repeatedly in one path.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "fertility": {
+      "label": "Fertility",
+      "description": "Fertility modifier applied to the terrain beneath this thing. -1 means no override.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "costList": {
+      "label": "Cost list",
+      "description": "Materials consumed when constructing this thing. Each child element is a ThingDef defName with a count.",
+      "type": {
+        "kind": "object"
+      },
+      "required": false,
+      "xml": "namedChildrenMap"
+    },
+    "costStuffCount": {
+      "label": "Cost stuff count",
+      "description": "Amount of the chosen stuff material required to build this thing.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "stuffCategories": {
+      "label": "Stuff categories",
+      "description": "StuffCategoryDef references listing which stuff materials this thing can be built from.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "StuffCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "stuffCategorySummary": {
+      "label": "Stuff category summary",
+      "description": "Optional override text summarizing the allowed stuff categories shown in the UI.",
+      "type": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "costListForDifficulty": {
+      "label": "Cost list for difficulty",
+      "description": "Conditional cost list applied based on a difficulty variable at construction time.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "CostListForDifficulty"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "drawStyleCategory": {
+      "label": "Draw style category",
+      "description": "DrawStyleCategoryDef that controls which visual style variants are available for this thing.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "DrawStyleCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "clearBuildingArea": {
+      "label": "Clear building area",
+      "description": "Whether the construction blueprint clears items from the footprint before building starts.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "defaultPlacingRot": {
+      "label": "Default placing rotation",
+      "description": "Initial rotation shown when the player selects this thing for placement.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "North",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["North", "East", "South", "West"]
+      },
+      "examples": [
+        "North",
+        "East",
+        "South",
+        "West"
+      ]
+    },
+    "resourcesFractionWhenDeconstructed": {
+      "label": "Resources fraction when deconstructed",
+      "description": "Fraction of construction materials returned when this thing is deconstructed.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "blocksAltitudes": {
+      "label": "Blocks altitudes",
+      "description": "Altitude layers that this thing blocks for other things trying to occupy the same cell.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "enum"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": [
+          "BelowTerrain",
+          "TerrainEdges",
+          "Terrain",
+          "TerrainScatter",
+          "Floor",
+          "Conduits",
+          "FloorCoverings",
+          "FloorEmplacement",
+          "Filth",
+          "Zone",
+          "SmallWire",
+          "LowPlant",
+          "MoteLow",
+          "Shadows",
+          "DoorMoveable",
+          "Building",
+          "BuildingBelowTop",
+          "BuildingOnTop",
+          "Item",
+          "ItemImportant",
+          "LayingPawn",
+          "PawnRope",
+          "Projectile",
+          "Pawn",
+          "PawnUnused",
+          "PawnState",
+          "Blueprint",
+          "MoteOverheadLow",
+          "MoteOverhead",
+          "Gas",
+          "Skyfaller",
+          "Weather",
+          "LightingOverlay",
+          "VisEffects",
+          "FogOfWar",
+          "Darkness",
+          "WorldClipper",
+          "Silhouettes",
+          "MapDataOverlay",
+          "MetaOverlays"
+        ]
+      }
+    },
+    "dominantStyleCategory": {
+      "label": "Dominant style category",
+      "description": "StyleCategoryDef that this building belongs to for style-related quests and requirements.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StyleCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "forcePassableByFlyingPawns": {
+      "label": "Force passable by flying pawns",
+      "description": "If true, flying pawns can always pass through this thing regardless of its passability.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forceMoveItemsBeforeConstruction": {
+      "label": "Force move items before construction",
+      "description": "If true, any items in the footprint must be moved before construction can begin.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isAltar": {
+      "label": "Is altar",
+      "description": "If true, this building is treated as an altar for ritual and ideoligion purposes.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useStuffTerrainAffordance": {
+      "label": "Use stuff terrain affordance",
+      "description": "If true, the terrain affordance requirement is determined by the chosen stuff material.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "terrainAffordanceNeeded": {
+      "label": "Terrain affordance needed",
+      "description": "TerrainAffordanceDef that the underlying terrain must provide for this thing to be placed.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TerrainAffordanceDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "buildingPrerequisites": {
+      "label": "Building prerequisites",
+      "description": "ThingDef references for buildings that must exist on the map before this thing can be constructed.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "discoveryPrerequisites": {
+      "label": "Discovery prerequisites",
+      "description": "ThingDef references that must have been discovered before this thing can be built.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "researchPrerequisites": {
+      "label": "Research prerequisites",
+      "description": "ResearchProjectDef references that must be completed before this thing can be built.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ResearchProjectDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minMonolithLevel": {
+      "label": "Min monolith level",
+      "description": "Minimum monolith activation level required before this thing can be built.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "constructionSkillPrerequisite": {
+      "label": "Construction skill prerequisite",
+      "description": "Minimum Construction skill level a pawn needs to build this thing.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "artisticSkillPrerequisite": {
+      "label": "Artistic skill prerequisite",
+      "description": "Minimum Artistic skill level a pawn needs to build this thing.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minTechLevelToBuild": {
+      "label": "Min tech level to build",
+      "description": "Minimum faction tech level required to construct this thing.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "Undefined",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Animal", "Neolithic", "Medieval", "Industrial", "Spacer", "Ultra", "Archotech"]
+      }
+    },
+    "maxTechLevelToBuild": {
+      "label": "Max tech level to build",
+      "description": "Maximum faction tech level that is permitted to construct this thing.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "Undefined",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Animal", "Neolithic", "Medieval", "Industrial", "Spacer", "Ultra", "Archotech"]
+      }
+    },
+    "requireInspectedGravEngine": {
+      "label": "Require inspected grav engine",
+      "description": "If true, a gravity engine must have been inspected before this thing can be constructed.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "altitudeLayer": {
+      "label": "Altitude layer",
+      "description": "Rendering layer that controls draw order relative to other things.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "defaultValue": "Item",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "BelowTerrain",
+          "TerrainEdges",
+          "Terrain",
+          "TerrainScatter",
+          "Floor",
+          "Conduits",
+          "FloorCoverings",
+          "FloorEmplacement",
+          "Filth",
+          "Zone",
+          "SmallWire",
+          "LowPlant",
+          "MoteLow",
+          "Shadows",
+          "DoorMoveable",
+          "Building",
+          "BuildingBelowTop",
+          "BuildingOnTop",
+          "Item",
+          "ItemImportant",
+          "LayingPawn",
+          "PawnRope",
+          "Projectile",
+          "Pawn",
+          "PawnUnused",
+          "PawnState",
+          "Blueprint",
+          "MoteOverheadLow",
+          "MoteOverhead",
+          "Gas",
+          "Skyfaller",
+          "Weather",
+          "LightingOverlay",
+          "VisEffects",
+          "FogOfWar",
+          "Darkness",
+          "WorldClipper",
+          "Silhouettes",
+          "MapDataOverlay",
+          "MetaOverlays"
+        ]
+      },
+      "examples": [
+        "FloorEmplacement",
+        "Floor",
+        "Building",
+        "BuildingBelowTop",
+        "Item",
+        "Pawn",
+        "Gas"
+      ]
+    },
+    "repairEffect": {
+      "label": "Repair effect",
+      "description": "EffecterDef played at this thing's location while it is being repaired.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "EffecterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "constructEffect": {
+      "label": "Construct effect",
+      "description": "EffecterDef played at this thing's location while it is being constructed.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "EffecterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "colorPerStuff": {
+      "label": "Color per stuff",
+      "description": "Overrides the tint color of this thing when built from a specific stuff material.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "object",
+        "schemaRef": "ColorForStuff"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "canGenerateDefaultDesignator": {
+      "label": "Can generate default designator",
+      "description": "If false, the game will not auto-generate a build designator for this thing in the Architect menu.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ideoBuilding": {
+      "label": "Ideo building",
+      "description": "If true, this building is an ideoligion building that can be assigned as a style-required structure.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "specialDisplayRadius": {
+      "label": "Special display radius",
+      "description": "Radius of the effect circle drawn around this thing when it is selected or hovered.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "placeWorkers": {
+      "label": "Place workers",
+      "description": "List of C# class names (PlaceWorker subclasses) that run placement validation logic.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "typeName"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "designationCategory": {
+      "label": "Designation category",
+      "description": "DesignationCategoryDef that controls which build menu tab this thing appears in.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "DesignationCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "designatorDropdown": {
+      "label": "Designator dropdown",
+      "description": "DesignatorDropdownGroupDef that groups this thing with others in a collapsed dropdown in the build menu.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "DesignatorDropdownGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "designationHotKey": {
+      "label": "Designation hot key",
+      "description": "KeyBindingDef reference for the keyboard shortcut that activates the build designation for this thing.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "KeyBindingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "uiOrder": {
+      "label": "UI order",
+      "description": "Floating-point sort key controlling the position of this thing within its designation category.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 2999,
+      "xml": "element"
+    },
+    "uiIconPath": {
+      "label": "UI icon path",
+      "description": "Texture path for the icon shown in the build menu for this thing. Defaults to the main graphic texture.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "uiIconPathsStuff": {
+      "label": "UI icon paths stuff",
+      "description": "Per-stuff-appearance icon overrides shown in the build menu.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "object",
+        "schemaRef": "IconForStuffAppearance"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "uiIconOffset": {
+      "label": "UI icon offset",
+      "description": "Pixel offset applied to the build menu icon.",
+      "type": {
+        "kind": "vector2"
+      },
+      "required": false,
+      "defaultValue": "(0, 0)",
+      "xml": "element"
+    },
+    "uiIconColor": {
+      "label": "UI icon color",
+      "description": "Tint color applied to the build menu icon.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "defaultValue": "white",
+      "xml": "element"
+    },
+    "uiIconColorTwo": {
+      "label": "UI icon color two",
+      "description": "Second tint color applied to the build menu icon mask.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "defaultValue": "white",
+      "xml": "element"
+    },
+    "uiIconForStackCount": {
+      "label": "UI icon for stack count",
+      "description": "Stack count at which the alternate stack-count icon is shown. -1 disables the feature.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    }
+  }
+}

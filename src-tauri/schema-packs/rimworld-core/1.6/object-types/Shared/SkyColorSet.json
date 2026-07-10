@@ -1,0 +1,40 @@
+{
+  "objectType": "SkyColorSet",
+  "label": "Sky color set",
+  "description": "A set of sky colors for one time-of-day or weather phase: sky tint, shadow tint, overlay tint, and a saturation multiplier.",
+  "fieldOrder": ["sky", "shadow", "overlay", "saturation"],
+  "fields": {
+    "sky": {
+      "label": "Sky",
+      "description": "Sky tint color as a Unity RGBA tuple.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1,1,1)", "(0.8,0.8,0.8)", "(0.6,0.6,0.6)"]
+    },
+    "shadow": {
+      "label": "Shadow",
+      "description": "Shadow tint color applied to shaded map cells.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1,1,1)", "(0.92,0.92,0.92)", "(0.6,0.6,0.6)"]
+    },
+    "overlay": {
+      "label": "Overlay",
+      "description": "Screen overlay tint color blended on top of the map.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1,1,1)", "(0.7,0.7,0.7)", "(0.6,0.6,0.6)"]
+    },
+    "saturation": {
+      "label": "Saturation",
+      "description": "Color saturation multiplier for the map. Source config errors warn when this is zero.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.9", "1.0", "0.6"]
+    }
+  }
+}

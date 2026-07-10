@@ -1,0 +1,26 @@
+{
+  "objectType": "JobGiver_WanderNearBreacher",
+  "label": "Job giver wander near breacher",
+  "description": "Directs the pawn to wander near the breaching pawn. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "wanderRadius",
+    "expiryInterval"
+  ],
+  "fields": {
+    "wanderRadius": {
+      "label": "Wander radius",
+      "description": "Radius in cells within which the pawn wanders around the breacher.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "expiryInterval": {
+      "label": "Expiry interval",
+      "description": "Number of ticks before the wander job expires and the pawn re-evaluates.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "objectType": "ScenPart_PlanetLayer",
+  "label": "Planet layer",
+  "description": "Defines a planet layer in the scenario. Specifies which layer is active, its display settings, and connections to adjacent layers.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "layer", "settingsDef", "hide", "tag", "connections"],
+  "fields": {
+    "layer": {
+      "label": "Layer",
+      "description": "PlanetLayerDef defining which planetary layer this scenario part represents.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PlanetLayerDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "settingsDef": {
+      "label": "Settings def",
+      "description": "PlanetLayerSettingsDef providing display and behaviour settings for this layer.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PlanetLayerSettingsDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "hide": {
+      "label": "Hide",
+      "description": "When true, this layer is hidden from the scenario editor and player view. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "tag": {
+      "label": "Tag",
+      "description": "Unique string tag identifying this layer instance within the scenario, used as a connection target by other layers.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Surface", "Orbit"]
+    },
+    "connections": {
+      "label": "Connections",
+      "description": "Map of connections to other planet layers. Each child element name is the target layer tag; nested elements are LayerConnection fields.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayerConnection" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "tag"
+    }
+  }
+}

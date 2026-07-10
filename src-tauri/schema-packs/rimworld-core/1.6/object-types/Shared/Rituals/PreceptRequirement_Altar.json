@@ -1,0 +1,9 @@
+{
+  "objectType": "PreceptRequirement_Altar",
+  "label": "Precept requirement (altar)",
+  "description": "Requires the ritual to take place at an altar.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" }
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "objectType": "CompProperties_AbilitySmokepop",
+  "label": "Ability smokepop",
+  "description": "Releases a smoke cloud to obscure vision.",
+  "fieldOrder": [
+    "Class",
+    "compClass",
+    "goodwillImpact",
+    "psychic",
+    "applicableToMechs",
+    "applyGoodwillImpactToLodgers",
+    "canTargetBosses",
+    "clamorType",
+    "clamorRadius",
+    "screenShakeIntensity",
+    "sound",
+    "soundMale",
+    "soundFemale",
+    "customLetterLabel",
+    "customLetterText",
+    "sendLetter",
+    "message",
+    "messageType",
+    "weight",
+    "availableWhenTargetIsWounded",
+    "canTargetBaby",
+    "smokeRadius"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# AbilityCompProperties type used by RimWorld DirectXmlLoader for this list item.",
+      "type": {
+        "kind": "typeName"
+      },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime AbilityComp class. Usually set by the constructor.",
+      "type": {
+        "kind": "typeName"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "goodwillImpact": {
+      "label": "Goodwill impact",
+      "description": "Faction goodwill change when used.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "psychic": {
+      "label": "Psychic",
+      "description": "Whether this effect is psychic.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "applicableToMechs": {
+      "label": "Applicable to mechs",
+      "description": "Whether this comp applies to mechanoids.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "applyGoodwillImpactToLodgers": {
+      "label": "Apply goodwill impact to lodgers",
+      "description": "Whether goodwill impact applies to lodgers.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canTargetBosses": {
+      "label": "Can target bosses",
+      "description": "Whether this comp can target boss pawns.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "clamorType": {
+      "label": "Clamor type",
+      "description": "ClamorDef produced when this ability fires.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ClamorDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "clamorRadius": {
+      "label": "Clamor radius",
+      "description": "Radius of the clamor event.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "screenShakeIntensity": {
+      "label": "Screen shake intensity",
+      "description": "Intensity of the screen shake when the ability fires.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "sound": {
+      "label": "Sound",
+      "description": "SoundDef played on cast.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundMale": {
+      "label": "Sound (male)",
+      "description": "SoundDef played when caster is male.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "soundFemale": {
+      "label": "Sound (female)",
+      "description": "SoundDef played when caster is female.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "customLetterLabel": {
+      "label": "Custom letter label",
+      "description": "Label for the letter sent when this comp fires.",
+      "type": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "customLetterText": {
+      "label": "Custom letter text",
+      "description": "Body text for the letter sent when this comp fires.",
+      "type": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "sendLetter": {
+      "label": "Send letter",
+      "description": "Whether to send a letter when this comp fires.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "message": {
+      "label": "Message",
+      "description": "Message shown in the bottom-left when this comp fires.",
+      "type": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "messageType": {
+      "label": "Message type",
+      "description": "MessageTypeDef controlling message appearance.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MessageTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "AI selection weight for this comp.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "availableWhenTargetIsWounded": {
+      "label": "Available when target is wounded",
+      "description": "Whether the ability is available when the target is already wounded.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canTargetBaby": {
+      "label": "Can target baby",
+      "description": "Whether this comp can target babies.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "smokeRadius": {
+      "label": "Smoke radius",
+      "description": "Radius of the smoke cloud.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

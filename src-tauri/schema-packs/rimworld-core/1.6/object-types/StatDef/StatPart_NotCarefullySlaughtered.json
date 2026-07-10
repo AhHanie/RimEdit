@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_NotCarefullySlaughtered",
+  "label": "Stat part (not carefully slaughtered)",
+  "description": "Applies a penalty factor when the animal was not carefully slaughtered.",
+  "fieldOrder": ["Class", "priority", "factor"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Stat multiplier applied when the pawn was not carefully slaughtered.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

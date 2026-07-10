@@ -1,0 +1,38 @@
+{
+  "objectType": "RoadDefGenStep_Bulldoze",
+  "label": "Road gen step: bulldoze",
+  "description": "Removes impassable objects from road positions before terrain is placed. Has no fields beyond the base gen step fields.",
+  "fieldOrder": ["Class", "chancePerPositionCurve", "antialiasingMultiplier", "periodicSpacing"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoadDefGenStep subclass that implements this generation step.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "chancePerPositionCurve": {
+      "label": "Chance per position curve",
+      "description": "Piecewise linear curve mapping distance from the road center (x) to placement probability (y) for each map cell.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "antialiasingMultiplier": {
+      "label": "Antialiasing multiplier",
+      "description": "Scales how far the placement probability extends past the hard road edge to produce smooth borders. Set to 0 to disable antialiasing for this step.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "periodicSpacing": {
+      "label": "Periodic spacing",
+      "description": "When non-zero, placement is restricted to positions that are multiples of this distance along the road, producing evenly spaced decorations.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

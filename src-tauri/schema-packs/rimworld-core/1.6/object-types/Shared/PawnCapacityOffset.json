@@ -1,0 +1,36 @@
+{
+  "objectType": "PawnCapacityOffset",
+  "label": "Pawn capacity offset",
+  "description": "Adds an offset to a stat based on how efficiently the pawn performs a body capacity.",
+  "fieldOrder": ["capacity", "scale", "max"],
+  "fields": {
+    "capacity": {
+      "label": "Capacity",
+      "description": "PawnCapacityDef whose efficiency value is used to compute the offset.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnCapacityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Multiplier applied to (capacity efficiency - 1) to compute the offset. Default is 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "max": {
+      "label": "Max",
+      "description": "Upper bound on the capacity efficiency before scaling. Default is 9999 (effectively uncapped).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999,
+      "xml": "element"
+    }
+  }
+}

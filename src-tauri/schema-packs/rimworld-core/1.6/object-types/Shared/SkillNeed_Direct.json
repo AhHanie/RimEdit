@@ -1,0 +1,43 @@
+{
+  "objectType": "SkillNeed_Direct",
+  "label": "Skill need (direct per-level)",
+  "description": "Returns the value at the pawn's skill level from a direct per-level list. Falls back to the last value when level exceeds the list length.",
+  "fieldOrder": ["Class", "skill", "required", "valuesPerLevel"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# SkillNeed subclass used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef that this need evaluates.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "required": {
+      "label": "Required",
+      "description": "If true, the pawn must have this skill for the stat to be enabled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "valuesPerLevel": {
+      "label": "Values per level",
+      "description": "Direct lookup table of values indexed by skill level (0-based). Level beyond the list uses the last entry.",
+      "type": { "kind": "list" },
+      "items": { "kind": "float" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

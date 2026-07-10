@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_TraderStock",
+  "label": "Trader stock maker",
+  "description": "Generates trader stock according to the trader kind definition supplied via fixedParams.traderDef.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

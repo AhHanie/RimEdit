@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_DestroyOrgan",
+  "label": "Destroy organ comp",
+  "description": "Destroys the affected body part after a set number of ticks.",
+  "fieldOrder": ["Class", "compClass", "destroyAfterTicks"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "destroyAfterTicks": {
+      "label": "Destroy after ticks",
+      "description": "Ticks after which the body part is destroyed.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "objectType": "ScenPart_StartingAnimal",
+  "label": "Starting animal",
+  "description": "Adds one or more tamed animals to the starting party, optionally bonded to a random colonist.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "animalKind", "count", "bondToRandomPlayerPawnChance"],
+  "fields": {
+    "animalKind": {
+      "label": "Animal kind",
+      "description": "PawnKindDef for the animal to add. Leave absent to allow any animal.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "count": {
+      "label": "Count",
+      "description": "Number of animals to add. Defaults to 1.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "bondToRandomPlayerPawnChance": {
+      "label": "Bond to random player pawn chance",
+      "description": "Probability (0-1) that each animal is bonded to a randomly chosen starting colonist. Defaults to 0.5.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.5
+    }
+  }
+}

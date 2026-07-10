@@ -1,0 +1,31 @@
+{
+  "objectType": "ScattererValidator_AvoidThingsOfDef",
+  "label": "Avoid things of def validator",
+  "description": "Rejects scatter positions within the given radius of any instance of the listed ThingDefs.",
+  "fieldOrder": ["Class", "radius", "thingsToAvoid"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be ScattererValidator_AvoidThingsOfDef.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Distance in cells within which none of the listed things may exist.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "thingsToAvoid": {
+      "label": "Things to avoid",
+      "description": "List of ThingDefs whose placed instances must not be within the radius of the candidate position.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

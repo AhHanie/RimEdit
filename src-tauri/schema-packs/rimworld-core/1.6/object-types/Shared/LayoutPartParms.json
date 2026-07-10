@@ -1,0 +1,38 @@
+{
+  "objectType": "LayoutPartParms",
+  "label": "Layout part parms",
+  "description": "Parameters for applying a room part to a room. The element name is the RoomPartDef defName (the 'def' field). Scalar text is treated as the 'chance' field via the defaultValueField shorthand.",
+  "fieldOrder": ["def", "chance", "threatPointsRange", "countRange"],
+  "fields": {
+    "def": {
+      "label": "Room part",
+      "description": "RoomPartDef to apply. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "RoomPartDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability this part is applied (0-1). May also be provided as a scalar text node on the element.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "threatPointsRange": {
+      "label": "Threat points range",
+      "description": "Threat point range within which this part is eligible. Uses IntRange.Invalid to mean always eligible.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "How many times this part is applied per room. Uses IntRange.Invalid to mean apply once.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

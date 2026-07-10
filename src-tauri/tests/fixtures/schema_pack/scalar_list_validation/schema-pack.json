@@ -1,0 +1,8 @@
+{
+  "formatVersion": 1,
+  "packId": "scalar_list_validation",
+  "name": "Scalar List Validation",
+  "version": "1.0.0",
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": []
+}

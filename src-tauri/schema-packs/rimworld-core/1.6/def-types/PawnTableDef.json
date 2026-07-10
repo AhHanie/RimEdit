@@ -1,0 +1,46 @@
+{
+  "defType": "PawnTableDef",
+  "label": "Pawn table",
+  "description": "Defines a pawn management table — a multi-column grid used on tabs such as Assign, Restrict, Work, and Animals.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "columns",
+    "workerClass",
+    "minWidth"
+  ],
+  "fields": {
+    "columns": {
+      "label": "Columns",
+      "description": "Ordered list of PawnColumnDefs shown in this table. List entries support MayRequire for DLC-conditional columns.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PawnColumnDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# PawnTable subclass that implements this table's layout and row logic. Defaults to PawnTable.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "minWidth": {
+      "label": "Min width",
+      "description": "Minimum pixel width the table is rendered at. Default 998.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 998,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-table": {
+      "label": "Basic table",
+      "description": "A minimal pawn table with a label and a list of columns.",
+      "includeRequiredFields": true,
+      "promptFields": ["label"],
+      "fieldValues": {}
+    }
+  }
+}

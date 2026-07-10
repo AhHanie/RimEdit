@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_RandomGeneralGoods",
+  "label": "Random general goods maker",
+  "description": "Generates a random assortment of general trade goods using built-in weighting logic.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

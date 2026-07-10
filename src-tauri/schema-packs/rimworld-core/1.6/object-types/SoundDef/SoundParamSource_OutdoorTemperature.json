@@ -1,0 +1,8 @@
+{
+  "objectType": "SoundParamSource_OutdoorTemperature",
+  "label": "Sound param source: outdoor temperature",
+  "description": "Reads the current outdoor temperature of the source tile as the parameter value.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class"],
+  "fields": {}
+}

@@ -1,0 +1,25 @@
+{
+  "defType": "ScenarioDef",
+  "label": "Scenario",
+  "description": "Defines a playable scenario including player faction, surface layer, and all scenario parts that shape the starting conditions and rules of the game.",
+  "inherits": ["Def"],
+  "fieldOrder": ["scenario"],
+  "fields": {
+    "scenario": {
+      "label": "Scenario",
+      "description": "The scenario configuration: faction, surface layer, and all scenario parts.",
+      "type": { "kind": "object", "schemaRef": "Scenario" },
+      "required": false,
+      "xml": "object"
+    }
+  },
+  "templates": {
+    "basic-scenario": {
+      "label": "Basic scenario",
+      "description": "Minimal scenario with required structure.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "description"],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "objectType": "StockGenerator_Animals",
+  "label": "Animals generator",
+  "description": "Generates animals for sale or purchase based on trade tags, wildness, and temperature filters. Supports optional mating pair creation.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": [
+    "tradeTagsSell",
+    "tradeTagsBuy",
+    "createMatingPair",
+    "kindCountRange",
+    "minWildness",
+    "maxWildness",
+    "checkTemperature"
+  ],
+  "fields": {
+    "tradeTagsSell": {
+      "label": "Trade tags (sell)",
+      "description": "Trade tags for animals this trader sells to the player. Matched against PawnKindDef.race.tradeTags.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tradeTagsBuy": {
+      "label": "Trade tags (buy)",
+      "description": "Trade tags for animals this trader buys from the player. Matched against PawnKindDef.race.tradeTags.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "createMatingPair": {
+      "label": "Create mating pair",
+      "description": "Trade tags for animals that should be generated as a mating pair (one male, one female) when stock is created.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "kindCountRange": {
+      "label": "Kind count range",
+      "description": "Number of distinct PawnKindDefs to include in the generated animal stock. Source default IntRange(1, 1).",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "minWildness": {
+      "label": "Min wildness",
+      "description": "Minimum wildness value an animal PawnKindDef must have to be eligible. Source default 0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxWildness": {
+      "label": "Max wildness",
+      "description": "Maximum wildness value an animal PawnKindDef may have to be eligible. Source default 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "checkTemperature": {
+      "label": "Check temperature",
+      "description": "If true, only animals whose temperature tolerance overlaps the current map tile temperature are eligible. Source default true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

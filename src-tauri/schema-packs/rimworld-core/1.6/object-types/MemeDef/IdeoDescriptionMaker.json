@@ -1,0 +1,30 @@
+{
+  "objectType": "IdeoDescriptionMaker",
+  "label": "Ideo description maker",
+  "description": "Grammar configuration for generating a structure meme's ideology description. Required for structure memes; must define at least one pattern.",
+  "fieldOrder": ["patterns", "rules", "constants"],
+  "fields": {
+    "patterns": {
+      "label": "Patterns",
+      "description": "Weighted list of IdeoStoryPatternDef entries. One is randomly selected when the ideology description is generated.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "IdeoDescriptionMaker_PatternEntry" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "rules": {
+      "label": "Rules",
+      "description": "Inline grammar rules applied on top of the selected pattern when generating the description.",
+      "type": { "kind": "object", "schemaRef": "RulePack" },
+      "required": false,
+      "xml": "object"
+    },
+    "constants": {
+      "label": "Constants",
+      "description": "String constant values injected into the grammar rules by key name. Each child element name is the constant key; text content is the string value.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap"
+    }
+  }
+}

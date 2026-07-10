@@ -1,0 +1,346 @@
+{
+  "defType": "WorkGiverDef",
+  "label": "Work giver",
+  "description": "Defines a work-finding unit that scans for potential jobs and creates them for eligible pawns. Each WorkTypeDef is served by one or more WorkGiverDefs.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "giverClass",
+    "workType",
+    "workTags",
+    "priorityInType",
+    "verb",
+    "gerund",
+    "scanThings",
+    "scanCells",
+    "emergency",
+    "requiredCapacities",
+    "directOrderable",
+    "prioritizeSustains",
+    "nonColonistsCanDo",
+    "tagToGive",
+    "equivalenceGroup",
+    "canBeDoneWhileDrafted",
+    "autoTakeablePriorityDrafted",
+    "forceMote",
+    "forceFleck",
+    "canBeDoneByMechs",
+    "fixedBillGiverDefs",
+    "billGiversAllHumanlikes",
+    "billGiversAllHumanlikesCorpses",
+    "billGiversAllMechanoids",
+    "billGiversAllMechanoidsCorpses",
+    "billGiversAllAnimals",
+    "billGiversAllAnimalsCorpses",
+    "feedHumanlikesOnly",
+    "feedAnimalsOnly",
+    "doesSmoothing",
+    "scannerDef"
+  ],
+  "fields": {
+    "giverClass": {
+      "label": "Giver class",
+      "description": "C# WorkGiver subclass that implements the job-finding logic at runtime.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["WorkGiver_DoBill", "WorkGiver_Haul", "WorkGiver_ConstructDeliverResources"]
+    },
+    "workType": {
+      "label": "Work type",
+      "description": "WorkTypeDef that this giver belongs to. Controls scheduling, priority ordering, and the work column it appears under.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "WorkTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "workTags": {
+      "label": "Work tags",
+      "description": "WorkTags flags associated with this giver. Used for backstory work-disable checks and pawn incapability filtering. Each flag is a separate li child element.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "flags": true,
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring", "Social",
+          "Commoner", "Intellectual", "Animals", "Artistic", "Crafting", "Cooking",
+          "Firefighting", "Cleaning", "Hauling", "PlantWork", "Mining", "Hunting",
+          "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "priorityInType": {
+      "label": "Priority in type",
+      "description": "Execution order within the parent WorkTypeDef. Lower values run before higher values. Default is 0.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "verb": {
+      "label": "Verb",
+      "description": "Short action verb shown in the work tab UI and job reports. Marked MustTranslate; required for concrete givers.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element",
+      "examples": ["haul", "construct", "tend"]
+    },
+    "gerund": {
+      "label": "Gerund",
+      "description": "Present-participle form of the action verb shown while the pawn is actively working. Marked MustTranslate; required for concrete givers.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Hauling", "Constructing", "Tending"]
+    },
+    "scanThings": {
+      "label": "Scan things",
+      "description": "If true, the giver scans nearby things for potential jobs.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "scanCells": {
+      "label": "Scan cells",
+      "description": "If true, the giver scans map cells for potential jobs.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "emergency": {
+      "label": "Emergency",
+      "description": "If true, this giver runs before all non-emergency givers, bypassing normal work-type scheduling.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiredCapacities": {
+      "label": "Required capacities",
+      "description": "PawnCapacityDef references the pawn must possess. A pawn missing any listed capacity is skipped by this giver.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "PawnCapacityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "directOrderable": {
+      "label": "Direct orderable",
+      "description": "If true, the player can issue a direct work order for this giver.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "prioritizeSustains": {
+      "label": "Prioritize sustains",
+      "description": "If true, the scheduler prefers this giver when it would sustain an existing ongoing activity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "nonColonistsCanDo": {
+      "label": "Non-colonists can do",
+      "description": "If true, non-colonist pawns such as prisoners, slaves, and guests can perform this work.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tagToGive": {
+      "label": "Tag to give",
+      "description": "JobTag assigned to jobs created by this giver. Controls interruption priority and job-tracker categorization.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "MiscWork",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Misc", "MiscWork", "Fieldwork", "Idle", "InMentalState", "SatisfyingNeeds",
+          "DraftedOrder", "UnspecifiedLordDuty", "WaitingForOthersToFinishGatheringItems",
+          "TuckedIntoBed", "RestingForMedicalReasons", "ChangingApparel", "Escaping",
+          "JoiningCaravan", "TrainedAnimalBehavior", "UnloadingOwnInventory",
+          "TakeForInventoryStock"
+        ]
+      }
+    },
+    "equivalenceGroup": {
+      "label": "Equivalence group",
+      "description": "WorkGiverEquivalenceGroupDef that groups this giver with interchangeable givers so the scheduler treats them as a single unit.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "WorkGiverEquivalenceGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "canBeDoneWhileDrafted": {
+      "label": "Can be done while drafted",
+      "description": "If true, this work can proceed when the pawn is in drafted mode.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "autoTakeablePriorityDrafted": {
+      "label": "Auto-takeable priority (drafted)",
+      "description": "Auto-take priority when the pawn is drafted. -1 disables auto-take entirely.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "forceMote": {
+      "label": "Force mote",
+      "description": "ThingDef mote spawned at the work location when this giver activates. Decorative only.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "forceFleck": {
+      "label": "Force fleck",
+      "description": "FleckDef particle effect spawned at the work location when this giver activates. Decorative only.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FleckDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "canBeDoneByMechs": {
+      "label": "Can be done by mechs",
+      "description": "If true, mechanoid pawns are eligible to receive jobs from this giver.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "fixedBillGiverDefs": {
+      "label": "Fixed bill giver defs",
+      "description": "ThingDef references for specific buildings that always provide bills for this giver, regardless of recipe assignments. Applies to WorkGiver_DoBill subclasses.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "billGiversAllHumanlikes": {
+      "label": "Bill givers - all humanlikes",
+      "description": "If true, all living humanlike pawns are included as bill givers for this work. Applies to WorkGiver_DoBill subclasses.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "billGiversAllHumanlikesCorpses": {
+      "label": "Bill givers - all humanlike corpses",
+      "description": "If true, all humanlike corpses are included as bill givers for this work. Applies to WorkGiver_DoBill subclasses.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "billGiversAllMechanoids": {
+      "label": "Bill givers - all mechanoids",
+      "description": "If true, all living mechanoid pawns are included as bill givers for this work. Applies to WorkGiver_DoBill subclasses.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "billGiversAllMechanoidsCorpses": {
+      "label": "Bill givers - all mechanoid corpses",
+      "description": "If true, all mechanoid corpses are included as bill givers for this work. Applies to WorkGiver_DoBill subclasses.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "billGiversAllAnimals": {
+      "label": "Bill givers - all animals",
+      "description": "If true, all living animal pawns are included as bill givers for this work. Applies to WorkGiver_DoBill subclasses.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "billGiversAllAnimalsCorpses": {
+      "label": "Bill givers - all animal corpses",
+      "description": "If true, all animal corpses are included as bill givers for this work. Applies to WorkGiver_DoBill subclasses.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "feedHumanlikesOnly": {
+      "label": "Feed humanlikes only",
+      "description": "If true, feeding work is restricted to humanlike pawns only.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "feedAnimalsOnly": {
+      "label": "Feed animals only",
+      "description": "If true, feeding work is restricted to animal pawns only.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "doesSmoothing": {
+      "label": "Does smoothing",
+      "description": "If true, this giver is classified as a floor-smoothing work giver by floor-smoothing work logic.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scannerDef": {
+      "label": "Scanner def",
+      "description": "ThingDef building that acts as the scanner for scanner-type work givers.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "basic-work-giver": {
+      "label": "Basic work giver",
+      "description": "A minimal work giver with a driver class, work type, and UI labels.",
+      "includeRequiredFields": true,
+      "promptFields": ["giverClass", "workType", "verb", "gerund"],
+      "fieldValues": {}
+    }
+  }
+}

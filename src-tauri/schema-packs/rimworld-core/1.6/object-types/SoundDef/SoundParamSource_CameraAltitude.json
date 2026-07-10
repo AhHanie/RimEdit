@@ -1,0 +1,8 @@
+{
+  "objectType": "SoundParamSource_CameraAltitude",
+  "label": "Sound param source: camera altitude",
+  "description": "Reads the current camera zoom altitude as the parameter value.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class"],
+  "fields": {}
+}

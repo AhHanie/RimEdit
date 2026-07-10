@@ -1,0 +1,18 @@
+{
+  "objectType": "PartValue",
+  "label": "Part value",
+  "fields": {
+    "knownField": {
+      "label": "Known field",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "count": {
+      "label": "Count",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

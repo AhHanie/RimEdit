@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AddColumns",
+  "label": "Sketch resolver: Add columns",
+  "description": "Concrete RimWorld SketchResolver_AddColumns resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

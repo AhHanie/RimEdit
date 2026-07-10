@@ -1,0 +1,20 @@
+{
+  "objectType": "ThingSetMaker_Conditional",
+  "label": "Conditional maker",
+  "description": "Abstract base for conditional makers. Runs the nested thingSetMaker only when the condition is satisfied. Concrete subclasses define the condition.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "thingSetMaker"
+  ],
+  "fields": {
+    "thingSetMaker": {
+      "label": "Thing set maker",
+      "description": "Nested maker that runs when the condition is met. The Class attribute selects the concrete subclass.",
+      "type": { "kind": "object", "schemaRef": "ThingSetMaker" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

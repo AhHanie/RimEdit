@@ -1,0 +1,28 @@
+{
+  "defType": "BillRepeatModeDef",
+  "label": "Bill repeat mode",
+  "description": "Defines a bill repeat mode that controls how many times a production bill repeats (e.g. a fixed count, until a target stock is reached, or forever).",
+  "inherits": ["Def"],
+  "fieldOrder": ["listOrder"],
+  "fields": {
+    "listOrder": {
+      "label": "List order",
+      "description": "Controls the position of this repeat mode in the bill configuration menu. Shipped modes use multiples of 10 (0, 10, 20) to leave room for modded entries.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-bill-repeat-mode": {
+      "label": "New bill repeat mode",
+      "description": "Minimal bill repeat mode with a def name, label, and list order.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "listOrder": "0"
+      }
+    }
+  }
+}

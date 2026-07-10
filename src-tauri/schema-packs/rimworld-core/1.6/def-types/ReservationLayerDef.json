@@ -1,0 +1,17 @@
+{
+  "defType": "ReservationLayerDef",
+  "label": "Reservation layer",
+  "description": "Identifies a reservation layer used by the reservation system to prevent pawn conflicts at different vertical levels (floor, ceiling, empty). This def carries no fields beyond the base Def class.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {},
+  "templates": {
+    "new-reservation-layer": {
+      "label": "New reservation layer",
+      "description": "Minimal reservation layer with a def name and label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

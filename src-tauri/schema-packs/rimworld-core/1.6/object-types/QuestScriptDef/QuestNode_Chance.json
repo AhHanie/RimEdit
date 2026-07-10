@@ -1,0 +1,41 @@
+{
+  "objectType": "QuestNode_Chance",
+  "label": "QuestNode Chance",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_Chance.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "chance",
+    "node",
+    "elseNode"
+  ],
+  "fields": {
+    "chance": {
+      "description": "SlateRef<float> probability literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "node": {
+      "description": "QuestNode run when the chance succeeds.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "elseNode": {
+      "description": "QuestNode run when the chance fails.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

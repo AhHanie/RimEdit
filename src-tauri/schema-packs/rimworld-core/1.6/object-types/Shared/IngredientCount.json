@@ -1,0 +1,23 @@
+{
+  "objectType": "IngredientCount",
+  "label": "Ingredient count",
+  "description": "One ingredient slot in a recipe. Specifies a filter for which things are accepted and how many units are consumed per recipe completion.",
+  "fieldOrder": ["filter", "count"],
+  "fields": {
+    "filter": {
+      "label": "Filter",
+      "description": "ThingFilter restricting which things can satisfy this ingredient slot.",
+      "type": { "kind": "object", "schemaRef": "ThingFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "count": {
+      "label": "Count",
+      "description": "Number of units consumed from this ingredient slot per recipe completion.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

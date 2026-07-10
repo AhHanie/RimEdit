@@ -1,0 +1,132 @@
+{
+  "objectType": "AlternateGraphic",
+  "label": "Alternate graphic",
+  "description": "A weighted alternative graphic variant for a pawn. Selected randomly at spawn using the weight field.",
+  "fieldOrder": [
+    "weight",
+    "texPath",
+    "color",
+    "colorTwo",
+    "graphicData",
+    "rottingTexPath",
+    "dessicatedTexPath",
+    "swimmingTexPath",
+    "stationaryTexPath",
+    "dessicatedGraphicData",
+    "swimmingGraphicData",
+    "rottingGraphicData",
+    "stationaryGraphicData",
+    "attachPoints"
+  ],
+  "fields": {
+    "weight": {
+      "label": "Weight",
+      "description": "Relative selection weight for this variant. Higher values increase the probability of this graphic being chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "texPath": {
+      "label": "Texture path",
+      "description": "Primary texture path for this graphic variant.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Things/Pawn/Animal/GuineaPig/GuineaPig1"]
+    },
+    "color": {
+      "label": "Color",
+      "description": "Primary color tint for this variant. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.494, 0.356, 0.164, 1)", "(1, 1, 1, 1)"]
+    },
+    "colorTwo": {
+      "label": "Color two",
+      "description": "Secondary color tint for dual-color graphic variants. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.3, 0.3, 0.3, 1)"]
+    },
+    "graphicData": {
+      "label": "Graphic data",
+      "description": "Full graphic configuration for this variant. Overrides texPath and color when set.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "rottingTexPath": {
+      "label": "Rotting texture path",
+      "description": "Texture path override for the rotting state.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "dessicatedTexPath": {
+      "label": "Dessicated texture path",
+      "description": "Texture path override for the dessicated corpse state.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "swimmingTexPath": {
+      "label": "Swimming texture path",
+      "description": "Texture path override used when the pawn is swimming.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "stationaryTexPath": {
+      "label": "Stationary texture path",
+      "description": "Texture path override used when the pawn is standing still.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "dessicatedGraphicData": {
+      "label": "Dessicated graphic data",
+      "description": "Full graphic configuration override for the dessicated corpse state.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "swimmingGraphicData": {
+      "label": "Swimming graphic data",
+      "description": "Full graphic configuration override for the swimming state.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "rottingGraphicData": {
+      "label": "Rotting graphic data",
+      "description": "Full graphic configuration override for the rotting state.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "stationaryGraphicData": {
+      "label": "Stationary graphic data",
+      "description": "Full graphic configuration override for the stationary state.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "attachPoints": {
+      "label": "Attach points",
+      "description": "Named attach points on this graphic variant used by equipment and apparel rendering.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "AttachPoint" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    }
+  }
+}

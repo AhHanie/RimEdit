@@ -1,0 +1,49 @@
+{
+  "objectType": "QuestNode_NoWorldObject",
+  "label": "QuestNode NoWorldObject",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_NoWorldObject.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignalEnable",
+    "outSignalComplete",
+    "worldObject",
+    "node"
+  ],
+  "fields": {
+    "inSignalEnable": {
+      "description": "SlateRef<string> signal name or $varName that enables the listener.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "outSignalComplete": {
+      "description": "SlateRef<string> signal name or $varName emitted when the world object is absent.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "worldObject": {
+      "description": "SlateRef<WorldObject> world object variable or expression.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "node": {
+      "description": "QuestNode run when the world object no longer exists.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

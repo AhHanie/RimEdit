@@ -1,0 +1,66 @@
+{
+  "objectType": "HediffCompProperties_Immunizable",
+  "label": "Immunizable comp",
+  "description": "Makes this hediff interact with the pawn's immunity system.",
+  "fieldOrder": [
+    "Class", "compClass",
+    "severityPerDayImmune", "immunityPerDayPassion", "immuneAgeThreshold",
+    "severityPerDayNotImmune", "makeSickThought"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "severityPerDayImmune": {
+      "label": "Severity per day (immune)",
+      "description": "Severity change per day when fully immune.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "immunityPerDayPassion": {
+      "label": "Immunity per day (passion)",
+      "description": "Immunity gain per day from passion.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "immuneAgeThreshold": {
+      "label": "Immune age threshold",
+      "description": "Age below which the pawn is naturally immune. -1 to disable.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "severityPerDayNotImmune": {
+      "label": "Severity per day (not immune)",
+      "description": "Severity change per day when not immune.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "makeSickThought": {
+      "label": "Make sick thought",
+      "description": "If true, gain a sick thought when this becomes life-threatening.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

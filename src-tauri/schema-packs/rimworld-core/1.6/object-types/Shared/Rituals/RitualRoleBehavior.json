@@ -1,0 +1,46 @@
+{
+  "objectType": "RitualRoleBehavior",
+  "label": "Ritual role behavior",
+  "description": "Defines the duty, position, and speaker interaction for a specific role within a ritual stage.",
+  "fieldOrder": ["roleId", "dutyDef", "jobReportOverride", "customPositions", "speakerInteraction"],
+  "fields": {
+    "roleId": {
+      "label": "Role ID",
+      "description": "ID of the RitualRole this behavior applies to.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "dutyDef": {
+      "label": "Duty def",
+      "description": "DutyDef assigned to pawns in this role during the stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DutyDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "jobReportOverride": {
+      "label": "Job report override",
+      "description": "Localized text overriding the job report shown for the pawn in this role. Supports {PAWN} token.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "customPositions": {
+      "label": "Custom positions",
+      "description": "Ordered list of position objects tried in sequence to place the pawn. Each li selects a class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualPosition" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "speakerInteraction": {
+      "label": "Speaker interaction",
+      "description": "InteractionDef played by this role pawn as a speaker during the stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "InteractionDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "objectType": "SoundFilterReverb",
+  "label": "Sound filter: reverb",
+  "description": "Unity AudioReverbFilter applied to this sub-sound using a ReverbSetup preset.",
+  "inherits": ["SoundFilter"],
+  "fieldOrder": ["Class", "baseSetup"],
+  "fields": {
+    "baseSetup": {
+      "label": "Base setup",
+      "description": "Reverb filter parameters for this sub-sound.",
+      "type": { "kind": "object", "schemaRef": "ReverbSetup" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

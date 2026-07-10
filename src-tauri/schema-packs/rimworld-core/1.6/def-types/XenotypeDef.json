@@ -1,0 +1,193 @@
+{
+  "defType": "XenotypeDef",
+  "label": "Xenotype",
+  "description": "Defines a pawn xenotype: a named package of genes, inheritance behavior, generation weights, naming rules, combat scaling, and implant behavior.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "genes",
+    "inheritable",
+    "iconPath",
+    "descriptionShort",
+    "combatPowerFactor",
+    "canGenerateAsCombatant",
+    "factionlessGenerationWeight",
+    "nameMaker",
+    "nameMakerFemale",
+    "chanceToUseNameMaker",
+    "forbiddenWeaponClasses",
+    "generateWithXenogermReplicatingHediffChance",
+    "xenogermReplicatingDurationLeftDaysRange",
+    "soundDefOnImplant",
+    "doubleXenotypeChances",
+    "displayPriority"
+  ],
+  "fields": {
+    "genes": {
+      "label": "Genes",
+      "description": "GeneDefs included in this xenotype. Determines the gene package carried by pawns of this xenotype.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "GeneDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "inheritable": {
+      "label": "Inheritable",
+      "description": "If true, this xenotype's genes can be inherited by offspring.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Content-relative path to the xenotype icon texture. Required for the xenotype to display correctly.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Icons/Xenotypes/Pigskin", "UI/Icons/Xenotypes/MyXenotype"]
+    },
+    "descriptionShort": {
+      "label": "Description short",
+      "description": "Short description shown in condensed UI contexts such as the gene assembler.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "combatPowerFactor": {
+      "label": "Combat power factor",
+      "description": "Multiplier on the pawn's combat power rating when this xenotype is active. Default 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "canGenerateAsCombatant": {
+      "label": "Can generate as combatant",
+      "description": "If true, pawns of this xenotype are eligible to generate as combat-capable pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "factionlessGenerationWeight": {
+      "label": "Factionless generation weight",
+      "description": "Relative weight for generating factionless pawns of this xenotype. Default 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "nameMaker": {
+      "label": "Name maker",
+      "description": "RulePackDef used to generate names for pawns of this xenotype.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RulePackDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nameMakerFemale": {
+      "label": "Name maker female",
+      "description": "RulePackDef used to generate names for female pawns. Falls back to nameMaker when absent.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RulePackDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chanceToUseNameMaker": {
+      "label": "Chance to use name maker",
+      "description": "Probability (0-1) that the xenotype name maker is used instead of the default name generator.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "forbiddenWeaponClasses": {
+      "label": "Forbidden weapon classes",
+      "description": "WeaponClassDefs that pawns of this xenotype cannot use.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "WeaponClassDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "generateWithXenogermReplicatingHediffChance": {
+      "label": "Generate with xenogerm replicating hediff chance",
+      "description": "Probability (0-1) that a generated pawn of this xenotype starts with the xenogerm-replicating hediff active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "xenogermReplicatingDurationLeftDaysRange": {
+      "label": "Xenogerm replicating duration left days range",
+      "description": "Range of days remaining on the xenogerm-replicating hediff when generated. Example: 0.1~140.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "soundDefOnImplant": {
+      "label": "Sound def on implant",
+      "description": "SoundDef played when a xenogerm of this type is implanted into a pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "doubleXenotypeChances": {
+      "label": "Double xenotype chances",
+      "description": "Optional keyed chances for combining this xenotype with an inheritable second xenotype. Child element names are XenotypeDef defNames; text is the chance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "XenotypeChance" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "xenotype",
+      "valueField": "chance",
+      "keyReference": {
+        "defType": "XenotypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "displayPriority": {
+      "label": "Display priority",
+      "description": "Sort order in xenotype display lists. Lower values appear first.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-xenotype": {
+      "label": "Basic xenotype",
+      "description": "A basic xenotype with label, icon, short description, and an empty gene list.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "iconPath": "UI/Icons/Xenotypes/MyXenotype",
+        "combatPowerFactor": 1,
+        "canGenerateAsCombatant": true,
+        "factionlessGenerationWeight": 1
+      }
+    }
+  }
+}

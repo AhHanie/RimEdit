@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_Resting",
+  "label": "Stat part (resting)",
+  "description": "Scales the stat by a factor when the pawn is currently resting in a bed.",
+  "fieldOrder": ["Class", "priority", "factor"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Stat multiplier applied when the pawn is resting.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

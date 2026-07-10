@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_SkillDecay",
+  "label": "Skill decay comp",
+  "description": "Degrades a pawn skill level over time while this hediff is active.",
+  "fieldOrder": ["Class", "compClass", "skill", "decayPerDay"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "skill": {
+      "label": "Skill",
+      "description": "Skill whose level decays.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SkillDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "decayPerDay": {
+      "label": "Decay per day",
+      "description": "Skill levels lost per day.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

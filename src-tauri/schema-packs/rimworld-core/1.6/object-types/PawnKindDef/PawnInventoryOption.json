@@ -1,0 +1,70 @@
+{
+  "objectType": "PawnInventoryOption",
+  "label": "Pawn inventory option",
+  "description": "A probabilistic inventory entry that gives a pawn a ThingDef at spawn time. Sub-options allow branching take-all or choose-one selection trees.",
+  "fieldOrder": [
+    "thingDef",
+    "countRange",
+    "choiceChance",
+    "skipChance",
+    "subOptionsTakeAll",
+    "subOptionsChooseOne"
+  ],
+  "fields": {
+    "thingDef": {
+      "label": "Thing",
+      "description": "ThingDef placed in the pawn's inventory.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "Integer count range of the item added to inventory. Written as min~max.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element",
+      "examples": ["1~1", "1~3", "10~30"]
+    },
+    "choiceChance": {
+      "label": "Choice chance",
+      "description": "Probability (0–1) that this option is chosen when it competes inside a subOptionsChooseOne list.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "skipChance": {
+      "label": "Skip chance",
+      "description": "Probability (0–1) that this option is skipped entirely even if selected.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "subOptionsTakeAll": {
+      "label": "Sub-options (take all)",
+      "description": "Child inventory options all taken when this option is selected.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnInventoryOption" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "subOptionsChooseOne": {
+      "label": "Sub-options (choose one)",
+      "description": "Child inventory options from which exactly one is chosen by weight when this option is selected.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnInventoryOption" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    }
+  }
+}

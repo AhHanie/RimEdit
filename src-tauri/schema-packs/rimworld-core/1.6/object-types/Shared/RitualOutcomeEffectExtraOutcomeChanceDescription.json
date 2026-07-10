@@ -1,0 +1,22 @@
+{
+  "objectType": "RitualOutcomeEffectExtraOutcomeChanceDescription",
+  "label": "Extra outcome chance description",
+  "description": "A description entry shown in the ritual outcome UI that can vary by ritual quality, used by extraOutcomeDescriptions on RitualOutcomeEffectDef.",
+  "fieldOrder": ["description", "qualityToValue"],
+  "fields": {
+    "description": {
+      "label": "Description",
+      "description": "Display text shown in the extra outcome description list.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityToValue": {
+      "label": "Quality to value",
+      "description": "Static method reference (e.g. PregnancyUtility.ChanceMomDiesDuringBirth) converting a quality float to a display value. Not resolved by the editor; stored as a plain string.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "objectType": "ScenPart_IncidentBase",
+  "label": "Scenario part (incident base)",
+  "description": "Abstract base for scenario parts that reference an incident. Subclasses disable or create specific incidents.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "incident"],
+  "fields": {
+    "incident": {
+      "label": "Incident",
+      "description": "IncidentDef that this part enables, disables, or creates.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "IncidentDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

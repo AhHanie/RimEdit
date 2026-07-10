@@ -1,0 +1,29 @@
+{
+  "defType": "OrderedTakeGroupDef",
+  "label": "Ordered take group",
+  "description": "Defines a named group that limits how many items of this kind a pawn may pick up at once. Things reference a group via their orderedTakeGroup field.",
+  "inherits": ["Def"],
+  "fieldOrder": ["max"],
+  "fields": {
+    "max": {
+      "label": "Max",
+      "description": "Maximum number of items belonging to this group that a pawn may pick up in a single ordered-take action. Must be greater than zero.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 3,
+      "xml": "element",
+      "minimum": 1
+    }
+  },
+  "templates": {
+    "new-ordered-take-group": {
+      "label": "New ordered take group",
+      "description": "Minimal ordered take group with a def name, label, and pickup limit.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "max": "3"
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "objectType": "DamageDefAdditionalHediff",
+  "label": "Additional hediff",
+  "description": "Specifies a hediff applied as an additional effect when a DamageDef hits a pawn. Severity can scale per damage dealt, be fixed, or be scaled by a victim stat.",
+  "fieldOrder": [
+    "hediff",
+    "severityPerDamageDealt",
+    "severityFixed",
+    "victimSeverityScaling",
+    "inverseStatScaling",
+    "victimSeverityScalingByInvBodySize"
+  ],
+  "fields": {
+    "hediff": {
+      "label": "Hediff",
+      "description": "HediffDef applied when the damage hits.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "severityPerDamageDealt": {
+      "label": "Severity per damage dealt",
+      "description": "How much hediff severity is added per point of damage dealt.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.1,
+      "xml": "element"
+    },
+    "severityFixed": {
+      "label": "Severity fixed",
+      "description": "Flat severity added regardless of damage dealt. Used when severity should not scale with damage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "victimSeverityScaling": {
+      "label": "Victim severity scaling",
+      "description": "StatDef on the victim that scales the added severity up or down.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "inverseStatScaling": {
+      "label": "Inverse stat scaling",
+      "description": "If true, the victim stat divides severity instead of multiplying it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "victimSeverityScalingByInvBodySize": {
+      "label": "Victim severity scaling by inverse body size",
+      "description": "If true, severity is also scaled by the inverse of the victim's body size.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

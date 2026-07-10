@@ -1,0 +1,10 @@
+{
+  "objectType": "QuestNode_ResolveQuestDescription",
+  "label": "QuestNode ResolveQuestDescription",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_ResolveQuestDescription.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [],
+  "fields": {}
+}

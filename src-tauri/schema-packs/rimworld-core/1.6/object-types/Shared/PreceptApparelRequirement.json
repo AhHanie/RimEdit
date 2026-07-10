@@ -1,0 +1,44 @@
+{
+  "objectType": "PreceptApparelRequirement",
+  "label": "Precept apparel requirement",
+  "description": "An apparel requirement attached to a precept role, with faction category and meme filters.",
+  "fieldOrder": [
+    "allowedFactionCategoryTags",
+    "disallowedFactionCategoryTags",
+    "anyMemeRequired",
+    "requirement"
+  ],
+  "fields": {
+    "allowedFactionCategoryTags": {
+      "label": "Allowed faction category tags",
+      "description": "This requirement only applies to factions with at least one of these category tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedFactionCategoryTags": {
+      "label": "Disallowed faction category tags",
+      "description": "This requirement does not apply to factions with any of these category tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "anyMemeRequired": {
+      "label": "Any meme required",
+      "description": "The ideology must have at least one of these memes for this requirement to apply.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "requirement": {
+      "label": "Requirement",
+      "description": "The apparel requirement specifying body parts, tags, and allowed defs.",
+      "type": { "kind": "object", "schemaRef": "ApparelRequirement" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

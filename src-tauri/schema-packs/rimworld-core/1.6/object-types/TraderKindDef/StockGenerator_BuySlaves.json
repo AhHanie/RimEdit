@@ -1,0 +1,8 @@
+{
+  "objectType": "StockGenerator_BuySlaves",
+  "label": "Buy slaves generator",
+  "description": "Marks humanlike pawns as buyable (Sellable tradeability) by this trader. Generates no items. Used to allow slavers to purchase captive colonists.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": [],
+  "fields": {}
+}

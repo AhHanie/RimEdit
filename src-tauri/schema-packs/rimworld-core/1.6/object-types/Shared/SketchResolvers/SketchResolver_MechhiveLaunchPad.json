@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_MechhiveLaunchPad",
+  "label": "Sketch resolver: Mechhive launch pad",
+  "description": "Concrete RimWorld SketchResolver_MechhiveLaunchPad resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

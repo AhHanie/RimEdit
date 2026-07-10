@@ -1,0 +1,10 @@
+{
+  "objectType": "StageEndTrigger_Instant",
+  "label": "Stage end trigger (instant)",
+  "description": "Ends the stage immediately on the first tick.",
+  "fieldOrder": ["Class", "countsTowardsProgress"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" }
+  }
+}

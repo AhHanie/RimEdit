@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_MonumentRuin",
+  "label": "Sketch resolver: Monument ruin",
+  "description": "Concrete RimWorld SketchResolver_MonumentRuin resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

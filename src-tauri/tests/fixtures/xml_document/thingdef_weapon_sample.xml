@@ -1,0 +1,34 @@
+<Defs>
+  <ThingDef>
+    <defName>SwordSample</defName>
+    <label>sword sample</label>
+    <category>Item</category>
+    <techLevel>Industrial</techLevel>
+    <equipmentType>Primary</equipmentType>
+    <weaponClasses>
+      <li>Swords</li>
+    </weaponClasses>
+    <verbs>
+      <li>
+        <range>1.42</range>
+        <label>cut</label>
+      </li>
+    </verbs>
+    <tools>
+      <li>
+        <label>blade</label>
+        <power>16</power>
+        <cooldownTime>1.6</cooldownTime>
+      </li>
+    </tools>
+    <equippedStatOffsets>
+      <MeleeHitChance>0.1</MeleeHitChance>
+    </equippedStatOffsets>
+    <tradeability>Buyable</tradeability>
+    <tradeTags>
+      <li>WeaponMelee</li>
+    </tradeTags>
+    <selectable>true</selectable>
+    <fillPercent>0.1</fillPercent>
+  </ThingDef>
+</Defs>

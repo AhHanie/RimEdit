@@ -1,0 +1,64 @@
+{
+  "objectType": "JobGiver_GotoTravelDestination",
+  "label": "Job giver goto travel destination",
+  "description": "Directs the pawn to travel to its duty focus position. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "exactCell",
+    "locomotionUrgency",
+    "ritualTagOnArrival",
+    "jobDef",
+    "destinationFocusIndex",
+    "jobMaxDuration"
+  ],
+  "fields": {
+    "exactCell": {
+      "label": "Exact cell",
+      "description": "If true, the pawn must reach the exact destination cell rather than a nearby cell.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "locomotionUrgency": {
+      "label": "Locomotion urgency",
+      "description": "Movement speed mode used while travelling to the destination.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Walk",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Amble", "Walk", "Jog", "Sprint"] }
+    },
+    "ritualTagOnArrival": {
+      "label": "Ritual tag on arrival",
+      "description": "Ritual tag assigned to the pawn when it reaches the destination (e.g. Arrived). Not translated.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "jobDef": {
+      "label": "Job def",
+      "description": "JobDef given to the pawn on arrival. Uses the engine default (Goto) when absent.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "JobDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "destinationFocusIndex": {
+      "label": "Destination focus index",
+      "description": "Which duty focus slot is used as the destination: 1 = focus, 2 = focusSecond, 3 = focusThird.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "jobMaxDuration": {
+      "label": "Job max duration",
+      "description": "Maximum ticks before the travel job expires.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 999999,
+      "xml": "element"
+    }
+  }
+}

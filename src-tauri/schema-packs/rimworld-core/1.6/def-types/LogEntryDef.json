@@ -1,0 +1,39 @@
+{
+  "defType": "LogEntryDef",
+  "label": "Log entry",
+  "description": "Defines a battle or gameplay log entry type referenced by maneuver and combat systems.",
+  "inherits": ["Def"],
+  "fieldOrder": ["iconMiss", "iconDamaged", "iconDamagedFromInstigator"],
+  "fields": {
+    "iconMiss": {
+      "label": "Icon miss",
+      "description": "Texture path for the icon shown when this log entry records a missed attack.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "iconDamaged": {
+      "label": "Icon damaged",
+      "description": "Texture path for the icon shown when this log entry records a damaging hit.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "iconDamagedFromInstigator": {
+      "label": "Icon damaged from instigator",
+      "description": "Texture path for the icon shown from the instigator's perspective when damage is dealt.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-log-entry": {
+      "label": "Basic log entry",
+      "description": "Minimal log entry with only the required inherited identity fields.",
+      "includeRequiredFields": true,
+      "promptFields": [],
+      "fieldValues": {}
+    }
+  }
+}

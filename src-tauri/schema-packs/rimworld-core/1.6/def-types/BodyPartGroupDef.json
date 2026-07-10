@@ -1,0 +1,26 @@
+{
+  "defType": "BodyPartGroupDef",
+  "label": "Body part group",
+  "description": "Groups body parts for apparel coverage, attack targeting, and UI display ordering.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "labelShort",
+    "listOrder"
+  ],
+  "fields": {
+    "labelShort": {
+      "label": "Label (short)",
+      "description": "Abbreviated label used in compact UI contexts.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "listOrder": {
+      "label": "List order",
+      "description": "Sort priority for this group in lists and selection UI. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AncientStorageRoom",
+  "label": "Sketch resolver: Ancient storage room",
+  "description": "Concrete RimWorld SketchResolver_AncientStorageRoom resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

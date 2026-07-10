@@ -1,0 +1,78 @@
+{
+  "objectType": "TerrainPatchMaker",
+  "label": "Terrain patch maker",
+  "description": "Generates terrain patches on a map using Perlin noise, applying each TerrainThreshold layer where the noise value falls within its range.",
+  "fieldOrder": [
+    "thresholds", "perlinFrequency", "perlinLacunarity", "perlinPersistence",
+    "perlinOctaves", "minFertility", "maxFertility", "minSize", "isPond"
+  ],
+  "fields": {
+    "thresholds": {
+      "label": "Thresholds",
+      "description": "Ordered list of terrain layers applied based on Perlin noise value ranges.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TerrainThreshold" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "perlinFrequency": {
+      "label": "Perlin frequency",
+      "description": "Spatial frequency of the Perlin noise. Higher values produce smaller, more frequent patches.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.01
+    },
+    "perlinLacunarity": {
+      "label": "Perlin lacunarity",
+      "description": "Frequency multiplier applied at each successive Perlin octave.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "perlinPersistence": {
+      "label": "Perlin persistence",
+      "description": "Amplitude multiplier applied at each successive Perlin octave. Controls how much detail each octave adds.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "perlinOctaves": {
+      "label": "Perlin octaves",
+      "description": "Number of Perlin noise octaves summed together. More octaves produce more detailed patches.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 6
+    },
+    "minFertility": {
+      "label": "Min fertility",
+      "description": "Minimum base-terrain fertility required for this patch maker to place terrain on a cell.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxFertility": {
+      "label": "Max fertility",
+      "description": "Maximum base-terrain fertility at which this patch maker places terrain on a cell.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "minSize": {
+      "label": "Min size",
+      "description": "Minimum number of connected cells required before a generated patch is committed to the map.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "isPond": {
+      "label": "Is pond",
+      "description": "When true, treats generated patches as ponds for water-body classification purposes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  }
+}

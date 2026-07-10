@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AncientLandingPad",
+  "label": "Sketch resolver: Ancient landing pad",
+  "description": "Concrete RimWorld SketchResolver_AncientLandingPad resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

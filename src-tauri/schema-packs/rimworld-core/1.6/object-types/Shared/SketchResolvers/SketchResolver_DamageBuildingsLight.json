@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_DamageBuildingsLight",
+  "label": "Sketch resolver: Damage buildings light",
+  "description": "Concrete RimWorld SketchResolver_DamageBuildingsLight resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

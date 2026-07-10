@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_ConfigurableHostilityResponse",
+  "label": "Job giver configurable hostility response",
+  "description": "Issues attack or flee jobs based on the player-configured hostility response setting for the pawn. No XML-loadable fields.",
+  "inherits": ["ThinkNode_JobGiver"]
+}

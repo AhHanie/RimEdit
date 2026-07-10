@@ -1,0 +1,89 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "score": {
+      "label": "Score",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "priority": {
+      "label": "Priority",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 10
+    },
+    "chance": {
+      "label": "Chance",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1.0
+    },
+    "mode": {
+      "label": "Mode",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "normal"
+    },
+    "options": {
+      "label": "Options",
+      "type": { "kind": "list" },
+      "items": { "kind": "integer" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "validationRules": {
+    "gte-rule": {
+      "kind": "requiredWhen",
+      "field": "options",
+      "when": {
+        "field": "score",
+        "operator": "greaterThanOrEqual",
+        "value": 5
+      },
+      "message": "Options required when score >= 5."
+    },
+    "lt-rule": {
+      "kind": "requiredWhen",
+      "field": "options",
+      "when": {
+        "field": "priority",
+        "operator": "lessThan",
+        "value": 5
+      },
+      "message": "Options required when priority < 5."
+    },
+    "lte-rule": {
+      "kind": "requiredWhen",
+      "field": "options",
+      "when": {
+        "field": "chance",
+        "operator": "lessThanOrEqual",
+        "value": 0.0
+      },
+      "message": "Options required when chance <= 0."
+    },
+    "ne-rule": {
+      "kind": "requiredWhen",
+      "field": "options",
+      "when": {
+        "field": "mode",
+        "operator": "notEquals",
+        "value": "normal"
+      },
+      "message": "Options required when mode is not 'normal'."
+    }
+  }
+}

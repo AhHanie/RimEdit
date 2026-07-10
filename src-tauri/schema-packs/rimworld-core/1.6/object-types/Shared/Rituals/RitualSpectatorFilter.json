@@ -1,0 +1,32 @@
+{
+  "objectType": "RitualSpectatorFilter",
+  "label": "Ritual spectator filter",
+  "description": "Base schema for spectator filter objects that control which pawns may spectate a ritual. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class", "description"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RitualSpectatorFilter",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "RitualSpectatorFilter_NatureFocus": "RitualSpectatorFilter_NatureFocus",
+      "RitualSpectatorFilter_WillWitnessExecution": "RitualSpectatorFilter_WillWitnessExecution"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualSpectatorFilter subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Localized description of which pawns this filter allows to spectate.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

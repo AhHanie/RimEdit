@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_ShamblerCorpse",
+  "label": "Stat part (shambler corpse)",
+  "description": "Scales the stat by a multiplier when evaluated on a shambler corpse.",
+  "fieldOrder": ["Class", "priority", "multiplier"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "multiplier": {
+      "label": "Multiplier",
+      "description": "Stat multiplier applied to shambler corpses.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

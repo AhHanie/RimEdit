@@ -1,0 +1,9 @@
+{
+  "formatVersion": 1,
+  "packId": "conditional_rules_override_high",
+  "name": "Conditional Rules Override High Priority",
+  "version": "1.0.0",
+  "priority": 10,
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": []
+}

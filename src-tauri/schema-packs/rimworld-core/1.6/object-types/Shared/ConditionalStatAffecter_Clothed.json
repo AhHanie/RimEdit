@@ -1,0 +1,31 @@
+{
+  "objectType": "ConditionalStatAffecter_Clothed",
+  "label": "Conditional stat affecter (clothed)",
+  "description": "Applies stat modifications when the pawn is wearing apparel.",
+  "fieldOrder": ["Class", "statFactors", "statOffsets"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# ConditionalStatAffecter subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers applied when the pawn is clothed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Stat additive offsets applied when the pawn is clothed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

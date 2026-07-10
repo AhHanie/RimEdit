@@ -1,0 +1,30 @@
+{
+  "objectType": "RoleRequirement_MinSkillAny",
+  "label": "Role requirement (min skill, any)",
+  "description": "Requires the role pawn to meet at least one of the listed minimum skill requirements.",
+  "fieldOrder": ["Class", "labelKey", "skills"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the requirement label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "skills": {
+      "label": "Skills",
+      "description": "At least one of these skill requirements must be met.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

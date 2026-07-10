@@ -1,0 +1,32 @@
+{
+  "objectType": "XenotypePawnKind",
+  "label": "Xenotype pawn kind",
+  "description": "Maps a xenotype to a pawn kind for use in override lists that control which pawn kind is generated for each xenotype slot.",
+  "fieldOrder": ["xenotype", "pawnKind"],
+  "fields": {
+    "xenotype": {
+      "label": "Xenotype",
+      "description": "XenotypeDef that this mapping applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "XenotypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "pawnKind": {
+      "label": "Pawn kind",
+      "description": "PawnKindDef to use when generating a pawn for this xenotype slot.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

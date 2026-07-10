@@ -1,0 +1,46 @@
+{
+  "objectType": "GenStep_Asteroid",
+  "label": "Gen step asteroid",
+  "description": "Generates an asteroid map with noise-shaped terrain, ore lumps, optional ruins, and an archean tree.",
+  "fieldOrder": ["Class", "mineableCounts", "numChunks", "ruinsChance", "archeanTreeChance"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# GenStep_Asteroid subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "mineableCounts": {
+      "label": "Mineable counts",
+      "description": "List of mineable types with their count ranges for ore generation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "MineableCountConfig" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "numChunks": {
+      "label": "Num chunks",
+      "description": "Random range for the number of ore lump chunks to scatter.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "ruinsChance": {
+      "label": "Ruins chance",
+      "description": "Probability (0-1) that ruins are generated on the asteroid.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "archeanTreeChance": {
+      "label": "Archean tree chance",
+      "description": "Probability (0-1) that an archean tree grove is generated on the asteroid.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

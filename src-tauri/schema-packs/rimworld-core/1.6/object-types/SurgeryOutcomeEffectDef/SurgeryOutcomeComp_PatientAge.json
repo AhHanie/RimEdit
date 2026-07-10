@@ -1,0 +1,8 @@
+{
+  "objectType": "SurgeryOutcomeComp_PatientAge",
+  "label": "Surgery outcome comp (patient age)",
+  "description": "Adjusts surgery quality via a curve evaluated at the patient's biological age in years.",
+  "inherits": ["SurgeryOutcomeComp_Curve"],
+  "fieldOrder": [],
+  "fields": {}
+}

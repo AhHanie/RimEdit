@@ -1,0 +1,49 @@
+{
+  "objectType": "RulePack",
+  "label": "Rule pack data",
+  "description": "Container for grammar rules defined inline or by file reference.",
+  "fieldOrder": [
+    "rulesStrings",
+    "rulesFiles",
+    "rulesRaw",
+    "include"
+  ],
+  "fields": {
+    "rulesStrings": {
+      "label": "Rules (strings)",
+      "description": "Inline grammar rules in the format 'keyword(p=weight)->output text'. Each li is one rule definition.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "rulesFiles": {
+      "label": "Rules (files)",
+      "description": "File-backed grammar rules in the format 'Keyword->Language/File/Path'. Each line of the file becomes a selectable output.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "rulesRaw": {
+      "label": "Rules (raw objects)",
+      "description": "Structured grammar rule objects. Each li must carry a Class attribute identifying the Rule subclass.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Rule" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "include": {
+      "label": "Include",
+      "description": "Additional RulePackDefs whose resolved rules are merged into this rule pack.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "RulePackDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

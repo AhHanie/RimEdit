@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalMentalStates",
+  "label": "Think node conditional mental states",
+  "description": "Satisfied when the pawn's current mental state is one of the listed MentalStateDef records.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["states"],
+  "fields": {
+    "states": {
+      "label": "States",
+      "description": "List of mental states; the conditional is satisfied if the pawn is in any of them.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MentalStateDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

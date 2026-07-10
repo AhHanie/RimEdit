@@ -1,0 +1,36 @@
+{
+  "objectType": "SurgeryOutcome_FailureWithHediff",
+  "label": "Surgery outcome: failure with hediff",
+  "description": "Surgery failure that applies a specific HediffDef to the patient. Optionally restricted to a set of recipes.",
+  "inherits": ["SurgeryOutcome_Failure"],
+  "fieldOrder": ["Class", "chance", "totalDamage", "applyEffectsToPart", "failure", "letterLabel", "letterText", "applyToRecipes", "failedHediff"],
+  "fields": {
+    "applyToRecipes": {
+      "label": "Apply to recipes",
+      "description": "Optional list of RecipeDefs this outcome applies to. When non-empty, the outcome only fires for the listed recipes.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": {
+          "defType": "RecipeDef",
+          "allowAbstract": false,
+          "scope": "allSources"
+        }
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "failedHediff": {
+      "label": "Failed hediff",
+      "description": "HediffDef applied to the patient when this failure outcome fires.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

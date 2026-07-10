@@ -1,0 +1,91 @@
+{
+  "objectType": "RitualOutcomeComp_RitualTargetDefs",
+  "label": "Ritual outcome comp (ritual target defs)",
+  "description": "Applies qualityOffset when the ritual target Thing matches one of the specified defs (or any altar, or auto-applies in classic mode).",
+  "fieldOrder": [
+    "Class", "label", "labelAbstract", "qualityOffset", "curve",
+    "expectedThingLabelTip", "defs", "allowAltars", "autoPoweredNeedsToBeOn", "autoApplyInClassicMode"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Quality offset applied when the target matches one of the defs.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve; not typically used by this variant.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "expectedThingLabelTip": {
+      "label": "Expected thing label tip",
+      "description": "Label used in the tooltip describing what target object is expected for this ritual.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "defs": {
+      "label": "Defs",
+      "description": "List of ThingDefs that the ritual target must match for this comp to apply.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowAltars": {
+      "label": "Allow altars",
+      "description": "If true, any altar Thing (isAltar=true) also satisfies this comp regardless of the defs list.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "autoPoweredNeedsToBeOn": {
+      "label": "Auto powered needs to be on",
+      "description": "If true, issues a blocking warning when the target has an AutoPowered comp and it is not powered on.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "autoApplyInClassicMode": {
+      "label": "Auto apply in classic mode",
+      "description": "If true, this comp always applies in classic (no ideo) mode regardless of the target.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

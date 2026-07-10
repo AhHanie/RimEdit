@@ -1,0 +1,27 @@
+{
+  "objectType": "ThinkNode_ConditionalCapableOfWorkTag",
+  "label": "Think node conditional capable of work tag",
+  "description": "Conditional node whose condition passes when the pawn is capable of any of the specified work tags. Inherits ThinkNode_Conditional fields (including invert) and base ThinkNode fields.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": [
+    "workTags"
+  ],
+  "fields": {
+    "workTags": {
+      "label": "Work tags",
+      "description": "WorkTags flags the pawn must be capable of. Serialized as a list of individual flag names; the condition passes if the pawn can perform any of them.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "items": { "kind": "enum" },
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring", "Social",
+          "Commoner", "Intellectual", "Animals", "Artistic", "Crafting", "Cooking",
+          "Firefighting", "Cleaning", "Hauling", "PlantWork", "Mining", "Hunting",
+          "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    }
+  }
+}

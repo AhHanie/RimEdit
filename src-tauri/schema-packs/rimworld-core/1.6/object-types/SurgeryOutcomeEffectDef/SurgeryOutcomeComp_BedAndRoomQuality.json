@@ -1,0 +1,8 @@
+{
+  "objectType": "SurgeryOutcomeComp_BedAndRoomQuality",
+  "label": "Surgery outcome comp (bed and room quality)",
+  "description": "Adjusts surgery quality based on the quality of the medical bed and operating room.",
+  "inherits": ["SurgeryOutcomeComp"],
+  "fieldOrder": [],
+  "fields": {}
+}

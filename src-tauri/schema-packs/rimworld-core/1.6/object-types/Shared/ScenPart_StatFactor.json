@@ -1,0 +1,29 @@
+{
+  "objectType": "ScenPart_StatFactor",
+  "label": "Stat factor",
+  "description": "Applies a global multiplicative factor to a specific stat for the entire game.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "stat", "factor"],
+  "fields": {
+    "stat": {
+      "label": "Stat",
+      "description": "StatDef whose value is multiplied by the factor.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Multiplier applied to the stat. Values above 1 increase the stat; values below 1 decrease it.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.5", "1", "2"]
+    }
+  }
+}

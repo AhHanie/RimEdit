@@ -1,0 +1,123 @@
+{
+  "objectType": "GenStep_Outpost",
+  "label": "Gen step outpost",
+  "description": "Generates an outpost structure on the map. Extends GenStep directly - does not use scatterer placement.",
+  "fieldOrder": [
+    "Class",
+    "size",
+    "requiredWorshippedTerminalRooms",
+    "requiredGravcoreRooms",
+    "allowGeneratingThronerooms",
+    "settlementDontGeneratePawns",
+    "allowGeneratingFarms",
+    "generateLoot",
+    "postProcessSettlementParams",
+    "unfogged",
+    "attackWhenPlayerBecameEnemy",
+    "defaultPawnGroupPointsRange",
+    "pawnGroupKindDef"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_Outpost.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "size": {
+      "label": "Size",
+      "description": "Width and height in cells of the outpost footprint.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 16,
+      "xml": "element"
+    },
+    "requiredWorshippedTerminalRooms": {
+      "label": "Required worshipped terminal rooms",
+      "description": "Minimum number of worshipped-terminal rooms the outpost must contain.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "requiredGravcoreRooms": {
+      "label": "Required gravcore rooms",
+      "description": "Minimum number of gravcore-compatible rooms the outpost must contain.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "allowGeneratingThronerooms": {
+      "label": "Allow generating thronerooms",
+      "description": "Whether thronerooms may be generated inside the outpost.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "settlementDontGeneratePawns": {
+      "label": "Settlement don't generate pawns",
+      "description": "When true, no enemy pawns are generated inside the outpost.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowGeneratingFarms": {
+      "label": "Allow generating farms",
+      "description": "Whether farm growing zones may be generated inside the outpost.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "generateLoot": {
+      "label": "Generate loot",
+      "description": "Whether loot is placed inside the outpost at generation time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "postProcessSettlementParams": {
+      "label": "Post-process settlement params",
+      "description": "Optional parameters for post-generation processing of outpost buildings.",
+      "type": { "kind": "object", "schemaRef": "PostProcessSettlementParams" },
+      "required": false,
+      "xml": "object"
+    },
+    "unfogged": {
+      "label": "Unfogged",
+      "description": "When true, the outpost area is revealed on the map without requiring scouting.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "attackWhenPlayerBecameEnemy": {
+      "label": "Attack when player became enemy",
+      "description": "When true, outpost pawns attack the player if the faction becomes hostile.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "defaultPawnGroupPointsRange": {
+      "label": "Default pawn group points range",
+      "description": "Threat points range used to generate outpost pawns when no site-part points are available.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "pawnGroupKindDef": {
+      "label": "Pawn group kind def",
+      "description": "PawnGroupKindDef controlling the type of pawns generated inside the outpost.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnGroupKindDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "objectType": "RitualPosition_BesideTree",
+  "label": "Ritual position (beside tree)",
+  "description": "Places the pawn beside the nearest tree at the ritual location.",
+  "fieldOrder": ["Class", "highlight"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" }
+  }
+}

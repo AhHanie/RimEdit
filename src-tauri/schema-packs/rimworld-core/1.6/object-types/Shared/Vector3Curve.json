@@ -1,0 +1,29 @@
+{
+  "objectType": "Vector3Curve",
+  "label": "Vector3 curve",
+  "description": "Three independent ComplexCurves driving the x, y, and z components of a Vector3 animation channel. Used by CurveKeyAnimationPart for the offset and scale channels.",
+  "fieldOrder": ["x", "y", "z"],
+  "fields": {
+    "x": {
+      "label": "X",
+      "description": "Curve controlling the x component.",
+      "type": { "kind": "object", "schemaRef": "ComplexCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "y": {
+      "label": "Y",
+      "description": "Curve controlling the y component.",
+      "type": { "kind": "object", "schemaRef": "ComplexCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "z": {
+      "label": "Z",
+      "description": "Curve controlling the z component.",
+      "type": { "kind": "object", "schemaRef": "ComplexCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

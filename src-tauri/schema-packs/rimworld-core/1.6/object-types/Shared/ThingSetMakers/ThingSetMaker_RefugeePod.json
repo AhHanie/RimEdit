@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_RefugeePod",
+  "label": "Refugee pod maker",
+  "description": "Generates items placed inside a refugee drop pod using the built-in refugee loot profile.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

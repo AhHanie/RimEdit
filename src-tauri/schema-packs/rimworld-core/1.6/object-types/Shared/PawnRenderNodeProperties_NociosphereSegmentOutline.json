@@ -1,0 +1,8 @@
+{
+  "objectType": "PawnRenderNodeProperties_NociosphereSegmentOutline",
+  "label": "Render node properties (nociosphere segment outline)",
+  "description": "Render node properties for nociosphere segment outline rendering. No additional fields beyond the base; constructor sets defaults.",
+  "inherits": ["PawnRenderNodeProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

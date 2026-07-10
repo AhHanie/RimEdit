@@ -1,0 +1,98 @@
+{
+  "objectType": "HediffCompProperties_TendDuration",
+  "label": "Tend duration comp",
+  "description": "Tracks tending state and duration for this hediff.",
+  "fieldOrder": [
+    "Class", "compClass",
+    "baseTendDuration", "tendOverlapDays", "severityPerDayTended", "severityPerDayNotTended",
+    "showRemainingTime", "disappearsAtTotalTendQuality", "repairOnTend",
+    "TendTicksRange", "allTreatmentQualityLevel"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "baseTendDuration": {
+      "label": "Base tend duration",
+      "description": "Base duration in ticks that tending lasts.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "tendOverlapDays": {
+      "label": "Tend overlap days",
+      "description": "Overlap in days before tending expires.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "severityPerDayTended": {
+      "label": "Severity per day (tended)",
+      "description": "Severity change per day when tended.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "severityPerDayNotTended": {
+      "label": "Severity per day (not tended)",
+      "description": "Severity change per day when not tended.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "showRemainingTime": {
+      "label": "Show remaining time",
+      "description": "Show remaining tend time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disappearsAtTotalTendQuality": {
+      "label": "Disappears at total tend quality",
+      "description": "Total tend quality at which hediff disappears. -1 to disable.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "repairOnTend": {
+      "label": "Repair on tend",
+      "description": "If true, the body part is repaired when tended.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "TendTicksRange": {
+      "label": "Tend ticks range",
+      "description": "Randomized tend duration in ticks.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "allTreatmentQualityLevel": {
+      "label": "All treatment quality level",
+      "description": "Override tend quality level for all treatments.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    }
+  }
+}

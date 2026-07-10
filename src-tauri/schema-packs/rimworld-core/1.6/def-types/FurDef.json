@@ -1,0 +1,45 @@
+{
+  "defType": "FurDef",
+  "label": "Fur",
+  "description": "Defines a fur style for animal-bodied pawns (e.g. gene-driven fur). Inherits all StyleItemDef fields.",
+  "inherits": ["StyleItemDef"],
+  "fieldOrder": ["bodyTypeGraphicPaths"],
+  "fields": {
+    "bodyTypeGraphicPaths": {
+      "label": "Body type graphic paths",
+      "description": "Per-body-type texture paths used to render this fur. Child element name is the BodyTypeDef defName; text is the texture atlas path.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BodyTypeGraphicData" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "bodyType",
+      "valueField": "texturePath",
+      "keyReference": {
+        "defType": "BodyTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "repeatable": true
+    }
+  },
+  "templates": {
+    "per-body-type-fur": {
+      "label": "Per-body-type fur",
+      "description": "Fur style with no base texture, rendered per body type, matching the shipped Furskin pattern.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "styleGender", "category", "styleTags", "bodyTypeGraphicPaths"],
+      "fieldValues": {
+        "noGraphic": "true"
+      }
+    },
+    "no-graphic-fur": {
+      "label": "No-graphic fur",
+      "description": "Fur slot that renders nothing (e.g. a \"no fur\" option).",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "category", "styleTags"],
+      "fieldValues": {
+        "noGraphic": "true"
+      }
+    }
+  }
+}

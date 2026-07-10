@@ -1,0 +1,24 @@
+{
+  "objectType": "IdeoDescriptionMaker_PatternEntry",
+  "label": "Description pattern entry",
+  "description": "Pairs an IdeoStoryPatternDef with a selection weight. Used by IdeoDescriptionMaker to randomly choose the description pattern for a structure meme.",
+  "fieldOrder": ["def", "weight"],
+  "fields": {
+    "def": {
+      "label": "Pattern def",
+      "description": "IdeoStoryPatternDef providing the grammar rules for this description pattern.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "IdeoStoryPatternDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative selection weight for this pattern. Higher values increase selection probability.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

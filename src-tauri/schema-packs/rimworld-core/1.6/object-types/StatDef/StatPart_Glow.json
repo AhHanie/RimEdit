@@ -1,0 +1,67 @@
+{
+  "objectType": "StatPart_Glow",
+  "label": "Stat part (glow)",
+  "description": "Scales the stat based on the ambient light level at the pawn's tile.",
+  "fieldOrder": [
+    "Class", "priority",
+    "pawnOnly", "humanlikeOnly",
+    "factorFromGlowCurve",
+    "ignoreIfPrefersDarkness", "ignoreIfIncapableOfSight"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "pawnOnly": {
+      "label": "Pawn only",
+      "description": "If true, this part only applies when the stat request is for a pawn.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "humanlikeOnly": {
+      "label": "Humanlike only",
+      "description": "If true, this part only applies to humanlike pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "factorFromGlowCurve": {
+      "label": "Factor from glow curve",
+      "description": "Piecewise linear curve mapping light level (0–1) to the stat factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "ignoreIfPrefersDarkness": {
+      "label": "Ignore if prefers darkness",
+      "description": "If true, the glow factor is ignored for pawns that prefer darkness.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreIfIncapableOfSight": {
+      "label": "Ignore if incapable of sight",
+      "description": "If true, the glow factor is ignored for pawns that cannot see.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "objectType": "ScattererValidator_Buildable",
+  "label": "Buildable validator",
+  "description": "Rejects scatter positions where cells within the given radius are not buildable for the specified terrain affordance.",
+  "fieldOrder": ["Class", "radius", "affordance"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be ScattererValidator_Buildable.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Cell radius around the candidate position to check for buildability.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "affordance": {
+      "label": "Affordance",
+      "description": "Terrain affordance all cells in the radius must support.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainAffordanceDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

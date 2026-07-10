@@ -1,0 +1,42 @@
+{
+  "defType": "DebugTabMenuDef",
+  "label": "Debug tab menu",
+  "description": "Registers a tab in the in-game debug window (Dialog_Debug). The menuClass names the C# class that implements the tab; displayOrder controls its position in the tab bar.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "menuClass",
+    "displayOrder"
+  ],
+  "fields": {
+    "menuClass": {
+      "label": "Menu class",
+      "description": "C# class that implements this debug tab. Must derive from LudeonTK.DebugTabMenu. Omitting this field causes a config error at runtime.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "DebugTabMenu_Actions",
+        "DebugTabMenu_Settings",
+        "DebugTabMenu_Output"
+      ]
+    },
+    "displayOrder": {
+      "label": "Display order",
+      "description": "Sort order of this tab in Dialog_Debug. Lower values appear first. Defaults to 99999. Shipped values use multiples of 100 to leave room for mod entries between vanilla tabs.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 99999,
+      "xml": "element",
+      "examples": ["0", "100", "200"]
+    }
+  },
+  "templates": {
+    "new-debug-tab-menu": {
+      "label": "New debug tab menu",
+      "description": "A new debug window tab with a menu class and display order.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "menuClass", "displayOrder"],
+      "fieldValues": {}
+    }
+  }
+}

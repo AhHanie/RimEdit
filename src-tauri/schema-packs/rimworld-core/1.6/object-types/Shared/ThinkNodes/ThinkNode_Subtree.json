@@ -1,0 +1,19 @@
+{
+  "objectType": "ThinkNode_Subtree",
+  "label": "Think node subtree",
+  "description": "Injects a deep copy of a ThinkTreeDef's root node as a child at runtime. Private in source but treeDef is XML-backed. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "treeDef"
+  ],
+  "fields": {
+    "treeDef": {
+      "label": "Tree def",
+      "description": "ThinkTreeDef whose thinkRoot is deep-copied and injected as this node's child at resolve time. Private in C# source but loaded from XML.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThinkTreeDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

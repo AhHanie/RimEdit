@@ -1,0 +1,30 @@
+{
+  "objectType": "QuestNode_WorldObjectTimeout",
+  "label": "QuestNode WorldObjectTimeout",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_WorldObjectTimeout. Inherits timing fields from QuestNode_Delay.",
+  "inherits": [
+    "QuestNode_Delay"
+  ],
+  "fieldOrder": [
+    "destroyOnCleanup",
+    "worldObject"
+  ],
+  "fields": {
+    "destroyOnCleanup": {
+      "description": "SlateRef<bool> literal, expression, or $varName; whether to destroy the world object during cleanup.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "worldObject": {
+      "description": "SlateRef<WorldObject> world object variable or expression.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,445 @@
+{
+  "defType": "MentalStateDef",
+  "label": "Mental state",
+  "description": "Defines a mental state that a pawn can enter, including its eligibility rules, recovery conditions, interaction blocks, drug policy, and display properties.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "stateClass",
+    "workerClass",
+    "category",
+    "prisonersCanDo",
+    "slavesCanDo",
+    "inCaravanCanDo",
+    "colonistsOnly",
+    "slavesOnly",
+    "requiredCapacities",
+    "downedCanDo",
+    "unspawnedNotInCaravanCanDo",
+    "blockNormalThoughts",
+    "stopsJobs",
+    "blockInteractionInitiationExcept",
+    "blockInteractionRecipientExcept",
+    "blockRandomInteraction",
+    "stateEffecter",
+    "tale",
+    "allowBeatfire",
+    "drugCategory",
+    "ignoreDrugPolicy",
+    "ticksBetweenRamblingRange",
+    "recoveryMtbDays",
+    "minTicksBeforeRecovery",
+    "maxTicksBeforeRecovery",
+    "recoverFromSleep",
+    "recoverFromDowned",
+    "recoverFromCaptured",
+    "recoverFromCollapsingExhausted",
+    "moodRecoveryThought",
+    "allowGuilty",
+    "beginLetter",
+    "beginLetterLabel",
+    "beginLetterDef",
+    "nameColor",
+    "recoveryMessage",
+    "baseInspectLine",
+    "escapingPrisonersIgnore",
+    "blocksDefendAndExpandHive"
+  ],
+  "fields": {
+    "stateClass": {
+      "label": "State class",
+      "description": "C# MentalState subclass that implements the active behaviour for this mental state.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "MentalState",
+      "xml": "element",
+      "examples": [
+        "MentalState",
+        "MentalState_Berserk",
+        "MentalState_WanderPsychotic",
+        "MentalState_Manhunter",
+        "MentalState_BingingDrug",
+        "MentalState_Tantrum",
+        "MentalState_SocialFighting"
+      ]
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# MentalStateWorker subclass that decides when this mental state can trigger.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "MentalStateWorker",
+      "xml": "element",
+      "examples": [
+        "MentalStateWorker",
+        "MentalStateWorker_BingingDrug",
+        "MentalStateWorker_Berserk",
+        "MentalStateWorker_Manhunter"
+      ]
+    },
+    "category": {
+      "label": "Category",
+      "description": "Broad behavioural category of this mental state. Aggro means the pawn attacks others; Malicious means hostile but not directly violent; Misc covers the rest.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Undefined",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Aggro", "Malicious", "Misc"]
+      }
+    },
+    "prisonersCanDo": {
+      "label": "Prisoners can do",
+      "description": "Whether prisoner pawns are eligible to enter this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "slavesCanDo": {
+      "label": "Slaves can do",
+      "description": "Whether slave pawns are eligible to enter this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "inCaravanCanDo": {
+      "label": "In caravan can do",
+      "description": "Whether pawns travelling in a caravan are eligible to enter this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "colonistsOnly": {
+      "label": "Colonists only",
+      "description": "If true, only colonist pawns can enter this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "slavesOnly": {
+      "label": "Slaves only",
+      "description": "If true, only slave pawns can enter this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiredCapacities": {
+      "label": "Required capacities",
+      "description": "PawnCapacityDefs that a pawn must have at non-zero level to be eligible for this mental state.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "PawnCapacityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "downedCanDo": {
+      "label": "Downed can do",
+      "description": "Whether a downed pawn can enter this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "unspawnedNotInCaravanCanDo": {
+      "label": "Unspawned not in caravan can do",
+      "description": "Whether an unspawned pawn that is not in a caravan (e.g. held captive off-map) can enter this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blockNormalThoughts": {
+      "label": "Block normal thoughts",
+      "description": "If true, the pawn does not accumulate normal mood thoughts while in this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "stopsJobs": {
+      "label": "Stops jobs",
+      "description": "If true, the pawn's current job is interrupted when this mental state begins.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "blockInteractionInitiationExcept": {
+      "label": "Block interaction initiation except",
+      "description": "If set, the pawn may only initiate interactions that appear in this list. An empty element blocks all initiations.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "InteractionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "blockInteractionRecipientExcept": {
+      "label": "Block interaction recipient except",
+      "description": "If set, the pawn may only receive interactions that appear in this list. An empty element blocks all received interactions.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "InteractionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "blockRandomInteraction": {
+      "label": "Block random interaction",
+      "description": "If true, the pawn does not initiate random social interactions while in this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "stateEffecter": {
+      "label": "State effecter",
+      "description": "EffecterDef played on the pawn while this mental state is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "EffecterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "tale": {
+      "label": "Tale",
+      "description": "TaleDef recorded when this mental state ends, used for art generation and history.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TaleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowBeatfire": {
+      "label": "Allow beat fire",
+      "description": "Whether the pawn is allowed to beat out fires while in this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "drugCategory": {
+      "label": "Drug category",
+      "description": "Which category of drugs the pawn will binge on during this mental state. Only relevant for binging mental states.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Any",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Medical", "Social", "Hard", "Any"]
+      }
+    },
+    "ignoreDrugPolicy": {
+      "label": "Ignore drug policy",
+      "description": "If true, the pawn ignores the colony drug policy when consuming drugs during this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ticksBetweenRamblingRange": {
+      "label": "Ticks between rambling range",
+      "description": "Random range of ticks between rambling speech events during this mental state, e.g. 600~1800.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "recoveryMtbDays": {
+      "label": "Recovery MTB days",
+      "description": "Mean time in in-game days before spontaneous recovery. Use Infinity to disable spontaneous recovery.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "minTicksBeforeRecovery": {
+      "label": "Min ticks before recovery",
+      "description": "Minimum ticks that must pass after this mental state begins before recovery can occur.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 500,
+      "xml": "element"
+    },
+    "maxTicksBeforeRecovery": {
+      "label": "Max ticks before recovery",
+      "description": "Hard tick cap after which the mental state always ends, regardless of other conditions.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 99999999,
+      "xml": "element"
+    },
+    "recoverFromSleep": {
+      "label": "Recover from sleep",
+      "description": "If true, the pawn recovers from this mental state when they fall asleep.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "recoverFromDowned": {
+      "label": "Recover from downed",
+      "description": "If true, the pawn recovers from this mental state when they become downed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "recoverFromCaptured": {
+      "label": "Recover from captured",
+      "description": "If true, the pawn recovers from this mental state when they are captured.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "recoverFromCollapsingExhausted": {
+      "label": "Recover from collapsing exhausted",
+      "description": "If true, the pawn recovers from this mental state when they collapse from exhaustion.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "moodRecoveryThought": {
+      "label": "Mood recovery thought",
+      "description": "ThoughtDef applied to the pawn when they recover from this mental state.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowGuilty": {
+      "label": "Allow guilty",
+      "description": "If false, the pawn cannot gain the guilty thought during this mental state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "beginLetter": {
+      "label": "Begin letter",
+      "description": "Translated text body of the letter sent to the player when this mental state begins.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "beginLetterLabel": {
+      "label": "Begin letter label",
+      "description": "Translated headline of the letter sent to the player when this mental state begins.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "beginLetterDef": {
+      "label": "Begin letter def",
+      "description": "LetterDef controlling the visual style and sound of the begin letter. Defaults to NegativeEvent.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "LetterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nameColor": {
+      "label": "Name color",
+      "description": "Color used when displaying the pawn's name or status while in this mental state. Defaults to green.",
+      "type": { "kind": "color" },
+      "required": false,
+      "defaultValue": "(0,1,0)",
+      "xml": "element",
+      "examples": ["(1,0,0)", "(1,0.5,0)", "(0,1,0)", "(0.8,0.2,0.2)"]
+    },
+    "recoveryMessage": {
+      "label": "Recovery message",
+      "description": "Translated message shown in the log when the pawn recovers from this mental state. May be IsNull.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "baseInspectLine": {
+      "label": "Base inspect line",
+      "description": "Translated line shown in the inspect pane while the pawn is in this mental state.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "escapingPrisonersIgnore": {
+      "label": "Escaping prisoners ignore",
+      "description": "If true, escaping prisoners do not treat pawns in this mental state as a threat.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blocksDefendAndExpandHive": {
+      "label": "Blocks defend and expand hive",
+      "description": "If true, insectoid hive AI is suppressed while a pawn in this mental state is nearby.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-mental-state": {
+      "label": "Basic mental state",
+      "description": "Minimal mental state with a state class and inspect line.",
+      "includeRequiredFields": true,
+      "promptFields": ["stateClass", "category", "baseInspectLine"],
+      "fieldValues": {
+        "prisonersCanDo": "true",
+        "slavesCanDo": "true",
+        "stopsJobs": "true",
+        "recoverFromDowned": "true",
+        "recoverFromCaptured": "true",
+        "recoverFromCollapsingExhausted": "true",
+        "allowGuilty": "true",
+        "recoveryMtbDays": "1",
+        "minTicksBeforeRecovery": "500"
+      }
+    },
+    "aggro-mental-state": {
+      "label": "Aggro mental state",
+      "description": "Mental state where the pawn attacks others, with a begin letter and name color.",
+      "includeRequiredFields": true,
+      "promptFields": ["stateClass", "baseInspectLine", "beginLetter", "beginLetterLabel"],
+      "fieldValues": {
+        "category": "Aggro",
+        "prisonersCanDo": "true",
+        "slavesCanDo": "true",
+        "stopsJobs": "true",
+        "blockNormalThoughts": "true",
+        "recoverFromDowned": "true",
+        "recoverFromCaptured": "true",
+        "recoverFromCollapsingExhausted": "true",
+        "allowGuilty": "true",
+        "recoveryMtbDays": "1",
+        "minTicksBeforeRecovery": "500",
+        "nameColor": "(1,0,0)"
+      }
+    }
+  }
+}

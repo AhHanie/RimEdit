@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualDef_ImbueDeathRefusal",
+  "label": "Psychic ritual -- imbue death refusal",
+  "description": "Ritual that imbues the target pawn with a death refusal, scaling the skill offset by ritual quality.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "skillOffsetPercentFromQualityCurve"
+  ],
+  "fields": {
+    "skillOffsetPercentFromQualityCurve": {
+      "label": "Skill offset percent from quality curve",
+      "description": "Curve mapping ritual quality to the percentage offset applied to the death-refusal skill.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

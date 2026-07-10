@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_Pain",
+  "label": "Stat part (pain)",
+  "description": "Scales the stat based on the pawn's pain level.",
+  "fieldOrder": ["Class", "priority", "factor"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Stat multiplier applied based on pain level.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

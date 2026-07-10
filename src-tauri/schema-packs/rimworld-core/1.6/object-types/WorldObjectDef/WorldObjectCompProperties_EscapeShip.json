@@ -1,0 +1,8 @@
+{
+  "objectType": "WorldObjectCompProperties_EscapeShip",
+  "label": "Escape ship comp",
+  "description": "Adds escape ship behavior to this world object. Requires a MapParent world object class.",
+  "inherits": ["WorldObjectCompProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

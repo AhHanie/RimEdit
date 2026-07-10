@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_Randomizer",
+  "label": "Randomizer comp",
+  "description": "Randomizes severity and trigger timing on add.",
+  "fieldOrder": ["Class", "compClass", "randomSeverity", "randomMtbDays"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "randomSeverity": {
+      "label": "Random severity",
+      "description": "Randomized severity applied on add.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "randomMtbDays": {
+      "label": "Random MTB days",
+      "description": "Randomized mean-time-between triggers.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    }
+  }
+}

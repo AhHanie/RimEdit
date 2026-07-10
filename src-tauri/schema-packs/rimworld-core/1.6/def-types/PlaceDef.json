@@ -1,0 +1,35 @@
+{
+  "defType": "PlaceDef",
+  "label": "Place",
+  "description": "Defines a place of origin used by ideoligion generation. PlaceDefs provide origin tags and grammar rules for generated place names, summaries, communities, jobs, weapons, and enemies.",
+  "inherits": ["Def"],
+  "fieldOrder": ["placeRules", "tags"],
+  "fields": {
+    "placeRules": {
+      "label": "Place rules",
+      "description": "Inline grammar rules added to ideoligion name and text generation when this place is selected.",
+      "type": { "kind": "object", "schemaRef": "RulePack" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": false
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "Origin tags used to match this place against CultureDef.allowedPlaceTags. These are plain strings, not Def references.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi",
+      "examples": ["OriginSpacer", "OriginTribal", "OriginTechnoFeudal"]
+    }
+  },
+  "templates": {
+    "basic-place": {
+      "label": "Basic place",
+      "description": "Minimal place with one origin tag and an inline RulePack.",
+      "includeRequiredFields": true,
+      "promptFields": ["tags", "placeRules"],
+      "fieldValues": {}
+    }
+  }
+}

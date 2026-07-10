@@ -1,0 +1,58 @@
+{
+  "defType": "InventoryStockGroupDef",
+  "label": "Inventory stock group",
+  "description": "Defines a named group of interchangeable ThingDefs that pawns automatically restock and carry, such as the Medicine group used by the auto-restock system.",
+  "inherits": ["Def"],
+  "fieldOrder": ["thingDefs", "min", "max", "defaultThingDef"],
+  "fields": {
+    "thingDefs": {
+      "label": "Thing defs",
+      "description": "ThingDefs that are interchangeable members of this stock group.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+      },
+      "required": true,
+      "xml": "listOfLi"
+    },
+    "min": {
+      "label": "Min",
+      "description": "Minimum quantity of this stock group a pawn should carry.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element",
+      "minimum": 0
+    },
+    "max": {
+      "label": "Max",
+      "description": "Maximum quantity of this stock group a pawn should carry.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 3,
+      "xml": "element",
+      "minimum": 0
+    },
+    "defaultThingDef": {
+      "label": "Default thing def",
+      "description": "ThingDef used when restocking without a more specific preference. Should be one of the entries in thingDefs; falls back to the first entry in thingDefs if unset.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-inventory-stock-group": {
+      "label": "New inventory stock group",
+      "description": "Minimal inventory stock group with a def name, label, and member thing defs.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "thingDefs"],
+      "fieldValues": {
+        "min": "0",
+        "max": "3"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "objectType": "StatPart_IsFlesh",
+  "label": "Stat part (is flesh)",
+  "description": "Modifies the stat based on whether the pawn is a flesh-and-blood creature.",
+  "fieldOrder": ["Class", "priority"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

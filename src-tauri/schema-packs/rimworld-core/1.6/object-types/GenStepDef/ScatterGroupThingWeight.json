@@ -1,0 +1,24 @@
+{
+  "objectType": "ScatterGroupThingWeight",
+  "label": "Scatter group thing weight",
+  "description": "A ThingDef paired with a relative selection weight within a scatter group.",
+  "fieldOrder": ["thing", "weight"],
+  "fields": {
+    "thing": {
+      "label": "Thing",
+      "description": "ThingDef that can be placed within the scatter group.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative probability of this thing being chosen within the group.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

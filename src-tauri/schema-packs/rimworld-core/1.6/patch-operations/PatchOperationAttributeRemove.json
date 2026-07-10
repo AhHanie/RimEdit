@@ -1,0 +1,24 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationAttributeRemove",
+  "label": "Attribute Remove",
+  "description": "Removes an XML attribute from the node(s) matched by xpath.",
+  "fieldOrder": ["xpath", "attribute"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Target node(s) to remove the attribute from.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    },
+    "attribute": {
+      "label": "Attribute",
+      "description": "Name of the attribute to remove.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "required": true
+    }
+  }
+}

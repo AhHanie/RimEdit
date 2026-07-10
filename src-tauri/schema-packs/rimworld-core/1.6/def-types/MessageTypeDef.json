@@ -1,0 +1,26 @@
+{
+  "defType": "MessageTypeDef",
+  "label": "Message type",
+  "description": "Defines a short on-screen message category and the optional sound played when that message appears.",
+  "inherits": ["Def"],
+  "fieldOrder": ["sound"],
+  "fields": {
+    "sound": {
+      "label": "Sound",
+      "description": "SoundDef played when this message type is shown. If absent, the message is silent.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  },
+  "templates": {
+    "basic-message-type": {
+      "label": "Basic message type",
+      "description": "Minimal message type with inherited identity fields and an optional sound.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName"],
+      "fieldValues": {}
+    }
+  }
+}

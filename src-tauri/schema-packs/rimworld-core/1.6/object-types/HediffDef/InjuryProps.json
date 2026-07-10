@@ -1,0 +1,44 @@
+{
+  "objectType": "InjuryProps",
+  "label": "Injury props",
+  "description": "Physical properties of an injury-type hediff such as bleed rate and pain coefficient.",
+  "fieldOrder": [
+    "becomeRotten",
+    "bleedRate",
+    "painPerSeverity",
+    "destroyBodyPartOnRemoval"
+  ],
+  "fields": {
+    "becomeRotten": {
+      "label": "Become rotten",
+      "description": "Severity threshold at which the injury becomes infected/rotten. Reaching this value triggers infection mechanics.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "bleedRate": {
+      "label": "Bleed rate",
+      "description": "Base bleed rate contributed by this injury per severity point. Added to the pawn's total bleed rate.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "painPerSeverity": {
+      "label": "Pain per severity",
+      "description": "Pain added per unit of severity. Total pain contribution equals this value multiplied by current severity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "destroyBodyPartOnRemoval": {
+      "label": "Destroy body part on removal",
+      "description": "If true, the affected body part is destroyed when this injury hediff is removed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "defType": "TerrainAffordanceDef",
+  "label": "Terrain Affordance Def",
+  "description": "Defines a terrain capability used by building placement, terrain validation, overlays, and map generation.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "order",
+    "visualizeOnAffordanceOverlay",
+    "affordanceOverlayColor",
+    "blockAffordanceOverlay"
+  ],
+  "fields": {
+    "order": {
+      "label": "Order",
+      "description": "Sort order used when displaying terrain requirements and choosing which affordance overlay color has priority.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "visualizeOnAffordanceOverlay": {
+      "label": "Visualize on affordance overlay",
+      "description": "If true, terrain with this affordance can be shown on the terrain affordance overlay using this def's overlay color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "affordanceOverlayColor": {
+      "label": "Affordance overlay color",
+      "description": "Color used by the terrain affordance overlay when this affordance is the highest-priority visualized affordance on a cell.",
+      "type": { "kind": "color" },
+      "required": false,
+      "defaultValue": "white",
+      "xml": "element",
+      "examples": ["(255,130,0)", "(255,255,0)", "(0,0,200)"]
+    },
+    "blockAffordanceOverlay": {
+      "label": "Block affordance overlay",
+      "description": "If true and this affordance is present on a cell, lower-priority affordance overlay visualization is suppressed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

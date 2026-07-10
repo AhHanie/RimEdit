@@ -1,0 +1,43 @@
+{
+  "defType": "GameSetupStepDef",
+  "label": "Game setup step",
+  "description": "Defines one ordered step in the world generation setup sequence. Steps run in ascending order value; ties break by def index.",
+  "inherits": ["Def"],
+  "fieldOrder": ["order", "executeAfterWorldSetup", "setupStep"],
+  "fields": {
+    "order": {
+      "label": "Order",
+      "description": "Execution order. Steps with lower values run first; ties are broken by def index.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0", "100", "200"]
+    },
+    "executeAfterWorldSetup": {
+      "label": "Execute after world setup",
+      "description": "When true, this step defers execution until after the main world setup sequence completes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "setupStep": {
+      "label": "Setup step",
+      "description": "Polymorphic object that performs the setup work. The XML Class attribute selects the concrete GameSetupStep subclass.",
+      "type": { "kind": "object", "schemaRef": "GameSetupStep" },
+      "required": false,
+      "xml": "object"
+    }
+  },
+  "templates": {
+    "new-game-setup-step": {
+      "label": "New game setup step",
+      "description": "Blank game setup step using the Grids subclass as the default placeholder.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "order"],
+      "fieldValues": {
+        "setupStep": { "Class": "GameSetupStep_Grids" }
+      }
+    }
+  }
+}

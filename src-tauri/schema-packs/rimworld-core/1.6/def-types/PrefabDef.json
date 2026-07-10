@@ -1,0 +1,72 @@
+{
+  "defType": "PrefabDef",
+  "label": "Prefab",
+  "description": "Reusable map layout snippet composed of placed things, terrain patches, and nested sub-prefabs. Loaded and placed by map generators and scenario parts.",
+  "inherits": ["Def"],
+  "fieldOrder": ["things", "prefabs", "terrain", "size", "rotations", "edgeOnly"],
+  "fields": {
+    "things": {
+      "label": "Things",
+      "description": "Placed things. Each child element name is the ThingDef defName; the element body contains placement options.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PrefabThingData" },
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "repeatable": true
+    },
+    "prefabs": {
+      "label": "Sub-prefabs",
+      "description": "Nested sub-prefabs placed inside this prefab. Each child element name is the PrefabDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SubPrefabData" },
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": {
+        "defType": "PrefabDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "defaultValueField": "position"
+    },
+    "terrain": {
+      "label": "Terrain",
+      "description": "Terrain patches. Each child element name is the TerrainDef defName; the element body specifies coverage rectangles.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PrefabTerrainData" },
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": {
+        "defType": "TerrainDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "size": {
+      "label": "Size",
+      "description": "Bounding size of the prefab in map cells, serialized as '(width, height)'.",
+      "type": { "kind": "vector2" },
+      "examples": ["(5, 3)", "(1, 1)", "(10, 10)"]
+    },
+    "rotations": {
+      "label": "Rotations",
+      "description": "Allowed placement rotations as comma-separated flags. Defaults to All if omitted.",
+      "type": { "kind": "string" },
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["North", "East", "South", "West", "All"]
+      },
+      "examples": ["North", "North, South", "All"]
+    },
+    "edgeOnly": {
+      "label": "Edge only",
+      "description": "If true, the prefab is only placed at or near the map edge.",
+      "type": { "kind": "boolean" },
+      "defaultValue": false
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "objectType": "StageFailTrigger_NoThingPresent",
+  "label": "Stage fail trigger (no thing present)",
+  "description": "Fails the stage when the required thing is not present within range.",
+  "fieldOrder": ["Class", "desc", "allowanceTicks", "onlyIfTargetIsOfDef", "maxDistance", "thingDef"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "desc": { "label": "Description", "type": { "kind": "localizedString" }, "required": false, "xml": "element" },
+    "allowanceTicks": {
+      "label": "Allowance ticks",
+      "description": "Number of ticks the condition is allowed to persist before the stage fails.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "onlyIfTargetIsOfDef": {
+      "label": "Only if target is of def",
+      "description": "If set, this trigger only activates when the ritual target is of this ThingDef.",
+      "type": { "kind": "defReference", "reference": { "defType": "ThingDef" } },
+      "required": false,
+      "xml": "element"
+    },
+    "maxDistance": {
+      "label": "Max distance",
+      "description": "Maximum cell distance within which the required thing must be present. Defaults to 12.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 12,
+      "xml": "element"
+    },
+    "thingDef": {
+      "label": "Thing def",
+      "description": "The ThingDef that must be present within range.",
+      "type": { "kind": "defReference", "reference": { "defType": "ThingDef" } },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

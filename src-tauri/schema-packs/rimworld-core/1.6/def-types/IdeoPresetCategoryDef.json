@@ -1,0 +1,25 @@
+{
+  "defType": "IdeoPresetCategoryDef",
+  "label": "Ideo preset category",
+  "description": "Defines a category grouping for ideology presets in the new colony ideology selection page.",
+  "inherits": ["Def"],
+  "fieldOrder": ["groupLabel"],
+  "fields": {
+    "groupLabel": {
+      "label": "Group label",
+      "description": "Display name shown as the category group heading on the ideology selection screen. Must be translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-ideo-preset-category": {
+      "label": "Basic ideo preset category",
+      "description": "Minimal ideology preset category with a defName, label, description, and group label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "description", "groupLabel"],
+      "fieldValues": {}
+    }
+  }
+}

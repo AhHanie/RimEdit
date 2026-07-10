@@ -1,0 +1,37 @@
+{
+  "objectType": "RoleEffect_ProductionQualityOffset",
+  "label": "Role effect (production quality offset)",
+  "description": "Offsets the quality level of items produced by the role pawn.",
+  "fieldOrder": ["Class", "label", "labelKey", "offset"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleEffect subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Label shown for this role effect.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the role effect label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Integer quality offset applied to production results.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "objectType": "StatPart_Stuff",
+  "label": "Stat part (stuff)",
+  "description": "Scales the stat based on a stuff-material stat and an optional multiplier stat.",
+  "fieldOrder": ["Class", "priority", "stuffPowerStat", "multiplierStat"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "stuffPowerStat": {
+      "label": "Stuff power stat",
+      "description": "StatDef read from the stuff material that provides the base power value.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "multiplierStat": {
+      "label": "Multiplier stat",
+      "description": "StatDef read from the stuff material used as an additional multiplier.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "defType": "AbilityCategoryDef",
+  "label": "Ability category",
+  "description": "Groups abilities under a shared category heading in the ability UI. Controls the display order of that category row.",
+  "inherits": ["Def"],
+  "fieldOrder": ["displayOrder"],
+  "fields": {
+    "displayOrder": {
+      "label": "Display order",
+      "description": "Sort priority among ability categories in the ability UI. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-ability-category": {
+      "label": "Basic ability category",
+      "description": "A new ability category with a display order.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "displayOrder"],
+      "fieldValues": {}
+    }
+  }
+}

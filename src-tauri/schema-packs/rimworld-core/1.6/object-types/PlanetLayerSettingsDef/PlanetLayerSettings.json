@@ -1,0 +1,87 @@
+{
+  "objectType": "PlanetLayerSettings",
+  "label": "Planet layer settings",
+  "description": "Camera and rendering geometry values for a planet layer.",
+  "fieldOrder": [
+    "origin",
+    "radius",
+    "viewAngle",
+    "extraCameraAltitude",
+    "subdivisions",
+    "useSurfaceViewAngle",
+    "backgroundWorldCameraOffset",
+    "backgroundWorldCameraParallaxDistancePer100Cells"
+  ],
+  "fields": {
+    "origin": {
+      "label": "Origin",
+      "description": "World-space origin offset for this planet layer.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "(0,0,0)",
+      "examples": ["(200,50,0)"]
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Radius of the planet sphere for this layer.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 100,
+      "examples": ["100", "130"]
+    },
+    "viewAngle": {
+      "label": "View angle",
+      "description": "Camera view angle used when rendering this planet layer.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 180
+    },
+    "extraCameraAltitude": {
+      "label": "Extra camera altitude",
+      "description": "Additional camera altitude applied when viewing this planet layer.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0,
+      "examples": ["300"]
+    },
+    "subdivisions": {
+      "label": "Subdivisions",
+      "description": "Number of mesh subdivisions used to generate the planet sphere for this layer.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 10,
+      "examples": ["10", "5"]
+    },
+    "useSurfaceViewAngle": {
+      "label": "Use surface view angle",
+      "description": "If true, this layer uses the surface layer's view angle instead of its own viewAngle value.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "backgroundWorldCameraOffset": {
+      "label": "Background world camera offset",
+      "description": "Camera offset applied when this layer is rendered as a background world.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0,
+      "examples": ["160"]
+    },
+    "backgroundWorldCameraParallaxDistancePer100Cells": {
+      "label": "Background world camera parallax distance per 100 cells",
+      "description": "Parallax distance applied per 100 cells when this layer is rendered as a background world.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0,
+      "examples": ["2.5"]
+    }
+  }
+}

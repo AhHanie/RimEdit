@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_Count",
+  "label": "Count maker",
+  "description": "Generates exactly the number of items specified by countRange in fixedParams, drawn from the eligible pool.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

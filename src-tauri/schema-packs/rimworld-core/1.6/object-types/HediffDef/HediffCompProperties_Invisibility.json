@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_Invisibility",
+  "label": "Invisibility comp",
+  "description": "Makes the pawn invisible based on hediff severity.",
+  "fieldOrder": ["Class", "compClass", "visibilityAtSeverity"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "visibilityAtSeverity": {
+      "label": "Visibility at severity",
+      "description": "Curve mapping severity to visibility factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    }
+  }
+}

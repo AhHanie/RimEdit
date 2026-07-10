@@ -1,0 +1,94 @@
+{
+  "objectType": "StatPart_Quality_Offset",
+  "label": "Stat part (quality offset)",
+  "description": "Adds a flat offset to the stat based on the item's quality tier. Optionally restricted to specific ThingDefs.",
+  "fieldOrder": [
+    "Class", "priority",
+    "offsetAwful", "offsetPoor", "offsetNormal", "offsetGood", "offsetExcellent", "offsetMasterwork", "offsetLegendary",
+    "thingDefs"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "offsetAwful": {
+      "label": "Offset (awful)",
+      "description": "Stat offset added for awful quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "offsetPoor": {
+      "label": "Offset (poor)",
+      "description": "Stat offset added for poor quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "offsetNormal": {
+      "label": "Offset (normal)",
+      "description": "Stat offset added for normal quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "offsetGood": {
+      "label": "Offset (good)",
+      "description": "Stat offset added for good quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "offsetExcellent": {
+      "label": "Offset (excellent)",
+      "description": "Stat offset added for excellent quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "offsetMasterwork": {
+      "label": "Offset (masterwork)",
+      "description": "Stat offset added for masterwork quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "offsetLegendary": {
+      "label": "Offset (legendary)",
+      "description": "Stat offset added for legendary quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "thingDefs": {
+      "label": "Thing defs",
+      "description": "If non-empty, this part only applies when the stat request is for one of these ThingDefs.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

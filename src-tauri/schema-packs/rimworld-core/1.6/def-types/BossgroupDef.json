@@ -1,0 +1,74 @@
+{
+  "defType": "BossgroupDef",
+  "label": "Bossgroup",
+  "description": "Defines a bossgroup that controls wave escalation and quest data for a mechanoid boss encounter. The boss and waves fields are required.",
+  "inherits": ["Def"],
+  "fieldOrder": ["boss", "waves", "repeatWaveStartIndex", "workerClass", "leaderDescription", "quest", "rewardDef"],
+  "fields": {
+    "boss": {
+      "label": "Boss",
+      "description": "BossDef that this bossgroup belongs to.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "BossDef", "allowAbstract": false, "scope": "allSources" },
+      "required": true,
+      "xml": "element"
+    },
+    "waves": {
+      "label": "Waves",
+      "description": "Ordered list of wave definitions. The first encounter uses wave 0; repeat encounters cycle from repeatWaveStartIndex onward.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BossGroupWave" },
+      "required": true,
+      "xml": "listOfLi"
+    },
+    "repeatWaveStartIndex": {
+      "label": "Repeat wave start index",
+      "description": "Index into waves at which repeat encounters begin cycling. Must be lower than the wave count. Defaults to 0.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class that implements bossgroup logic. Defaults to BossgroupWorker and is not set in any shipped data.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "leaderDescription": {
+      "label": "Leader description",
+      "description": "Player-facing description of the boss leader shown in the bossgroup UI. Supports the {LEADERKIND_label} token.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "quest": {
+      "label": "Quest",
+      "description": "QuestScriptDef triggered when a bossgroup wave is encountered.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "QuestScriptDef", "allowAbstract": false, "scope": "allSources" },
+      "required": false,
+      "xml": "element"
+    },
+    "rewardDef": {
+      "label": "Reward def",
+      "description": "ThingDef awarded as a reward upon defeating this bossgroup.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-bossgroup": {
+      "label": "New bossgroup",
+      "description": "Minimal bossgroup with a def name, label, boss reference, reward def, and one empty wave.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "boss", "rewardDef"],
+      "fieldValues": {
+        "repeatWaveStartIndex": "0"
+      }
+    }
+  }
+}

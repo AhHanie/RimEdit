@@ -1,0 +1,86 @@
+{
+  "objectType": "Scenario",
+  "label": "Scenario",
+  "description": "The scenario configuration embedded in a ScenarioDef. Contains the player faction, surface layer, and the list of all scenario parts that define starting conditions and game rules.",
+  "fieldOrder": [
+    "name", "summary", "description", "playerFaction", "surfaceLayer", "parts",
+    "enabled", "showInUI", "valid", "standardAnomalyPlaystyleOnly"
+  ],
+  "fields": {
+    "name": {
+      "label": "Name",
+      "description": "Display name of this scenario shown in the scenario selection menu. Translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "summary": {
+      "label": "Summary",
+      "description": "Short one-line description of this scenario shown in the scenario selection menu. Translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Full multi-line description of this scenario shown in the scenario selection detail view. Translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "playerFaction": {
+      "label": "Player faction",
+      "description": "Fixed scenario part defining the player faction type for this scenario.",
+      "type": { "kind": "object", "schemaRef": "ScenPart_PlayerFaction" },
+      "required": false,
+      "xml": "object"
+    },
+    "surfaceLayer": {
+      "label": "Surface layer",
+      "description": "Fixed scenario part defining the starting planet layer for this scenario.",
+      "type": { "kind": "object", "schemaRef": "ScenPart_PlanetLayer" },
+      "required": false,
+      "xml": "object"
+    },
+    "parts": {
+      "label": "Parts",
+      "description": "All additional scenario parts that modify starting conditions, apply game rules, and configure player pawns. Each list item selects a concrete scenario part type via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ScenPart" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "enabled": {
+      "label": "Enabled",
+      "description": "Whether this scenario is active and available for selection.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "showInUI": {
+      "label": "Show in UI",
+      "description": "Whether this scenario is shown in the scenario selection menu.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "valid": {
+      "label": "Valid",
+      "description": "Whether this scenario has passed validation and can be used to start a game.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "standardAnomalyPlaystyleOnly": {
+      "label": "Standard anomaly playstyle only",
+      "description": "When true, this scenario is only available when using the standard Anomaly DLC playstyle.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  }
+}

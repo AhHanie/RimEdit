@@ -1,0 +1,21 @@
+{
+  "objectType": "QuestNode_Unset",
+  "label": "QuestNode Unset",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_Unset.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "name"
+  ],
+  "fields": {
+    "name": {
+      "description": "Slate variable name to remove.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

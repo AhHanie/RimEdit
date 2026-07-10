@@ -1,0 +1,45 @@
+{
+  "objectType": "Keyframe",
+  "label": "Keyframe",
+  "description": "A single keyframe in a KeyframeAnimationPart. Specifies the node's position offset, rotation angle, scale, and optional graphic state at the given tick.",
+  "fieldOrder": ["tick", "offset", "angle", "scale", "graphicState"],
+  "fields": {
+    "tick": {
+      "label": "Tick",
+      "description": "Animation tick at which this keyframe applies.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Position offset applied to the node at this keyframe. Default is (0, 0, 0).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "angle": {
+      "label": "Angle",
+      "description": "Rotation angle in degrees applied to the node at this keyframe. Default is 0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Scale multiplier applied to the node at this keyframe. Default is (1, 1, 1).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "graphicState": {
+      "label": "Graphic state",
+      "description": "GraphicStateDef to switch the node's graphic to at this keyframe. Optional.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "GraphicStateDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

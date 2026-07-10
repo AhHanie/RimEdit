@@ -1,0 +1,41 @@
+{
+  "objectType": "QuestNode_IsTrue",
+  "label": "QuestNode IsTrue",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_IsTrue.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "value",
+    "node",
+    "elseNode"
+  ],
+  "fields": {
+    "value": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "node": {
+      "description": "QuestNode run when value is true.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "elseNode": {
+      "description": "QuestNode run when value is false.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

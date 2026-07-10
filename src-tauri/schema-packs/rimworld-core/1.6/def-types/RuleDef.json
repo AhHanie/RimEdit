@@ -1,0 +1,28 @@
+{
+  "defType": "RuleDef",
+  "label": "Rule def",
+  "description": "A BaseGen symbol resolver definition. Provides a named set of SymbolResolvers that the base generation system dispatches when the symbol is encountered.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "symbol",
+    "resolvers"
+  ],
+  "fields": {
+    "symbol": {
+      "label": "Symbol",
+      "description": "The BaseGen symbol name this def responds to. Multiple RuleDefs may share the same symbol; one is selected by weighted random at generation time.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "noTranslate": true
+    },
+    "resolvers": {
+      "label": "Resolvers",
+      "description": "Ordered list of SymbolResolvers that implement the generation logic for this symbol. Each list item carries a Class attribute that selects the concrete resolver subclass.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SymbolResolver" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

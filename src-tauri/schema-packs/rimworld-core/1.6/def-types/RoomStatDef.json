@@ -1,0 +1,88 @@
+{
+  "defType": "RoomStatDef",
+  "label": "Room stat",
+  "description": "Defines a numeric stat measured for a room - impressiveness, cleanliness, wealth - and the curve that converts the raw score to a quality stage.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "updatePriority",
+    "displayRounded",
+    "isHidden",
+    "roomlessScore",
+    "scoreStages",
+    "inputStat",
+    "curve"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# RoomStatWorker subclass that calculates this stat's score for a given room.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["RoomStatWorker_Impressiveness", "RoomStatWorker_Cleanliness", "RoomStatWorker_Wealth"]
+    },
+    "updatePriority": {
+      "label": "Update priority",
+      "description": "Higher priority stats are recalculated before lower priority stats. Use when one stat depends on another.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "displayRounded": {
+      "label": "Display rounded",
+      "description": "If true, the stat score shown in the room inspector is rounded to the nearest integer.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isHidden": {
+      "label": "Hidden",
+      "description": "If true, this stat does not appear in the room inspector UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "roomlessScore": {
+      "label": "Roomless score",
+      "description": "Score assigned when no enclosing room exists (e.g., outdoors).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "scoreStages": {
+      "label": "Score stages",
+      "description": "Ordered list of quality stages with label and minimum score threshold.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RoomStatScoreStage" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "inputStat": {
+      "label": "Input stat",
+      "description": "Another RoomStatDef whose score is used as input by this stat's worker.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RoomStatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Piecewise linear curve that maps this stat's raw score to a display value or quality index.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  },
+  "templates": {
+    "basic-room-stat": {
+      "label": "Basic room stat",
+      "description": "A minimal room stat with a worker class.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass"],
+      "fieldValues": {}
+    }
+  }
+}

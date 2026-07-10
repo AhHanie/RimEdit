@@ -1,0 +1,38 @@
+{
+  "objectType": "StatPart_ArtificialBuildingsNearbyOffset",
+  "label": "Stat part (artificial buildings nearby offset)",
+  "description": "Adds an offset based on the number of artificial buildings within a radius, evaluated against a curve.",
+  "fieldOrder": ["Class", "priority", "curve", "radius"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Piecewise linear curve mapping the count of nearby artificial buildings to the stat offset.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Search radius in cells for counting nearby artificial buildings.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    }
+  }
+}

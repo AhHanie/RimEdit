@@ -1,0 +1,274 @@
+{
+  "defType": "RitualPatternDef",
+  "label": "Ritual pattern",
+  "description": "Defines a ritual template used to generate Precept_Ritual instances. Specifies behavior, targeting, outcome effects, and display overrides for a ritual.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "nameMaker", "ritualFreeStartIntervalDaysRange", "ritualObligationTriggers",
+    "ritualObligationTargetFilter", "ritualTargetFilter", "ritualBehavior",
+    "ritualOutcomeEffect", "ritualOnlyForIdeoMembers", "canStartAnytime",
+    "alwaysStartAnytime", "allowOtherInstances", "playsIdeoMusic",
+    "ignoreConsumableBuildingRequirement", "mergeGizmosForObligations",
+    "canMergeGizmosFromDifferentIdeos", "ignoreExtremeTemperatures", "minTechLevel",
+    "maxTechLevel", "showIdeoIconsInDialog", "ritualExpectedDesc",
+    "ritualExpectedDescNoAdjective", "shortDescOverride", "descOverride",
+    "ritualExplanation", "beginRitualOverride", "iconPathOverride",
+    "cancelIconPathOverride", "tags", "patternGroupTag", "layerWhitelist",
+    "layerBlacklist"
+  ],
+  "fields": {
+    "nameMaker": {
+      "label": "Name maker",
+      "description": "RulePackDef used to generate a random name for the ritual when no label is specified.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ritualFreeStartIntervalDaysRange": {
+      "label": "Ritual free start interval days range",
+      "description": "FloatRange controlling how many in-game days must pass between free (obligation-free) ritual starts.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "ritualObligationTriggers": {
+      "label": "Ritual obligation triggers",
+      "description": "List of obligation trigger property objects. Each li selects a trigger class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualObligationTriggerProperties" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "ritualObligationTargetFilter": {
+      "label": "Ritual obligation target filter",
+      "description": "RitualObligationTargetFilterDef that selects valid targets for obligation-driven ritual starts.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RitualObligationTargetFilterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ritualTargetFilter": {
+      "label": "Ritual target filter",
+      "description": "RitualTargetFilterDef that selects valid targets for player-initiated ritual starts.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RitualTargetFilterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ritualBehavior": {
+      "label": "Ritual behavior",
+      "description": "RitualBehaviorDef defining roles, stages, and overall behavior of the ritual.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RitualBehaviorDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ritualOutcomeEffect": {
+      "label": "Ritual outcome effect",
+      "description": "RitualOutcomeEffectDef controlling outcome quality, chances, and comps for this ritual.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RitualOutcomeEffectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ritualOnlyForIdeoMembers": {
+      "label": "Ritual only for ideo members",
+      "description": "If true, only members of the owning ideology may participate.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canStartAnytime": {
+      "label": "Can start anytime",
+      "description": "If true, the player can start this ritual at any time as an anytime ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "alwaysStartAnytime": {
+      "label": "Always start anytime",
+      "description": "If true, the ritual is always marked as an anytime ritual regardless of other ideos.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowOtherInstances": {
+      "label": "Allow other instances",
+      "description": "If true, multiple instances of this ritual pattern can be active simultaneously.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "playsIdeoMusic": {
+      "label": "Plays ideo music",
+      "description": "If true, ideo-specific music plays during this ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ignoreConsumableBuildingRequirement": {
+      "label": "Ignore consumable building requirement",
+      "description": "If true, consumable building requirements are skipped when starting this ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mergeGizmosForObligations": {
+      "label": "Merge gizmos for obligations",
+      "description": "If true, obligation gizmos from this pattern are merged into one UI button.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canMergeGizmosFromDifferentIdeos": {
+      "label": "Can merge gizmos from different ideos",
+      "description": "If true, gizmos for this ritual can be merged with those from other ideologies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ignoreExtremeTemperatures": {
+      "label": "Ignore extreme temperatures",
+      "description": "If true, extreme temperature warnings are suppressed when starting this ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minTechLevel": {
+      "label": "Min tech level",
+      "description": "Minimum faction tech level required to use this ritual pattern.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Undefined",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Animal", "Neolithic", "Medieval", "Industrial", "Spacer", "Ultra", "Archotech"]
+      }
+    },
+    "maxTechLevel": {
+      "label": "Max tech level",
+      "description": "Maximum faction tech level permitted to use this ritual pattern. Undefined means no upper limit.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Undefined",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Animal", "Neolithic", "Medieval", "Industrial", "Spacer", "Ultra", "Archotech"]
+      }
+    },
+    "showIdeoIconsInDialog": {
+      "label": "Show ideo icons in dialog",
+      "description": "If true, ideology icons are shown in the ritual start dialog.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ritualExpectedDesc": {
+      "label": "Ritual expected desc",
+      "description": "Localized description of what the ritual is expected to produce, shown in the ritual info dialog.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "ritualExpectedDescNoAdjective": {
+      "label": "Ritual expected desc (no adjective)",
+      "description": "Variant of ritualExpectedDesc used when no quality adjective is prepended.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "shortDescOverride": {
+      "label": "Short desc override",
+      "description": "Overrides the short description shown in ritual selection UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "descOverride": {
+      "label": "Desc override",
+      "description": "Overrides the full description of the generated ritual precept.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "ritualExplanation": {
+      "label": "Ritual explanation",
+      "description": "Additional explanation text shown in the ritual start dialog.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "beginRitualOverride": {
+      "label": "Begin ritual override",
+      "description": "Override label for the start-ritual button in the gizmo or dialog.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "iconPathOverride": {
+      "label": "Icon path override",
+      "description": "Texture path for the ritual gizmo icon, relative to the game content folder.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "cancelIconPathOverride": {
+      "label": "Cancel icon path override",
+      "description": "Texture path for the cancel-ritual gizmo icon.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "List of string tags used to group or filter ritual patterns.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "patternGroupTag": {
+      "label": "Pattern group tag",
+      "description": "Tag that groups multiple ritual patterns together in the ideology builder. Empty element is valid.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "layerWhitelist": {
+      "label": "Layer whitelist",
+      "description": "If non-empty, this ritual pattern is only available on these PlanetLayerDefs.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerBlacklist": {
+      "label": "Layer blacklist",
+      "description": "PlanetLayerDefs on which this ritual pattern is not available.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "new-ritual-pattern": {
+      "label": "New ritual pattern",
+      "description": "Minimal ritual pattern with a behavior and icon path.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "ritualBehavior", "iconPathOverride"],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "defType": "Def",
+  "label": "Def",
+  "description": "Base type for all RimWorld defs. Provides the common identity fields shared by every def type.",
+  "abstractType": true,
+  "inherits": [],
+  "fieldOrder": [
+    "Name",
+    "ParentName",
+    "Abstract",
+    "defName",
+    "label",
+    "description",
+    "descriptionHyperlinks",
+    "ignoreConfigErrors",
+    "ignoreIllegalLabelCharacterConfigError",
+    "modExtensions"
+  ],
+  "fields": {
+    "Name": {
+      "label": "Name (XML template)",
+      "description": "XML inheritance template identifier. Allows other defs to inherit from this node using ParentName. Not the same as defName - this is not a game database identity.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "ParentName": {
+      "label": "Parent name (XML inheritance)",
+      "description": "Name of the XML template node this def inherits from. The loader merges fields from the named template before applying this node's own fields.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "Abstract": {
+      "label": "Abstract",
+      "description": "When true, this node is an XML inheritance template and is not loaded as a real def into the game's DefDatabase.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "attribute"
+    },
+    "defName": {
+      "label": "Def name",
+      "description": "Unique identifier for this def. Used in XML cross-references and game code lookups.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "examples": ["Steel", "CraftingSpot", "ResearchBasic"],
+      "validationHints": {
+        "pattern": "^[a-zA-Z0-9_-]+$"
+      }
+    },
+    "label": {
+      "label": "Label",
+      "description": "Short human-readable name shown in the UI. Supports translation keys.",
+      "type": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Longer text shown in the info card or tooltip. Supports translation keys.",
+      "type": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "descriptionHyperlinks": {
+      "label": "Description hyperlinks",
+      "description": "Defs linked from this def's description. Each row selects a target def type and def name. The game renders these as clickable links in the info card.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "typedReferenceList",
+      "typedReference": {
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "ignoreConfigErrors": {
+      "label": "Ignore config errors",
+      "description": "Suppresses XML validation errors for this def during startup. Useful while authoring incomplete defs.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreIllegalLabelCharacterConfigError": {
+      "label": "Ignore illegal label character config error",
+      "description": "Suppresses the config error that fires when the label contains characters illegal for translation keys. Used by backstory defs whose titles include punctuation.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "modExtensions": {
+      "label": "Mod extensions",
+      "description": "List of modder-defined extension objects attached to this def at runtime. Each extension must specify a Class attribute.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

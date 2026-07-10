@@ -1,0 +1,505 @@
+{
+  "defType": "IncidentDef",
+  "label": "Incident",
+  "description": "Defines a random or scripted event - raid, disease, weather, visitor arrival, quest - that the storyteller system fires during play.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "category",
+    "targetTags",
+    "baseChance",
+    "baseChanceWithRoyalty",
+    "populationEffect",
+    "earliestDay",
+    "minPopulation",
+    "requireColonistsPresent",
+    "minRefireDays",
+    "disabledWhen",
+    "pointsScaleable",
+    "minThreatPoints",
+    "maxThreatPoints",
+    "allowedBiomes",
+    "disallowedBiomes",
+    "tags",
+    "refireCheckTags",
+    "chanceFactorByPopulationCurve",
+    "tale",
+    "minAnomalyThreatLevel",
+    "minGreatestPopulation",
+    "ignoreRecentSelectionWeighting",
+    "hidden",
+    "layerWhitelist",
+    "layerBlacklist",
+    "canOccurOnAllPlanetLayers",
+    "codexEntry",
+    "letterText",
+    "letterLabel",
+    "letterDef",
+    "letterHyperlinkHediffDefs",
+    "letterSingularForm",
+    "pawnKind",
+    "pawnMustBeCapableOfViolence",
+    "pawnFixedGender",
+    "pawnHediff",
+    "gameCondition",
+    "durationDays",
+    "diseaseIncident",
+    "diseaseVictimFractionRange",
+    "diseaseMaxVictims",
+    "diseaseBiomeRecords",
+    "diseasePartsToAffect",
+    "diseaseLethalLetterText",
+    "diseaseDevelopmentStage",
+    "mechClusterBuilding",
+    "mtbDaysByBiome",
+    "questScriptDef",
+    "treeDef",
+    "treeGenStepDef",
+    "letterTextPlural",
+    "treeGrowth"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# IncidentWorker type that implements this incident's execution logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["IncidentWorker_RaidEnemy", "IncidentWorker_MakeGameCondition", "IncidentWorker_GiveQuest"]
+    },
+    "category": {
+      "label": "Category",
+      "description": "IncidentCategoryDef that groups this incident for storyteller scheduling.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": { "defType": "IncidentCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "targetTags": {
+      "label": "Target tags",
+      "description": "List of IncidentTargetTagDef values that determine which map or world-object types this incident can target.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": true,
+      "xml": "listOfLi"
+    },
+    "baseChance": {
+      "label": "Base chance",
+      "description": "Base relative weight for storyteller selection. Higher values make the incident more common.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "baseChanceWithRoyalty": {
+      "label": "Base chance (Royalty)",
+      "description": "Overrides baseChance when the Royalty expansion is active. -1 means this field is inactive.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "populationEffect": {
+      "label": "Population effect",
+      "description": "How this incident's population reward is categorized for storyteller pacing.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "IncreaseHard", "IncreaseMedium", "IncreaseEasy"] }
+    },
+    "earliestDay": {
+      "label": "Earliest day",
+      "description": "The earliest in-game day (from game start) on which this incident can fire.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minPopulation": {
+      "label": "Min population",
+      "description": "Minimum colony population required for this incident to fire.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "requireColonistsPresent": {
+      "label": "Require colonists present",
+      "description": "If true, the incident can only fire when at least one colonist is on the target map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minRefireDays": {
+      "label": "Min refire days",
+      "description": "Minimum in-game days that must pass before this incident can fire again.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "disabledWhen": {
+      "label": "Disabled when",
+      "description": "Difficulty flags that disable this incident when the corresponding option is active.",
+      "type": { "kind": "object", "schemaRef": "DifficultyConditionConfig" },
+      "required": false,
+      "xml": "object"
+    },
+    "pointsScaleable": {
+      "label": "Points scaleable",
+      "description": "If true, the storyteller scales threat points for this incident based on colony wealth and progress.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minThreatPoints": {
+      "label": "Min threat points",
+      "description": "Minimum threat points required for this incident to fire. Leave unset to impose no minimum.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxThreatPoints": {
+      "label": "Max threat points",
+      "description": "Maximum threat points at which this incident can fire. Leave unset to impose no cap.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowedBiomes": {
+      "label": "Allowed biomes",
+      "description": "Whitelist of BiomeDefs where this incident can fire. Mutually exclusive with disallowedBiomes.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "BiomeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedBiomes": {
+      "label": "Disallowed biomes",
+      "description": "Blacklist of BiomeDefs where this incident cannot fire. Mutually exclusive with allowedBiomes.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "BiomeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "String tags used for refire cross-checking and general incident grouping. Not translated.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "refireCheckTags": {
+      "label": "Refire check tags",
+      "description": "Incidents sharing any tag in this list count toward this incident's refire cooldown.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "chanceFactorByPopulationCurve": {
+      "label": "Chance factor by population curve",
+      "description": "Multiplies baseChance based on colony population. X = population, Y = chance multiplier.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "tale": {
+      "label": "Tale",
+      "description": "TaleDef recorded when this incident fires. Used by the tale recorder and art generation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TaleDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "minAnomalyThreatLevel": {
+      "label": "Min anomaly threat level",
+      "description": "Minimum Anomaly threat level required for this incident. -1 means no requirement (non-Anomaly incident). Values 0–3 gate on the current threat level.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "minGreatestPopulation": {
+      "label": "Min greatest population",
+      "description": "Minimum value of the colony's all-time-greatest population required for this incident to fire. -1 means no requirement.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "ignoreRecentSelectionWeighting": {
+      "label": "Ignore recent selection weighting",
+      "description": "If true, the storyteller does not penalize this incident for having been selected recently. Private in source but used in shipped XML.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hidden": {
+      "label": "Hidden",
+      "description": "If true, this incident is invisible in dev tools and scenario incident filters.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "layerWhitelist": {
+      "label": "Layer whitelist",
+      "description": "If non-empty, this incident can only occur on these PlanetLayerDefs (Odyssey expansion).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerBlacklist": {
+      "label": "Layer blacklist",
+      "description": "This incident cannot occur on any PlanetLayerDef in this list (Odyssey expansion).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "canOccurOnAllPlanetLayers": {
+      "label": "Can occur on all planet layers",
+      "description": "If true, this incident is eligible on every planet layer regardless of layer filters.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "codexEntry": {
+      "label": "Codex entry",
+      "description": "EntityCodexEntryDef that describes this incident in the Anomaly entity codex.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EntityCodexEntryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "letterText": {
+      "label": "Letter text",
+      "description": "Body text of the notification letter. Supports keyed translation and format arguments.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "Title line of the notification letter. Supports keyed translation and format arguments.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterDef": {
+      "label": "Letter def",
+      "description": "LetterDef that controls the notification icon, sound, and urgency.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LetterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "letterHyperlinkHediffDefs": {
+      "label": "Letter hyperlink hediff defs",
+      "description": "HediffDefs shown as clickable hyperlinks in the notification letter body.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "letterSingularForm": {
+      "label": "Letter singular form",
+      "description": "If true, the letter text uses singular grammar (one pawn affected rather than multiple).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "pawnKind": {
+      "label": "Pawn kind",
+      "description": "PawnKindDef used to generate a pawn for this incident (wanderer joins, stranger in black, etc.).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "pawnMustBeCapableOfViolence": {
+      "label": "Pawn must be capable of violence",
+      "description": "If true, only pawns capable of violence are eligible for the generated pawn slot.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "pawnFixedGender": {
+      "label": "Pawn fixed gender",
+      "description": "Forces the generated pawn to a specific gender. None means gender is random.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Male", "Female"] }
+    },
+    "pawnHediff": {
+      "label": "Pawn hediff",
+      "description": "HediffDef applied to the pawn generated by this incident.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "gameCondition": {
+      "label": "Game condition",
+      "description": "GameConditionDef started by this incident (heat wave, toxic fallout, aurora, etc.).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "GameConditionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "durationDays": {
+      "label": "Duration (days)",
+      "description": "Duration of the game condition started by this incident, in in-game days.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["1.5~3.5", "0.75~1.25", "7.5~40"]
+    },
+    "diseaseIncident": {
+      "label": "Disease incident",
+      "description": "HediffDef that is the disease applied by this disease incident.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "diseaseVictimFractionRange": {
+      "label": "Disease victim fraction range",
+      "description": "Fraction of eligible pawns that contract the disease. Sampled uniformly from this range.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0.49",
+      "xml": "element",
+      "examples": ["0.2~0.5", "0.3~0.7"]
+    },
+    "diseaseMaxVictims": {
+      "label": "Disease max victims",
+      "description": "Hard cap on the number of pawns that can be infected by one firing of this disease incident.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 99999,
+      "xml": "element"
+    },
+    "diseaseBiomeRecords": {
+      "label": "Disease biome records",
+      "description": "Per-biome commonality overrides for biome-specific disease selection.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BiomeDiseaseRecord" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "diseasePartsToAffect": {
+      "label": "Disease parts to affect",
+      "description": "BodyPartDefs that the disease targets. When set, only those body parts are considered.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "BodyPartDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "diseaseLethalLetterText": {
+      "label": "Disease lethal letter text",
+      "description": "Additional letter text shown when the disease will be lethal without treatment.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "diseaseDevelopmentStage": {
+      "label": "Disease development stage",
+      "description": "Developmental stages eligible for this disease. Comma-separated flags.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "Baby, Child, Adult",
+      "xml": "flagsText",
+      "validationHints": { "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"] },
+      "examples": ["Adult", "Child, Adult", "Baby, Child, Adult"]
+    },
+    "mechClusterBuilding": {
+      "label": "Mech cluster building",
+      "description": "ThingDef for the ship part or mech cluster building dropped by this incident.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mtbDaysByBiome": {
+      "label": "MTB days by biome",
+      "description": "Per-biome mean time between firings (in days). Each child element name is a BiomeDef defName, value is the MTB in days.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "BiomeDef", "allowAbstract": false, "scope": "allSources" },
+      "valueType": { "kind": "float" },
+      "examples": ["<TemperateForest>20</TemperateForest>", "<Desert>30</Desert>"]
+    },
+    "questScriptDef": {
+      "label": "Quest script def",
+      "description": "QuestScriptDef that this incident launches when it fires.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "QuestScriptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "treeDef": {
+      "label": "Tree def",
+      "description": "ThingDef for the tree plant spawned by a tree-spawn incident (Polux tree, harbinger tree).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "treeGenStepDef": {
+      "label": "Tree gen step def",
+      "description": "GenStepDef used to scatter the tree grove on the map.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "GenStepDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "letterTextPlural": {
+      "label": "Letter text (plural)",
+      "description": "Alternate letter body text used when multiple entities are involved (e.g., multiple harbinger trees).",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "treeGrowth": {
+      "label": "Tree growth",
+      "description": "Initial growth fraction (0–1) applied to the spawned trees.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-incident": {
+      "label": "Basic incident",
+      "description": "Minimal incident: worker class, category, and at least one target tag.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "category", "targetTags"],
+      "fieldValues": {}
+    },
+    "disease-incident": {
+      "label": "Disease incident",
+      "description": "A human disease incident with victim fraction and letter fields.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "category", "diseaseIncident"],
+      "fieldValues": {
+        "diseaseVictimFractionRange": "0.2~0.5",
+        "diseaseDevelopmentStage": "Baby, Child, Adult"
+      }
+    }
+  }
+}

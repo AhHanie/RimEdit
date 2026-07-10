@@ -1,0 +1,148 @@
+{
+  "defType": "PsychicRitualDef",
+  "label": "Psychic ritual",
+  "description": "Defines a psychic ritual that pawns can perform. Specifies roles, outcomes, timing, and accessibility.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "researchPrerequisite",
+    "allowsDrafting",
+    "allowsFloatMenu",
+    "cooldownHours",
+    "nonRequiredPawnsMayLeave",
+    "rolePowerFactor",
+    "aiCastable",
+    "playerCastable",
+    "minThreatPoints",
+    "castableOnPocketMaps",
+    "layerWhitelist",
+    "letterAICompleteLabel",
+    "letterAICompleteText",
+    "letterAIArrivedText",
+    "iconPath"
+  ],
+  "fields": {
+    "researchPrerequisite": {
+      "label": "Research prerequisite",
+      "description": "Research project that must be completed before this ritual can be cast.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ResearchProjectDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowsDrafting": {
+      "label": "Allows drafting",
+      "description": "Whether the colony's pawns may be drafted while this ritual is in progress.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "allowsFloatMenu": {
+      "label": "Allows float menu",
+      "description": "Whether pawns show a float-menu option to join this ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "cooldownHours": {
+      "label": "Cooldown hours",
+      "description": "Hours that must pass before this ritual can be cast again.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0,
+      "validationHints": { "min": 0 }
+    },
+    "nonRequiredPawnsMayLeave": {
+      "label": "Non-required pawns may leave",
+      "description": "Whether pawns filling optional roles may leave the ritual area freely.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "rolePowerFactor": {
+      "label": "Role power factor",
+      "description": "Multiplier applied to each filled role's contribution when calculating ritual power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.2,
+      "validationHints": { "min": 0 }
+    },
+    "aiCastable": {
+      "label": "AI castable",
+      "description": "Whether enemy factions can initiate this ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "playerCastable": {
+      "label": "Player castable",
+      "description": "Whether the player colony can initiate this ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "minThreatPoints": {
+      "label": "Minimum threat points",
+      "description": "Minimum raid threat-point budget required before this ritual can trigger.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0,
+      "validationHints": { "min": 0 }
+    },
+    "castableOnPocketMaps": {
+      "label": "Castable on pocket maps",
+      "description": "Whether this ritual can be cast on pocket maps (anomaly pocket dimensions).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "layerWhitelist": {
+      "label": "Layer whitelist",
+      "description": "Planet layers on which this ritual is allowed. If empty, allowed on all layers.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "letterAICompleteLabel": {
+      "label": "AI completion letter label",
+      "description": "Title of the letter sent to the player when an enemy faction completes this ritual.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterAICompleteText": {
+      "label": "AI completion letter text",
+      "description": "Body of the letter sent when an enemy faction completes this ritual.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterAIArrivedText": {
+      "label": "AI arrival letter text",
+      "description": "Body of the letter sent when the enemy faction's ritual pawn arrives.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path for the ritual icon shown in the UI.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

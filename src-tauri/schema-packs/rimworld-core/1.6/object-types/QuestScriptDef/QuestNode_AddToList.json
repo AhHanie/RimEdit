@@ -1,0 +1,30 @@
+{
+  "objectType": "QuestNode_AddToList",
+  "label": "QuestNode AddToList",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_AddToList.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "name",
+    "value"
+  ],
+  "fields": {
+    "name": {
+      "description": "Slate variable name for the list.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "value": {
+      "description": "SlateRef<object> item to add to the list.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

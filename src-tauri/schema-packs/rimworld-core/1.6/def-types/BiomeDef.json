@@ -1,0 +1,630 @@
+{
+  "defType": "BiomeDef",
+  "label": "Biome",
+  "description": "Defines a biome: world tile characteristics, wild flora and fauna, weather, terrain generation, and display properties for a RimWorld map.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass", "implemented", "generatesNaturally", "canBuildBase", "canAutoChoose",
+    "allowRoads", "allowRivers", "allowFarmingCamps", "animalDensity", "plantDensity",
+    "diseaseMtbDays", "settlementSelectionWeight", "campSelectionWeight",
+    "pollutionOffset", "impassable", "hasVirtualPlants", "forageability", "foragedFood",
+    "wildPlantsCareAboutLocalFertility", "wildPlantsAreCavePlants",
+    "wildPlantRegrowDays", "movementDifficulty", "baseWeatherCommonalities",
+    "terrainsByFertility", "soundsAmbient", "terrainPatchMakers", "wildPlants",
+    "wildAnimals", "pollutionWildAnimals", "coastalWildAnimals", "diseases",
+    "allowedPackAnimals", "hasBedrock", "isExtremeBiome", "isWaterBiome",
+    "allowPollution", "wildAnimalsCanWanderInto", "noAmbientWind", "inVacuum",
+    "disableSkyLighting", "disableShadows", "noGravel", "canExitMap",
+    "onlyAllowWhitelistedArrivalModes", "isBackgroundBiome", "wildAnimalScariaChance",
+    "geyserCountFactor", "constantOutdoorTemperature", "coastalBeachTerrain",
+    "lakeBeachTerrain", "riverbankTerrain", "mudTerrain", "gravelTerrain",
+    "waterShallowTerrain", "waterDeepTerrain", "oceanShallowTerrain", "oceanDeepTerrain",
+    "waterMovingShallowTerrain", "waterMovingChestDeepTerrain", "riverbankSizeRange",
+    "biomeMapConditions", "extraGenSteps", "preventGenSteps", "extraRockTypes",
+    "forceRockTypes", "maxFishPopulation", "fishTypes", "layerWhitelist", "layerBlacklist",
+    "settleWarning", "fogOfWarColor", "orbitalDebris", "texture"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# BiomeWorker type that implements biome selection scoring logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "implemented": {
+      "label": "Implemented",
+      "description": "When false, this biome is a placeholder and will not be used in world generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "generatesNaturally": {
+      "label": "Generates naturally",
+      "description": "When false, this biome is never placed by the world generator without explicit scripting.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "canBuildBase": {
+      "label": "Can build base",
+      "description": "When false, players cannot establish a colony on tiles with this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "canAutoChoose": {
+      "label": "Can auto-choose",
+      "description": "When false, the auto-select landing site logic will not choose tiles with this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "allowRoads": {
+      "label": "Allow roads",
+      "description": "When false, roads cannot pass through tiles with this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "allowRivers": {
+      "label": "Allow rivers",
+      "description": "When false, rivers cannot pass through tiles with this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "allowFarmingCamps": {
+      "label": "Allow farming camps",
+      "description": "When false, farming camp sites cannot be placed on tiles with this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "animalDensity": {
+      "label": "Animal density",
+      "description": "Base density of wild animals spawned on maps in this biome.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "plantDensity": {
+      "label": "Plant density",
+      "description": "Base density of wild plants grown on maps in this biome.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "diseaseMtbDays": {
+      "label": "Disease MTB days",
+      "description": "Mean time between disease outbreaks in days for this biome.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 60
+    },
+    "settlementSelectionWeight": {
+      "label": "Settlement selection weight",
+      "description": "Relative weight for AI faction settlement placement on tiles with this biome.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "campSelectionWeight": {
+      "label": "Camp selection weight",
+      "description": "Relative weight for AI faction camp placement on tiles with this biome.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "pollutionOffset": {
+      "label": "Pollution offset",
+      "description": "Pollution level offset applied to tiles with this biome during world generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "impassable": {
+      "label": "Impassable",
+      "description": "When true, tiles with this biome cannot be traversed on the world map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "hasVirtualPlants": {
+      "label": "Has virtual plants",
+      "description": "When true, the biome displays virtual plant sprites at the world map level even when no real plants are on the tile.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "forageability": {
+      "label": "Forageability",
+      "description": "Amount of food that can be foraged per forager per day on maps in this biome.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "foragedFood": {
+      "label": "Foraged food",
+      "description": "ThingDef produced by foraging in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "wildPlantsCareAboutLocalFertility": {
+      "label": "Wild plants care about local fertility",
+      "description": "When true, wild plant spawning is weighted by local cell fertility. When false, plants spawn uniformly.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "wildPlantsAreCavePlants": {
+      "label": "Wild plants are cave plants",
+      "description": "When true, wild plants in this biome use cave plant rules and can grow under roofs.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "wildPlantRegrowDays": {
+      "label": "Wild plant regrow days",
+      "description": "Mean time in days for wild plants to regrow after being destroyed in this biome.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 25
+    },
+    "movementDifficulty": {
+      "label": "Movement difficulty",
+      "description": "World-map movement speed multiplier for pawns traveling through tiles with this biome. Higher values slow movement.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "baseWeatherCommonalities": {
+      "label": "Base weather commonalities",
+      "description": "Relative frequency weights for each WeatherDef in this biome. Each element name is the WeatherDef defName; scalar text is the commonality.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "WeatherCommonalityRecord" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "weather",
+      "keyReference": { "defType": "WeatherDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "commonality"
+    },
+    "terrainsByFertility": {
+      "label": "Terrains by fertility",
+      "description": "Ordered list of terrain layers placed on map cells according to the cell fertility noise value.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TerrainThreshold" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "soundsAmbient": {
+      "label": "Ambient sounds",
+      "description": "SoundDefs played as ambient background audio on maps in this biome.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "terrainPatchMakers": {
+      "label": "Terrain patch makers",
+      "description": "Perlin-noise terrain patch generators applied during map generation in this biome.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TerrainPatchMaker" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "wildPlants": {
+      "label": "Wild plants",
+      "description": "Plants that can appear wild in this biome. Each element name is the ThingDef defName; scalar text is the commonality.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BiomePlantRecord" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "plant",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "commonality"
+    },
+    "wildAnimals": {
+      "label": "Wild animals",
+      "description": "Animals that spawn wild in this biome. Each element name is the PawnKindDef defName; scalar text is the commonality.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BiomeAnimalRecord" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "animal",
+      "keyReference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "commonality"
+    },
+    "pollutionWildAnimals": {
+      "label": "Pollution wild animals",
+      "description": "Animals that spawn wild in this biome when the tile is polluted (Biotech). Same format as wildAnimals.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BiomeAnimalRecord" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "animal",
+      "keyReference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "commonality"
+    },
+    "coastalWildAnimals": {
+      "label": "Coastal wild animals",
+      "description": "Animals that spawn on the coast of tiles with this biome (Odyssey). Same format as wildAnimals.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BiomeAnimalRecord" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "animal",
+      "keyReference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "commonality"
+    },
+    "diseases": {
+      "label": "Diseases",
+      "description": "Biome-specific disease commonality overrides for this biome.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BiomeDiseaseRecord" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "allowedPackAnimals": {
+      "label": "Allowed pack animals",
+      "description": "ThingDefs that can be used as pack animals by caravans in this biome. If empty, all pack animals are allowed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "hasBedrock": {
+      "label": "Has bedrock",
+      "description": "When true, bedrock is placed beneath the deep soil layer on maps in this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "isExtremeBiome": {
+      "label": "Is extreme biome",
+      "description": "When true, this biome is considered extreme (ice sheet, extreme desert) for difficulty and warning purposes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "isWaterBiome": {
+      "label": "Is water biome",
+      "description": "When true, this biome is treated as an open-water biome (ocean, lake) for world map and travel logic.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "allowPollution": {
+      "label": "Allow pollution",
+      "description": "When false, tiles with this biome cannot be polluted (Biotech).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "wildAnimalsCanWanderInto": {
+      "label": "Wild animals can wander into",
+      "description": "When false, wild animals will not wander into maps generated in this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "noAmbientWind": {
+      "label": "No ambient wind",
+      "description": "When true, wind ambience is suppressed on maps in this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "inVacuum": {
+      "label": "In vacuum",
+      "description": "When true, maps in this biome are in vacuum and require EVA suits for survival (Odyssey).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "disableSkyLighting": {
+      "label": "Disable sky lighting",
+      "description": "When true, sky-based lighting is disabled on maps in this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "disableShadows": {
+      "label": "Disable shadows",
+      "description": "When true, shadow rendering is disabled on maps in this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "noGravel": {
+      "label": "No gravel",
+      "description": "When true, gravel is not placed during map generation in this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "canExitMap": {
+      "label": "Can exit map",
+      "description": "When false, pawns cannot exit the map at the edges on tiles with this biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "onlyAllowWhitelistedArrivalModes": {
+      "label": "Only allow whitelisted arrival modes",
+      "description": "When true, only arrival modes explicitly whitelisted for this biome are available.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "isBackgroundBiome": {
+      "label": "Is background biome",
+      "description": "When true, this biome renders as a background world layer rather than a foreground tile biome.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "wildAnimalScariaChance": {
+      "label": "Wild animal scaria chance",
+      "description": "Probability (0-1) that wild animals spawning in this biome are infected with scaria.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "geyserCountFactor": {
+      "label": "Geyser count factor",
+      "description": "Multiplier applied to the base number of geysers placed during map generation in this biome.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "constantOutdoorTemperature": {
+      "label": "Constant outdoor temperature",
+      "description": "If set, overrides all season and weather temperature variation with this fixed outdoor temperature (in Celsius). Leave unset to use normal temperature simulation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "coastalBeachTerrain": {
+      "label": "Coastal beach terrain",
+      "description": "TerrainDef placed on coastal beach cells adjacent to ocean water in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "lakeBeachTerrain": {
+      "label": "Lake beach terrain",
+      "description": "TerrainDef placed on beach cells adjacent to lake water in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "riverbankTerrain": {
+      "label": "Riverbank terrain",
+      "description": "TerrainDef placed on riverbank cells in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mudTerrain": {
+      "label": "Mud terrain",
+      "description": "TerrainDef used for mud cells in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "gravelTerrain": {
+      "label": "Gravel terrain",
+      "description": "TerrainDef used for gravel cells in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "waterShallowTerrain": {
+      "label": "Shallow water terrain",
+      "description": "TerrainDef used for shallow standing water cells in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "waterDeepTerrain": {
+      "label": "Deep water terrain",
+      "description": "TerrainDef used for deep standing water cells in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "oceanShallowTerrain": {
+      "label": "Shallow ocean terrain",
+      "description": "TerrainDef used for shallow ocean cells in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "oceanDeepTerrain": {
+      "label": "Deep ocean terrain",
+      "description": "TerrainDef used for deep ocean cells in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "waterMovingShallowTerrain": {
+      "label": "Moving shallow water terrain",
+      "description": "TerrainDef used for shallow moving water cells (rivers) in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "waterMovingChestDeepTerrain": {
+      "label": "Moving chest-deep water terrain",
+      "description": "TerrainDef used for chest-deep moving water cells (deep rivers) in this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "riverbankSizeRange": {
+      "label": "Riverbank size range",
+      "description": "Integer range controlling the minimum and maximum width of riverbank terrain strips placed during map generation.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "biomeMapConditions": {
+      "label": "Biome map conditions",
+      "description": "GameConditionDefs that are permanently active on maps in this biome.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "GameConditionDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "extraGenSteps": {
+      "label": "Extra gen steps",
+      "description": "Additional map generation steps run when generating maps in this biome.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "GenStepDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "preventGenSteps": {
+      "label": "Prevent gen steps",
+      "description": "Map generation steps that are suppressed when generating maps in this biome.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "GenStepDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "extraRockTypes": {
+      "label": "Extra rock types",
+      "description": "Additional ThingDefs (rock types) added to the rock selection pool for maps in this biome.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "forceRockTypes": {
+      "label": "Force rock types",
+      "description": "ThingDefs (rock types) that replace the world-tile rock selection entirely on maps in this biome.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "maxFishPopulation": {
+      "label": "Max fish population",
+      "description": "Maximum number of fish that can be present at one time in a fishing zone on maps in this biome.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "fishTypes": {
+      "label": "Fish types",
+      "description": "Fish populations available in this biome, organized by water type and rarity tier (Odyssey).",
+      "type": { "kind": "object", "schemaRef": "BiomeFishTypes" },
+      "required": false,
+      "xml": "object"
+    },
+    "layerWhitelist": {
+      "label": "Layer whitelist",
+      "description": "If non-empty, this biome can only appear on these PlanetLayerDefs (Odyssey).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerBlacklist": {
+      "label": "Layer blacklist",
+      "description": "This biome cannot appear on any PlanetLayerDef in this list (Odyssey).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "settleWarning": {
+      "label": "Settle warning",
+      "description": "Translated warning message shown when a player attempts to settle on a tile with this biome.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "fogOfWarColor": {
+      "label": "Fog of war color",
+      "description": "Color used for the fog of war overlay on maps in this biome. Leave unset to use the default color.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "orbitalDebris": {
+      "label": "Orbital debris",
+      "description": "OrbitalDebrisDef assigned to maps in this biome for orbital debris rendering (Odyssey).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "OrbitalDebrisDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "texture": {
+      "label": "Texture",
+      "description": "Content path to the world map texture for this biome. Not translated.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["World/Biomes/TemperateForest", "World/Biomes/Desert", "World/Biomes/TropicalRainforest"]
+    }
+  },
+  "templates": {
+    "basic-biome": {
+      "label": "Basic biome",
+      "description": "Minimal biome with worker class, densities, and a texture.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "animalDensity", "plantDensity", "texture"],
+      "fieldValues": {
+        "implemented": true,
+        "generatesNaturally": true,
+        "canBuildBase": true,
+        "diseaseMtbDays": 60
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "objectType": "StatPart_WeaponTraitsMarketValueOffset",
+  "label": "Stat part (weapon traits market value offset)",
+  "description": "Adds a market value offset based on the weapon's quality traits.",
+  "fieldOrder": ["Class", "priority"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

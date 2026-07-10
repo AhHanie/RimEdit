@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_PsychicHarmonizer",
+  "label": "Psychic harmonizer comp",
+  "description": "Applies a mood offset to nearby colonists based on the pawn's psychic harmony.",
+  "fieldOrder": ["Class", "compClass", "statOffset", "radius"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "statOffset": {
+      "label": "Stat offset",
+      "description": "Mood offset applied to nearby colonists.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Radius in cells of the harmonizer effect.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

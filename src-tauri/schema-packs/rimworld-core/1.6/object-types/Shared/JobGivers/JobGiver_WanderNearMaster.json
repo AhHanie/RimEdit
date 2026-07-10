@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_WanderNearMaster",
+  "label": "Job giver wander near master",
+  "description": "Wanders close to the pawn's master. No additional XML-loadable fields beyond the Wander base.",
+  "inherits": ["JobGiver_Wander"]
+}

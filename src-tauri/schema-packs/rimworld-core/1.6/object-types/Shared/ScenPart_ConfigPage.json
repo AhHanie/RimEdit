@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_ConfigPage",
+  "label": "Scenario part (config page)",
+  "description": "Abstract base for scenario parts that represent full-screen configuration pages shown during new game setup.",
+  "inherits": ["ScenPart"]
+}

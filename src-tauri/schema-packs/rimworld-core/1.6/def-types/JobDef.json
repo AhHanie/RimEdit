@@ -1,0 +1,388 @@
+{
+  "defType": "JobDef",
+  "label": "Job",
+  "description": "Defines a pawn job - the discrete work unit that the job driver system executes. Controls interruption rules, UI display, joy gain, and flying behavior.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "driverClass",
+    "reportString",
+    "playerInterruptible",
+    "forceCompleteBeforeNextJob",
+    "checkOverrideOnDamage",
+    "alwaysShowWeapon",
+    "neverShowWeapon",
+    "suspendable",
+    "casualInterruptible",
+    "allowOpportunisticPrefix",
+    "collideWithPawns",
+    "isIdle",
+    "taleOnCompletion",
+    "neverFleeFromEnemies",
+    "sleepCanInterrupt",
+    "makeTargetPrisoner",
+    "waitAfterArriving",
+    "carryThingAfterJob",
+    "dropThingBeforeJob",
+    "isCrawlingIfDowned",
+    "alwaysShowReport",
+    "abilityCasting",
+    "tryStartFlying",
+    "ifFlyingKeepFlying",
+    "overrideFlyChance",
+    "displayAsAreaInFloatMenu",
+    "ignoreFenceBlocked",
+    "joyDuration",
+    "joyMaxParticipants",
+    "joyGainRate",
+    "joySkill",
+    "joyXpPerTick",
+    "joyKind",
+    "faceDir",
+    "learningDuration",
+    "containerReservationLayer",
+    "boardingGravship"
+  ],
+  "fields": {
+    "driverClass": {
+      "label": "Driver class",
+      "description": "C# JobDriver type that implements the job's tick-by-tick logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["JobDriver_Wait", "JobDriver_Goto", "JobDriver_HaulToCell"]
+    },
+    "reportString": {
+      "label": "Report string",
+      "description": "Short text shown in the pawn info card while this job is active. Supports translation keys. Use {0} for the primary target noun.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "Doing something.",
+      "xml": "element",
+      "examples": ["Going somewhere.", "Hauling {0}.", "Tending to {0}."]
+    },
+    "playerInterruptible": {
+      "label": "Player interruptible",
+      "description": "If true, the player can interrupt this job by issuing a direct order.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "forceCompleteBeforeNextJob": {
+      "label": "Force complete before next job",
+      "description": "If true, this job must finish before the next queued job begins.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "checkOverrideOnDamage": {
+      "label": "Check override on damage",
+      "description": "Controls whether the job is re-evaluated when the pawn takes damage.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Always",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Never", "OnlyIfInstigatorNotJobTarget", "Always"]
+      }
+    },
+    "alwaysShowWeapon": {
+      "label": "Always show weapon",
+      "description": "If true, the pawn always displays its equipped weapon while performing this job.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "neverShowWeapon": {
+      "label": "Never show weapon",
+      "description": "If true, the pawn never displays its equipped weapon while performing this job.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "suspendable": {
+      "label": "Suspendable",
+      "description": "If true, this job can be suspended by the scheduler and resumed later.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "casualInterruptible": {
+      "label": "Casual interruptible",
+      "description": "If true, this job can be interrupted by casual events such as mental breaks or low needs.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowOpportunisticPrefix": {
+      "label": "Allow opportunistic prefix",
+      "description": "If true, the job giver may prepend an opportunistic pickup or haul job before this one.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "collideWithPawns": {
+      "label": "Collide with pawns",
+      "description": "If true, the pawn uses collision pathfinding to avoid walking through other pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isIdle": {
+      "label": "Is idle",
+      "description": "If true, this job is treated as idle time in efficiency and stat calculations.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "taleOnCompletion": {
+      "label": "Tale on completion",
+      "description": "TaleDef recorded in the pawn's tale recorder when this job completes successfully.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TaleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "neverFleeFromEnemies": {
+      "label": "Never flee from enemies",
+      "description": "If true, the pawn does not flee even when it normally would while performing this job.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "sleepCanInterrupt": {
+      "label": "Sleep can interrupt",
+      "description": "If true, the sleep scheduler can interrupt this job when the pawn needs rest.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "makeTargetPrisoner": {
+      "label": "Make target prisoner",
+      "description": "If true, the primary target is captured as a prisoner when this job completes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "waitAfterArriving": {
+      "label": "Wait after arriving (ticks)",
+      "description": "Number of ticks the pawn waits at the destination before the job driver starts.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "carryThingAfterJob": {
+      "label": "Carry thing after job",
+      "description": "If true, any carried thing is retained in the pawn's hands when this job ends.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "dropThingBeforeJob": {
+      "label": "Drop thing before job",
+      "description": "If true, any carried thing is dropped before this job begins.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "isCrawlingIfDowned": {
+      "label": "Is crawling if downed",
+      "description": "If true, downed pawns use the crawling animation while performing this job.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "alwaysShowReport": {
+      "label": "Always show report",
+      "description": "If true, the report string is shown even when the pawn would normally not display job text.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "abilityCasting": {
+      "label": "Ability casting",
+      "description": "If true, this job is classified as an ability cast, affecting interruption and animation handling.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tryStartFlying": {
+      "label": "Try start flying",
+      "description": "If true, the pawn attempts to enter flying mode when this job starts.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ifFlyingKeepFlying": {
+      "label": "If flying keep flying",
+      "description": "If true, a pawn already in flying mode stays flying throughout this job.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "overrideFlyChance": {
+      "label": "Override fly chance",
+      "description": "Overrides the default chance of triggering a flying event for this job. -1 means use the pawn's default chance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "displayAsAreaInFloatMenu": {
+      "label": "Display as area in float menu",
+      "description": "If true, the float menu entry for this job shows the target area rather than a single cell.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ignoreFenceBlocked": {
+      "label": "Ignore fence blocked",
+      "description": "If true, the pawn ignores fence-blocked path costs when pathfinding for this job.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "joyDuration": {
+      "label": "Joy duration (ticks)",
+      "description": "How many ticks this job runs as a joy activity before ending naturally.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 4000,
+      "xml": "element"
+    },
+    "joyMaxParticipants": {
+      "label": "Joy max participants",
+      "description": "Maximum number of pawns that can share this joy activity simultaneously.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "joyGainRate": {
+      "label": "Joy gain rate",
+      "description": "Multiplier on the base joy gain per tick while this job is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "joySkill": {
+      "label": "Joy skill",
+      "description": "SkillDef that gains XP while the pawn performs this joy activity.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "joyXpPerTick": {
+      "label": "Joy XP per tick",
+      "description": "Amount of skill XP awarded each tick while the pawn performs this joy activity. Must be non-zero when joySkill is set.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "joyKind": {
+      "label": "Joy kind",
+      "description": "JoyKindDef that classifies the type of joy this job provides.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "JoyKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "faceDir": {
+      "label": "Face direction",
+      "description": "Cardinal direction the pawn faces while performing this job. Invalid means no forced direction.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Invalid",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Invalid", "North", "East", "South", "West"]
+      }
+    },
+    "learningDuration": {
+      "label": "Learning duration (ticks)",
+      "description": "How many ticks this job counts as a learning activity for childhood development.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 20000,
+      "xml": "element"
+    },
+    "containerReservationLayer": {
+      "label": "Container reservation layer",
+      "description": "ReservationLayerDef used when reserving a container target for this job.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ReservationLayerDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "boardingGravship": {
+      "label": "Boarding gravship",
+      "description": "If true, this job is classified as boarding a gravship, used by gravship embark logic.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-job": {
+      "label": "Basic job",
+      "description": "A minimal job with a driver class and report string.",
+      "includeRequiredFields": true,
+      "promptFields": ["driverClass", "reportString"],
+      "fieldValues": {}
+    },
+    "joy-job": {
+      "label": "Joy job",
+      "description": "A joy activity job with kind, duration, and optional skill XP.",
+      "includeRequiredFields": true,
+      "promptFields": ["driverClass", "reportString", "joyKind"],
+      "fieldValues": {
+        "joyDuration": 4000,
+        "joyMaxParticipants": 1,
+        "joyGainRate": 1
+      }
+    }
+  }
+}

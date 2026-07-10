@@ -1,0 +1,24 @@
+{
+  "objectType": "ThingDefStyle",
+  "label": "Thing def style",
+  "description": "A pairing of a ThingDef with a ThingStyleDef used as list items in StyleCategoryDef.thingDefStyles. Both fields are private in source but present in all shipped XML.",
+  "fieldOrder": ["thingDef", "styleDef"],
+  "fields": {
+    "thingDef": {
+      "label": "Thing def",
+      "description": "The base ThingDef whose appearance this entry overrides. Private in source but present in shipped XML.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "styleDef": {
+      "label": "Style def",
+      "description": "The ThingStyleDef supplying the visual override. Private in source but present in shipped XML.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingStyleDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

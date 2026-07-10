@@ -1,0 +1,24 @@
+{
+  "objectType": "ThinkNode_ConditionalNeedPercentageAbove",
+  "label": "Think node conditional need percentage above",
+  "description": "Satisfied when the pawn's specified need level is above a threshold percentage.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["need", "threshold"],
+  "fields": {
+    "need": {
+      "label": "Need",
+      "description": "The need whose current level is checked against the threshold.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "NeedDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "threshold": {
+      "label": "Threshold",
+      "description": "The need must be above this fraction (0–1) for the conditional to be satisfied.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

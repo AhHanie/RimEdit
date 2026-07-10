@@ -1,0 +1,37 @@
+{
+  "defType": "ImplementOwnerTypeDef",
+  "label": "Implement owner type",
+  "description": "Defines a verb-ownership category used by the combat log and battle-log grammar systems to tag the source of a verb (weapon, hediff, bodypart, terrain, or native verb).",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "implementOwnerRuleName",
+    "implementOwnerTypeValue"
+  ],
+  "fields": {
+    "implementOwnerRuleName": {
+      "label": "Implement owner rule name",
+      "description": "The rule name token injected into the battle-log text grammar for this owner type. Used when formatting combat log entries such as hit with <weapon>. Absent on owner types that do not contribute a grammar rule (e.g. Bodypart, NativeVerb).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["WEAPON"]
+    },
+    "implementOwnerTypeValue": {
+      "label": "Implement owner type value",
+      "description": "The unique lowercase token identifying this verb-owner category in text generation and combat logging contexts. Must be unique across all ImplementOwnerTypeDef instances.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["weapon", "bodypart", "hediff", "terrain", "nativeVerb"]
+    }
+  },
+  "templates": {
+    "basic-implement-owner-type": {
+      "label": "Basic implement owner type",
+      "description": "Minimal ImplementOwnerTypeDef with defName and implementOwnerTypeValue ready to fill.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "implementOwnerTypeValue"],
+      "fieldValues": {}
+    }
+  }
+}

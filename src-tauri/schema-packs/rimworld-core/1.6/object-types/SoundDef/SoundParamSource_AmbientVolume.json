@@ -1,0 +1,8 @@
+{
+  "objectType": "SoundParamSource_AmbientVolume",
+  "label": "Sound param source: ambient volume",
+  "description": "Reads the game ambient volume setting as the parameter value.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class"],
+  "fields": {}
+}

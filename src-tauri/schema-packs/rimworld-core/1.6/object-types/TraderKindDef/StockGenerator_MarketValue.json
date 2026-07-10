@@ -1,0 +1,30 @@
+{
+  "objectType": "StockGenerator_MarketValue",
+  "label": "Market value generator",
+  "description": "Generates individual items weighted by market value, filtered by trade tag, weapon tag, and apparel tag. Inherits misc-item generation logic from StockGenerator_MiscItems.",
+  "inherits": ["StockGenerator_MiscItems"],
+  "fieldOrder": ["tradeTag", "weaponTag", "apparelTag"],
+  "fields": {
+    "tradeTag": {
+      "label": "Trade tag",
+      "description": "Trade tag that eligible ThingDefs must carry in their tradeTags list.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "weaponTag": {
+      "label": "Weapon tag",
+      "description": "Optional weapon tag filter. When set, only ThingDefs whose weaponTags contain this value are eligible.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "apparelTag": {
+      "label": "Apparel tag",
+      "description": "Optional apparel tag filter. When set, only ThingDefs whose apparel.tags contain this value are eligible.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

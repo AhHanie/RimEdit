@@ -1,0 +1,15 @@
+{
+  "objectType": "ScattererValidator_AvoidSpecialThings",
+  "label": "Avoid special things validator",
+  "description": "Rejects scatter positions near hardcoded special structures such as geysers, anima trees, and archonexus cores.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be ScattererValidator_AvoidSpecialThings.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

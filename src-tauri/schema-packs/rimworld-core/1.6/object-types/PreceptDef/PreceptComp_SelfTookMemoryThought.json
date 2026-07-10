@@ -1,0 +1,66 @@
+{
+  "objectType": "PreceptComp_SelfTookMemoryThought",
+  "label": "Precept comp (self-took memory thought)",
+  "description": "Gives a memory thought to the pawn who performed the action.",
+  "fieldOrder": [
+    "Class", "description",
+    "thought", "thoughtStageDescriptions", "tooltipShowMoodRange",
+    "eventDef", "onlyForNonSlaves"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "thought": {
+      "label": "Thought",
+      "description": "Memory thought given to the pawn who performed the action.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thoughtStageDescriptions": {
+      "label": "Thought stage descriptions",
+      "description": "Override descriptions for each thought stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "localizedString" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tooltipShowMoodRange": {
+      "label": "Tooltip show mood range",
+      "description": "If true, the tooltip shows the mood range.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "eventDef": {
+      "label": "Event def",
+      "description": "The history event that triggers this thought for the actor.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HistoryEventDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "onlyForNonSlaves": {
+      "label": "Only for non-slaves",
+      "description": "If true, slaves do not receive this thought.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AncientLab",
+  "label": "Sketch resolver: Ancient lab",
+  "description": "Concrete RimWorld SketchResolver_AncientLab resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

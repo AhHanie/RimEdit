@@ -1,0 +1,44 @@
+{
+  "objectType": "AsymmetricLinkBorderData",
+  "label": "Asymmetric link border data",
+  "description": "Color, size, and offset for a border overlay on an asymmetric link. Maps to Verse.AsymmetricLinkData.BorderData in RimWorld source.",
+  "fieldOrder": [
+    "color",
+    "size",
+    "offset"
+  ],
+  "fields": {
+    "color": {
+      "label": "Color",
+      "description": "RGBA color of the border overlay. Defaults to black.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "(0, 0, 0, 1)",
+      "xml": "element",
+      "examples": [
+        "(0, 0, 0, 1)",
+        "(1, 1, 1, 1)"
+      ]
+    },
+    "size": {
+      "label": "Size",
+      "description": "Size of the border overlay as (width, height) in world units.",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(0.1, 1)"
+      ]
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "World-space offset of the border overlay as (x, y, z).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(0, 0, 0)"
+      ]
+    }
+  }
+}

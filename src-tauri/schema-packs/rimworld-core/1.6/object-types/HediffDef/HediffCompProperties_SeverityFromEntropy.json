@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_SeverityFromEntropy",
+  "label": "Severity from entropy comp",
+  "description": "Scales hediff severity based on the pawn's psychic entropy.",
+  "fieldOrder": ["Class", "compClass", "severityPerEntropy"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "severityPerEntropy": {
+      "label": "Severity per entropy",
+      "description": "Severity change per point of psychic entropy.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

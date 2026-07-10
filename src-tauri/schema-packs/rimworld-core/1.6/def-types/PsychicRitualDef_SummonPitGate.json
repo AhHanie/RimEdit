@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualDef_SummonPitGate",
+  "label": "Psychic ritual -- summon pit gate",
+  "description": "Ritual that opens a pit gate on the map, scaled by a combat-point multiplier derived from ritual quality.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "combatPointMultiplierFromQualityRange"
+  ],
+  "fields": {
+    "combatPointMultiplierFromQualityRange": {
+      "label": "Combat point multiplier from quality range",
+      "description": "Range of multipliers applied to the combat-point budget when opening the pit gate, lerped through by ritual quality.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

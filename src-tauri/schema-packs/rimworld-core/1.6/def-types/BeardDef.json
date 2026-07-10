@@ -1,0 +1,52 @@
+{
+  "defType": "BeardDef",
+  "label": "Beard",
+  "description": "Defines a beard style for humanlike pawns. Inherits shared style item fields and adds optional narrow-head render offsets.",
+  "inherits": ["StyleItemDef"],
+  "fieldOrder": ["offsetNarrowEast", "offsetNarrowSouth"],
+  "fields": {
+    "offsetNarrowEast": {
+      "label": "Narrow east offset",
+      "description": "Additional render offset for narrow head types when facing east. West-facing pawns mirror the X component at runtime.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "(0,0,0)",
+      "examples": ["(-0.01,0,0.03)", "(-0.05,0,0)"]
+    },
+    "offsetNarrowSouth": {
+      "label": "Narrow south offset",
+      "description": "Additional render offset for narrow head types when facing south.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "(0,0,0)",
+      "examples": ["(0,0,0.05)", "(0,0,0.02)"]
+    }
+  },
+  "templates": {
+    "basic-beard": {
+      "label": "Basic beard",
+      "description": "Beard style with a texture, gender restriction, category, and style tags.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "styleGender", "texPath", "category", "styleTags"],
+      "fieldValues": {}
+    },
+    "no-graphic-beard": {
+      "label": "No-graphic beard",
+      "description": "Beard style with no texture, used for the no-beard slot (e.g., NoBeard).",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "category", "styleTags"],
+      "fieldValues": {
+        "noGraphic": "true"
+      }
+    },
+    "narrow-head-adjusted-beard": {
+      "label": "Narrow-head adjusted beard",
+      "description": "Beard style with additional render offsets for narrow head types.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "styleGender", "texPath", "category", "styleTags", "offsetNarrowEast", "offsetNarrowSouth"],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualDef_SummonFleshbeastsPlayer",
+  "label": "Psychic ritual -- summon fleshbeasts (player)",
+  "description": "Player-castable ritual that summons fleshbeasts. The number summoned scales with ritual quality.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "fleshbeastCombatPointsFromQualityCurve"
+  ],
+  "fields": {
+    "fleshbeastCombatPointsFromQualityCurve": {
+      "label": "Fleshbeast combat points from quality curve",
+      "description": "Curve mapping ritual quality to the combat points spent summoning fleshbeasts.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

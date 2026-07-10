@@ -1,0 +1,21 @@
+{
+  "defType": "ThingDef",
+  "label": "Thing",
+  "abstractType": false,
+  "inherits": ["Def"],
+  "fieldOrder": ["defName", "stackLimit"],
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "examples": ["Steel"]
+    },
+    "stackLimit": {
+      "label": "Stack limit",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1
+    }
+  }
+}

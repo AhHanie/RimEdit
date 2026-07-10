@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalHasAbility",
+  "label": "Think node conditional has ability",
+  "description": "Satisfied when the pawn has the specified ability.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["ability"],
+  "fields": {
+    "ability": {
+      "label": "Ability",
+      "description": "The pawn must have this ability for the conditional to be satisfied.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

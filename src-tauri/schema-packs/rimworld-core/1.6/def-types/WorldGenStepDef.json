@@ -1,0 +1,23 @@
+{
+  "defType": "WorldGenStepDef",
+  "label": "World gen step",
+  "description": "Defines an ordered world generation step for a planet layer.",
+  "inherits": ["Def"],
+  "fieldOrder": ["order", "worldGenStep"],
+  "fields": {
+    "order": {
+      "label": "Order",
+      "description": "Execution order of this world generation step. Lower values run first within a planet layer.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "worldGenStep": {
+      "label": "World gen step",
+      "description": "Polymorphic world generation object. The XML Class attribute selects the concrete WorldGenStep subclass.",
+      "type": { "kind": "object", "schemaRef": "WorldGenStep" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

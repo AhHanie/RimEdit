@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_RandomizeStageWithInterval",
+  "label": "Randomize stage with interval comp",
+  "description": "Periodically randomizes the hediff's active stage.",
+  "fieldOrder": ["Class", "compClass", "intervalDays"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "intervalDays": {
+      "label": "Interval days",
+      "description": "Days between stage randomizations.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    }
+  }
+}

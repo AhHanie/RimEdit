@@ -1,0 +1,19 @@
+{
+  "objectType": "SoundParamTarget_PropertyEcho",
+  "label": "Sound param target: echo property",
+  "description": "Applies the mapped parameter value to a property of the echo audio filter.",
+  "inherits": ["SoundParamTarget"],
+  "fieldOrder": ["Class", "filterProperty"],
+  "fields": {
+    "filterProperty": {
+      "label": "Filter property",
+      "description": "Which echo filter property to modulate.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Delay", "DecayRatio", "WetMix", "DryMix"]
+      }
+    }
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "objectType": "QuestNode_GetFaction",
+  "label": "QuestNode GetFaction",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_GetFaction.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "storeAs",
+    "allowEnemy",
+    "allowNeutral",
+    "allowAlly",
+    "allowAskerFaction",
+    "allowPermanentEnemy",
+    "mustBePermanentEnemy",
+    "playerCantBeAttackingCurrently",
+    "peaceTalksCantExist",
+    "leaderMustBeSafe",
+    "mustHaveGoodwillRewardsEnabled",
+    "ofPawn",
+    "mustBeHostileToFactionOf",
+    "exclude",
+    "allowedHiddenFactions"
+  ],
+  "fields": {
+    "storeAs": {
+      "description": "SlateRef<string> variable name to store the selected faction.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowEnemy": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowNeutral": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowAlly": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowAskerFaction": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowPermanentEnemy": {
+      "description": "SlateRef<bool?> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBePermanentEnemy": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "playerCantBeAttackingCurrently": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "peaceTalksCantExist": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "leaderMustBeSafe": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustHaveGoodwillRewardsEnabled": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "ofPawn": {
+      "description": "SlateRef<Pawn> pawn variable whose faction must match.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBeHostileToFactionOf": {
+      "description": "SlateRef<Thing> thing variable whose faction must be hostile to the selected faction.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "exclude": {
+      "description": "SlateRef<IEnumerable<Faction>> factions to exclude; accepts literals, expressions, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowedHiddenFactions": {
+      "description": "SlateRef<IEnumerable<Faction>> hidden factions allowed for selection; accepts literals, expressions, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

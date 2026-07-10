@@ -1,0 +1,26 @@
+{
+  "objectType": "AudioGrain",
+  "label": "Audio grain",
+  "description": "Base schema for audio grain list items. Specific item schemas are selected by the li Class attribute.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "AudioGrain",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "AudioGrain_Clip": "AudioGrain_Clip",
+      "AudioGrain_Folder": "AudioGrain_Folder",
+      "AudioGrain_Silence": "AudioGrain_Silence"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Grain class",
+      "description": "C# AudioGrain subclass used by RimWorld DirectXmlLoader for this grain list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

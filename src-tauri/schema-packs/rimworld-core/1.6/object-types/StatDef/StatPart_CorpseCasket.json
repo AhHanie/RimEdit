@@ -1,0 +1,42 @@
+{
+  "objectType": "StatPart_CorpseCasket",
+  "label": "Stat part (corpse casket)",
+  "description": "Adds an offset when a corpse is inside an occupied casket of a listed ThingDef type.",
+  "fieldOrder": ["Class", "priority", "offsetOccupied", "thingDefs"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "offsetOccupied": {
+      "label": "Offset (occupied)",
+      "description": "Integer offset added to the stat when the corpse is inside a matching casket.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "thingDefs": {
+      "label": "Thing defs",
+      "description": "ThingDefs that qualify as matching caskets for this part.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_FilterPriority",
+  "label": "Think node filter priority",
+  "description": "Only executes child nodes whose GetPriority exceeds minPriority.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": ["minPriority"],
+  "fields": {
+    "minPriority": {
+      "label": "Min priority",
+      "description": "Child nodes with a priority at or below this value are skipped.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    }
+  }
+}

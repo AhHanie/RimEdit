@@ -1,0 +1,46 @@
+{
+  "defType": "GenStepDef",
+  "label": "Gen step",
+  "description": "Defines a map generation step that runs during world or map generation at the specified execution order.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "linkWithSite",
+    "order",
+    "genStep",
+    "preventsGenSteps"
+  ],
+  "fields": {
+    "linkWithSite": {
+      "label": "Link with site",
+      "description": "SitePartDef this gen step is linked to. The step only runs when that site part is present.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SitePartDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "order": {
+      "label": "Order",
+      "description": "Execution order of this step relative to other gen steps. Lower values run first.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "genStep": {
+      "label": "Gen step",
+      "description": "The polymorphic gen step object that performs the actual generation work. The Class attribute selects the variant.",
+      "type": { "kind": "object", "schemaRef": "GenStep" },
+      "required": false,
+      "xml": "object"
+    },
+    "preventsGenSteps": {
+      "label": "Prevents gen steps",
+      "description": "GenStepDefs that this step blocks from running when it is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "GenStepDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

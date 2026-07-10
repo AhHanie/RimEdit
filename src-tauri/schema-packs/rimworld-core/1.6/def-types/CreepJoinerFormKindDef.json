@@ -1,0 +1,145 @@
+{
+  "defType": "CreepJoinerFormKindDef",
+  "label": "Creep joiner form kind",
+  "description": "Defines a creep joiner arrival form -- the pawn-kind template controlling appearance, arrival letter text, and which benefit/downside/aggressive/rejection options are valid for this form. Inherits all PawnKindDef fields.",
+  "inherits": ["PawnKindDef"],
+  "fieldOrder": [
+    "weight",
+    "minCombatPoints",
+    "canOccurRandomly",
+    "letterLabel",
+    "letterPrompt",
+    "bodyTypeGraphicPaths",
+    "forcedHeadTypes",
+    "hairTagFilter",
+    "beardTagFilter",
+    "hairColorOverride",
+    "excludes",
+    "requires"
+  ],
+  "fields": {
+    "weight": {
+      "label": "Weight",
+      "description": "Relative selection weight used when choosing a random creep joiner form.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "minCombatPoints": {
+      "label": "Min combat points",
+      "description": "Minimum raid threat-point threshold required before this form can be randomly selected.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "canOccurRandomly": {
+      "label": "Can occur randomly",
+      "description": "When false, excludes this form from random selection while still allowing explicit selection.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "One-line label shown in the creep joiner arrival notification. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterPrompt": {
+      "label": "Letter prompt",
+      "description": "Body text of the creep joiner arrival letter describing this form's appearance and situation. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "bodyTypeGraphicPaths": {
+      "label": "Body type graphic paths",
+      "description": "Per-body-type texture paths used to render this creep joiner form. Child element name is the BodyTypeDef defName; text is the texture atlas path.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BodyTypeGraphicData" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "bodyType",
+      "valueField": "texturePath",
+      "keyReference": {
+        "defType": "BodyTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "repeatable": true
+    },
+    "forcedHeadTypes": {
+      "label": "Forced head types",
+      "description": "Restricts the head types available for this creep joiner form. When set, only the listed HeadTypeDefs are used during pawn generation.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HeadTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "hairTagFilter": {
+      "label": "Hair tag filter",
+      "description": "Whitelist or blacklist of hair style tags applied when generating this creep joiner form.",
+      "type": { "kind": "object", "schemaRef": "TagFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "beardTagFilter": {
+      "label": "Beard tag filter",
+      "description": "Whitelist or blacklist of beard style tags applied when generating this creep joiner form.",
+      "type": { "kind": "object", "schemaRef": "TagFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "hairColorOverride": {
+      "label": "Hair color override",
+      "description": "Optional hair color forced onto pawns generated with this creep joiner form. Absent element means no override (null).",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "excludes": {
+      "label": "Excludes",
+      "description": "Blacklists compatible CreepJoiner choices for this form. References any concrete CreepJoinerBaseDef subtype (benefit, downside, aggressive, or rejection).",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "CreepJoinerBaseDef",
+        "allowAbstract": false,
+        "scope": "allSources",
+        "acceptedDefTypes": [
+          "CreepJoinerBenefitDef",
+          "CreepJoinerDownsideDef",
+          "CreepJoinerAggressiveDef",
+          "CreepjoinerRejectionDef"
+        ]
+      }
+    },
+    "requires": {
+      "label": "Requires",
+      "description": "Whitelists compatible CreepJoiner choices for this form. References any concrete CreepJoinerBaseDef subtype (benefit, downside, aggressive, or rejection).",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "CreepJoinerBaseDef",
+        "allowAbstract": false,
+        "scope": "allSources",
+        "acceptedDefTypes": [
+          "CreepJoinerBenefitDef",
+          "CreepJoinerDownsideDef",
+          "CreepJoinerAggressiveDef",
+          "CreepjoinerRejectionDef"
+        ]
+      }
+    }
+  }
+}

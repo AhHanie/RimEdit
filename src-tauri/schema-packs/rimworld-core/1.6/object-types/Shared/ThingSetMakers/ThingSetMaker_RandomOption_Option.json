@@ -1,0 +1,59 @@
+{
+  "objectType": "ThingSetMaker_RandomOption_Option",
+  "label": "Random option entry",
+  "description": "A single weighted entry in a ThingSetMaker_RandomOption options list. Exactly one option is chosen at random each generation.",
+  "fieldOrder": [
+    "thingSetMaker",
+    "weight",
+    "weightIfPlayerHasNoItem",
+    "weightIfPlayerHasNoItemItem",
+    "weightIfPlayerHasXenotype",
+    "weightIfPlayerHasXenotypeXenotype"
+  ],
+  "fields": {
+    "thingSetMaker": {
+      "label": "Thing set maker",
+      "description": "The maker that runs when this option is selected. The Class attribute selects the concrete subclass.",
+      "type": { "kind": "object", "schemaRef": "ThingSetMaker" },
+      "required": false,
+      "xml": "object"
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Base selection weight for this option relative to others in the list.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "weightIfPlayerHasNoItem": {
+      "label": "Weight if player has no item",
+      "description": "Replacement weight applied when the player colony does not own any item of the type specified by weightIfPlayerHasNoItemItem.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "weightIfPlayerHasNoItemItem": {
+      "label": "Weight if player has no item - item",
+      "description": "ThingDef checked to determine whether the player weight override applies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "weightIfPlayerHasXenotype": {
+      "label": "Weight if player has xenotype",
+      "description": "Replacement weight applied when the player colony contains a pawn of the xenotype specified by weightIfPlayerHasXenotypeXenotype.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "weightIfPlayerHasXenotypeXenotype": {
+      "label": "Weight if player has xenotype - xenotype",
+      "description": "XenotypeDef checked to determine whether the xenotype weight override applies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "XenotypeDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

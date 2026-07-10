@@ -1,0 +1,17 @@
+{
+  "objectType": "RitualPosition_InFrontThingCenter",
+  "label": "Ritual position (in front of thing center)",
+  "description": "Places the pawn in front of the center of the ritual target thing.",
+  "fieldOrder": ["Class", "highlight", "offset"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "offset": {
+      "label": "Offset",
+      "description": "IntVec3 offset added to the computed in-front-center position.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

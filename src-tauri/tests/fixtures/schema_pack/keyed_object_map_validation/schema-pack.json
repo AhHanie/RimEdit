@@ -1,0 +1,8 @@
+{
+  "formatVersion": 1,
+  "packId": "rimedit.test.keyed_object_map_validation",
+  "name": "Keyed Object Map Validation Test Fixture",
+  "version": "1.0.0",
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": ["object-types"]
+}

@@ -1,0 +1,26 @@
+{
+  "objectType": "SpecificApparelTagChance",
+  "label": "Specific apparel tag chance",
+  "description": "An alternate apparel tag choice with an associated selection probability for a SpecificApparelRequirement.",
+  "fieldOrder": [
+    "tag",
+    "chance"
+  ],
+  "fields": {
+    "tag": {
+      "label": "Tag",
+      "description": "Apparel tag that satisfies the requirement as an alternative to the primary requiredTag.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Relative weight for this alternate tag in selection.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

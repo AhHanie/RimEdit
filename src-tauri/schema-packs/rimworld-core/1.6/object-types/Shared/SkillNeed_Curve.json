@@ -1,0 +1,43 @@
+{
+  "objectType": "SkillNeed_Curve",
+  "label": "Skill need (curve)",
+  "description": "Evaluates the pawn's skill level against a piecewise linear curve to produce the need value.",
+  "fieldOrder": ["Class", "skill", "required", "curve"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# SkillNeed subclass used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef that this need evaluates.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "required": {
+      "label": "Required",
+      "description": "If true, the pawn must have this skill for the stat to be enabled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Piecewise linear curve mapping skill level to the need value.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    }
+  }
+}

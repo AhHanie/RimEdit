@@ -1,0 +1,46 @@
+{
+  "defType": "ShipJobDef",
+  "label": "Ship job",
+  "description": "Defines a job step in a gravship's ordered job queue. Controls which ShipJob driver runs and whether an unspawned ship can be disposed while this job is queued.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "jobClass",
+    "blocksDisposalIfQueuedUnspawned"
+  ],
+  "fields": {
+    "jobClass": {
+      "label": "Job class",
+      "description": "C# ShipJob subclass that implements this job step's logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "ShipJob_Arrive",
+        "ShipJob_FlyAway",
+        "ShipJob_Unload",
+        "ShipJob_WaitForever",
+        "ShipJob_WaitSendable",
+        "ShipJob_WaitTime"
+      ]
+    },
+    "blocksDisposalIfQueuedUnspawned": {
+      "label": "Blocks disposal if queued unspawned",
+      "description": "If true, a ship cannot be disposed while this job type is queued and the ship is unspawned. Set false for transient jobs like Unload and FlyAway that should not block cleanup.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-ship-job": {
+      "label": "New ship job",
+      "description": "A minimal ship job with a driver class.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "jobClass"],
+      "fieldValues": {}
+    }
+  }
+}

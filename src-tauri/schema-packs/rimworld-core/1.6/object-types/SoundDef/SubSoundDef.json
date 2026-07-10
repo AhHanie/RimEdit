@@ -1,0 +1,210 @@
+{
+  "objectType": "SubSoundDef",
+  "label": "Sub-sound def",
+  "description": "Defines one playable audio layer within a SoundDef, including grain selection, volume, pitch, and parameter mappings.",
+  "fieldOrder": [
+    "name",
+    "onCamera",
+    "muteWhenPaused",
+    "tempoAffectedByGameSpeed",
+    "grains",
+    "volumeRange",
+    "pitchRange",
+    "distRange",
+    "repeatMode",
+    "paramMappings",
+    "filters",
+    "startDelayRange",
+    "gameSpeedRange",
+    "tag",
+    "sustainLoop",
+    "sustainLoopDurationRange",
+    "sustainIntervalRange",
+    "sustainIntervalFactorByAggregateSize",
+    "sustainAttack",
+    "sustainSkipFirstAttack",
+    "sustainRelease",
+    "randomStartPoint",
+    "canVacuumDampen"
+  ],
+  "fields": {
+    "name": {
+      "label": "Name",
+      "description": "Optional name for this sub-sound, used for debugging and targeting.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "onCamera": {
+      "label": "On camera",
+      "description": "If true, this sub-sound only plays if the source is on the visible camera area.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "muteWhenPaused": {
+      "label": "Mute when paused",
+      "description": "If true, this sub-sound is silenced when the game is paused.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tempoAffectedByGameSpeed": {
+      "label": "Tempo affected by game speed",
+      "description": "If true, the playback rate scales with the game speed multiplier.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "grains": {
+      "label": "Grains",
+      "description": "Audio grain list. One grain is selected randomly each time the sub-sound plays.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "AudioGrain" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "volumeRange": {
+      "label": "Volume range",
+      "description": "Random volume range. A value is chosen each time the sub-sound plays.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "pitchRange": {
+      "label": "Pitch range",
+      "description": "Random pitch range. A value is chosen each time the sub-sound plays.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "distRange": {
+      "label": "Distance range",
+      "description": "Min/max world distance at which this sub-sound is audible.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "repeatMode": {
+      "label": "Repeat mode",
+      "description": "Controls how the same grain is avoided across multiple plays.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Any",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Any", "NeverTwice", "NeverLastHalf"]
+      }
+    },
+    "paramMappings": {
+      "label": "Parameter mappings",
+      "description": "List of parameter mappings that modulate volume, pitch, or filter properties at runtime.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SoundParameterMapping" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "filters": {
+      "label": "Filters",
+      "description": "Audio filters applied to this sub-sound.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SoundFilter" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "startDelayRange": {
+      "label": "Start delay range",
+      "description": "Random delay in seconds before this sub-sound starts playing.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "gameSpeedRange": {
+      "label": "Game speed range",
+      "description": "Minimum and maximum game speed at which this sub-sound plays.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "tag": {
+      "label": "Tag",
+      "description": "Optional string tag for this sub-sound.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "sustainLoop": {
+      "label": "Sustain loop",
+      "description": "If true, the grain loops continuously while the sustainer is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "sustainLoopDurationRange": {
+      "label": "Sustain loop duration range",
+      "description": "For looping sustainers, a random duration range (in seconds) before restarting the grain.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "sustainIntervalRange": {
+      "label": "Sustain interval range",
+      "description": "Random interval (in seconds) between grain plays on a non-looping sustainer.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "xmlAliases": ["sustainInterval"]
+    },
+    "sustainIntervalFactorByAggregateSize": {
+      "label": "Sustain interval factor by aggregate size",
+      "description": "SimpleCurve mapping aggregate source count to a sustain interval multiplier.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "sustainAttack": {
+      "label": "Sustain attack",
+      "description": "Fade-in time in seconds when the sustainer starts.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.05,
+      "xml": "element"
+    },
+    "sustainSkipFirstAttack": {
+      "label": "Sustain skip first attack",
+      "description": "If true, the fade-in is skipped for the very first sample of the sustainer.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "sustainRelease": {
+      "label": "Sustain release",
+      "description": "Fade-out time in seconds after the sustainer ends.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.2,
+      "xml": "element"
+    },
+    "randomStartPoint": {
+      "label": "Random start point",
+      "description": "If true, looping clips start at a random position instead of the beginning.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canVacuumDampen": {
+      "label": "Can vacuum dampen",
+      "description": "If true, this sub-sound is muted in vacuum biomes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

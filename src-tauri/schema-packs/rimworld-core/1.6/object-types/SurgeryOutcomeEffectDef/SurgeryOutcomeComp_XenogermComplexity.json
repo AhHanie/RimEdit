@@ -1,0 +1,8 @@
+{
+  "objectType": "SurgeryOutcomeComp_XenogermComplexity",
+  "label": "Surgery outcome comp (xenogerm complexity)",
+  "description": "Adjusts surgery quality via a curve evaluated at the implanted xenogerm's complexity. Biotech only.",
+  "inherits": ["SurgeryOutcomeComp_Curve"],
+  "fieldOrder": [],
+  "fields": {}
+}

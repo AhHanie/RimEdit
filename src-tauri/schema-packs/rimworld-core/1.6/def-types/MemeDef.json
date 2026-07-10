@@ -1,0 +1,368 @@
+{
+  "defType": "MemeDef",
+  "label": "Meme",
+  "description": "Defines an ideology meme - a core belief or value that shapes an ideology's precepts, style, rituals, and narrative. Memes come in two categories: Normal (impact 1–3) and Structure (impact 0).",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "iconPath",
+    "renderOrder",
+    "impact",
+    "category",
+    "groupDef",
+    "exclusionTags",
+    "selectOneOrNone",
+    "requiredRituals",
+    "preferredWeaponClasses",
+    "randomizationSelectionWeightFactor",
+    "requireAnyRitualSeat",
+    "deityCount",
+    "allowDuringTutorial",
+    "factionWhitelist",
+    "hiddenInChooseMemes",
+    "generalRules",
+    "descriptionMaker",
+    "deityNameMakerOverride",
+    "deityTypeMakerOverride",
+    "allowSymbolsFromDeity",
+    "symbolPackOverride",
+    "symbolPacks",
+    "fixedDeityNameTypes",
+    "thingStyleCategories",
+    "ritualsToMake",
+    "replaceRitualsWithTags",
+    "replacementPatterns",
+    "consumableBuildings",
+    "veneratedAnimalsCountOffset",
+    "veneratedAnimalsCountOverride",
+    "styleItemTags",
+    "worshipRoomLabel",
+    "startingResearchProjects",
+    "addDesignators",
+    "addDesignatorGroups",
+    "apparelRequirements",
+    "agreeableTraits",
+    "disagreeableTraits",
+    "preventApparelRequirements",
+    "xenotypeSet"
+  ],
+  "fields": {
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path for the meme icon shown in the ideology editor.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Ideology/Memes/Rancher", "UI/Ideology/Memes/Transhumanist"]
+    },
+    "renderOrder": {
+      "label": "Render order",
+      "description": "Draw order for the meme icon on the ideology screen. Higher values render on top.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "impact": {
+      "label": "Impact",
+      "description": "Ideological weight of this meme. Normal memes must be 1–3; structure memes must be 0.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -999,
+      "xml": "element",
+      "validationHints": { "min": 0, "max": 3 }
+    },
+    "category": {
+      "label": "Category",
+      "description": "Meme category. Normal memes are regular beliefs; Structure memes define the ideology's core identity and require a descriptionMaker.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Normal",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Normal", "Structure"] }
+    },
+    "groupDef": {
+      "label": "Group def",
+      "description": "MemeGroupDef that this meme belongs to. Only one meme from the same group can be active in an ideology at a time.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "MemeGroupDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "exclusionTags": {
+      "label": "Exclusion tags",
+      "description": "String tags used to prevent incompatible memes from coexisting. Memes sharing an exclusion tag cannot both be active in the same ideology. Not translated.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "selectOneOrNone": {
+      "label": "Select one or none",
+      "description": "A precept–thing selection group with a chance to select none. The ideology picks at most one precept from the listed pairs.",
+      "type": { "kind": "object", "schemaRef": "PreceptsWithNoneChance" },
+      "required": false,
+      "xml": "object"
+    },
+    "requiredRituals": {
+      "label": "Required rituals",
+      "description": "Ritual and building requirements forced on the ideology when this meme is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RequiredRitualAndBuilding" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "preferredWeaponClasses": {
+      "label": "Preferred weapon classes",
+      "description": "Noble and despised weapon class pair applied to ideologies with this meme.",
+      "type": { "kind": "object", "schemaRef": "IdeoWeaponClassPair" },
+      "required": false,
+      "xml": "object"
+    },
+    "randomizationSelectionWeightFactor": {
+      "label": "Randomization selection weight factor",
+      "description": "Multiplier applied to this meme's selection weight during random ideology generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "requireAnyRitualSeat": {
+      "label": "Require any ritual seat",
+      "description": "ThingDefs of which at least one must be available as a ritual seat for this meme's rituals.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "deityCount": {
+      "label": "Deity count",
+      "description": "Range for the number of deities generated for ideologies with this meme. -1~-1 means the game uses its default count.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "-1~-1",
+      "xml": "element",
+      "examples": ["-1~-1", "0~0", "1~1", "1~3"]
+    },
+    "allowDuringTutorial": {
+      "label": "Allow during tutorial",
+      "description": "Whether this meme can appear in the tutorial scenario's ideology.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "factionWhitelist": {
+      "label": "Faction whitelist",
+      "description": "FactionDefs whose ideologies are allowed to contain this meme. When empty, all factions may use it.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "hiddenInChooseMemes": {
+      "label": "Hidden in choose memes",
+      "description": "Whether this meme is hidden from the meme selection screen. Hidden memes can still be assigned programmatically.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "generalRules": {
+      "label": "General rules",
+      "description": "Inline grammar rules used when generating text for ideologies with this meme.",
+      "type": { "kind": "object", "schemaRef": "RulePack" },
+      "required": false,
+      "xml": "object"
+    },
+    "descriptionMaker": {
+      "label": "Description maker",
+      "description": "Grammar configuration for generating the ideology's description. Required for structure memes.",
+      "type": { "kind": "object", "schemaRef": "IdeoDescriptionMaker" },
+      "required": false,
+      "xml": "object"
+    },
+    "deityNameMakerOverride": {
+      "label": "Deity name maker override",
+      "description": "RulePackDef that overrides the culture's default deity name generator for ideologies with this meme.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "deityTypeMakerOverride": {
+      "label": "Deity type maker override",
+      "description": "RulePackDef that overrides the culture's default deity type generator for ideologies with this meme.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "allowSymbolsFromDeity": {
+      "label": "Allow symbols from deity",
+      "description": "Whether the ideology can draw symbol packs from its deity when generating names.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "symbolPackOverride": {
+      "label": "Symbol pack override",
+      "description": "When true, this meme's symbolPacks replace rather than supplement the candidate pool during name generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "symbolPacks": {
+      "label": "Symbol packs",
+      "description": "Named symbol packs providing translated name words for ideologies with this meme. One pack is chosen at ideology creation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "IdeoSymbolPack" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "fixedDeityNameTypes": {
+      "label": "Fixed deity name types",
+      "description": "Explicit deity name–type pairs for structure memes. Only valid on structure memes.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DeityNameType" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "thingStyleCategories": {
+      "label": "Thing style categories",
+      "description": "Weighted style categories influencing which visual theme is chosen for ideologies with this meme.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ThingStyleCategoryWithPriority" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "ritualsToMake": {
+      "label": "Rituals to make",
+      "description": "Range for the number of additional rituals randomly added to ideologies with this meme.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element",
+      "examples": ["0~0", "1~1", "1~2"]
+    },
+    "replaceRitualsWithTags": {
+      "label": "Replace rituals with tags",
+      "description": "Ritual tags. When this meme is active, rituals matching these tags are replaced with the meme's own ritual pattern.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "replacementPatterns": {
+      "label": "Replacement patterns",
+      "description": "RitualPatternDefs that replace existing rituals matching replaceRitualsWithTags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "RitualPatternDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "consumableBuildings": {
+      "label": "Consumable buildings",
+      "description": "ThingDefs consumed during rituals unlocked by this meme.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "veneratedAnimalsCountOffset": {
+      "label": "Venerated animals count offset",
+      "description": "Offset added to the number of venerated animals for ideologies with this meme.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "veneratedAnimalsCountOverride": {
+      "label": "Venerated animals count override",
+      "description": "Overrides the venerated animal count for ideologies with this meme. -1 means no override.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "styleItemTags": {
+      "label": "Style item tags",
+      "description": "Weighted style item tags influencing hair, beard, and body decoration selection for pawns in ideologies with this meme.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StyleItemTagWeighted" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "worshipRoomLabel": {
+      "label": "Worship room label",
+      "description": "Display name for the worship room required by structure memes. Required for structure memes. Must be translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "startingResearchProjects": {
+      "label": "Starting research projects",
+      "description": "ResearchProjectDefs granted as already-researched at colony start when this meme is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ResearchProjectDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "addDesignators": {
+      "label": "Add designators",
+      "description": "BuildableDefs added to the architect menu when a colony's ideology contains this meme.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "BuildableDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "addDesignatorGroups": {
+      "label": "Add designator groups",
+      "description": "DesignatorDropdownGroupDefs added alongside addDesignators when this meme is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "DesignatorDropdownGroupDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "apparelRequirements": {
+      "label": "Apparel requirements",
+      "description": "Apparel restrictions or requirements applied to ideology members when this meme is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PreceptApparelRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "agreeableTraits": {
+      "label": "Agreeable traits",
+      "description": "Traits that are ideologically compatible with this meme. Pawns with these traits get a mood bonus.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disagreeableTraits": {
+      "label": "Disagreeable traits",
+      "description": "Traits that are ideologically incompatible with this meme. Pawns with these traits get a mood penalty.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "preventApparelRequirements": {
+      "label": "Prevent apparel requirements",
+      "description": "When true, this meme suppresses all apparel requirements from other memes in the same ideology.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "xenotypeSet": {
+      "label": "Xenotype set",
+      "description": "Xenotype distribution weights applied to pawns generated in settlements with this meme active.",
+      "type": { "kind": "object", "schemaRef": "XenotypeSet" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

@@ -1,0 +1,102 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.defSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.defSelectorLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.defSelectorInput {
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.defSelectorInput:focus {
+  border-color: var(--border-focus);
+}
+
+.defSelectorInput option {
+  background: var(--surface-editor);
+  color: var(--text-primary);
+}
+
+.fields {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px 16px;
+}
+
+.noFields {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 8px 0;
+}
+
+.nestedSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 10px 0 2px;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 0;
+  margin-top: 4px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.nestedSectionHeader:hover {
+  color: var(--text-primary);
+}
+
+.sectionToggleIcon {
+  font-size: 8px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.formError {
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--text-error);
+  border-radius: 3px;
+  color: var(--text-error);
+  font-size: 12px;
+}

@@ -1,0 +1,55 @@
+{
+  "objectType": "ThingSetMaker",
+  "label": "Thing set maker",
+  "description": "Base schema for all ThingSetMaker objects. The Class attribute selects the concrete subclass. Unknown class values degrade to this base schema, preserving inherited fixedParams.",
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "ThingSetMaker",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "ThingSetMaker_StackCount": "ThingSetMaker_StackCount",
+      "ThingSetMaker_RandomOption": "ThingSetMaker_RandomOption",
+      "ThingSetMaker_MarketValue": "ThingSetMaker_MarketValue",
+      "ThingSetMaker_Pawn": "ThingSetMaker_Pawn",
+      "ThingSetMaker_Count": "ThingSetMaker_Count",
+      "ThingSetMaker_Sum": "ThingSetMaker_Sum",
+      "ThingSetMaker_Techprints": "ThingSetMaker_Techprints",
+      "ThingSetMaker_Conditional_MakingFaction": "ThingSetMaker_Conditional_MakingFaction",
+      "ThingSetMaker_RandomGeneralGoods": "ThingSetMaker_RandomGeneralGoods",
+      "ThingSetMaker_UniqueWeapon": "ThingSetMaker_UniqueWeapon",
+      "ThingSetMaker_MapGen_AncientPodContents": "ThingSetMaker_MapGen_AncientPodContents",
+      "ThingSetMaker_Nutrition": "ThingSetMaker_Nutrition",
+      "ThingSetMaker_RefugeePod": "ThingSetMaker_RefugeePod",
+      "ThingSetMaker_Conditional_MinMaxTotalMarketValue": "ThingSetMaker_Conditional_MinMaxTotalMarketValue",
+      "ThingSetMaker_Conditional_ResearchFinished": "ThingSetMaker_Conditional_ResearchFinished",
+      "ThingSetMaker_Books": "ThingSetMaker_Books",
+      "ThingSetMaker_Meteorite": "ThingSetMaker_Meteorite",
+      "ThingSetMaker_ResourcePod": "ThingSetMaker_ResourcePod",
+      "ThingSetMaker_SubTree": "ThingSetMaker_SubTree",
+      "ThingSetMaker_TraderStock": "ThingSetMaker_TraderStock",
+      "ThingSetMaker_Conditional": "ThingSetMaker_Conditional",
+      "ThingSetMaker_Conditional_FactionRelation": "ThingSetMaker_Conditional_FactionRelation"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# ThingSetMaker subclass selected by DirectXmlLoader.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "fixedParams": {
+      "label": "Fixed params",
+      "description": "Generation parameters baked into this maker node. Merged with caller-supplied params at runtime; fixed values take precedence.",
+      "type": { "kind": "object", "schemaRef": "ThingSetMakerParams" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

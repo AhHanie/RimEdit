@@ -1,0 +1,53 @@
+{
+  "objectType": "HediffCompProperties_GiveHediffsInRange",
+  "label": "Give hediffs in range comp",
+  "description": "Spreads a hediff to nearby pawns within a radius.",
+  "fieldOrder": ["Class", "compClass", "hediffDef", "radius", "mtbDays", "severity"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "hediffDef": {
+      "label": "Hediff def",
+      "description": "Hediff to spread to nearby pawns.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Radius in cells to spread the hediff.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "mtbDays": {
+      "label": "MTB days",
+      "description": "Mean time in days between spread events.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "severity": {
+      "label": "Severity",
+      "description": "Severity of the spread hediff.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

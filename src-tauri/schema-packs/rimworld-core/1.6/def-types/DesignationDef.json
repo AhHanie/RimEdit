@@ -1,0 +1,67 @@
+{
+  "defType": "DesignationDef",
+  "label": "Designation",
+  "description": "Defines a map designation marker such as mining, hauling, hunting, deconstruction, painting, or plant cutting.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "texturePath",
+    "targetType",
+    "removeIfBuildingDespawned",
+    "designateCancelable",
+    "shouldBatchDraw"
+  ],
+  "fields": {
+    "texturePath": {
+      "label": "Texture path",
+      "description": "Texture asset path used for the designation overlay icon. This is a raw, untranslated asset path.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Designations/Mine", "Designations/Haul", "Designations/RemoveFloor"]
+    },
+    "targetType": {
+      "label": "Target type",
+      "description": "Whether this designation targets a thing or a map cell.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Thing",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Thing", "Cell"]
+      }
+    },
+    "removeIfBuildingDespawned": {
+      "label": "Remove if building despawned",
+      "description": "If true, the designation is removed when its target building despawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "designateCancelable": {
+      "label": "Designation cancelable",
+      "description": "If true, normal cancel-designation actions can remove this designation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "shouldBatchDraw": {
+      "label": "Should batch draw",
+      "description": "If true, cell designations may be drawn through the batched instancing path.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-designation": {
+      "label": "Basic designation",
+      "description": "Minimal designation with a def name, texture path, and target type.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "texturePath", "targetType"],
+      "fieldValues": {}
+    }
+  }
+}

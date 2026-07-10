@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_DisappearsAndKills",
+  "label": "Disappears and kills comp",
+  "description": "Disappears after a set number of ticks and kills the pawn.",
+  "fieldOrder": ["Class", "compClass", "disappearAfterTicks"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "disappearAfterTicks": {
+      "label": "Disappear after ticks",
+      "description": "Ticks after which this hediff disappears and kills the pawn.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    }
+  }
+}

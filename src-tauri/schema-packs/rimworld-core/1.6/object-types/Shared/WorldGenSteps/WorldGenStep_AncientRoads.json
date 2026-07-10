@@ -1,0 +1,29 @@
+{
+  "objectType": "WorldGenStep_AncientRoads",
+  "label": "Ancient roads world gen step",
+  "description": "Generates ancient road networks across the world map.",
+  "fieldOrder": ["Class", "maximumSiteCurve", "maximumSegmentCurviness"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "maximumSiteCurve": {
+      "label": "Maximum site curve",
+      "description": "Controls the maximum deviation of ancient road paths from straight lines.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "maximumSegmentCurviness": {
+      "label": "Maximum segment curviness",
+      "description": "Maximum curviness allowed per road segment.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

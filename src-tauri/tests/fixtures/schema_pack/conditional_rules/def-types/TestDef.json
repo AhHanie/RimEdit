@@ -1,0 +1,45 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "threshold": {
+      "label": "Threshold",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "mode": {
+      "label": "Mode",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "normal"
+    },
+    "options": {
+      "label": "Options",
+      "type": { "kind": "list" },
+      "items": { "kind": "integer" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "validationRules": {
+    "options-required-when-threshold-active": {
+      "kind": "requiredWhen",
+      "field": "options",
+      "when": {
+        "field": "threshold",
+        "operator": "greaterThan",
+        "value": 0
+      },
+      "message": "Options are required when threshold is greater than zero."
+    }
+  }
+}

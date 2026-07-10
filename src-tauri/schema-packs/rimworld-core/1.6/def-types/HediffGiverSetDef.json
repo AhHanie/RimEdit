@@ -1,0 +1,26 @@
+{
+  "defType": "HediffGiverSetDef",
+  "label": "Hediff giver set",
+  "description": "Defines a named collection of HediffGiver entries that are applied together to pawns with a matching race.",
+  "inherits": ["Def"],
+  "fieldOrder": ["hediffGivers"],
+  "fields": {
+    "hediffGivers": {
+      "label": "Hediff givers",
+      "description": "List of hediff givers applied to pawns using this set. Each entry selects a giver class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "HediffGiver" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "new-hediff-giver-set": {
+      "label": "New hediff giver set",
+      "description": "Blank hediff giver set with an empty givers list.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName"],
+      "fieldValues": {}
+    }
+  }
+}

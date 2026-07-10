@@ -1,0 +1,53 @@
+{
+  "objectType": "BodyPartToDrop",
+  "label": "Body part to drop",
+  "description": "Specifies a body part group and an optional thing to spawn when a pawn of this kind is butchered.",
+  "fieldOrder": [
+    "bodyPartGroup",
+    "thing",
+    "allowMale",
+    "allowFemale"
+  ],
+  "fields": {
+    "bodyPartGroup": {
+      "label": "Body part group",
+      "description": "BodyPartGroupDef identifying which body part group produces this drop.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyPartGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "thing": {
+      "label": "Thing",
+      "description": "ThingDef spawned when this body part is butchered.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowMale": {
+      "label": "Allow male",
+      "description": "If true, this drop applies to male pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowFemale": {
+      "label": "Allow female",
+      "description": "If true, this drop applies to female pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

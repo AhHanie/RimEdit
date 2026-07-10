@@ -1,0 +1,108 @@
+{
+  "objectType": "MoteProperties",
+  "label": "Mote properties",
+  "description": "Properties for transient visual effect things (motes), controlling fade timing, motion, scale, and brightness.",
+  "fieldOrder": [
+    "motionSpeed",
+    "rotationRate",
+    "fadeInTime",
+    "solidTime",
+    "fadeOutTime",
+    "scale",
+    "fadeInBrightness",
+    "solidBrightness",
+    "fadeOutBrightness",
+    "airTimeScale",
+    "needsMaintenance"
+  ],
+  "fields": {
+    "motionSpeed": {
+      "label": "Motion speed",
+      "description": "Speed of the mote's translational movement in cells per second.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "rotationRate": {
+      "label": "Rotation rate",
+      "description": "Rate of rotation in degrees per second.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "fadeInTime": {
+      "label": "Fade in time",
+      "description": "Seconds taken to fade from invisible to solidBrightness after spawning.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "solidTime": {
+      "label": "Solid time",
+      "description": "Seconds spent at full solidBrightness before fading out.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "fadeOutTime": {
+      "label": "Fade out time",
+      "description": "Seconds taken to fade from solidBrightness to invisible before despawning.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Initial scale multiplier of the mote graphic.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "fadeInBrightness": {
+      "label": "Fade-in brightness",
+      "description": "Alpha at the start of the fade-in phase.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "solidBrightness": {
+      "label": "Solid brightness",
+      "description": "Alpha during the solid phase.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "fadeOutBrightness": {
+      "label": "Fade-out brightness",
+      "description": "Alpha at the end of the fade-out phase.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "airTimeScale": {
+      "label": "Air time scale",
+      "description": "Multiplier applied to overall lifetime, scaled by the local wind speed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "needsMaintenance": {
+      "label": "Needs maintenance",
+      "description": "If true, the mote must be kept alive externally; it will not expire on its own.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_Infecter",
+  "label": "Infecter comp",
+  "description": "Gives this hediff a chance to become infected.",
+  "fieldOrder": ["Class", "compClass", "infectionChance", "infectionAfterTendDuration"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "infectionChance": {
+      "label": "Infection chance",
+      "description": "Chance to become infected per day.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "infectionAfterTendDuration": {
+      "label": "Infection after tend duration",
+      "description": "Days before becoming infected after tending.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

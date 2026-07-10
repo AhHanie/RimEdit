@@ -1,0 +1,67 @@
+{
+  "objectType": "GenStep_ScatterLumpsMineable",
+  "label": "Scatter lumps mineable",
+  "description": "Scatters irregular lumps of mineable rock across the map, optionally overriding the biome-determined ore type.",
+  "inherits": ["GenStep_Scatterer"],
+  "fieldOrder": [
+    "Class",
+    "count",
+    "countPer10kCellsRange",
+    "nearPlayerStart",
+    "nearMapCenter",
+    "minSpacing",
+    "spotMustBeStandable",
+    "minDistToPlayerStart",
+    "minDistToPlayerStartPct",
+    "minEdgeDist",
+    "minEdgeDistPct",
+    "extraNoBuildEdgeDist",
+    "validators",
+    "fallbackValidators",
+    "allowInWaterBiome",
+    "allowFoggedPositions",
+    "allowRoofed",
+    "onlyOnStartingMap",
+    "minPollution",
+    "allowMechanoidDatacoreReadOrLost",
+    "isJunk",
+    "warnOnFail",
+    "forcedDefToScatter",
+    "forcedLumpSize",
+    "maxValue",
+    "useNomadicMineables"
+  ],
+  "fields": {
+    "forcedDefToScatter": {
+      "label": "Forced def to scatter",
+      "description": "ThingDef overriding the biome-determined mineable type for all lumps.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "forcedLumpSize": {
+      "label": "Forced lump size",
+      "description": "Fixed number of cells per lump, overriding the ThingDef's mineableScatterLumpSizeRange.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxValue": {
+      "label": "Max value",
+      "description": "Maximum base market value per cell for randomly chosen mineables. Ores above this value are excluded.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "useNomadicMineables": {
+      "label": "Use nomadic mineables",
+      "description": "When true, count is scaled by the storyteller's nomadic mineable resources factor on non-starting maps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

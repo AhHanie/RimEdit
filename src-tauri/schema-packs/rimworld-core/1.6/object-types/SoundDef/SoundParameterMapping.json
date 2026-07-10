@@ -1,0 +1,40 @@
+{
+  "objectType": "SoundParameterMapping",
+  "label": "Sound parameter mapping",
+  "description": "Maps a runtime parameter source to a sound property target via an optional curve.",
+  "fieldOrder": ["inParam", "outParam", "paramUpdateMode", "curve"],
+  "fields": {
+    "inParam": {
+      "label": "Input parameter",
+      "description": "Source that reads a runtime value to drive this mapping. Class attribute selects the variant.",
+      "type": { "kind": "object", "schemaRef": "SoundParamSource" },
+      "required": false,
+      "xml": "object"
+    },
+    "outParam": {
+      "label": "Output parameter",
+      "description": "Target property that receives the mapped value. Class attribute selects the variant.",
+      "type": { "kind": "object", "schemaRef": "SoundParamTarget" },
+      "required": false,
+      "xml": "object"
+    },
+    "paramUpdateMode": {
+      "label": "Parameter update mode",
+      "description": "Controls how often the mapping is evaluated: once per sample or continuously.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Constant",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Constant", "OncePerSample"]
+      }
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional piecewise linear curve that transforms the input value before applying it to the output.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

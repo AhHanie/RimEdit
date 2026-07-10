@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalShotRecently",
+  "label": "Think node conditional shot recently",
+  "description": "Satisfied when the pawn has dealt ranged harm within the specified number of ticks.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["thresholdTicks"],
+  "fields": {
+    "thresholdTicks": {
+      "label": "Threshold ticks",
+      "description": "The pawn must have dealt ranged harm within this many ticks for the conditional to be satisfied.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 2500,
+      "xml": "element"
+    }
+  }
+}

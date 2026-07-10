@@ -1,0 +1,24 @@
+{
+  "objectType": "Rule_File",
+  "label": "File rule",
+  "description": "A grammar rule that loads its outputs from one or more text files. Each line of the file becomes a selectable output string.",
+  "inherits": ["Rule"],
+  "fieldOrder": ["Class", "keyword", "tag", "requiredTag", "usesLimit", "constantConstraints", "path", "pathList"],
+  "fields": {
+    "path": {
+      "label": "Path",
+      "description": "Path to a single text file relative to the Language folder. Each line becomes a selectable output.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "pathList": {
+      "label": "Path list",
+      "description": "Paths to multiple text files. All lines from all files are pooled as selectable outputs.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

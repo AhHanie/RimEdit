@@ -1,0 +1,35 @@
+{
+  "objectType": "WorldGenStep",
+  "label": "World gen step",
+  "description": "Base schema for all world gen step objects. The Class attribute selects the concrete WorldGenStep subclass. Unknown Class values degrade to this base schema.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "WorldGenStep",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "WorldGenStep_AncientRoads": "WorldGenStep_AncientRoads",
+      "WorldGenStep_AncientSites": "WorldGenStep_AncientSites",
+      "WorldGenStep_Factions": "WorldGenStep_Factions",
+      "WorldGenStep_Features": "WorldGenStep_Features",
+      "WorldGenStep_Lakes": "WorldGenStep_Lakes",
+      "WorldGenStep_Landmarks": "WorldGenStep_Landmarks",
+      "WorldGenStep_Mutators": "WorldGenStep_Mutators",
+      "WorldGenStep_Pollution": "WorldGenStep_Pollution",
+      "WorldGenStep_Rivers": "WorldGenStep_Rivers",
+      "WorldGenStep_Roads": "WorldGenStep_Roads",
+      "WorldGenStep_Terrain": "WorldGenStep_Terrain",
+      "WorldGenStep_Tiles": "WorldGenStep_Tiles"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass that implements this world generation step.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

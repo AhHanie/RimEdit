@@ -1,0 +1,8 @@
+{
+  "objectType": "WorldObjectCompProperties_TimedForcedExit",
+  "label": "Timed forced exit comp",
+  "description": "Forces the player's caravan to exit the map after a set duration. Marked obsolete in source but retained for mod compatibility. Requires a MapParent world object class.",
+  "inherits": ["WorldObjectCompProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_Pollution",
+  "label": "Pollution comp",
+  "description": "Emits pollution from the pawn while this hediff is active.",
+  "fieldOrder": ["Class", "compClass", "pollutionPerDay"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "pollutionPerDay": {
+      "label": "Pollution per day",
+      "description": "Pollution emitted per day.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

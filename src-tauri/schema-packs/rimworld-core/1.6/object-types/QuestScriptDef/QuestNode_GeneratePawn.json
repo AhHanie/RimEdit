@@ -1,0 +1,207 @@
+{
+  "objectType": "QuestNode_GeneratePawn",
+  "label": "QuestNode GeneratePawn",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_GeneratePawn.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "storeAs",
+    "addToList",
+    "addToLists",
+    "kindDef",
+    "faction",
+    "forbidAnyTitle",
+    "ensureNonNumericName",
+    "forcedTraits",
+    "prohibitedTraits",
+    "extraPawnForExtraRelationChance",
+    "relationWithExtraPawnChanceFactor",
+    "allowAddictions",
+    "biocodeWeaponChance",
+    "biocodeApparelChance",
+    "mustBeCapableOfViolence",
+    "isChild",
+    "allowPregnant",
+    "fixedGender",
+    "giveDependentDrugs"
+  ],
+  "fields": {
+    "storeAs": {
+      "description": "SlateRef<string> variable name to store the generated pawn.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "addToList": {
+      "description": "SlateRef<string> list variable name to append the generated pawn to.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "addToLists": {
+      "description": "SlateRef<IEnumerable<string>> list variable names to append the generated pawn to.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "kindDef": {
+      "description": "SlateRef<PawnKindDef> def name or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "faction": {
+      "description": "SlateRef<Faction> faction variable or def-like literal.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "forbidAnyTitle": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "ensureNonNumericName": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "forcedTraits": {
+      "description": "SlateRef<IEnumerable<TraitDef>> TraitDef names forced onto the generated pawn.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "prohibitedTraits": {
+      "description": "SlateRef<IEnumerable<TraitDef>> TraitDef names prohibited on the generated pawn.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "extraPawnForExtraRelationChance": {
+      "description": "SlateRef<Pawn> pawn variable used for extra relation generation chance.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "relationWithExtraPawnChanceFactor": {
+      "description": "SlateRef<float> relation chance factor, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowAddictions": {
+      "description": "SlateRef<bool?> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "biocodeWeaponChance": {
+      "description": "SlateRef<float> biocode weapon chance, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "biocodeApparelChance": {
+      "description": "SlateRef<float> biocode apparel chance, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBeCapableOfViolence": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "isChild": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowPregnant": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "fixedGender": {
+      "description": "SlateRef<Gender?> literal Male/Female/None or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "giveDependentDrugs": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

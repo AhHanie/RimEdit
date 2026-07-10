@@ -1,0 +1,19 @@
+{
+  "objectType": "ThinkNode_Conditional",
+  "label": "Think node conditional",
+  "description": "Base conditional node. Children execute when the condition is satisfied; set invert to reverse the check. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "invert"
+  ],
+  "fields": {
+    "invert": {
+      "label": "Invert",
+      "description": "If true, children execute when the condition is NOT satisfied (logical negation).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

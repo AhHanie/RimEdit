@@ -1,0 +1,10 @@
+{
+  "objectType": "RitualSpectatorFilter_NatureFocus",
+  "label": "Ritual spectator filter (nature focus)",
+  "description": "Filters spectators to those with nature focus for the ritual.",
+  "fieldOrder": ["Class", "description"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "description": { "label": "Description", "type": { "kind": "localizedString" }, "required": false, "xml": "element" }
+  }
+}

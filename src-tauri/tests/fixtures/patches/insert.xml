@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationInsert">
+    <xpath>Defs/ThingDef[defName="Wall"]/costList/li[last()]</xpath>
+    <value>
+      <li>Steel</li>
+    </value>
+    <order>Append</order>
+  </Operation>
+</Patch>

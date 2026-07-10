@@ -1,0 +1,46 @@
+{
+  "objectType": "HediffCompProperties_ExplodeOnDeath",
+  "label": "Explode on death comp",
+  "description": "Causes an explosion when the pawn dies with this hediff.",
+  "fieldOrder": ["Class", "compClass", "explosionRadius", "explosionDamage", "explosionDamageAmount"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "explosionRadius": {
+      "label": "Explosion radius",
+      "description": "Radius of the explosion on death.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "explosionDamage": {
+      "label": "Explosion damage",
+      "description": "Damage type of the explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionDamageAmount": {
+      "label": "Explosion damage amount",
+      "description": "Amount of explosion damage.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

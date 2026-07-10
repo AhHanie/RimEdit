@@ -1,0 +1,54 @@
+{
+  "objectType": "StatPart_Rest",
+  "label": "Stat part (rest level)",
+  "description": "Scales the stat based on the pawn's current rest level.",
+  "fieldOrder": ["Class", "priority", "factorExhausted", "factorVeryTired", "factorTired", "factorRested"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factorExhausted": {
+      "label": "Factor (exhausted)",
+      "description": "Stat multiplier when the pawn is exhausted.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorVeryTired": {
+      "label": "Factor (very tired)",
+      "description": "Stat multiplier when the pawn is very tired.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorTired": {
+      "label": "Factor (tired)",
+      "description": "Stat multiplier when the pawn is tired.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorRested": {
+      "label": "Factor (rested)",
+      "description": "Stat multiplier when the pawn is fully rested.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

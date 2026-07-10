@@ -1,0 +1,88 @@
+{
+  "objectType": "AncientStructureGenParms",
+  "label": "Ancient structure gen parms",
+  "description": "Parameters controlling how an ancient structure is generated and what is scattered around its perimeter.",
+  "fieldOrder": [
+    "structureLayoutDef", "structureSizeRange", "scatteredPrefabs",
+    "perimeterWallDef", "perimeterExpandBy", "perimeterWallChance",
+    "perimeterTerrainDef", "perimeterScatterTerrain", "perimeterScatteredThings"
+  ],
+  "fields": {
+    "structureLayoutDef": {
+      "label": "Structure layout def",
+      "description": "LayoutDef that defines the interior layout of the generated structure.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LayoutDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "structureSizeRange": {
+      "label": "Structure size range",
+      "description": "Random range for the structure footprint size in cells.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "scatteredPrefabs": {
+      "label": "Scattered prefabs",
+      "description": "Prefab groups scattered around the exterior of the generated structure.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ScatteredPrefabs" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "perimeterWallDef": {
+      "label": "Perimeter wall def",
+      "description": "ThingDef placed as a wall around the structure perimeter.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "perimeterExpandBy": {
+      "label": "Perimeter expand by",
+      "description": "Number of cells to expand the perimeter wall outward from the structure edge.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "perimeterWallChance": {
+      "label": "Perimeter wall chance",
+      "description": "Probability (0-1) that each perimeter cell receives a wall.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "perimeterTerrainDef": {
+      "label": "Perimeter terrain def",
+      "description": "TerrainDef placed across the structure perimeter area.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "perimeterScatterTerrain": {
+      "label": "Perimeter scatter terrain",
+      "description": "Terrain patches scattered across the perimeter. Each element name is the TerrainDef defName; child elements are scatter parameters.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutScatterTerrainParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "perimeterScatteredThings": {
+      "label": "Perimeter scattered things",
+      "description": "Things scattered across the perimeter. Each element name is the ThingDef defName; scalar text is the chance per 100 cells.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "AncientStructureScatteredThing" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "thingDef",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "chancePer100Cells"
+    }
+  }
+}

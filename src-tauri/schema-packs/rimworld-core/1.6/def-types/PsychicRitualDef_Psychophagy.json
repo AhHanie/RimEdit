@@ -1,0 +1,26 @@
+{
+  "defType": "PsychicRitualDef_Psychophagy",
+  "label": "Psychic ritual -- psychophagy",
+  "description": "Ritual where the invoker psychically consumes the target's psychic energy, inflicting brain damage and granting a mood effect.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "brainDamageRange",
+    "effectDurationDaysFromQualityCurve"
+  ],
+  "fields": {
+    "brainDamageRange": {
+      "label": "Brain damage range",
+      "description": "Random amount of brain damage inflicted on the target pawn.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "effectDurationDaysFromQualityCurve": {
+      "label": "Effect duration days from quality curve",
+      "description": "Curve mapping ritual quality to the duration in days of the mood effect granted to the invoker.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "objectType": "NestedObject",
+  "label": "Nested object",
+  "fields": {
+    "nestedKnown": {
+      "label": "Nested known field",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

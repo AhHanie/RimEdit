@@ -1,0 +1,500 @@
+{
+  "defType": "QuestScriptDef",
+  "label": "Quest script",
+  "description": "Defines a RimWorld quest generation script and its root QuestNode program.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "root",
+    "rootSelectionWeight",
+    "rootSelectionWeightFactorFromPointsCurve",
+    "randomlySelectable",
+    "rootMinPoints",
+    "rootMinProgressScore",
+    "rootEarliestDay",
+    "rootIncreasesPopulation",
+    "minRefireDays",
+    "decreeSelectionWeight",
+    "decreeTags",
+    "questDescriptionRules",
+    "questNameRules",
+    "questDescriptionAndNameRules",
+    "questContentRules",
+    "questSubjectRules",
+    "autoAccept",
+    "hideOnCleanup",
+    "expireDaysRange",
+    "nameMustBeUnique",
+    "defaultChallengeRating",
+    "defaultHidden",
+    "isRootSpecial",
+    "canGiveRoyalFavor",
+    "questAvailableLetterLabel",
+    "questAvailableLetterDef",
+    "questAvailableLetterTextIsDescription",
+    "hideInvolvedFactionsInfo",
+    "affectedByPopulation",
+    "affectedByPoints",
+    "defaultCharity",
+    "successHistoryEvent",
+    "failedOrExpiredHistoryEvent",
+    "sendAvailableLetter",
+    "epic",
+    "epicParent",
+    "endOnColonyMove",
+    "everAcceptableInSpace",
+    "neverPossibleInSpace",
+    "givenBy",
+    "layerWhitelist",
+    "layerBlacklist",
+    "canOccurOnAllPlanetLayers"
+  ],
+  "fields": {
+    "root": {
+      "description": "Entry QuestNode program for this quest script. The XML Class attribute selects the concrete QuestNode schema.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "rootSelectionWeight": {
+      "description": "Base storyteller selection weight. If this is greater than 0 and autoAccept is false, expireDaysRange must have a positive max.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "rootSelectionWeightFactorFromPointsCurve": {
+      "description": "SimpleCurve factor applied to rootSelectionWeight based on current points.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "SimpleCurve"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "randomlySelectable": {
+      "description": "Whether this quest can be selected from the random quest pool.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "rootMinPoints": {
+      "description": "Minimum threat points required before this root quest can be offered.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "rootMinProgressScore": {
+      "description": "Minimum colony progress score required before this root quest can be offered.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "rootEarliestDay": {
+      "description": "Earliest game day on which this root quest can be offered.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "rootIncreasesPopulation": {
+      "description": "Marks quests that can increase colony population.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "minRefireDays": {
+      "description": "Minimum days before the same quest script can fire again.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "decreeSelectionWeight": {
+      "description": "Selection weight when this quest is considered for royal decrees.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "decreeTags": {
+      "description": "String tags used to match royal decree sources.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "items": {
+        "kind": "string"
+      }
+    },
+    "questDescriptionRules": {
+      "description": "Inline RulePack used by quest grammar resolution.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "questNameRules": {
+      "description": "Inline RulePack used by quest grammar resolution.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "questDescriptionAndNameRules": {
+      "description": "Inline RulePack injected into both quest description and quest name resolution.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "questContentRules": {
+      "description": "Inline RulePack used for in-quest letters and generated content.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "questSubjectRules": {
+      "description": "Inline RulePack used to resolve the quest subject.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "autoAccept": {
+      "description": "If true, the quest is accepted immediately. Source config rejects autoAccept together with a positive expireDaysRange max.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "hideOnCleanup": {
+      "description": "If true, hide the quest after cleanup/completion.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "expireDaysRange": {
+      "description": "Expiry days range before acceptance. -1~-1 means no expiry; required for random non-auto-accepted quests.",
+      "type": {
+        "kind": "floatRange"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "-1~-1"
+    },
+    "nameMustBeUnique": {
+      "description": "Requires generated quest names to be unique among active quests.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "defaultChallengeRating": {
+      "description": "Default challenge rating shown in the quest UI. Values above 0 are only valid on root quests.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": -1
+    },
+    "defaultHidden": {
+      "description": "Whether the quest is hidden by default in the quest log.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "isRootSpecial": {
+      "description": "Marks this as a special root quest script.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "canGiveRoyalFavor": {
+      "description": "Whether rewards from this quest may include royal favor.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "questAvailableLetterLabel": {
+      "description": "Optional label override for the available quest letter.",
+      "type": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "questAvailableLetterDef": {
+      "description": "Optional LetterDef override for the available quest letter.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "LetterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "questAvailableLetterTextIsDescription": {
+      "description": "If true, the available-letter text uses the full quest description.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "hideInvolvedFactionsInfo": {
+      "description": "If true, suppresses involved factions information in quest UI.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "affectedByPopulation": {
+      "description": "Whether population affects this quest's generation or rewards.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "affectedByPoints": {
+      "description": "Whether threat points affect this quest's generation or rewards.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "defaultCharity": {
+      "description": "Marks this quest as charitable by default.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "successHistoryEvent": {
+      "description": "HistoryEventDef fired when the quest succeeds.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HistoryEventDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "failedOrExpiredHistoryEvent": {
+      "description": "HistoryEventDef fired when the quest fails or expires.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HistoryEventDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "sendAvailableLetter": {
+      "description": "Whether the game sends an available quest letter.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "epic": {
+      "description": "Marks this quest as part of an epic quest chain.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "epicParent": {
+      "description": "Optional parent QuestScriptDef for an epic quest chain.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "QuestScriptDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "endOnColonyMove": {
+      "description": "Whether the quest ends when the player's colony moves.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "everAcceptableInSpace": {
+      "description": "Allows acceptance on space-layer maps regardless of the usual space rule.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "neverPossibleInSpace": {
+      "description": "Prevents this quest from generating in space.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "givenBy": {
+      "description": "QuestGiverTag values that can offer this quest.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "items": {
+        "kind": "enum"
+      },
+      "validationHints": {
+        "allowedValues": [
+          "Traders",
+          "OrbitalScanner",
+          "Reading",
+          "Beggars"
+        ]
+      }
+    },
+    "layerWhitelist": {
+      "description": "PlanetLayerDef whitelist. If non-empty, the quest can occur only on these layers.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "items": {
+        "kind": "defReference"
+      },
+      "reference": {
+        "defType": "PlanetLayerDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "layerBlacklist": {
+      "description": "PlanetLayerDef blacklist. These layers are excluded.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "items": {
+        "kind": "defReference"
+      },
+      "reference": {
+        "defType": "PlanetLayerDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "canOccurOnAllPlanetLayers": {
+      "description": "Bypasses layer whitelist and blacklist constraints.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  },
+  "templates": {
+    "basic-opportunity-site": {
+      "label": "Basic opportunity site quest",
+      "description": "A randomly selectable opportunity quest with expiry and a grammar rule pack for name and description.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "defName",
+        "rootSelectionWeight",
+        "rootMinPoints",
+        "expireDaysRange"
+      ],
+      "fieldValues": {
+        "randomlySelectable": true,
+        "autoAccept": false
+      }
+    }
+  }
+}

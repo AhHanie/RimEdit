@@ -1,0 +1,29 @@
+{
+  "objectType": "ScenPart_SetNeedLevel",
+  "label": "Set need level",
+  "description": "Sets the starting level of a specific need for affected pawns.",
+  "inherits": ["ScenPart_PawnModifier"],
+  "fieldOrder": ["def", "visible", "chance", "context", "hideOffMap", "need", "levelRange"],
+  "fields": {
+    "need": {
+      "label": "Need",
+      "description": "NeedDef whose level this part sets on affected starting pawns.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "NeedDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "levelRange": {
+      "label": "Level range",
+      "description": "Range from which the need level (0-1) is randomly chosen when applied.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0~0.2", "0.5~1"]
+    }
+  }
+}

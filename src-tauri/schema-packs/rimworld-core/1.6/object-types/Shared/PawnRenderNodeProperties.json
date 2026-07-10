@@ -1,0 +1,366 @@
+{
+  "objectType": "PawnRenderNodeProperties",
+  "label": "Render node properties",
+  "description": "Base schema for pawn render node properties. Shared by PawnRenderTreeDef, GeneDef, HediffDef, TraitDef, ApparelProperties, and other pawn-rendering defs.",
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "PawnRenderNodeProperties",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "PawnRenderNodeProperties_BulbfreakTentacle": "PawnRenderNodeProperties_BulbfreakTentacle",
+      "PawnRenderNodeProperties_Carried": "PawnRenderNodeProperties_Carried",
+      "PawnRenderNodeProperties_Eye": "PawnRenderNodeProperties_Eye",
+      "PawnRenderNodeProperties_NociosphereSegment": "PawnRenderNodeProperties_NociosphereSegment",
+      "PawnRenderNodeProperties_NociosphereSegmentOutline": "PawnRenderNodeProperties_NociosphereSegmentOutline",
+      "PawnRenderNodeProperties_Overlay": "PawnRenderNodeProperties_Overlay",
+      "PawnRenderNodeProperties_Parent": "PawnRenderNodeProperties_Parent",
+      "PawnRenderNodeProperties_Spastic": "PawnRenderNodeProperties_Spastic",
+      "PawnRenderNodeProperties_Swaddle": "PawnRenderNodeProperties_Swaddle",
+      "PawnRenderNodeProperties_Tattoo": "PawnRenderNodeProperties_Tattoo"
+    }
+  },
+  "fieldOrder": [
+    "Class",
+    "workerClass",
+    "subworkerClasses",
+    "nodeClass",
+    "tagDef",
+    "parentTagDef",
+    "children",
+    "texPath",
+    "texPaths",
+    "texPathFemale",
+    "texPathsFemale",
+    "bodyTypeGraphicPaths",
+    "texSeed",
+    "useGraphic",
+    "skipFlag",
+    "rotDrawMode",
+    "pawnType",
+    "linkedBodyPartsGroup",
+    "color",
+    "colorRGBPostFactor",
+    "useRottenColor",
+    "useSkinShader",
+    "shaderTypeDef",
+    "colorType",
+    "baseLayer",
+    "drawData",
+    "oppositeFacingLayerWhenFlipped",
+    "overrideMeshSize",
+    "drawSize",
+    "anchorTag",
+    "side",
+    "narrowCrownHorizontalOffset",
+    "visibleFacing",
+    "flipGraphic",
+    "rotateIndependently",
+    "debugLabel",
+    "overlayLayer",
+    "overlayOverApparel"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PawnRenderNodeProperties subclass discriminator attribute.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# PawnRenderNodeWorker subclass handling rendering logic for this node.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "subworkerClasses": {
+      "label": "Subworker classes",
+      "description": "Additional C# PawnRenderSubWorker types contributing to this node's render.",
+      "type": { "kind": "list" },
+      "items": { "kind": "typeName" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "nodeClass": {
+      "label": "Node class",
+      "description": "C# PawnRenderNode subclass for this node.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "tagDef": {
+      "label": "Tag def",
+      "description": "PawnRenderNodeTagDef identifying this node so child nodes can reference it via parentTagDef.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnRenderNodeTagDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "parentTagDef": {
+      "label": "Parent tag def",
+      "description": "PawnRenderNodeTagDef of the parent node this node attaches to in the render tree.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnRenderNodeTagDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "children": {
+      "label": "Children",
+      "description": "Nested render nodes that are children of this node in the render tree.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnRenderNodeProperties" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "texPath": {
+      "label": "Texture path",
+      "description": "Texture atlas path for this render node.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "texPaths": {
+      "label": "Texture paths",
+      "description": "List of texture atlas paths; used when multiple textures are cycled or selected at runtime.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "texPathFemale": {
+      "label": "Texture path (female)",
+      "description": "Texture atlas path used for female pawns.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "texPathsFemale": {
+      "label": "Texture paths (female)",
+      "description": "List of texture atlas paths used for female pawns.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "bodyTypeGraphicPaths": {
+      "label": "Body type graphic paths",
+      "description": "Per-BodyTypeDef texture atlas paths. Child element names are BodyTypeDef defNames; text is the texture path.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BodyTypeGraphicData" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "bodyType",
+      "valueField": "texturePath",
+      "keyReference": {
+        "defType": "BodyTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "texSeed": {
+      "label": "Texture seed",
+      "description": "Integer seed used for deterministic texture selection from texPaths.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "useGraphic": {
+      "label": "Use graphic",
+      "description": "If false, this node renders without a graphic (used for positioning-only nodes).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "skipFlag": {
+      "label": "Skip flag",
+      "description": "RenderSkipFlagDef that suppresses rendering of this node when set on the pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RenderSkipFlagDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "rotDrawMode": {
+      "label": "Rotation draw mode",
+      "description": "Comma-separated flags controlling which decay stages render this node. Values: Fresh, Rotting, Dessicated.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": { "allowedValues": ["Fresh", "Rotting", "Dessicated"] }
+    },
+    "pawnType": {
+      "label": "Pawn type",
+      "description": "Restricts this node to humanlike or non-humanlike pawns only.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Any", "HumanlikeOnly", "NonHumanlikeOnly"] }
+    },
+    "linkedBodyPartsGroup": {
+      "label": "Linked body parts group",
+      "description": "BodyPartGroupDef controlling visibility based on attached body parts.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "BodyPartGroupDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "color": {
+      "label": "Color",
+      "description": "Optional RGBA color override for this node. Format: (r, g, b, a).",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "colorRGBPostFactor": {
+      "label": "Color RGB post factor",
+      "description": "RGB multiplier applied after base color resolution. Format: (r, g, b, a).",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "useRottenColor": {
+      "label": "Use rotten color",
+      "description": "If true, applies rotten color tint when the pawn is in a rotting decay stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useSkinShader": {
+      "label": "Use skin shader",
+      "description": "If true, uses the skin shader for this node instead of the default cutout shader.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "shaderTypeDef": {
+      "label": "Shader type def",
+      "description": "ShaderTypeDef overriding the default shader for this node's graphic.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ShaderTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "colorType": {
+      "label": "Color type",
+      "description": "Source of the color applied to this node (Custom, Hair, or Skin).",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Custom", "Hair", "Skin"] }
+    },
+    "baseLayer": {
+      "label": "Base layer",
+      "description": "Rendering layer depth for this node. Lower values render behind higher values.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawData": {
+      "label": "Draw data",
+      "description": "Per-direction transform data (offset, layer, rotation, flip, scale) for this node.",
+      "type": { "kind": "object", "schemaRef": "DrawData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "oppositeFacingLayerWhenFlipped": {
+      "label": "Opposite facing layer when flipped",
+      "description": "If true, uses the opposite cardinal direction's layer value when this node is horizontally flipped.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "overrideMeshSize": {
+      "label": "Override mesh size",
+      "description": "If true, the node's mesh size is determined by drawSize rather than the graphic's native size.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "drawSize": {
+      "label": "Draw size",
+      "description": "2D draw size in world units. Accepts forms: (x, y), x,y, or a single uniform value.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "anchorTag": {
+      "label": "Anchor tag",
+      "description": "PawnRenderNodeTagDef of the node this node is spatially anchored to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnRenderNodeTagDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "side": {
+      "label": "Side",
+      "description": "Lateral side this node occupies (Center, Left, or Right).",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Center", "Left", "Right"] }
+    },
+    "narrowCrownHorizontalOffset": {
+      "label": "Narrow crown horizontal offset",
+      "description": "Horizontal offset adjustment applied for narrow-crown head types.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "visibleFacing": {
+      "label": "Visible facing",
+      "description": "List of Rot4 directions in which this node is visible. Empty means all directions.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum", "validationHints": { "allowedValues": ["North", "East", "South", "West"] } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "flipGraphic": {
+      "label": "Flip graphic",
+      "description": "If true, the graphic is horizontally flipped.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "rotateIndependently": {
+      "label": "Rotate independently",
+      "description": "If true, this node rotates independently of the pawn's facing direction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "debugLabel": {
+      "label": "Debug label",
+      "description": "Human-readable label shown in debug rendering overlays.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "overlayLayer": {
+      "label": "Overlay layer",
+      "description": "Which overlay layer this node occupies when drawn as a pawn overlay (Body or Head).",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Body", "Head"] }
+    },
+    "overlayOverApparel": {
+      "label": "Overlay over apparel",
+      "description": "If true, this overlay node is drawn on top of apparel.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

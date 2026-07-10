@@ -1,0 +1,34 @@
+{
+  "defType": "OptionCategoryDef",
+  "label": "Option category",
+  "description": "Defines an official category shown in RimWorld's options dialog, including the category label, icon texture path, and whether the category is developer-only.",
+  "inherits": ["Def"],
+  "fieldOrder": ["texPath", "isDev"],
+  "fields": {
+    "texPath": {
+      "label": "Texture path",
+      "description": "Content path to the icon texture drawn beside this options category. Source marks this field NoTranslate.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Icons/Options/OptionsGeneral"]
+    },
+    "isDev": {
+      "label": "Is developer category",
+      "description": "If true, this category is shown only when development mode is enabled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-option-category": {
+      "label": "Basic option category",
+      "description": "Minimal options category with a def name, label, and icon texture path.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "texPath"],
+      "fieldValues": {}
+    }
+  }
+}

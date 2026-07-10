@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_Nutrition",
+  "label": "Nutrition maker",
+  "description": "Generates food items until total nutrition reaches the target range specified in fixedParams.totalNutritionRange.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

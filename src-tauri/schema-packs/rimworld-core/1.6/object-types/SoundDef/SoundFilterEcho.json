@@ -1,0 +1,37 @@
+{
+  "objectType": "SoundFilterEcho",
+  "label": "Sound filter: echo",
+  "description": "Unity AudioEchoFilter applied to this sub-sound.",
+  "inherits": ["SoundFilter"],
+  "fieldOrder": ["Class", "delay", "decayRatio", "wetMix", "dryMix"],
+  "fields": {
+    "delay": {
+      "label": "Delay",
+      "description": "Echo delay time in milliseconds (80–10000).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "decayRatio": {
+      "label": "Decay ratio",
+      "description": "Echo decay ratio: fraction of previous echo amplitude. Range 0–1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "wetMix": {
+      "label": "Wet mix",
+      "description": "Volume of the echo signal. Range 0–1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "dryMix": {
+      "label": "Dry mix",
+      "description": "Volume of the original signal. Range 0–1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

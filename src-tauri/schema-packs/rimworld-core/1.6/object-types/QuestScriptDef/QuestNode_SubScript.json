@@ -1,0 +1,68 @@
+{
+  "objectType": "QuestNode_SubScript",
+  "label": "QuestNode SubScript",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_SubScript.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "def",
+    "prefix",
+    "allowNonPrefixedLookup",
+    "parms",
+    "returnVarNames"
+  ],
+  "fields": {
+    "def": {
+      "description": "QuestScriptDef def name or $varName for the subscript to run.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "QuestScriptDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "prefix": {
+      "description": "Slate variable prefix applied to the subscript.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowNonPrefixedLookup": {
+      "description": "SlateRef<bool> literal, expression, or $varName; allows fallback to unprefixed variables.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "parms": {
+      "description": "Named child map of subscript parameter name to SlateRef<object> value expression; values may be any literal, expression, XML fragment, or $varName.",
+      "type": {
+        "kind": "object"
+      },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": {
+        "kind": "string"
+      }
+    },
+    "returnVarNames": {
+      "description": "Variable names copied back out of the subscript prefix scope.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

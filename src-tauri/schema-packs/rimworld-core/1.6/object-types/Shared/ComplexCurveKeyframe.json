@@ -1,0 +1,57 @@
+{
+  "objectType": "ComplexCurveKeyframe",
+  "label": "Curve keyframe",
+  "description": "A single keyframe in a ComplexCurve. Maps to UnityEngine.Keyframe serialized via fi.Name (m_* prefix).",
+  "fieldOrder": ["m_Time", "m_Value", "m_InTangent", "m_OutTangent", "m_InWeight", "m_OutWeight", "m_WeightedMode"],
+  "fields": {
+    "m_Time": {
+      "label": "Time",
+      "description": "Time position of this keyframe.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "m_Value": {
+      "label": "Value",
+      "description": "Curve value at this keyframe.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "m_InTangent": {
+      "label": "In tangent",
+      "description": "Incoming tangent slope at this keyframe.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "m_OutTangent": {
+      "label": "Out tangent",
+      "description": "Outgoing tangent slope at this keyframe.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "m_InWeight": {
+      "label": "In weight",
+      "description": "Incoming tangent weight (used only when m_WeightedMode enables it).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "m_OutWeight": {
+      "label": "Out weight",
+      "description": "Outgoing tangent weight (used only when m_WeightedMode enables it).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "m_WeightedMode": {
+      "label": "Weighted mode",
+      "description": "Unity WeightedMode integer flag controlling which tangents use their weight values.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

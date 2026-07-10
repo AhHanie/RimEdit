@@ -1,0 +1,56 @@
+{
+  "objectType": "RitualOutcomeComp_BuildingOfDefPresent",
+  "label": "Ritual outcome comp (building of def present)",
+  "description": "Applies qualityOffset scaled by the number of the specified building found in the ritual gathering area relative to the required count.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "def"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Maximum quality offset when the required number of buildings is present.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve; not typically used by this variant.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "def": {
+      "label": "Def",
+      "description": "ThingDef of the building required to be present in the ritual area.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

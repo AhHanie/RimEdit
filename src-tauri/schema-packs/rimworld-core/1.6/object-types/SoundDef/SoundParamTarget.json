@@ -1,0 +1,29 @@
+{
+  "objectType": "SoundParamTarget",
+  "label": "Sound parameter target",
+  "description": "Base schema for sound parameter output targets. The Class attribute on the element selects the specific variant.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "SoundParamTarget",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "SoundParamTarget_Pitch": "SoundParamTarget_Pitch",
+      "SoundParamTarget_PropertyEcho": "SoundParamTarget_PropertyEcho",
+      "SoundParamTarget_PropertyHighPass": "SoundParamTarget_PropertyHighPass",
+      "SoundParamTarget_PropertyLowPass": "SoundParamTarget_PropertyLowPass",
+      "SoundParamTarget_PropertyReverb": "SoundParamTarget_PropertyReverb",
+      "SoundParamTarget_Volume": "SoundParamTarget_Volume"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Target class",
+      "description": "C# SoundParamTarget subclass used by RimWorld DirectXmlLoader for this parameter target element.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

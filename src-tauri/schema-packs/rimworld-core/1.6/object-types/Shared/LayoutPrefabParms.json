@@ -1,0 +1,63 @@
+{
+  "objectType": "LayoutPrefabParms",
+  "label": "Layout prefab parms",
+  "description": "Parameters for placing prefabs inside a room. The element name is the PrefabDef defName (the 'def' field).",
+  "fieldOrder": ["def", "countRange", "minMaxRange", "ensureNoBlocks", "countPerHundredCells", "countPerTenEdgeCells", "rotOffset"],
+  "fields": {
+    "def": {
+      "label": "Prefab",
+      "description": "PrefabDef to place. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "PrefabDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "Fixed placement count range. Uses IntRange.Invalid to derive count from countPerHundredCells or countPerTenEdgeCells.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "minMaxRange": {
+      "label": "Min max range",
+      "description": "Minimum and maximum allowed placement count. -1 lower bound means no minimum.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "ensureNoBlocks": {
+      "label": "Ensure no blocks",
+      "description": "When true, placement positions that would block room access are rejected.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "countPerHundredCells": {
+      "label": "Count per hundred cells",
+      "description": "Random range for how many placements appear per 100 room cells.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "1~2"
+    },
+    "countPerTenEdgeCells": {
+      "label": "Count per ten edge cells",
+      "description": "Random range for how many placements appear per 10 edge cells.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "1~1"
+    },
+    "rotOffset": {
+      "label": "Rotation offset",
+      "description": "Rotation applied to placed prefabs.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Clockwise", "Opposite", "Counterclockwise"]
+      }
+    }
+  }
+}

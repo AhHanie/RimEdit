@@ -1,0 +1,17 @@
+{
+  "objectType": "SurgeryOutcomeComp_Factor",
+  "label": "Surgery outcome comp (factor)",
+  "description": "Multiplies the running surgery quality score by a fixed factor.",
+  "inherits": ["SurgeryOutcomeComp"],
+  "fieldOrder": ["Class", "factor"],
+  "fields": {
+    "factor": {
+      "label": "Factor",
+      "description": "Multiplier applied to the running surgery quality score.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

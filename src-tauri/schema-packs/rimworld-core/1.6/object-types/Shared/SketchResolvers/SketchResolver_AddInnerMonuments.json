@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AddInnerMonuments",
+  "label": "Sketch resolver: Add inner monuments",
+  "description": "Concrete RimWorld SketchResolver_AddInnerMonuments resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

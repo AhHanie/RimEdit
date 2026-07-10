@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_WanderColony",
+  "label": "Job giver wander colony",
+  "description": "Wanders near a colony-derived root position. No additional XML-loadable fields beyond the Wander base.",
+  "inherits": ["JobGiver_Wander"]
+}

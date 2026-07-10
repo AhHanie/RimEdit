@@ -1,0 +1,48 @@
+{
+  "objectType": "QuestNode_SpawnWorldObjects",
+  "label": "QuestNode SpawnWorldObjects",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_SpawnWorldObjects.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignal",
+    "worldObjects",
+    "tile",
+    "defsToExcludeFromHyperlinks"
+  ],
+  "fields": {
+    "inSignal": {
+      "description": "Signal name that triggers spawning.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "worldObjects": {
+      "description": "Slate variable or expression resolving to world objects.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "tile": {
+      "description": "Slate variable or literal tile override.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "defsToExcludeFromHyperlinks": {
+      "description": "Slate variable for ThingDef names excluded from hyperlinks.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

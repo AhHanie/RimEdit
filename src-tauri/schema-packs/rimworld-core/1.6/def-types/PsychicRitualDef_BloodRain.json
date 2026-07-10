@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualDef_BloodRain",
+  "label": "Psychic ritual -- blood rain",
+  "description": "Ritual that summons a blood rain event. Duration scales with ritual quality.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "durationHoursFromQualityRange"
+  ],
+  "fields": {
+    "durationHoursFromQualityRange": {
+      "label": "Duration hours from quality range",
+      "description": "Range of blood rain durations in hours, lerped through by ritual quality.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

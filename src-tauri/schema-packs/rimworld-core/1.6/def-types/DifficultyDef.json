@@ -1,0 +1,433 @@
+{
+  "defType": "DifficultyDef",
+  "label": "Difficulty",
+  "description": "Defines a difficulty preset that controls threat scaling, yield factors, hazard rates, and tactical restrictions for a RimWorld playthrough.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "isCustom",
+    "threatScale",
+    "allowBigThreats",
+    "allowIntroThreats",
+    "allowCaveHives",
+    "peacefulTemples",
+    "allowViolentQuests",
+    "predatorsHuntHumanlikes",
+    "babiesAreHealthy",
+    "noBabiesOrChildren",
+    "scariaRotChance",
+    "colonistMoodOffset",
+    "tradePriceFactorLoss",
+    "cropYieldFactor",
+    "mineYieldFactor",
+    "butcherYieldFactor",
+    "fishingYieldFactor",
+    "researchSpeedFactor",
+    "diseaseIntervalFactor",
+    "enemyReproductionRateFactor",
+    "playerPawnInfectionChanceFactor",
+    "manhunterChanceOnDamageFactor",
+    "deepDrillInfestationChanceFactor",
+    "wastepackInfestationChanceFactor",
+    "nomadicMineableResourcesFactor",
+    "foodPoisonChanceFactor",
+    "maintenanceCostFactor",
+    "enemyDeathOnDownedChanceFactor",
+    "adaptationGrowthRateFactorOverZero",
+    "adaptationEffectFactor",
+    "questRewardValueFactor",
+    "raidLootPointsFactor",
+    "allowTraps",
+    "allowTurrets",
+    "allowMortars",
+    "classicMortars",
+    "allowExtremeWeatherIncidents",
+    "fixedWealthMode",
+    "lowPopConversionBoost",
+    "minThreatPointsRangeCeiling",
+    "childAgingRate",
+    "adultAgingRate",
+    "unwaveringPrisoners",
+    "childRaidersAllowed",
+    "anomalyThreatsInactiveFraction",
+    "anomalyThreatsActiveFraction",
+    "studyEfficiencyFactor"
+  ],
+  "fields": {
+    "isCustom": {
+      "label": "Is custom",
+      "description": "Marks this def as the special Custom slot where the player sets all sliders manually. When true the numeric fields on this def are not used.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "threatScale": {
+      "label": "Threat scale",
+      "description": "Primary multiplier applied to raid point budgets and most AI encounter budgets.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "allowBigThreats": {
+      "label": "Allow big threats",
+      "description": "Whether large-scale raid events such as mechanoid clusters and major faction assaults are permitted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowIntroThreats": {
+      "label": "Allow intro threats",
+      "description": "Whether the scripted introductory threat sequence fires at the start of a new game.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowCaveHives": {
+      "label": "Allow cave hives",
+      "description": "Whether insect hive infestations can spawn in underground cave areas.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "peacefulTemples": {
+      "label": "Peaceful temples",
+      "description": "When true, ancient danger rooms do not spawn hostile enemies when opened.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowViolentQuests": {
+      "label": "Allow violent quests",
+      "description": "Whether quests that require the player to engage in combat are offered.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "predatorsHuntHumanlikes": {
+      "label": "Predators hunt humanlikes",
+      "description": "Whether wild predator animals can target and hunt human-like pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "babiesAreHealthy": {
+      "label": "Babies are healthy",
+      "description": "When true, babies are always born without health conditions or deficiencies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "noBabiesOrChildren": {
+      "label": "No babies or children",
+      "description": "When true, reproduction and child development mechanics are disabled entirely.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scariaRotChance": {
+      "label": "Scaria rot chance",
+      "description": "Probability in [0, 1] that a downed enemy pawn develops scaria disease, causing rapid corpse rot.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "colonistMoodOffset": {
+      "label": "Colonist mood offset",
+      "description": "Flat additive modifier applied to all colonist mood values. Negative values reduce baseline mood.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "tradePriceFactorLoss": {
+      "label": "Trade price factor loss",
+      "description": "Penalty applied to the prices the player receives when selling items to traders.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "cropYieldFactor": {
+      "label": "Crop yield factor",
+      "description": "Multiplier applied to the quantity of items produced when harvesting grown crops.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "mineYieldFactor": {
+      "label": "Mine yield factor",
+      "description": "Multiplier applied to the quantity of resources obtained when mining ore or chunks.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "butcherYieldFactor": {
+      "label": "Butcher yield factor",
+      "description": "Multiplier applied to the quantity of meat and leather obtained when butchering animals or corpses.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "fishingYieldFactor": {
+      "label": "Fishing yield factor",
+      "description": "Multiplier applied to the quantity of fish caught during fishing activities.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "researchSpeedFactor": {
+      "label": "Research speed factor",
+      "description": "Multiplier applied to the research points generated per unit of work when researching technologies.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "diseaseIntervalFactor": {
+      "label": "Disease interval factor",
+      "description": "Multiplier on the interval between disease outbreaks. Higher values mean rarer diseases.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "enemyReproductionRateFactor": {
+      "label": "Enemy reproduction rate factor",
+      "description": "Multiplier applied to the rate at which enemy factions reproduce or reinforce their populations.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "playerPawnInfectionChanceFactor": {
+      "label": "Player pawn infection chance factor",
+      "description": "Multiplier on the probability that a player-controlled pawn contracts an infection from a wound.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "manhunterChanceOnDamageFactor": {
+      "label": "Manhunter chance on damage factor",
+      "description": "Multiplier on the probability that an animal enters a manhunter state after being wounded.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "deepDrillInfestationChanceFactor": {
+      "label": "Deep drill infestation chance factor",
+      "description": "Multiplier on the probability of an insect infestation triggering when using a deep drill.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "wastepackInfestationChanceFactor": {
+      "label": "Wastepack infestation chance factor",
+      "description": "Multiplier on the probability of an insect infestation triggered by accumulated wastepacks.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "nomadicMineableResourcesFactor": {
+      "label": "Nomadic mineable resources factor",
+      "description": "Multiplier on the quantity of mineable resources available on nomadic map tiles.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "foodPoisonChanceFactor": {
+      "label": "Food poison chance factor",
+      "description": "Multiplier on the probability that eating food with a low-skill cook causes food poisoning.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "maintenanceCostFactor": {
+      "label": "Maintenance cost factor",
+      "description": "Multiplier on the silver cost of maintaining structures and equipment over time.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "enemyDeathOnDownedChanceFactor": {
+      "label": "Enemy death on downed chance factor",
+      "description": "Multiplier on the probability that an enemy pawn dies outright when downed rather than being captured.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "adaptationGrowthRateFactorOverZero": {
+      "label": "Adaptation growth rate factor over zero",
+      "description": "Multiplier on how quickly the colony adaptation score grows when it is above zero.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "adaptationEffectFactor": {
+      "label": "Adaptation effect factor",
+      "description": "Multiplier on how strongly the colony adaptation score scales up raid threat points.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "questRewardValueFactor": {
+      "label": "Quest reward value factor",
+      "description": "Multiplier applied to the silver or item value of rewards offered by quests.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "raidLootPointsFactor": {
+      "label": "Raid loot points factor",
+      "description": "Multiplier on the loot point budget used to fill enemy raiders' equipment and inventory.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "allowTraps": {
+      "label": "Allow traps",
+      "description": "Whether the player is permitted to build and use trap structures such as IED mines and spike traps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowTurrets": {
+      "label": "Allow turrets",
+      "description": "Whether the player is permitted to build automated turrets for base defense.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowMortars": {
+      "label": "Allow mortars",
+      "description": "Whether the player is permitted to build and operate mortar emplacements.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "classicMortars": {
+      "label": "Classic mortars",
+      "description": "When true, enables simplified classic mortar behavior without the full targeting and crew mechanics.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowExtremeWeatherIncidents": {
+      "label": "Allow extreme weather incidents",
+      "description": "Whether extreme weather events such as eclipses, solar flares, and volcanic winters can occur.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "fixedWealthMode": {
+      "label": "Fixed wealth mode",
+      "description": "When true, freezes the colony wealth calculation so raid point budgets do not scale with prosperity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "lowPopConversionBoost": {
+      "label": "Low pop conversion boost",
+      "description": "Multiplier on prisoner conversion chance when the colony population is low.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 3.0,
+      "xml": "element"
+    },
+    "minThreatPointsRangeCeiling": {
+      "label": "Min threat points range ceiling",
+      "description": "Caps the minimum raid size so early-game threats still apply some pressure regardless of colony strength.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 70.0,
+      "xml": "element"
+    },
+    "childAgingRate": {
+      "label": "Child aging rate",
+      "description": "Multiplier on biological aging speed for child-aged pawns (Biotech DLC).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 4.0,
+      "xml": "element"
+    },
+    "adultAgingRate": {
+      "label": "Adult aging rate",
+      "description": "Multiplier on biological aging speed for adult pawns (Biotech DLC).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "unwaveringPrisoners": {
+      "label": "Unwavering prisoners",
+      "description": "When true, prisoners never break under sustained persuasion and refuse all recruitment attempts.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "childRaidersAllowed": {
+      "label": "Child raiders allowed",
+      "description": "Whether enemy raids may include child-aged pawns as combatants.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "anomalyThreatsInactiveFraction": {
+      "label": "Anomaly threats inactive fraction",
+      "description": "Share of the threat budget allocated to anomaly incidents during the quiet horror phase (Anomaly DLC).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.08,
+      "xml": "element"
+    },
+    "anomalyThreatsActiveFraction": {
+      "label": "Anomaly threats active fraction",
+      "description": "Share of the threat budget allocated to anomaly incidents during the active horror phase (Anomaly DLC).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.3,
+      "xml": "element"
+    },
+    "studyEfficiencyFactor": {
+      "label": "Study efficiency factor",
+      "description": "Multiplier on research points gained from studying anomaly entities (Anomaly DLC).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    }
+  }
+}

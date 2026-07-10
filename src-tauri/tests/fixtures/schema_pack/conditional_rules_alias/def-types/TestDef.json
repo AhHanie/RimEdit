@@ -1,0 +1,39 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "primaryName": {
+      "label": "Primary name",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0,
+      "xmlAliases": ["legacyName"]
+    },
+    "options": {
+      "label": "Options",
+      "type": { "kind": "list" },
+      "items": { "kind": "integer" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "validationRules": {
+    "options-required-when-active": {
+      "kind": "requiredWhen",
+      "field": "options",
+      "when": {
+        "field": "primaryName",
+        "operator": "greaterThan",
+        "value": 0
+      },
+      "message": "Options required when threshold is active."
+    }
+  }
+}

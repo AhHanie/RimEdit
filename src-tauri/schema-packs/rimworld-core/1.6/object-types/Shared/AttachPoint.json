@@ -1,0 +1,43 @@
+{
+  "objectType": "AttachPoint",
+  "label": "Attach point",
+  "description": "A named spatial anchor point on a graphic. Maps to RimWorld.AttachPoint in RimWorld source.",
+  "fieldOrder": [
+    "offset",
+    "type"
+  ],
+  "fields": {
+    "offset": {
+      "label": "Offset",
+      "description": "World-space position of this attach point relative to the graphic origin as (x, y, z).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(0, 0, 0)",
+        "(-0.3, 0, 0.45)"
+      ]
+    },
+    "type": {
+      "label": "Type",
+      "description": "Named attach point type identifying the role of this anchor.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "RootNone",
+          "CableConnection0",
+          "CableConnection1",
+          "CableConnection2",
+          "CableConnection3",
+          "PlatformRestraint0",
+          "PlatformRestraint1",
+          "PlatformRestraint2",
+          "PlatformRestraint3",
+          "Exhaust"
+        ]
+      }
+    }
+  }
+}

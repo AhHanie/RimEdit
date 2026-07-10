@@ -1,0 +1,38 @@
+{
+  "objectType": "StatPart_Outdoors",
+  "label": "Stat part (outdoors)",
+  "description": "Scales the stat depending on whether the pawn is indoors or outdoors.",
+  "fieldOrder": ["Class", "priority", "factorIndoors", "factorOutdoors"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factorIndoors": {
+      "label": "Factor (indoors)",
+      "description": "Stat multiplier applied when the pawn is in a roofed area.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorOutdoors": {
+      "label": "Factor (outdoors)",
+      "description": "Stat multiplier applied when the pawn is outdoors.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

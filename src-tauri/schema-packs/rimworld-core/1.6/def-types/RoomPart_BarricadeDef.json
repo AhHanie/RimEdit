@@ -1,0 +1,50 @@
+{
+  "defType": "RoomPart_BarricadeDef",
+  "label": "Room part barricade",
+  "description": "A room part that places barricaded door structures. Inherits from RoomPartDef.",
+  "inherits": ["RoomPartDef"],
+  "fieldOrder": ["wallDef", "stuffDef", "steps", "offset", "chancePerDoor"],
+  "fields": {
+    "wallDef": {
+      "label": "Wall def",
+      "description": "ThingDef used for barricade walls.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "stuffDef": {
+      "label": "Stuff",
+      "description": "Material (ThingDef) used when placing the wall, if it is stuffable.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "steps": {
+      "label": "Steps",
+      "description": "Number of barricade wall steps placed per door.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 2
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Cell offset from the door at which barricades begin.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 2
+    },
+    "chancePerDoor": {
+      "label": "Chance per door",
+      "description": "Probability that each door in the room receives a barricade.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.75,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    }
+  }
+}

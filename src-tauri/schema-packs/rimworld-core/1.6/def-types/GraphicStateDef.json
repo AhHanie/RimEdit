@@ -1,0 +1,35 @@
+{
+  "defType": "GraphicStateDef",
+  "label": "Graphic state",
+  "description": "Defines a named graphic state for pawn render nodes. Referenced by Keyframe.graphicState and CurveKey.graphicState to switch the visual of a node at a specific animation tick.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "defaultGraphicData",
+    "applySkinColorTint"
+  ],
+  "fields": {
+    "defaultGraphicData": {
+      "label": "Default graphic data",
+      "description": "Graphic settings applied when this state is active. Reuses the shared GraphicData schema.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object"
+    },
+    "applySkinColorTint": {
+      "label": "Apply skin color tint",
+      "description": "If true, the pawn's skin color is applied as a tint over the graphic. Used for graphics that should match mutant or hediff-affected skin color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-graphic-state": {
+      "label": "Basic graphic state",
+      "description": "A minimal graphic state definition identified by defName.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName"]
+    }
+  }
+}

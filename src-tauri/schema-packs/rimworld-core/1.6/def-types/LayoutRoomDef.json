@@ -1,0 +1,272 @@
+{
+  "defType": "LayoutRoomDef",
+  "label": "Layout room",
+  "description": "Defines a room archetype for structure layout generation, including terrain, scattered contents, prefab placements, and room part applications.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "sketchResolverDef", "areaSizeRange", "requiresSingleRectRoom", "floorTypes",
+    "edgeTerrain", "minSingleRectWidth", "minSingleRectHeight",
+    "roomContentsWorkerType", "canBeInMixedRoom", "dontPlaceRandomly",
+    "isValidPlayerSpawnRoom", "dontDestroyWallsDoors", "threatPointsScaleCurve",
+    "minConnectedRooms", "minAdjRooms", "spawnJunk", "canMergeWithAdjacentRoom",
+    "canRemoveBorderDoors", "canRemoveBorderWalls", "roofDef", "noRoof",
+    "itemsPer100CellsRange", "thingSetMakerDef",
+    "scatter", "scatterTerrain", "fillEdges", "fillInterior", "wallAttachments",
+    "prefabs", "parts"
+  ],
+  "fields": {
+    "sketchResolverDef": {
+      "label": "Sketch resolver",
+      "description": "SketchResolverDef used to resolve this room's sketch during generation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SketchResolverDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "areaSizeRange": {
+      "label": "Area size range",
+      "description": "Allowed room area in cells. Rooms outside this range cannot use this def.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "25~2147483647"
+    },
+    "requiresSingleRectRoom": {
+      "label": "Requires single rect room",
+      "description": "When true, this def is only used in rooms composed of exactly one rectangle.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "floorTypes": {
+      "label": "Floor types",
+      "description": "Terrain types randomly chosen for the room floor. Inherit='false' is preserved on the container element when present.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "edgeTerrain": {
+      "label": "Edge terrain",
+      "description": "TerrainDef placed along the inner edge cells of the room.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "minSingleRectWidth": {
+      "label": "Min single rect width",
+      "description": "Minimum width of the largest single rectangle that must fit inside the room.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "minSingleRectHeight": {
+      "label": "Min single rect height",
+      "description": "Minimum height of the largest single rectangle that must fit inside the room.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "roomContentsWorkerType": {
+      "label": "Room contents worker type",
+      "description": "C# RoomContentsWorker subclass responsible for populating this room's contents.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "RoomContentsWorker"
+    },
+    "canBeInMixedRoom": {
+      "label": "Can be in mixed room",
+      "description": "Whether this room type can coexist with other room types in a merged room.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "dontPlaceRandomly": {
+      "label": "Don't place randomly",
+      "description": "When true, this room type is never chosen randomly; it must be explicitly required.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "isValidPlayerSpawnRoom": {
+      "label": "Is valid player spawn room",
+      "description": "Whether this room type is a valid spawn location for the player.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "dontDestroyWallsDoors": {
+      "label": "Don't destroy walls and doors",
+      "description": "When true, the room generator will not remove existing walls or doors in this room.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "threatPointsScaleCurve": {
+      "label": "Threat points scale curve",
+      "description": "Curve mapping threat points to a scale factor applied when populating this room.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "minConnectedRooms": {
+      "label": "Min connected rooms",
+      "description": "Minimum number of other rooms this room must be connected to.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "minAdjRooms": {
+      "label": "Min adjacent rooms",
+      "description": "Minimum number of rooms that must share a cardinal edge with this room.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "spawnJunk": {
+      "label": "Spawn junk",
+      "description": "Whether junk items are scattered into this room during generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "canMergeWithAdjacentRoom": {
+      "label": "Can merge with adjacent room",
+      "description": "Whether this room can be merged with a directly adjacent room.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "canRemoveBorderDoors": {
+      "label": "Can remove border doors",
+      "description": "Whether doors on this room's border may be removed during generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "canRemoveBorderWalls": {
+      "label": "Can remove border walls",
+      "description": "Whether walls on this room's border may be removed during generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "roofDef": {
+      "label": "Roof def",
+      "description": "RoofDef placed over this room. Omit to use the structure default.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RoofDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "noRoof": {
+      "label": "No roof",
+      "description": "When true, no roof is placed over this room.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "itemsPer100CellsRange": {
+      "label": "Items per 100 cells range",
+      "description": "Range for how many items are generated per 100 room cells. Absent means no item generation.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "thingSetMakerDef": {
+      "label": "Thing set maker",
+      "description": "ThingSetMakerDef used to generate items placed in this room.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingSetMakerDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "scatter": {
+      "label": "Scatter",
+      "description": "Things scattered randomly throughout the room. Each element name is the ThingDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutScatterParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "scatterTerrain": {
+      "label": "Scatter terrain",
+      "description": "Terrain patches scattered randomly throughout the room. Each element name is the TerrainDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutScatterTerrainParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "fillEdges": {
+      "label": "Fill edges",
+      "description": "Things placed along the room's interior edges. Each element name is the ThingDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutFillEdgesParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "fillInterior": {
+      "label": "Fill interior",
+      "description": "Things placed across the room interior. Each element name is the ThingDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutFillInteriorParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "wallAttachments": {
+      "label": "Wall attachments",
+      "description": "Things attached to the room walls. Each element name is the ThingDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutWallAttatchmentParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "prefabs": {
+      "label": "Prefabs",
+      "description": "Prefabs placed inside the room. Each element name is the PrefabDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutPrefabParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "PrefabDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "parts": {
+      "label": "Parts",
+      "description": "Room parts applied during content resolution. Each element name is the RoomPartDef defName; scalar text is the chance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutPartParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "RoomPartDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "chance"
+    }
+  }
+}

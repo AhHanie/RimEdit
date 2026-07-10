@@ -1,0 +1,83 @@
+{
+  "objectType": "PawnCapacityModifier",
+  "label": "Pawn capacity modifier",
+  "description": "Adjusts a specific pawn capacity (e.g. Moving, Consciousness) by offset, factor, or hard cap.",
+  "fieldOrder": [
+    "capacity",
+    "offset",
+    "setMax",
+    "postFactor",
+    "statFactorMod",
+    "setMaxCurveOverride",
+    "setMaxCurveEvaluateStat"
+  ],
+  "fields": {
+    "capacity": {
+      "label": "Capacity",
+      "description": "PawnCapacityDef that this modifier targets.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnCapacityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Flat value added to the capacity after other calculations.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "setMax": {
+      "label": "Set max",
+      "description": "Hard cap applied to the capacity. The capacity cannot exceed this value. 999 means effectively uncapped.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 999,
+      "xml": "element"
+    },
+    "postFactor": {
+      "label": "Post factor",
+      "description": "Multiplier applied to the capacity after offset and cap calculations.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "statFactorMod": {
+      "label": "Stat factor mod",
+      "description": "StatDef whose value is used as an additional multiplier on this capacity modifier.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "setMaxCurveOverride": {
+      "label": "Set max curve override",
+      "description": "Curve used to evaluate the hard cap dynamically. Requires setMaxCurveEvaluateStat to determine the input value.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "setMaxCurveEvaluateStat": {
+      "label": "Set max curve evaluate stat",
+      "description": "StatDef whose value is fed into setMaxCurveOverride to determine the hard cap at runtime.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "objectType": "CompProperties_AbilityRequiresCapacity",
+  "label": "Ability requires capacity",
+  "description": "Restricts the ability to pawns that have a specific body capacity.",
+  "fieldOrder": [
+    "Class",
+    "compClass",
+    "capacity"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# AbilityCompProperties type used by RimWorld DirectXmlLoader for this list item.",
+      "type": {
+        "kind": "typeName"
+      },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime AbilityComp class. Usually set by the constructor.",
+      "type": {
+        "kind": "typeName"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "capacity": {
+      "label": "Capacity",
+      "description": "PawnCapacityDef the caster must have.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnCapacityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

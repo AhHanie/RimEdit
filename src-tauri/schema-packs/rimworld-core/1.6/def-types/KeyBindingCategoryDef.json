@@ -1,0 +1,53 @@
+{
+  "defType": "KeyBindingCategoryDef",
+  "label": "Key binding category",
+  "description": "Groups related key bindings and specifies which other categories are checked for conflicts when assigning keys.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "isGameUniversal",
+    "checkForConflicts",
+    "selfConflicting"
+  ],
+  "fields": {
+    "isGameUniversal": {
+      "label": "Is game universal",
+      "description": "If true, these key bindings are active in all game modes rather than only when the relevant context is open. Used for camera, global game controls, and main tabs.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "checkForConflicts": {
+      "label": "Check for conflicts",
+      "description": "List of KeyBindingCategoryDefs whose keys are compared against this category when detecting conflicts. Keys shared across listed categories will be reported as conflicting.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": {
+          "defType": "KeyBindingCategoryDef",
+          "allowAbstract": false,
+          "scope": "allSources"
+        }
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "selfConflicting": {
+      "label": "Self conflicting",
+      "description": "If true, two key bindings within this category cannot share the same key. Set to false for modifier categories such as Modifiers where sharing keys is intentional.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-category": {
+      "label": "Basic category",
+      "description": "Key binding category with a label and conflict checking.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "checkForConflicts"],
+      "fieldValues": {}
+    }
+  }
+}

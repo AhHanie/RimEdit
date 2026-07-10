@@ -1,0 +1,23 @@
+{
+  "objectType": "BiomePlantRecord",
+  "label": "Biome plant record",
+  "description": "A plant that can appear in a biome or tile mutator, with a relative commonality. The element name is the ThingDef defName (the 'plant' field); scalar text is the commonality.",
+  "fieldOrder": ["plant", "commonality"],
+  "fields": {
+    "plant": {
+      "label": "Plant",
+      "description": "ThingDef of the plant. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight controlling how often this plant appears. Populated from XML scalar text by the keyedObjectList loader.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    }
+  }
+}

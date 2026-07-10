@@ -1,0 +1,17 @@
+{
+  "objectType": "ScenPart_GameCondition",
+  "label": "Game condition",
+  "description": "Starts a persistent game condition at the beginning of the game. The condition type and duration are defined on the ScenPartDef.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "durationDayS"],
+  "fields": {
+    "durationDayS": {
+      "label": "Duration (days)",
+      "description": "Duration in days for the game condition. Overrides the random range from the ScenPartDef when specified.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "examples": ["90", "200", "500"]
+    }
+  }
+}

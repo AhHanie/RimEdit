@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_Meteorite",
+  "label": "Meteorite maker",
+  "description": "Generates meteorite ore chunks using the built-in meteorite loot table.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

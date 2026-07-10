@@ -1,0 +1,147 @@
+{
+  "defType": "MentalBreakDef",
+  "label": "Mental break",
+  "description": "Defines a mental break trigger: the conditions under which a pawn snaps into a linked MentalStateDef, including commonality, intensity, and trait or gene requirements.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "mentalState",
+    "baseCommonality",
+    "commonalityFactorPerPopulationCurve",
+    "intensity",
+    "requiredTrait",
+    "requiredGene",
+    "anomalousBreak",
+    "questLodgersCanDo",
+    "requiredPrecept",
+    "layerWhitelist"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# MentalBreakWorker subclass that controls break triggering logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "MentalBreakWorker",
+      "xml": "element",
+      "examples": [
+        "MentalBreakWorker",
+        "MentalBreakWorker_BingingDrug",
+        "MentalBreakWorker_BingingDrug_Hard",
+        "MentalBreakWorker_Tantrum",
+        "MentalBreakWorker_SadisticRage"
+      ]
+    },
+    "mentalState": {
+      "label": "Mental state",
+      "description": "MentalStateDef that the pawn enters when this break fires.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MentalStateDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "baseCommonality": {
+      "label": "Base commonality",
+      "description": "Base relative weight for this break when selecting which break fires. Higher values increase chance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element",
+      "validationHints": { "min": 0 }
+    },
+    "commonalityFactorPerPopulationCurve": {
+      "label": "Commonality factor per population curve",
+      "description": "Multiplier curve applied to baseCommonality based on colony population. X is population count, Y is the multiplier.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "intensity": {
+      "label": "Intensity",
+      "description": "Severity tier of this break, used by the mood threshold system to determine when it can trigger.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Minor", "Major", "Extreme"]
+      }
+    },
+    "requiredTrait": {
+      "label": "Required trait",
+      "description": "TraitDef that a pawn must have for this break to be eligible.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredGene": {
+      "label": "Required gene",
+      "description": "GeneDef that a pawn must have for this break to be eligible (Biotech expansion).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GeneDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "anomalousBreak": {
+      "label": "Anomalous break",
+      "description": "If true, this break is part of the Anomaly expansion and only triggers under anomaly conditions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "questLodgersCanDo": {
+      "label": "Quest lodgers can do",
+      "description": "Whether quest lodger pawns (e.g. allied guests) are eligible for this break.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "requiredPrecept": {
+      "label": "Required precept",
+      "description": "PreceptDef that a pawn's ideology must include for this break to be eligible (Ideology expansion).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PreceptDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "layerWhitelist": {
+      "label": "Layer whitelist",
+      "description": "If non-empty, this break can only trigger on these PlanetLayerDefs (Odyssey expansion).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "basic-mental-break": {
+      "label": "Basic mental break",
+      "description": "Mental break with a linked mental state, intensity, and commonality.",
+      "includeRequiredFields": true,
+      "promptFields": ["mentalState", "intensity", "baseCommonality"],
+      "fieldValues": {
+        "questLodgersCanDo": "true"
+      }
+    }
+  }
+}

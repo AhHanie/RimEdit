@@ -1,0 +1,17 @@
+{
+  "defType": "DrawStyleCategoryDef",
+  "label": "Draw style category",
+  "description": "A named group of DrawStyleDef entries assigned to a specific architect drawing tool.",
+  "inherits": ["Def"],
+  "fieldOrder": ["styles"],
+  "fields": {
+    "styles": {
+      "label": "Styles",
+      "description": "Ordered list of DrawStyleDef references in this category. Shipped categories inherit from named templates and add or override entries.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "DrawStyleDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

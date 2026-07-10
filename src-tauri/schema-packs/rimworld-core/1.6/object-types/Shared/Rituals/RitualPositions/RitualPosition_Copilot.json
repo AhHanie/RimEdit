@@ -1,0 +1,27 @@
+{
+  "objectType": "RitualPosition_Copilot",
+  "label": "Ritual position (copilot)",
+  "description": "Places the pawn at the copilot seat of the ritual vehicle target.",
+  "fieldOrder": ["Class", "highlight", "facing", "faceThing"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "facing": {
+      "label": "Facing",
+      "description": "Cardinal direction the pawn faces after arriving. Rot4.Invalid means no forced facing.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Invalid",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["North", "East", "South", "West", "Invalid"] }
+    },
+    "faceThing": {
+      "label": "Face thing",
+      "description": "If true, the pawn faces toward the ritual target thing instead of using a fixed facing direction. Cannot be combined with facing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

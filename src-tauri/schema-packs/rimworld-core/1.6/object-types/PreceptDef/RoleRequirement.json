@@ -1,0 +1,34 @@
+{
+  "objectType": "RoleRequirement",
+  "label": "Role requirement",
+  "description": "Base schema for role requirements. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class", "labelKey"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RoleRequirement",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "RoleRequirement_MinSkillAny": "RoleRequirement_MinSkillAny",
+      "RoleRequirement_NotChild": "RoleRequirement_NotChild",
+      "RoleRequirement_SameIdeo": "RoleRequirement_SameIdeo",
+      "RoleRequirement_SupremeGender": "RoleRequirement_SupremeGender"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the requirement label shown in the UI.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

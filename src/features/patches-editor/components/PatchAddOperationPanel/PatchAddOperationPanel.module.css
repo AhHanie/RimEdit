@@ -1,0 +1,81 @@
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  font-size: 11px;
+  padding: 4px 8px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 3px;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.trigger:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.customForm {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-sidebar);
+  max-width: 360px;
+}
+
+.customHeader {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.customField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.customField input,
+.customField select,
+.customField textarea {
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+}
+
+.customField select option {
+  background: var(--surface-sidebar);
+  color: var(--text-primary);
+}
+
+.error {
+  font-size: 11px;
+  color: var(--text-error, #d33);
+}
+
+.customActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.customActions button {
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+}
+
+.customActions button:hover {
+  background: var(--surface-hover);
+}

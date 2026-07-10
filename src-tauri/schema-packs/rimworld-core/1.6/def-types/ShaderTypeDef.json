@@ -1,0 +1,43 @@
+{
+  "defType": "ShaderTypeDef",
+  "label": "Shader Type",
+  "description": "Defines a named shader used when rendering things, pawns, flecks, and other graphics on the map and in UI contexts.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "shaderPath",
+    "uiShaderPath"
+  ],
+  "fields": {
+    "shaderPath": {
+      "label": "Shader path",
+      "description": "Path to the Unity shader asset inside the RimWorld asset bundle, relative to the Shaders/ directory and without file extension. Used at runtime by ShaderDatabase.LoadShader.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Map/Cutout",
+        "Map/CutoutComplex",
+        "Map/Transparent",
+        "Map/MoteGlow",
+        "Map/MoteGlowDistorted",
+        "Map/MoteGlowBob",
+        "Map/Wound",
+        "Map/BurnedPlant",
+        "Map/WaterSurface",
+        "Map/Wavy",
+        "Misc/ShadowMask",
+        "Misc/Metalblood"
+      ]
+    },
+    "uiShaderPath": {
+      "label": "UI shader path",
+      "description": "Optional shader variant used when drawing this graphic in UI contexts such as the inventory or trade screen. Falls back to shaderPath when absent.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Map/CutoutComplexUI"
+      ]
+    }
+  }
+}

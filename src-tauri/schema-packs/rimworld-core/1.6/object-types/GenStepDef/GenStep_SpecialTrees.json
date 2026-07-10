@@ -1,0 +1,98 @@
+{
+  "objectType": "GenStep_SpecialTrees",
+  "label": "Special trees",
+  "description": "Spawns special tree structures across the map based on pollution levels. Base schema shared by AnimaTrees, HarbingerTrees, and PoluxTrees.",
+  "fieldOrder": [
+    "Class",
+    "treeDef",
+    "minProximityToSameTree",
+    "pollutionNone",
+    "pollutionLight",
+    "pollutionModerate",
+    "pollutionExtreme",
+    "createUsedRect",
+    "requireUnfogged",
+    "validators"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# GenStep_SpecialTrees subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "treeDef": {
+      "label": "Tree def",
+      "description": "ThingDef of the special tree to spawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "minProximityToSameTree": {
+      "label": "Min proximity to same tree",
+      "description": "Minimum cell distance required between instances of this tree type.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "pollutionNone": {
+      "label": "Pollution none",
+      "description": "Number of trees to spawn on tiles with no pollution.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "pollutionLight": {
+      "label": "Pollution light",
+      "description": "Number of trees to spawn on tiles with light pollution.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "pollutionModerate": {
+      "label": "Pollution moderate",
+      "description": "Number of trees to spawn on tiles with moderate pollution.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "pollutionExtreme": {
+      "label": "Pollution extreme",
+      "description": "Number of trees to spawn on tiles with extreme pollution.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 3,
+      "xml": "element"
+    },
+    "createUsedRect": {
+      "label": "Create used rect",
+      "description": "When true, registers each tree's cell as a used rect during map generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requireUnfogged": {
+      "label": "Require unfogged",
+      "description": "When true, trees may only spawn on already-revealed cells.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "validators": {
+      "label": "Validators",
+      "description": "Placement validators that must all pass for a candidate tree cell to be accepted.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ScattererValidator" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

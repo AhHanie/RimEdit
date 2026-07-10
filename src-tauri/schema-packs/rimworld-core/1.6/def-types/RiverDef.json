@@ -1,0 +1,105 @@
+{
+  "defType": "RiverDef",
+  "label": "River",
+  "description": "Defines a river tier in the world generation system, including spawn thresholds, visual widths, degradation rules, and branching behavior at junctions.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "spawnFlowThreshold",
+    "spawnChance",
+    "degradeThreshold",
+    "degradeChild",
+    "branches",
+    "widthOnWorld",
+    "widthOnMap",
+    "debugOpacity"
+  ],
+  "fields": {
+    "spawnFlowThreshold": {
+      "label": "Spawn flow threshold",
+      "description": "Minimum accumulated flow value required for this river tier to spawn during world generation. A value of -1 means no threshold (never spawned by flow alone).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": -1
+    },
+    "spawnChance": {
+      "label": "Spawn chance",
+      "description": "Probability (0.0 to 1.0) that this river spawns when flow meets the threshold.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1.0
+    },
+    "degradeThreshold": {
+      "label": "Degrade threshold",
+      "description": "Flow level below which this river degrades into degradeChild.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "degradeChild": {
+      "label": "Degrade child",
+      "description": "River tier this river degrades into when flow falls below degradeThreshold.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RiverDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "branches": {
+      "label": "Branches",
+      "description": "List of potential tributary rivers that may branch off at junctions, each controlled by a minimum flow level and spawn probability.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Branch" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "widthOnWorld": {
+      "label": "Width on world",
+      "description": "Visual width of this river on the world map.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.5
+    },
+    "widthOnMap": {
+      "label": "Width on map",
+      "description": "Width of this river in local map cells.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 10.0
+    },
+    "debugOpacity": {
+      "label": "Debug opacity",
+      "description": "Opacity of the debug overlay drawn for this river tier. Only visible with developer mode enabled.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    }
+  },
+  "templates": {
+    "basic-river": {
+      "label": "Basic river",
+      "description": "Minimal river with a label, world-map width, and local-map width.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "spawnFlowThreshold", "widthOnWorld", "widthOnMap"],
+      "fieldValues": {}
+    },
+    "basic-river-with-degradation": {
+      "label": "Basic river with degradation",
+      "description": "River that degrades into a smaller tier when flow drops below a threshold.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "spawnFlowThreshold", "widthOnWorld", "widthOnMap"],
+      "fieldValues": {
+        "degradeThreshold": "",
+        "degradeChild": ""
+      }
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "defType": "GeneTemplateDef",
+  "label": "Gene template",
+  "description": "Template used to procedurally generate genes for a specific skill or chemical. The game expands each template into a concrete GeneDef for every applicable skill or chemical.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "geneClass",
+    "biostatCpx",
+    "biostatMet",
+    "aptitudeOffset",
+    "addictionChanceFactor",
+    "passionModType",
+    "geneTemplateType",
+    "minAgeActive",
+    "displayCategory",
+    "displayOrderOffset",
+    "selectionWeight",
+    "chemicalBiostatOverrides",
+    "labelShortAdj",
+    "iconPath",
+    "exclusionTagPrefix"
+  ],
+  "fields": {
+    "geneClass": {
+      "label": "Gene class",
+      "description": "C# Gene subclass instantiated at runtime for each expanded gene. Must be Gene or a subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "Gene",
+      "xml": "element"
+    },
+    "biostatCpx": {
+      "label": "Biostat complexity",
+      "description": "Complexity biostat contributed by genes expanded from this template.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "biostatMet": {
+      "label": "Biostat metabolism",
+      "description": "Metabolism biostat contributed by genes expanded from this template. Negative values increase food consumption; positive values reduce it.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "aptitudeOffset": {
+      "label": "Aptitude offset",
+      "description": "Skill aptitude offset applied by genes expanded from this template. Used only when geneTemplateType is Skill.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "addictionChanceFactor": {
+      "label": "Addiction chance factor",
+      "description": "Multiplier on addiction chance for genes expanded from this template. Used only when geneTemplateType is Chemical. 0 means immune.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "passionModType": {
+      "label": "Passion mod type",
+      "description": "How passion for the skill is modified. AddOneLevel raises passion by one tier; DropAll removes all passion. Used only when geneTemplateType is Skill.",
+      "type": {
+        "kind": "enum",
+        "values": ["None", "AddOneLevel", "DropAll"]
+      },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element"
+    },
+    "geneTemplateType": {
+      "label": "Gene template type",
+      "description": "Whether this template expands into skill-aptitude genes or chemical-relationship genes.",
+      "type": {
+        "kind": "enum",
+        "values": ["Skill", "Chemical"]
+      },
+      "required": false,
+      "defaultValue": "Skill",
+      "xml": "element"
+    },
+    "minAgeActive": {
+      "label": "Min age active",
+      "description": "Minimum biological age in years before genes expanded from this template become active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "displayCategory": {
+      "label": "Display category",
+      "description": "GeneCategoryDef that groups expanded genes in the gene editor UI.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GeneCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "displayOrderOffset": {
+      "label": "Display order offset",
+      "description": "Sort offset within the display category. Lower values appear earlier.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative probability that genes expanded from this template are chosen during random xenotype generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "chemicalBiostatOverrides": {
+      "label": "Chemical biostat overrides",
+      "description": "Per-chemical biostat overrides. Each entry replaces the template-level biostat values for a specific chemical. Used only when geneTemplateType is Chemical.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ChemicalBiostatOverride" },
+      "required": false,
+      "defaultCollapsed": true,
+      "xml": "listOfLi"
+    },
+    "labelShortAdj": {
+      "label": "Label short adjective",
+      "description": "Short adjective label shown in condensed UI contexts for expanded genes. Supports {0} substitution for the skill or chemical name.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Content-relative path to the icon texture for expanded genes. Supports {0} substitution for the skill or chemical defName.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Icons/Genes/Skills/{0}/Terrible", "UI/Icons/Genes/Chemicals/{0}/ChemicalDependency"]
+    },
+    "exclusionTagPrefix": {
+      "label": "Exclusion tag prefix",
+      "description": "Prefix used to generate exclusion tags on expanded genes. Genes sharing any exclusion tag cannot be active simultaneously.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Aptitude", "Addiction"]
+    }
+  }
+}

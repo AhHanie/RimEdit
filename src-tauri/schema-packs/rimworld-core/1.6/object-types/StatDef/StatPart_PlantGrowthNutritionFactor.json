@@ -1,0 +1,22 @@
+{
+  "objectType": "StatPart_PlantGrowthNutritionFactor",
+  "label": "Stat part (plant growth nutrition factor)",
+  "description": "Scales nutrition yield based on the plant's current growth stage.",
+  "fieldOrder": ["Class", "priority"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

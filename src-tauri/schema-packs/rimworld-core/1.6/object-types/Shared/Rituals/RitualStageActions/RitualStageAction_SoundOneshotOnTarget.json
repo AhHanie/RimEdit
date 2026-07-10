@@ -1,0 +1,16 @@
+{
+  "objectType": "RitualStageAction_SoundOneshotOnTarget",
+  "label": "Ritual stage action (sound oneshot on target)",
+  "description": "Plays a one-shot sound at the ritual target location when the stage action fires.",
+  "fieldOrder": ["Class", "sound"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "sound": {
+      "label": "Sound",
+      "description": "SoundDef to play at the ritual target location.",
+      "type": { "kind": "defReference", "reference": { "defType": "SoundDef" } },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

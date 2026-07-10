@@ -1,0 +1,28 @@
+{
+  "objectType": "JobGiver_PickUpOpportunisticWeapon",
+  "label": "Job giver pick up opportunistic weapon",
+  "description": "Directs the pawn to pick up a nearby weapon it can use. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "pickUpUtilityItems",
+    "preferBuildingDestroyers"
+  ],
+  "fields": {
+    "pickUpUtilityItems": {
+      "label": "Pick up utility items",
+      "description": "If true, the pawn also considers utility equipment (e.g. grenades) in addition to weapons.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preferBuildingDestroyers": {
+      "label": "Prefer building destroyers",
+      "description": "If true, the pawn prefers weapons effective against buildings (e.g. incendiary or explosive) when choosing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

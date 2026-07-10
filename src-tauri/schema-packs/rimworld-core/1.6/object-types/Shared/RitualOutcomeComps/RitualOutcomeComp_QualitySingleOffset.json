@@ -1,0 +1,44 @@
+{
+  "objectType": "RitualOutcomeComp_QualitySingleOffset",
+  "label": "Ritual outcome comp (single quality offset)",
+  "description": "Abstract intermediate comp that applies qualityOffset directly when a binary condition is met. Not used directly as a Class value; use concrete subclasses.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Quality offset applied when the condition of this comp is met.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve used by some subclasses to scale the quality offset by a runtime value.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

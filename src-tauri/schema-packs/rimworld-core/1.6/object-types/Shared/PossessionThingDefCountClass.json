@@ -1,0 +1,31 @@
+{
+  "objectType": "PossessionThingDefCountClass",
+  "label": "Possession",
+  "description": "A starting item given to pawns with this backstory. Loaded from keyed child elements via LoadDataFromXmlCustom: element name is the ThingDef defName, text is an IntRange count (defaults to 1~1 when omitted). Entries may carry MayRequire or MayRequireAnyOf attributes.",
+  "fieldOrder": [
+    "key",
+    "value"
+  ],
+  "fields": {
+    "key": {
+      "label": "Thing",
+      "description": "ThingDef of the item to give.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "value": {
+      "label": "Count",
+      "description": "Integer range for the quantity of this item given at spawn. Defaults to 1~1 when the child element has no text content.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element"
+    }
+  }
+}

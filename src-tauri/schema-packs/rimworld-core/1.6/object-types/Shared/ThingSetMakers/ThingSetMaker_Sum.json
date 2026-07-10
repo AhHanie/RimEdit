@@ -1,0 +1,30 @@
+{
+  "objectType": "ThingSetMaker_Sum",
+  "label": "Sum maker",
+  "description": "Runs each option in the list in sequence (or in random order when resolveInOrder is false) and combines their outputs into a single thing set.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "options",
+    "resolveInOrder"
+  ],
+  "fields": {
+    "options": {
+      "label": "Options",
+      "description": "List of maker entries whose outputs are summed together.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "items": { "kind": "object", "schemaRef": "ThingSetMaker_Sum_Option" }
+    },
+    "resolveInOrder": {
+      "label": "Resolve in order",
+      "description": "When true, entries are executed in list order. When false, execution order is randomized.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

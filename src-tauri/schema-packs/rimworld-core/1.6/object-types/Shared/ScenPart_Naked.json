@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_Naked",
+  "label": "Naked",
+  "description": "Removes all starting apparel from affected pawns so they begin the game without clothing.",
+  "inherits": ["ScenPart_PawnModifier"]
+}

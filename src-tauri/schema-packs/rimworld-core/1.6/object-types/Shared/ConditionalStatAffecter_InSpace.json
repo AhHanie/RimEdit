@@ -1,0 +1,31 @@
+{
+  "objectType": "ConditionalStatAffecter_InSpace",
+  "label": "Conditional stat affecter (in space)",
+  "description": "Applies stat modifications when the pawn is in a space biome.",
+  "fieldOrder": ["Class", "statFactors", "statOffsets"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# ConditionalStatAffecter subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers applied when in space.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Stat additive offsets applied when in space.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

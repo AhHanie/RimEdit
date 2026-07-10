@@ -1,0 +1,44 @@
+{
+  "objectType": "RitualPosition",
+  "label": "Ritual position",
+  "description": "Base schema for ritual position objects controlling where pawns stand during a stage. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class", "highlight"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RitualPosition",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "RitualPosition_AnimaLinkingSpot": "RitualPosition_AnimaLinkingSpot",
+      "RitualPosition_BehindThingCenter": "RitualPosition_BehindThingCenter",
+      "RitualPosition_BesideThing": "RitualPosition_BesideThing",
+      "RitualPosition_BesideTree": "RitualPosition_BesideTree",
+      "RitualPosition_ClaimedBed": "RitualPosition_ClaimedBed",
+      "RitualPosition_Copilot": "RitualPosition_Copilot",
+      "RitualPosition_DuelistStart": "RitualPosition_DuelistStart",
+      "RitualPosition_InCircle": "RitualPosition_InCircle",
+      "RitualPosition_InFrontThingCenter": "RitualPosition_InFrontThingCenter",
+      "RitualPosition_Lectern": "RitualPosition_Lectern",
+      "RitualPosition_OnInteractionCell": "RitualPosition_OnInteractionCell",
+      "RitualPosition_PreferredAdjacentCellCardinal": "RitualPosition_PreferredAdjacentCellCardinal",
+      "RitualPosition_VerticalThingCenter": "RitualPosition_VerticalThingCenter"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualPosition subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "highlight": {
+      "label": "Highlight",
+      "description": "If true, the target cell for this position is highlighted on the map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

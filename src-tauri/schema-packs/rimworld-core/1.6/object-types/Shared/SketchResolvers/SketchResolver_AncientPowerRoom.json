@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AncientPowerRoom",
+  "label": "Sketch resolver: Ancient power room",
+  "description": "Concrete RimWorld SketchResolver_AncientPowerRoom resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

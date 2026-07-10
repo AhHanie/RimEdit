@@ -1,0 +1,24 @@
+{
+  "objectType": "SoundParamSource_External",
+  "label": "Sound param source: external",
+  "description": "Reads a named external parameter value set by game code.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class", "inParamName", "defaultValue"],
+  "fields": {
+    "inParamName": {
+      "label": "Input parameter name",
+      "description": "Name of the external parameter to read from the sound info object.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "defaultValue": {
+      "label": "Default value",
+      "description": "Fallback float value when the named parameter is not present.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

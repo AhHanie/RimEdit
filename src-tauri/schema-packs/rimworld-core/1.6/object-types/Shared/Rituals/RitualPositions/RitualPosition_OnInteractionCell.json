@@ -1,0 +1,34 @@
+{
+  "objectType": "RitualPosition_OnInteractionCell",
+  "label": "Ritual position (on interaction cell)",
+  "description": "Places the pawn on the interaction cell of the ritual target thing.",
+  "fieldOrder": ["Class", "highlight", "facing", "faceThing", "offset"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "facing": {
+      "label": "Facing",
+      "description": "Cardinal direction the pawn faces after arriving. Rot4.Invalid means no forced facing.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Invalid",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["North", "East", "South", "West", "Invalid"] }
+    },
+    "faceThing": {
+      "label": "Face thing",
+      "description": "If true, the pawn faces toward the ritual target thing instead of using a fixed facing direction. Cannot be combined with facing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "IntVec3 offset applied to the interaction cell position.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

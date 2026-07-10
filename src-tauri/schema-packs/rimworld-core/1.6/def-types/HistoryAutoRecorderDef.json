@@ -1,0 +1,66 @@
+{
+  "defType": "HistoryAutoRecorderDef",
+  "label": "History Auto Recorder",
+  "description": "Defines a single data series recorded in the History graph, including its worker class, sampling frequency, graph color, y-axis label, and value format string.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "recordTicksFrequency",
+    "graphColor",
+    "graphLabelY",
+    "valueFormat"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class that samples the recorded value each tick. Must be a subclass of HistoryAutoRecorderWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["HistoryAutoRecorderWorker_WealthTotal", "HistoryAutoRecorderWorker_ColonistCount"]
+    },
+    "recordTicksFrequency": {
+      "label": "Record ticks frequency",
+      "description": "How often (in ticks) the worker is called to sample a new data point. Default is 60000 (one in-game day).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 60000,
+      "xml": "element"
+    },
+    "graphColor": {
+      "label": "Graph color",
+      "description": "Color used to draw this series on the History graph. Accepts integer (0-255) or float (0-1) RGBA components.",
+      "type": { "kind": "color" },
+      "required": false,
+      "defaultValue": "(0, 1, 0, 1)",
+      "xml": "element",
+      "examples": ["(1, 0, 0, 1)", "(0, 0.5, 1, 1)", "(255, 128, 0)"]
+    },
+    "graphLabelY": {
+      "label": "Graph label Y",
+      "description": "Optional label for the y-axis when this series is displayed alone. Supports translation.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "valueFormat": {
+      "label": "Value format",
+      "description": "Optional .NET format string applied to each sampled value before display. Examples: \"{0}\", \"{0}%\", \"${0}\".",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["{0}", "{0}%", "${0}"]
+    }
+  },
+  "templates": {
+    "basic-recorder": {
+      "label": "Basic recorder",
+      "description": "A basic history recorder with worker class, graph color, and value format.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "workerClass", "graphColor", "valueFormat"],
+      "fieldValues": {
+        "recordTicksFrequency": 60000
+      }
+    }
+  }
+}

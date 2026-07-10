@@ -1,0 +1,38 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "mode": {
+      "label": "Mode",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "normal"
+    },
+    "options": {
+      "label": "Options",
+      "type": { "kind": "list" },
+      "items": { "kind": "integer" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "validationRules": {
+    "options-required-when-mode-special": {
+      "kind": "requiredWhen",
+      "field": "options",
+      "when": {
+        "field": "mode",
+        "operator": "equals",
+        "value": "special"
+      },
+      "message": "Options are required when mode is 'special'."
+    }
+  }
+}

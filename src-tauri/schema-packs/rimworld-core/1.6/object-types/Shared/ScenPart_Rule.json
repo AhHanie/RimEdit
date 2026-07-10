@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_Rule",
+  "label": "Scenario part (rule)",
+  "description": "Abstract base for scenario parts that restrict or modify game rules, such as disallowing specific designators or buildings.",
+  "inherits": ["ScenPart"]
+}

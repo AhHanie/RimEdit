@@ -1,0 +1,40 @@
+{
+  "objectType": "ExtraDamage",
+  "label": "Extra damage",
+  "description": "An additional damage instance applied alongside the primary damage of a melee hit or projectile impact.",
+  "fieldOrder": ["def", "amount", "armorPenetration", "chance"],
+  "fields": {
+    "def": {
+      "label": "Damage def",
+      "description": "DamageDef applied as the extra hit.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "amount": {
+      "label": "Amount",
+      "description": "Base damage amount of the extra hit.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "armorPenetration": {
+      "label": "Armor penetration",
+      "description": "Armor penetration factor of the extra hit (0–1). -1 uses the primary verb's value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0–1) that this extra damage fires on each hit.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

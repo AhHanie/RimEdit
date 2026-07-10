@@ -1,0 +1,8 @@
+{
+  "objectType": "SoundParamSource_MusicPlayingFadeOut",
+  "label": "Sound param source: music playing fade-out",
+  "description": "Reads the current music fade-out level as the parameter value.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class"],
+  "fields": {}
+}

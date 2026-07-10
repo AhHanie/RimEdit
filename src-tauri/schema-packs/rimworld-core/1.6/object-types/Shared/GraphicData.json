@@ -1,0 +1,413 @@
+{
+  "objectType": "GraphicData",
+  "label": "Graphic data",
+  "description": "Visual rendering settings for a def. Maps to Verse.GraphicData in RimWorld source.",
+  "fieldOrder": [
+    "name",
+    "texPath",
+    "maskPath",
+    "graphicClass",
+    "shaderType",
+    "shaderParameters",
+    "color",
+    "colorTwo",
+    "drawSize",
+    "drawOffset",
+    "drawOffsetNorth",
+    "drawOffsetEast",
+    "drawOffsetSouth",
+    "drawOffsetWest",
+    "onGroundRandomRotateAngle",
+    "drawRotated",
+    "allowFlip",
+    "flipExtraRotation",
+    "renderInstanced",
+    "allowAtlasing",
+    "renderQueue",
+    "overlayOpacity",
+    "attachments",
+    "attachPoints",
+    "addTopAltitudeBias",
+    "ignoreThingDrawColor",
+    "maxSnS",
+    "offsetSnS",
+    "shadowData",
+    "damageData",
+    "linkType",
+    "linkFlags",
+    "asymmetricLink",
+    "cornerOverlayPath"
+  ],
+  "fields": {
+    "name": {
+      "label": "Name",
+      "description": "Optional internal name tag. Rarely used in vanilla data. Marked [NoTranslate] in source.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "texPath": {
+      "label": "Texture path",
+      "description": "Path to the texture relative to the Textures folder, without file extension.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Things/Item/Resource/Steel",
+        "Things/Building/Production/TableMachining"
+      ]
+    },
+    "maskPath": {
+      "label": "Mask path",
+      "description": "Path to the texture mask relative to the Textures folder, without file extension.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Things/Building/Security/TurretMortar_Mask"
+      ]
+    },
+    "graphicClass": {
+      "label": "Graphic class",
+      "description": "C# class controlling how the texture is rendered. Must be a Graphic subclass.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Graphic_ActivityMask",
+          "Graphic_ActivityMaskRandom",
+          "Graphic_ActivityStaged",
+          "Graphic_Appearances",
+          "Graphic_Cluster",
+          "Graphic_ClusterTight",
+          "Graphic_FadesInOut",
+          "Graphic_Fleck",
+          "Graphic_FleckPulse",
+          "Graphic_FleckSplash",
+          "Graphic_Flicker",
+          "Graphic_Gas",
+          "Graphic_Genepack",
+          "Graphic_Indexed",
+          "Graphic_Indexed_SquashNStretch",
+          "Graphic_Linked",
+          "Graphic_LinkedAsymmetric",
+          "Graphic_LinkedCornerFiller",
+          "Graphic_LinkedCornerOverlay",
+          "Graphic_LinkedTransmitter",
+          "Graphic_LinkedTransmitterOverlay",
+          "Graphic_MealVariants",
+          "Graphic_Mote",
+          "Graphic_MoteRandom",
+          "Graphic_MoteWithAgeSecs",
+          "Graphic_MoteWithParentRotation",
+          "Graphic_Multi",
+          "Graphic_Multi_AgeSecs",
+          "Graphic_Multi_BuildingWorking",
+          "Graphic_Multi_Mote",
+          "Graphic_PawnBodySilhouette",
+          "Graphic_Random",
+          "Graphic_RandomRotated",
+          "Graphic_Shadow",
+          "Graphic_Single",
+          "Graphic_Single_AgeSecs",
+          "Graphic_Single_SquashNStretch",
+          "Graphic_StackCount",
+          "Graphic_Terrain",
+          "Graphic_Tiling",
+          "GraphicMote_RandomWithAgeSecs"
+        ]
+      },
+      "examples": [
+        "Graphic_Single",
+        "Graphic_Multi",
+        "Graphic_Random",
+        "Graphic_StackCount"
+      ]
+    },
+    "shaderType": {
+      "label": "Shader type",
+      "description": "ShaderTypeDef reference selecting the GPU shader used to draw this graphic.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ShaderTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "examples": [
+        "Cutout",
+        "CutoutComplex",
+        "Transparent",
+        "MoteGlow",
+        "MoteGlowDistorted"
+      ]
+    },
+    "shaderParameters": {
+      "label": "Shader parameters",
+      "description": "Named shader property overrides. Each child element name is a shader property name; values are float, vector (starting with '('), or texture path (starting with '/'). Arbitrary child names are resolved by RimWorld at runtime.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap"
+    },
+    "color": {
+      "label": "Color",
+      "description": "Primary RGBA tint applied to the texture.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "colorTwo": {
+      "label": "Color two",
+      "description": "Secondary RGBA tint used by shaders that support dual-colour rendering.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawSize": {
+      "label": "Draw size",
+      "description": "Rendered size in world units as (width, height). Defaults to (1, 1). Some vanilla data uses a scalar shorthand such as '2.2'.",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(1, 1)",
+        "(2, 2)",
+        "(0.5, 0.5)"
+      ]
+    },
+    "drawOffset": {
+      "label": "Draw offset",
+      "description": "Base (x, y, z) world-space offset applied to the rendered graphic.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "(0, 0, 0)",
+        "(0, 0, -0.1)"
+      ]
+    },
+    "drawOffsetNorth": {
+      "label": "Draw offset north",
+      "description": "Draw offset override when facing north.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawOffsetEast": {
+      "label": "Draw offset east",
+      "description": "Draw offset override when facing east.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawOffsetSouth": {
+      "label": "Draw offset south",
+      "description": "Draw offset override when facing south.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawOffsetWest": {
+      "label": "Draw offset west",
+      "description": "Draw offset override when facing west.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "onGroundRandomRotateAngle": {
+      "label": "On-ground random rotate angle",
+      "description": "Maximum random rotation angle in degrees when the thing lies on the ground. Wraps the cached graphic with Graphic_RandomRotated.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "drawRotated": {
+      "label": "Draw rotated",
+      "description": "Whether the graphic rotates with the thing's facing direction. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowFlip": {
+      "label": "Allow flip",
+      "description": "Whether the graphic can be horizontally flipped for east/west variants. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "flipExtraRotation": {
+      "label": "Flip extra rotation",
+      "description": "Additional rotation applied when the graphic is flipped.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "renderInstanced": {
+      "label": "Render instanced",
+      "description": "Whether to use GPU instancing for rendering. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowAtlasing": {
+      "label": "Allow atlasing",
+      "description": "Whether the texture may be packed into a texture atlas. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "renderQueue": {
+      "label": "Render queue",
+      "description": "Optional GPU render queue override. Affects draw order within a layer.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "overlayOpacity": {
+      "label": "Overlay opacity",
+      "description": "Opacity multiplier for overlay rendering. Between 0 and 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "attachments": {
+      "label": "Attachments",
+      "description": "List of additional GraphicData entries rendered as overlays attached to this graphic. Each <li> element is a nested GraphicData.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "attachPoints": {
+      "label": "Attach points",
+      "description": "List of named spatial anchor points on this graphic. Each <li> element is an AttachPoint with an offset and type.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "AttachPoint" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "addTopAltitudeBias": {
+      "label": "Add top altitude bias",
+      "description": "Whether to push this graphic slightly above its altitude layer at the top of the cell.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "ignoreThingDrawColor": {
+      "label": "Ignore thing draw color",
+      "description": "Whether to ignore the parent thing's draw color override.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxSnS": {
+      "label": "Max squash and stretch",
+      "description": "Maximum squash-and-stretch scale as (x, y).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element"
+    },
+    "offsetSnS": {
+      "label": "Offset squash and stretch",
+      "description": "Squash-and-stretch offset as (x, y).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element"
+    },
+    "shadowData": {
+      "label": "Shadow data",
+      "description": "Drop shadow settings for this graphic.",
+      "type": { "kind": "object", "schemaRef": "ShadowData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "damageData": {
+      "label": "Damage data",
+      "description": "Damage overlay textures and regions for this graphic.",
+      "type": { "kind": "object", "schemaRef": "DamageGraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "linkType": {
+      "label": "Link type",
+      "description": "Visual link drawing strategy used when this graphic links to adjacent things.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "None",
+          "Basic",
+          "CornerFiller",
+          "CornerOverlay",
+          "Transmitter",
+          "TransmitterOverlay",
+          "Asymmetric"
+        ]
+      }
+    },
+    "linkFlags": {
+      "label": "Link flags",
+      "description": "Flags controlling which adjacent thing types this graphic links to. Each <li> is one flag value. Multiple flags can be combined using multiple <li> entries.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "flags": true,
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": [
+          "None",
+          "MapEdge",
+          "Rock",
+          "Wall",
+          "Sandbags",
+          "PowerConduit",
+          "Barricades",
+          "Fences",
+          "Fleshmass",
+          "SolidIce",
+          "BurrowWall",
+          "Custom1",
+          "Custom2",
+          "Custom3",
+          "Custom4",
+          "Custom5",
+          "Custom6",
+          "Custom7",
+          "Custom8",
+          "Custom9",
+          "Custom10"
+        ]
+      },
+      "examples": [
+        "PowerConduit",
+        "Wall",
+        "Rock",
+        "MapEdge"
+      ]
+    },
+    "asymmetricLink": {
+      "label": "Asymmetric link",
+      "description": "Settings for asymmetric link drawing, used with linkType Asymmetric.",
+      "type": { "kind": "object", "schemaRef": "AsymmetricLinkData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "cornerOverlayPath": {
+      "label": "Corner overlay path",
+      "description": "Texture path for the corner overlay graphic used with Graphic_LinkedCornerOverlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

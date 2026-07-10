@@ -1,0 +1,234 @@
+{
+  "objectType": "QuestNode_GetPawn",
+  "label": "QuestNode GetPawn",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_GetPawn.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "storeAs",
+    "mustBeFactionLeader",
+    "mustBeWorldPawn",
+    "ifWorldPawnThenMustBeFree",
+    "ifWorldPawnThenMustBeFreeOrLeader",
+    "mustHaveNoFaction",
+    "mustBeFreeColonist",
+    "mustBePlayerPrisoner",
+    "mustBeNotSuspended",
+    "mustHaveRoyalTitleInCurrentFaction",
+    "mustBeNonHostileToPlayer",
+    "allowPermanentEnemyFaction",
+    "canGeneratePawn",
+    "mustHaveSettlementOnLayer",
+    "requireResearchedBedroomFurnitureIfRoyal",
+    "mustBeOfKind",
+    "seniorityRange",
+    "minTechLevel",
+    "excludeFactionDefs",
+    "hostileWeight",
+    "nonHostileWeight",
+    "factionMustBePermanent",
+    "maxUsablePawnsToGenerate"
+  ],
+  "fields": {
+    "storeAs": {
+      "description": "Slate variable name to store the selected pawn.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBeFactionLeader": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBeWorldPawn": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "ifWorldPawnThenMustBeFree": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "ifWorldPawnThenMustBeFreeOrLeader": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustHaveNoFaction": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBeFreeColonist": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBePlayerPrisoner": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBeNotSuspended": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustHaveRoyalTitleInCurrentFaction": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBeNonHostileToPlayer": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "allowPermanentEnemyFaction": {
+      "description": "SlateRef<bool?> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "canGeneratePawn": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustHaveSettlementOnLayer": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "requireResearchedBedroomFurnitureIfRoyal": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBeOfKind": {
+      "description": "PawnKindDef def name or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "seniorityRange": {
+      "description": "SlateRef<FloatRange> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "minTechLevel": {
+      "description": "SlateRef<TechLevel> enum literal or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "excludeFactionDefs": {
+      "description": "FactionDef names excluded from pawn selection.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "FactionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "hostileWeight": {
+      "description": "SlateRef<float?> hostile pawn selection weight.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "nonHostileWeight": {
+      "description": "SlateRef<float?> non-hostile pawn selection weight.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "factionMustBePermanent": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "true"
+    },
+    "maxUsablePawnsToGenerate": {
+      "description": "SlateRef<int> maximum generated pawns considered usable.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "10"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationAddModExtension">
+    <xpath>Defs/ThingDef[defName="Wall"]</xpath>
+    <value>
+      <li Class="SomeMod.ThingExtension">
+        <value>1</value>
+      </li>
+    </value>
+  </Operation>
+</Patch>

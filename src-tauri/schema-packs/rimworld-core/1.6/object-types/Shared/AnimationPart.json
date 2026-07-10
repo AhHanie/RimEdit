@@ -1,0 +1,37 @@
+{
+  "objectType": "AnimationPart",
+  "label": "Animation part",
+  "description": "Abstract base for per-node animation data. Provides the pivot point, rotation mode, and optional worker type override shared by KeyframeAnimationPart and CurveKeyAnimationPart.",
+  "fieldOrder": ["workerType", "pivot", "rotationMode"],
+  "fields": {
+    "workerType": {
+      "label": "Worker type",
+      "description": "C# AnimationWorker subclass that drives this part. Defaults to AnimationWorker_Keyframes for keyframe parts and AnimationWorker_Curves for curve parts.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "AnimationWorker_Keyframes",
+        "AnimationWorker_RevenantSpasm",
+        "AnimationWorker_RevenantHypnotise",
+        "AnimationWorker_UnnaturalCorpseAwokenKilling"
+      ]
+    },
+    "pivot": {
+      "label": "Pivot",
+      "description": "Pivot point for rotation, as a (x, y) fraction of the node's size. Default is (0.5, 0.5) (centre). Vanilla XML commonly uses (0.5, 0).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "defaultValue": "(0.5, 0.5)",
+      "xml": "element"
+    },
+    "rotationMode": {
+      "label": "Rotation mode",
+      "description": "How the node's rotation is combined with the animation angle. None ignores the pawn's facing direction; OneD, TwoD, and PawnAimTarget blend with it.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "OneD", "TwoD", "PawnAimTarget"] }
+    }
+  }
+}

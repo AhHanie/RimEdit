@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <ThingDef>
+    <defName>TestGraphicThing</defName>
+    <graphicData>
+      <texPath>Things/Building/Test/TestThing</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderParameters>
+        <_DistortionTex>/Other/Ripples</_DistortionTex>
+        <_DistortionStrength>0.35</_DistortionStrength>
+      </shaderParameters>
+      <attachments>
+        <li>
+          <texPath>Things/Building/Test/TestThingOverlay</texPath>
+          <graphicClass>Graphic_Single</graphicClass>
+        </li>
+      </attachments>
+      <attachPoints>
+        <li>
+          <offset>(-.3, 0, .45)</offset>
+          <type>PlatformRestraint0</type>
+        </li>
+      </attachPoints>
+      <damageData>
+        <scratches>
+          <li>Damage/ScratchA</li>
+          <li>Damage/ScratchB</li>
+        </scratches>
+      </damageData>
+      <linkFlags>
+        <li>Wall</li>
+        <li>Rock</li>
+        <li>UnknownModFlag</li>
+      </linkFlags>
+    </graphicData>
+  </ThingDef>
+</Defs>

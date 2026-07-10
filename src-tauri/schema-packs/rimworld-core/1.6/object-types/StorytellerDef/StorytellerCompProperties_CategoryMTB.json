@@ -1,0 +1,105 @@
+{
+  "objectType": "StorytellerCompProperties_CategoryMTB",
+  "label": "Category MTB comp",
+  "description": "Fires incidents from a category at a mean time between events that varies over time via a curve.",
+  "fieldOrder": [
+    "Class",
+    "compClass",
+    "minDaysPassed",
+    "allowedTargetTags",
+    "disallowedTargetTags",
+    "minIncChancePopulationIntentFactor",
+    "enableIfAnyModActive",
+    "disableIfAnyModActive",
+    "mtbDays",
+    "mtbDaysFactorByDaysPassedCurve",
+    "category"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# StorytellerCompProperties type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime StorytellerComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "minDaysPassed": {
+      "label": "Min days passed",
+      "description": "Earliest in-game day on which this comp can fire.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "allowedTargetTags": {
+      "label": "Allowed target tags",
+      "description": "Restrict this comp to firing at incident targets with one of these tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedTargetTags": {
+      "label": "Disallowed target tags",
+      "description": "Exclude incident targets with any of these tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "IncidentTargetTagDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "minIncChancePopulationIntentFactor": {
+      "label": "Min inc chance population intent factor",
+      "description": "Minimum population-intent multiplier applied to incident chance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.05,
+      "xml": "element"
+    },
+    "enableIfAnyModActive": {
+      "label": "Enable if any mod active",
+      "description": "This comp is active only when at least one mod in this list is loaded.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disableIfAnyModActive": {
+      "label": "Disable if any mod active",
+      "description": "This comp is disabled when any mod in this list is loaded.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "mtbDays": {
+      "label": "MTB days",
+      "description": "Base mean time between incident firings in in-game days. -1 disables this comp.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "mtbDaysFactorByDaysPassedCurve": {
+      "label": "MTB days factor by days passed curve",
+      "description": "Multiplier applied to mtbDays based on elapsed days. X = days, Y = factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "category": {
+      "label": "Category",
+      "description": "IncidentCategoryDef from which a random incident is chosen.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "IncidentCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

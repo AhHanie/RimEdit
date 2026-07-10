@@ -1,0 +1,9 @@
+{
+  "formatVersion": 1,
+  "packId": "test.sk_matter_network",
+  "name": "SK Matter Network (Test Fixture)",
+  "version": "0.1.0",
+  "priority": 10,
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": ["object-types"]
+}

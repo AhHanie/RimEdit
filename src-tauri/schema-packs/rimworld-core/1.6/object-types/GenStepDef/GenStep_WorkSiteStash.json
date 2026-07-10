@@ -1,0 +1,40 @@
+{
+  "objectType": "GenStep_WorkSiteStash",
+  "label": "Work site stash",
+  "description": "Scatters a work-site stockpile using a named BaseGen symbol.",
+  "inherits": ["GenStep_Scatterer"],
+  "fieldOrder": [
+    "Class",
+    "count",
+    "countPer10kCellsRange",
+    "nearPlayerStart",
+    "nearMapCenter",
+    "minSpacing",
+    "spotMustBeStandable",
+    "minDistToPlayerStart",
+    "minDistToPlayerStartPct",
+    "minEdgeDist",
+    "minEdgeDistPct",
+    "extraNoBuildEdgeDist",
+    "validators",
+    "fallbackValidators",
+    "allowInWaterBiome",
+    "allowFoggedPositions",
+    "allowRoofed",
+    "onlyOnStartingMap",
+    "minPollution",
+    "allowMechanoidDatacoreReadOrLost",
+    "isJunk",
+    "warnOnFail",
+    "symbolName"
+  ],
+  "fields": {
+    "symbolName": {
+      "label": "Symbol name",
+      "description": "BaseGen symbol name pushed onto the generation stack to build the work-site stash.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

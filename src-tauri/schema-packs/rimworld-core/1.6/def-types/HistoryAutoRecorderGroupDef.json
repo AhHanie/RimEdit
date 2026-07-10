@@ -1,0 +1,107 @@
+{
+  "defType": "HistoryAutoRecorderGroupDef",
+  "label": "History Auto Recorder Group",
+  "description": "Defines a named group of history recorders shown together as one graph tab in the History window, including optional y-axis scale and display constraints.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "useFixedScale",
+    "fixedScale",
+    "integersOnly",
+    "onlyPositiveValues",
+    "devModeOnly",
+    "historyAutoRecorderDefs"
+  ],
+  "fields": {
+    "useFixedScale": {
+      "label": "Use fixed scale",
+      "description": "If true, the y-axis is locked to the range defined by fixedScale rather than auto-scaling to the data.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fixedScale": {
+      "label": "Fixed scale",
+      "description": "Y-axis range (min, max) used when useFixedScale is true. Example: (0, 100).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0, 100)", "(0, 1000)"]
+    },
+    "integersOnly": {
+      "label": "Integers only",
+      "description": "If true, the y-axis tick labels are rounded to integers.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "onlyPositiveValues": {
+      "label": "Only positive values",
+      "description": "If true, the y-axis minimum is clamped to zero so negative values are never shown.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "devModeOnly": {
+      "label": "Dev mode only",
+      "description": "If true, this group tab is only visible when dev mode is enabled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "historyAutoRecorderDefs": {
+      "label": "History auto recorder defs",
+      "description": "Ordered list of HistoryAutoRecorderDefs whose series are drawn together in this group's graph.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HistoryAutoRecorderDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "basic-recorder-group": {
+      "label": "Basic recorder group",
+      "description": "A simple recorder group with auto-scaling y-axis.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "useFixedScale": false,
+        "integersOnly": false,
+        "onlyPositiveValues": true,
+        "devModeOnly": false
+      }
+    },
+    "fixed-scale-recorder-group": {
+      "label": "Fixed scale recorder group",
+      "description": "A recorder group with a locked y-axis range.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "fixedScale"],
+      "fieldValues": {
+        "useFixedScale": true,
+        "integersOnly": false,
+        "onlyPositiveValues": true,
+        "devModeOnly": false
+      }
+    },
+    "dev-recorder-group": {
+      "label": "Dev recorder group",
+      "description": "A recorder group only visible in dev mode.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "useFixedScale": false,
+        "integersOnly": false,
+        "onlyPositiveValues": true,
+        "devModeOnly": true
+      }
+    }
+  }
+}

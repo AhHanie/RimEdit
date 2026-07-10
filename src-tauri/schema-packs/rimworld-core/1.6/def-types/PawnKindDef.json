@@ -1,0 +1,1499 @@
+{
+  "defType": "PawnKindDef",
+  "label": "Pawn kind",
+  "description": "Defines a kind of pawn - the generation template controlling race, graphics, gear, backstory filters, traits, xenotype, skills, combat stats, and AI behaviour for a pawn of this type.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "race",
+    "defaultFactionDef",
+    "backstoryFilters",
+    "backstoryFiltersOverride",
+    "backstoryCategories",
+    "labelPlural",
+    "lifeStages",
+    "alternateGraphics",
+    "forcedTraits",
+    "disallowedTraitsWithDegree",
+    "disallowedTraits",
+    "alternateGraphicChance",
+    "mutant",
+    "xenotypeSet",
+    "useFactionXenotypes",
+    "styleItemTags",
+    "forcedHair",
+    "forcedHairColor",
+    "missingParts",
+    "nameMaker",
+    "nameMakerFemale",
+    "abilities",
+    "preventIdeo",
+    "studiableAsPrisoner",
+    "isBoss",
+    "moveSpeedFactorByTerrainTag",
+    "fixedChildBackstories",
+    "fixedAdultBackstories",
+    "backstoryCryptosleepCommonality",
+    "chronologicalAgeRange",
+    "minGenerationAge",
+    "maxGenerationAge",
+    "factionLeader",
+    "fixedGender",
+    "allowOldAgeInjuries",
+    "generateInitialNonFamilyRelations",
+    "pawnGroupDevelopmentStage",
+    "destroyGearOnDrop",
+    "canStrip",
+    "defendPointRadius",
+    "factionHostileOnKill",
+    "factionHostileOnDeath",
+    "hostileToAll",
+    "initialResistanceRange",
+    "initialWillRange",
+    "forceNoDeathNotification",
+    "skipResistant",
+    "controlGroupPortraitZoom",
+    "overrideDeathOnDownedChance",
+    "forceDeathOnDowned",
+    "immuneToGameConditionEffects",
+    "immuneToTraps",
+    "collidesWithPawns",
+    "ignoresPainShock",
+    "canMeleeAttack",
+    "basePrisonBreakMtbDays",
+    "useFixedRotation",
+    "fixedRotation",
+    "showInDebugSpawner",
+    "canOpenAnyDoor",
+    "canOpenDoors",
+    "overrideDebugActionCategory",
+    "royalTitleChance",
+    "titleRequired",
+    "minTitleRequired",
+    "titleSelectOne",
+    "allowRoyalRoomRequirements",
+    "allowRoyalApparelRequirements",
+    "meleeAttackInfectionPathways",
+    "rangedAttackInfectionPathways",
+    "isFighter",
+    "combatPower",
+    "canArriveManhunter",
+    "canBeSapper",
+    "isGoodBreacher",
+    "allowInMechClusters",
+    "maxPerGroup",
+    "isGoodPsychicRitualInvoker",
+    "canBeScattered",
+    "appearsRandomlyInCombatGroups",
+    "aiAvoidCover",
+    "fleeHealthThresholdRange",
+    "acceptArrestChanceFactor",
+    "canUseAvoidGrid",
+    "itemQuality",
+    "forceWeaponQuality",
+    "forceNormalGearQuality",
+    "gearHealthRange",
+    "weaponMoney",
+    "weaponTags",
+    "weaponStuffOverride",
+    "weaponStyleDef",
+    "apparelMoney",
+    "apparelRequired",
+    "apparelTags",
+    "apparelDisallowTags",
+    "apparelAllowHeadgearChance",
+    "ignoreApparelAllowChance",
+    "apparelIgnoreSeasons",
+    "apparelIgnorePollution",
+    "ignoreFactionApparelStuffRequirements",
+    "apparelColor",
+    "skinColorOverride",
+    "favoriteColor",
+    "ignoreIdeoApparelColors",
+    "specificApparelRequirements",
+    "techHediffsRequired",
+    "techHediffsMoney",
+    "techHediffsTags",
+    "techHediffsDisallowTags",
+    "techHediffsChance",
+    "techHediffsMaxAmount",
+    "biocodeWeaponChance",
+    "humanPregnancyChance",
+    "startingHediffs",
+    "nakedChance",
+    "existingDamage",
+    "minApparelQuality",
+    "maxApparelQuality",
+    "fixedInventory",
+    "inventoryOptions",
+    "invNutrition",
+    "invFoodDef",
+    "chemicalAddictionChance",
+    "combatEnhancingDrugsChance",
+    "combatEnhancingDrugsCount",
+    "forcedAddictions",
+    "trader",
+    "skills",
+    "requiredWorkTags",
+    "disabledWorkTags",
+    "extraSkillLevels",
+    "minTotalSkillLevels",
+    "minBestSkillLevel",
+    "labelMale",
+    "labelMalePlural",
+    "labelFemale",
+    "labelFemalePlural",
+    "wildGroupSize",
+    "ecoSystemWeight",
+    "flyingAnimationFramePathPrefix",
+    "flyingAnimationFramePathPrefixFemale",
+    "flyingAnimationFrameCount",
+    "flyingAnimationTicksPerFrame",
+    "flyingAnimationDrawSize",
+    "flyingAnimationDrawSizeIsMultiplier",
+    "flyingAnimationInheritColors"
+  ],
+  "fields": {
+    "race": {
+      "label": "Race",
+      "description": "ThingDef that defines the race this pawn kind belongs to. Determines body, health, locomotion, and race-level stats.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "defaultFactionDef": {
+      "label": "Default faction",
+      "description": "FactionDef this pawn kind belongs to when no explicit faction is specified during spawning.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "xmlAliases": ["defaultFactionType"],
+      "reference": {
+        "defType": "FactionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "backstoryFilters": {
+      "label": "Backstory filters",
+      "description": "Filters that control which backstory categories are eligible when generating this pawn kind.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BackstoryCategoryFilter" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "backstoryFiltersOverride": {
+      "label": "Backstory filters override",
+      "description": "Completely replaces inherited backstoryFilters. Only the entries in this list are used when set.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BackstoryCategoryFilter" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "backstoryCategories": {
+      "label": "Backstory categories",
+      "description": "Legacy list of backstory category strings. Folded into backstoryFilters during PostLoad. Kept for XML compatibility.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "labelPlural": {
+      "label": "Label (plural)",
+      "description": "Plural form of the pawn kind label used in UI contexts that refer to multiple pawns of this kind.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "lifeStages": {
+      "label": "Life stages",
+      "description": "Per-life-stage graphic and label overrides. The index must match the corresponding life stage in the race's RaceProperties.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnKindLifeStage" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "alternateGraphics": {
+      "label": "Alternate graphics",
+      "description": "Weighted list of alternate graphic variants. One is selected randomly at spawn according to the alternateGraphicChance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "AlternateGraphic" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "forcedTraits": {
+      "label": "Forced traits",
+      "description": "Traits always given to pawns of this kind. Each entry is a TraitDef and optional degree.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitRequirement" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedTraitsWithDegree": {
+      "label": "Disallowed traits with degree",
+      "description": "Trait-and-degree pairs blocked from random assignment. Child element names are TraitDef defNames; text is the integer degree.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitRequirement" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "def",
+      "valueField": "degree",
+      "keyReference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disallowedTraits": {
+      "label": "Disallowed traits",
+      "description": "TraitDefs that cannot be randomly assigned to pawns of this kind regardless of degree.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "alternateGraphicChance": {
+      "label": "Alternate graphic chance",
+      "description": "Probability (0–1) that an alternate graphic is chosen from alternateGraphics at spawn. When 0 only the life-stage body graphic is used.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "mutant": {
+      "label": "Mutant",
+      "description": "MutantDef applied to pawns of this kind at spawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MutantDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "xenotypeSet": {
+      "label": "Xenotype set",
+      "description": "Weighted xenotype distribution used when generating this pawn kind. Overrides faction xenotypes when useFactionXenotypes is false.",
+      "type": { "kind": "object", "schemaRef": "XenotypeSet" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "useFactionXenotypes": {
+      "label": "Use faction xenotypes",
+      "description": "If true, the pawn inherits xenotype distribution from its faction instead of xenotypeSet.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "styleItemTags": {
+      "label": "Style item tags",
+      "description": "Weighted style and hair tags controlling which hairstyles and style items are selected during generation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StyleItemTagWeighted" },
+      "required": false,
+      "xml": "listOfLi",
+      "xmlAliases": ["hairTags"]
+    },
+    "forcedHair": {
+      "label": "Forced hair",
+      "description": "HairDef that overrides random hair selection for all pawns of this kind.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HairDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "forcedHairColor": {
+      "label": "Forced hair color",
+      "description": "Color override applied to pawn hair at generation. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.2, 0.15, 0.1, 1)", "(1, 1, 1, 1)"]
+    },
+    "missingParts": {
+      "label": "Missing parts",
+      "description": "Body parts that may be absent at spawn. Each entry specifies the part, the hediff representing the wound, and the probability.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "MissingPart" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "nameMaker": {
+      "label": "Name maker",
+      "description": "RulePackDef used to generate names for pawns of this kind.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RulePackDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nameMakerFemale": {
+      "label": "Name maker (female)",
+      "description": "RulePackDef used to generate names for female pawns of this kind. Falls back to nameMaker when absent.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RulePackDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "abilities": {
+      "label": "Abilities",
+      "description": "AbilityDefs granted to all pawns of this kind at generation.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "AbilityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "preventIdeo": {
+      "label": "Prevent ideo",
+      "description": "If true, pawns of this kind are not assigned an ideology during generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "studiableAsPrisoner": {
+      "label": "Studiable as prisoner",
+      "description": "If true, this pawn kind can be studied by researchers while held as a prisoner.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isBoss": {
+      "label": "Is boss",
+      "description": "If true, this pawn is treated as a boss unit with special raid scaling rules.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "moveSpeedFactorByTerrainTag": {
+      "label": "Move speed factor by terrain tag",
+      "description": "Per-terrain-tag move speed multipliers. Child element names are terrain tag strings; text is the float factor.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TerrainTagSpeedFactor" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "tag",
+      "valueField": "factor"
+    },
+    "fixedChildBackstories": {
+      "label": "Fixed child backstories",
+      "description": "Pool of BackstoryDefs restricted to the childhood slot for this pawn kind. One is chosen randomly at generation.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "BackstoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "fixedAdultBackstories": {
+      "label": "Fixed adult backstories",
+      "description": "Pool of BackstoryDefs restricted to the adulthood slot for this pawn kind. One is chosen randomly at generation.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "BackstoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "backstoryCryptosleepCommonality": {
+      "label": "Backstory cryptosleep commonality",
+      "description": "Relative weight for selecting cryptosleep-origin backstories for this pawn kind. Higher values increase the probability of cryptosleep backstories.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "chronologicalAgeRange": {
+      "label": "Chronological age range",
+      "description": "Float range for the pawn's total chronological age in years, including time spent in cryptosleep. When absent the biological age range is used.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["20~40", "100~300"]
+    },
+    "minGenerationAge": {
+      "label": "Min generation age",
+      "description": "Minimum biological age in years when generating this pawn kind.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxGenerationAge": {
+      "label": "Max generation age",
+      "description": "Maximum biological age in years when generating this pawn kind.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 999999,
+      "xml": "element"
+    },
+    "factionLeader": {
+      "label": "Faction leader",
+      "description": "If true, this pawn kind can be chosen as the leader of its faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fixedGender": {
+      "label": "Fixed gender",
+      "description": "Forces all generated pawns of this kind to have the specified gender. None means gender is chosen randomly.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Male", "Female"]
+      }
+    },
+    "allowOldAgeInjuries": {
+      "label": "Allow old age injuries",
+      "description": "If true, old-age injuries such as cataracts and bad back may be applied during generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "generateInitialNonFamilyRelations": {
+      "label": "Generate initial non-family relations",
+      "description": "If true, random non-family social relationships are generated between pawns of this kind at game start.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "pawnGroupDevelopmentStage": {
+      "label": "Pawn group developmental stage",
+      "description": "DevelopmentalStage flags (comma-separated) controlling which life stages are eligible when selecting this pawn kind for a group. Defaults to Adult.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      }
+    },
+    "destroyGearOnDrop": {
+      "label": "Destroy gear on drop",
+      "description": "If true, gear is destroyed rather than dropped when the pawn dies or is stripped.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canStrip": {
+      "label": "Can strip",
+      "description": "If true, colonists can strip gear from downed or dead pawns of this kind.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "defendPointRadius": {
+      "label": "Defend point radius",
+      "description": "Radius in cells around a defend point within which this pawn kind will hold position. -1 uses the default radius.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "factionHostileOnKill": {
+      "label": "Faction hostile on kill",
+      "description": "If true, killing a pawn of this kind makes the pawn's faction hostile to the player.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "factionHostileOnDeath": {
+      "label": "Faction hostile on death",
+      "description": "If true, any death of a pawn of this kind - not just player-inflicted - makes the faction hostile.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hostileToAll": {
+      "label": "Hostile to all",
+      "description": "If true, pawns of this kind are hostile to every other faction including allies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "initialResistanceRange": {
+      "label": "Initial resistance range",
+      "description": "Float range for starting resistance when captured as a prisoner. When absent the default resistance formula applies.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["1~5", "0~3"]
+    },
+    "initialWillRange": {
+      "label": "Initial will range",
+      "description": "Float range for starting will when captured as a prisoner under the Ideology system.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["1~5", "3~8"]
+    },
+    "forceNoDeathNotification": {
+      "label": "Force no death notification",
+      "description": "If true, no death letter or notification is generated when a pawn of this kind dies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "skipResistant": {
+      "label": "Skip resistant",
+      "description": "If true, captured pawns of this kind skip the resistance phase and go directly to the will phase.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "controlGroupPortraitZoom": {
+      "label": "Control group portrait zoom",
+      "description": "Zoom factor for this pawn's portrait in the control group UI. Default 1 means no scaling.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "overrideDeathOnDownedChance": {
+      "label": "Override death on downed chance",
+      "description": "Overrides the probability that a downed pawn of this kind dies from the downed event. Omit to use the game's default death-on-downed curve.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "forceDeathOnDowned": {
+      "label": "Force death on downed",
+      "description": "If true, pawns of this kind always die when downed rather than becoming incapacitated.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "immuneToGameConditionEffects": {
+      "label": "Immune to game condition effects",
+      "description": "If true, this pawn kind ignores map-wide game condition effects such as temperature extremes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "immuneToTraps": {
+      "label": "Immune to traps",
+      "description": "If true, pawns of this kind never trigger traps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "collidesWithPawns": {
+      "label": "Collides with pawns",
+      "description": "If true, this pawn uses pawn-collision physics and blocks passage by other pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ignoresPainShock": {
+      "label": "Ignores pain shock",
+      "description": "If true, this pawn never goes into pain shock regardless of pain level.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canMeleeAttack": {
+      "label": "Can melee attack",
+      "description": "If true, this pawn can engage enemies in melee combat.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "basePrisonBreakMtbDays": {
+      "label": "Base prison break MTB (days)",
+      "description": "Mean time between prison break attempts in days. Modifiers apply on top of this base value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 60,
+      "xml": "element"
+    },
+    "useFixedRotation": {
+      "label": "Use fixed rotation",
+      "description": "If true, this pawn always faces the direction specified by fixedRotation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fixedRotation": {
+      "label": "Fixed rotation",
+      "description": "Cardinal direction this pawn always faces when useFixedRotation is true.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Invalid",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Invalid", "North", "East", "South", "West"]
+      }
+    },
+    "showInDebugSpawner": {
+      "label": "Show in debug spawner",
+      "description": "If true, this pawn kind appears in the debug pawn spawner tool.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canOpenAnyDoor": {
+      "label": "Can open any door",
+      "description": "If true, this pawn can open doors regardless of faction ownership or access rights.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canOpenDoors": {
+      "label": "Can open doors",
+      "description": "If true, this pawn can open doors it has access to. When false the pawn treats all doors as impassable.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "overrideDebugActionCategory": {
+      "label": "Override debug action category",
+      "description": "Category string shown in the debug action menu for pawns of this kind. Overrides the default category derived from the race.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "royalTitleChance": {
+      "label": "Royal title chance",
+      "description": "Probability (0–1) that a generated pawn of this kind is assigned a random royal title. Requires Royalty.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "titleRequired": {
+      "label": "Title required",
+      "description": "Minimum RoyalTitleDef a pawn must hold to be generated as this kind. Requires Royalty.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RoyalTitleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minTitleRequired": {
+      "label": "Min title required",
+      "description": "Minimum RoyalTitleDef in the title ladder that qualifies a pawn to be generated as this kind.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RoyalTitleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "titleSelectOne": {
+      "label": "Title select one",
+      "description": "Pool of RoyalTitleDefs from which one is chosen for this pawn kind. Requires Royalty.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "RoyalTitleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "allowRoyalRoomRequirements": {
+      "label": "Allow royal room requirements",
+      "description": "If true, royal title room requirements apply to this pawn kind.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowRoyalApparelRequirements": {
+      "label": "Allow royal apparel requirements",
+      "description": "If true, royal title apparel requirements apply to this pawn kind.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "meleeAttackInfectionPathways": {
+      "label": "Melee attack infection pathways",
+      "description": "InfectionPathwayDefs transmitted when this pawn strikes enemies in melee.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "InfectionPathwayDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "rangedAttackInfectionPathways": {
+      "label": "Ranged attack infection pathways",
+      "description": "InfectionPathwayDefs transmitted when this pawn hits enemies with a ranged attack.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "InfectionPathwayDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "isFighter": {
+      "label": "Is fighter",
+      "description": "If true, this pawn participates in combat. If false, it flees rather than fighting.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "combatPower": {
+      "label": "Combat power",
+      "description": "Raid point cost of this pawn kind. -1 causes the game to calculate power from race and gear stats.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "canArriveManhunter": {
+      "label": "Can arrive manhunter",
+      "description": "If true, this pawn kind can appear in manhunter pack events.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canBeSapper": {
+      "label": "Can be sapper",
+      "description": "If true, this pawn can take the sapper role in raids, prioritising structure destruction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isGoodBreacher": {
+      "label": "Is good breacher",
+      "description": "If true, this pawn is considered an effective breacher for raid group composition.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowInMechClusters": {
+      "label": "Allow in mech clusters",
+      "description": "If true, this pawn kind can appear in mechanoid cluster threats.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "maxPerGroup": {
+      "label": "Max per group",
+      "description": "Maximum number of this pawn kind that can appear in a single raid group. Selection is rejected when the current count reaches this value, so 0 effectively blocks the kind. Omit or use 2147483647 for no limit.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 2147483647,
+      "xml": "element"
+    },
+    "isGoodPsychicRitualInvoker": {
+      "label": "Is good psychic ritual invoker",
+      "description": "If true, this pawn kind is preferred as the invoker in psychic ritual compositions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canBeScattered": {
+      "label": "Can be scattered",
+      "description": "If true, this pawn kind can be included in world-map scatter groups.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "appearsRandomlyInCombatGroups": {
+      "label": "Appears randomly in combat groups",
+      "description": "If true, this pawn kind may appear in randomly composed combat groups during raids.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "aiAvoidCover": {
+      "label": "AI avoid cover",
+      "description": "If true, the pawn AI avoids taking cover positions during combat.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fleeHealthThresholdRange": {
+      "label": "Flee health threshold range",
+      "description": "Float range for the health fraction at which this pawn flees combat. Negative values are sampled symmetrically around 0.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "-0.4~0.4",
+      "xml": "element",
+      "examples": ["-0.4~0.4", "0.2~0.4"]
+    },
+    "acceptArrestChanceFactor": {
+      "label": "Accept arrest chance factor",
+      "description": "Multiplier on the base probability that this pawn accepts an arrest attempt without resisting.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "canUseAvoidGrid": {
+      "label": "Can use avoid grid",
+      "description": "If true, the pawn AI uses the avoid grid when pathfinding away from threats.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "itemQuality": {
+      "label": "Item quality",
+      "description": "Default quality category for gear generated for this pawn kind.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Normal",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Awful", "Poor", "Normal", "Good", "Excellent", "Masterwork", "Legendary"]
+      }
+    },
+    "forceWeaponQuality": {
+      "label": "Force weapon quality",
+      "description": "Forces generated weapons to this quality category, overriding itemQuality for weapons.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Awful", "Poor", "Normal", "Good", "Excellent", "Masterwork", "Legendary"]
+      }
+    },
+    "forceNormalGearQuality": {
+      "label": "Force normal gear quality",
+      "description": "If true, all generated gear is forced to Normal quality regardless of itemQuality.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "gearHealthRange": {
+      "label": "Gear health range",
+      "description": "Float range for the health fraction of generated gear. 1~1 means full health.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element",
+      "examples": ["1~1", "0.5~0.8", "0.3~1"]
+    },
+    "weaponMoney": {
+      "label": "Weapon money",
+      "description": "Silver value range used to select a weapon. The most expensive weapon within the range is chosen.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element",
+      "examples": ["0~0", "50~150", "200~500"]
+    },
+    "weaponTags": {
+      "label": "Weapon tags",
+      "description": "Weapon tags eligible for this pawn kind. Only weapons with at least one matching tag are considered.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "weaponStuffOverride": {
+      "label": "Weapon stuff override",
+      "description": "ThingDef material used as the stuff for generated weapons, overriding random stuff selection.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "weaponStyleDef": {
+      "label": "Weapon style def",
+      "description": "ThingStyleDef applied to the generated weapon.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingStyleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "apparelMoney": {
+      "label": "Apparel money",
+      "description": "Silver value range used to select apparel items for this pawn kind.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element",
+      "examples": ["0~0", "20~80", "100~300"]
+    },
+    "apparelRequired": {
+      "label": "Apparel required",
+      "description": "ThingDefs always worn by pawns of this kind regardless of other apparel selection.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "apparelTags": {
+      "label": "Apparel tags",
+      "description": "Apparel tags eligible for this pawn kind. Only apparel with at least one matching tag is considered.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "apparelDisallowTags": {
+      "label": "Apparel disallow tags",
+      "description": "Apparel tags that prevent an apparel item from being selected for this pawn kind.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "apparelAllowHeadgearChance": {
+      "label": "Apparel allow headgear chance",
+      "description": "Probability (0–1) that headgear is included when generating apparel for this pawn kind.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "ignoreApparelAllowChance": {
+      "label": "Ignore apparel allow chance",
+      "description": "If true, apparelAllowHeadgearChance is ignored and headgear is always allowed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "apparelIgnoreSeasons": {
+      "label": "Apparel ignore seasons",
+      "description": "If true, apparel is selected regardless of seasonal temperature suitability.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "apparelIgnorePollution": {
+      "label": "Apparel ignore pollution",
+      "description": "If true, apparel selection ignores pollution resistance ratings.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreFactionApparelStuffRequirements": {
+      "label": "Ignore faction apparel stuff requirements",
+      "description": "If true, faction-level material restrictions on apparel are ignored during generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "apparelColor": {
+      "label": "Apparel color",
+      "description": "Color tint applied to generated apparel. Format: (r, g, b, a) or a named color such as white.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "white",
+      "xml": "element",
+      "examples": ["white", "(0.2, 0.2, 0.6, 1)", "(0.8, 0.3, 0.1, 1)"]
+    },
+    "skinColorOverride": {
+      "label": "Skin color override",
+      "description": "Color replacing the pawn's skin color at generation. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.3, 0.8, 0.3, 1)", "(0.7, 0.5, 0.3, 1)"]
+    },
+    "favoriteColor": {
+      "label": "Favorite color",
+      "description": "ColorDef assigned as the pawn's favourite color, affecting ideology-based apparel and decoration preferences.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ColorDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "ignoreIdeoApparelColors": {
+      "label": "Ignore ideo apparel colors",
+      "description": "If true, ideology apparel color requirements are ignored for this pawn kind.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "specificApparelRequirements": {
+      "label": "Specific apparel requirements",
+      "description": "Explicit apparel slot requirements that override tag-based and money-based selection for specific body layers.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SpecificApparelRequirement" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "techHediffsRequired": {
+      "label": "Tech hediffs required",
+      "description": "ThingDefs that must be installed as tech hediffs on this pawn kind regardless of techHediffsMoney.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "techHediffsMoney": {
+      "label": "Tech hediffs money",
+      "description": "Silver value range used to select tech hediff implants for this pawn kind.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element",
+      "examples": ["0~0", "200~500", "500~1500"]
+    },
+    "techHediffsTags": {
+      "label": "Tech hediffs tags",
+      "description": "Tags controlling which implant categories are eligible for this pawn kind.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "techHediffsDisallowTags": {
+      "label": "Tech hediffs disallow tags",
+      "description": "Tags that prevent an implant from being selected for this pawn kind.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "techHediffsChance": {
+      "label": "Tech hediffs chance",
+      "description": "Probability (0–1) that tech hediff implants are generated for this pawn kind.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "techHediffsMaxAmount": {
+      "label": "Tech hediffs max amount",
+      "description": "Maximum number of tech hediff implants that can be installed during generation.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "biocodeWeaponChance": {
+      "label": "Biocode weapon chance",
+      "description": "Probability (0–1) that the pawn's generated weapon is biocoded to them.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "humanPregnancyChance": {
+      "label": "Human pregnancy chance",
+      "description": "Probability (0–1) that a generated female pawn of this kind is pregnant.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.03,
+      "xml": "element"
+    },
+    "startingHediffs": {
+      "label": "Starting hediffs",
+      "description": "Hediffs applied to pawns of this kind at spawn time, each with a configurable probability.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StartingHediff" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "nakedChance": {
+      "label": "Naked chance",
+      "description": "Probability (0–1) that a pawn of this kind is generated without any apparel.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "existingDamage": {
+      "label": "Existing damage",
+      "description": "Pre-existing wounds applied to the pawn at spawn, each with its own probability.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "MiscDamage" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "minApparelQuality": {
+      "label": "Min apparel quality",
+      "description": "Minimum quality category for apparel generated for this pawn kind.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Awful",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Awful", "Poor", "Normal", "Good", "Excellent", "Masterwork", "Legendary"]
+      }
+    },
+    "maxApparelQuality": {
+      "label": "Max apparel quality",
+      "description": "Maximum quality category for apparel generated for this pawn kind.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Excellent",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Awful", "Poor", "Normal", "Good", "Excellent", "Masterwork", "Legendary"]
+      }
+    },
+    "fixedInventory": {
+      "label": "Fixed inventory",
+      "description": "Items always placed in the pawn's inventory at spawn regardless of other inventory generation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ThingDefCountClass" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "inventoryOptions": {
+      "label": "Inventory options",
+      "description": "Probabilistic inventory generation tree. Supports take-all and choose-one sub-option branches.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnInventoryOption" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "invNutrition": {
+      "label": "Inventory nutrition",
+      "description": "Amount of nutrition worth of food placed in the pawn's inventory at spawn.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "invFoodDef": {
+      "label": "Inventory food def",
+      "description": "ThingDef used as the food item when invNutrition is set. Defaults to a generic meal when absent.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chemicalAddictionChance": {
+      "label": "Chemical addiction chance",
+      "description": "Probability (0–1) that a pawn of this kind is generated with a random chemical addiction.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "combatEnhancingDrugsChance": {
+      "label": "Combat enhancing drugs chance",
+      "description": "Probability (0–1) that combat-enhancing drugs are placed in the pawn's inventory.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "combatEnhancingDrugsCount": {
+      "label": "Combat enhancing drugs count",
+      "description": "Integer range for the number of combat-enhancing drug doses placed in the pawn's inventory.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element",
+      "examples": ["0~0", "1~2", "1~3"]
+    },
+    "forcedAddictions": {
+      "label": "Forced addictions",
+      "description": "ChemicalDefs the pawn is always addicted to at generation.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ChemicalDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "trader": {
+      "label": "Trader",
+      "description": "If true, pawns of this kind carry trader inventories and can be interacted with as merchants.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "skills": {
+      "label": "Skills",
+      "description": "Skill level ranges applied to specific skills during generation. Skills not listed use racial defaults.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillRange" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "requiredWorkTags": {
+      "label": "Required work tags",
+      "description": "Work tags that must be enabled on pawns of this kind. Each flag is a separate li element.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "flags": true,
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "disabledWorkTags": {
+      "label": "Disabled work tags",
+      "description": "Work tags disabled for pawns of this kind. Each flag is a separate li element.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "flags": true,
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "extraSkillLevels": {
+      "label": "Extra skill levels",
+      "description": "Additional skill levels added on top of the backstory and age-based skill totals during generation.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minTotalSkillLevels": {
+      "label": "Min total skill levels",
+      "description": "Minimum combined skill level across all skills that the generated pawn must have.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minBestSkillLevel": {
+      "label": "Min best skill level",
+      "description": "Minimum level the pawn's highest skill must reach after generation.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "labelMale": {
+      "label": "Label (male)",
+      "description": "Male-specific label override for this pawn kind.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelMalePlural": {
+      "label": "Label (male plural)",
+      "description": "Plural form of the male-specific label.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelFemale": {
+      "label": "Label (female)",
+      "description": "Female-specific label override for this pawn kind.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelFemalePlural": {
+      "label": "Label (female plural)",
+      "description": "Plural form of the female-specific label.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "wildGroupSize": {
+      "label": "Wild group size",
+      "description": "Integer range for the number of pawns in a wild group when this kind spawns in the wild.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element",
+      "examples": ["1~1", "2~5", "5~12"]
+    },
+    "ecoSystemWeight": {
+      "label": "Ecosystem weight",
+      "description": "Relative weight of this pawn kind in biome population calculations. Higher values increase its share of the wild population.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "flyingAnimationFramePathPrefix": {
+      "label": "Flying animation frame path prefix",
+      "description": "Texture path prefix for the flying animation frame sequence. Frames are numbered from this prefix.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Things/Pawn/Animal/Bird/BirdFlying"]
+    },
+    "flyingAnimationFramePathPrefixFemale": {
+      "label": "Flying animation frame path prefix (female)",
+      "description": "Texture path prefix for the female flying animation frame sequence.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "flyingAnimationFrameCount": {
+      "label": "Flying animation frame count",
+      "description": "Number of frames in the flying animation sequence.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "flyingAnimationTicksPerFrame": {
+      "label": "Flying animation ticks per frame",
+      "description": "Number of game ticks each flying animation frame is displayed. -1 uses the life-stage animation timing.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "flyingAnimationDrawSize": {
+      "label": "Flying animation draw size",
+      "description": "Scale of the flying animation graphic. Interpreted as an absolute size or a multiplier depending on flyingAnimationDrawSizeIsMultiplier.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "flyingAnimationDrawSizeIsMultiplier": {
+      "label": "Flying animation draw size is multiplier",
+      "description": "If true, flyingAnimationDrawSize is multiplied with the life-stage body size rather than used as an absolute scale.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "flyingAnimationInheritColors": {
+      "label": "Flying animation inherit colors",
+      "description": "If true, the flying animation graphic inherits the pawn's graphic colors instead of using its own.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "human-pawn": {
+      "label": "Human pawn",
+      "description": "A basic human pawn kind with race, weapon money, and apparel money.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "race"],
+      "fieldValues": {
+        "combatPower": 35,
+        "weaponMoney": "50~150",
+        "apparelMoney": "20~80",
+        "isFighter": true
+      }
+    },
+    "animal-pawn": {
+      "label": "Animal pawn",
+      "description": "A basic animal pawn kind with race and ecosystem weight.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "race"],
+      "fieldValues": {
+        "wildGroupSize": "1~1",
+        "ecoSystemWeight": 1,
+        "isFighter": false
+      }
+    }
+  }
+}

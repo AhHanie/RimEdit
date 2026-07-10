@@ -1,0 +1,155 @@
+{
+  "objectType": "SpecificApparelRequirement",
+  "label": "Specific apparel requirement",
+  "description": "A precise apparel slot requirement specifying which body part group, layer, def, tag, and quality the pawn must wear when generated.",
+  "fieldOrder": [
+    "bodyPartGroup",
+    "apparelLayer",
+    "apparelDef",
+    "requiredTag",
+    "alternateTagChoices",
+    "stuff",
+    "styleDef",
+    "color",
+    "colorGenerator",
+    "quality",
+    "locked",
+    "biocode",
+    "useRandomStyleDef",
+    "ignoreNaked"
+  ],
+  "fields": {
+    "bodyPartGroup": {
+      "label": "Body part group",
+      "description": "BodyPartGroupDef the apparel must cover.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyPartGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "apparelLayer": {
+      "label": "Apparel layer",
+      "description": "ApparelLayerDef the apparel must occupy.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ApparelLayerDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "apparelDef": {
+      "label": "Apparel def",
+      "description": "Specific ThingDef the pawn must wear. When set, tag-based selection is skipped.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredTag": {
+      "label": "Required tag",
+      "description": "Apparel tag the item must have. Used when apparelDef is not set.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "alternateTagChoices": {
+      "label": "Alternate tag choices",
+      "description": "Additional apparel tags that can satisfy this requirement, each with their own selection weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SpecificApparelTagChance" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "stuff": {
+      "label": "Stuff",
+      "description": "ThingDef material override for stuffed apparel.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "styleDef": {
+      "label": "Style def",
+      "description": "ThingStyleDef applied to the apparel when generated.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingStyleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "color": {
+      "label": "Color",
+      "description": "Color applied to the apparel. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1, 1, 1, 1)", "(0.8, 0.2, 0.2, 1)"]
+    },
+    "colorGenerator": {
+      "label": "Color generator",
+      "description": "ColorGenerator used to randomly select the apparel color when color is not fixed.",
+      "type": { "kind": "object", "schemaRef": "ColorGenerator" },
+      "required": false,
+      "xml": "object"
+    },
+    "quality": {
+      "label": "Quality",
+      "description": "Quality category override for the generated apparel.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Awful", "Poor", "Normal", "Good", "Excellent", "Masterwork", "Legendary"]
+      }
+    },
+    "locked": {
+      "label": "Locked",
+      "description": "If true, the pawn cannot remove or trade this apparel item.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "biocode": {
+      "label": "Biocode",
+      "description": "If true, the apparel is biocoded to the pawn at generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useRandomStyleDef": {
+      "label": "Use random style def",
+      "description": "If true, a random style is selected for the apparel rather than using styleDef.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreNaked": {
+      "label": "Ignore naked",
+      "description": "If true, the naked check is skipped for this apparel slot.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

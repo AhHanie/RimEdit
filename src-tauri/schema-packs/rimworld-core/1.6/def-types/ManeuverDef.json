@@ -1,0 +1,82 @@
+{
+  "defType": "ManeuverDef",
+  "label": "Maneuver",
+  "description": "Associates a tool capacity with a verb and combat log rules, defining how a melee attack plays out at runtime.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "requiredCapacity",
+    "verb",
+    "combatLogRulesHit",
+    "combatLogRulesDeflect",
+    "combatLogRulesMiss",
+    "combatLogRulesDodge",
+    "logEntryDef"
+  ],
+  "fields": {
+    "requiredCapacity": {
+      "label": "Required capacity",
+      "description": "ToolCapacityDef that a tool must have for this maneuver to be available.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": { "defType": "ToolCapacityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "verb": {
+      "label": "Verb",
+      "description": "Verb properties defining the attack mechanics for this maneuver.",
+      "type": { "kind": "object", "schemaRef": "VerbProperties" },
+      "required": true,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "combatLogRulesHit": {
+      "label": "Combat log rules hit",
+      "description": "RulePackDef used to generate combat log text when this maneuver lands a hit.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "combatLogRulesDeflect": {
+      "label": "Combat log rules deflect",
+      "description": "RulePackDef used to generate combat log text when this maneuver is deflected by armor.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "combatLogRulesMiss": {
+      "label": "Combat log rules miss",
+      "description": "RulePackDef used to generate combat log text when this maneuver misses.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "combatLogRulesDodge": {
+      "label": "Combat log rules dodge",
+      "description": "RulePackDef used to generate combat log text when this maneuver is dodged.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "logEntryDef": {
+      "label": "Log entry def",
+      "description": "LogEntryDef that determines which battle log entry type is created when this maneuver executes.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LogEntryDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  },
+  "templates": {
+    "basic-maneuver": {
+      "label": "Basic maneuver",
+      "description": "Minimal maneuver with required capacity and verb.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "requiredCapacity"],
+      "fieldValues": {}
+    }
+  }
+}

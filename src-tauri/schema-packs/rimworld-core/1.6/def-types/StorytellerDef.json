@@ -1,0 +1,195 @@
+{
+  "defType": "StorytellerDef",
+  "label": "Storyteller",
+  "description": "Defines a storyteller AI: its portrait, adaptation curves, and the list of incident-scheduling comps that drive gameplay pacing.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "listOrder",
+    "listVisible",
+    "tutorialMode",
+    "disableAdaptiveTraining",
+    "disableAlerts",
+    "disablePermadeath",
+    "forcedDifficulty",
+    "portraitLarge",
+    "portraitTiny",
+    "adaptDaysMin",
+    "adaptDaysMax",
+    "adaptDaysGameStartGraceDays",
+    "populationIntentFactorFromPopCurve",
+    "populationIntentFactorFromPopAdaptDaysCurve",
+    "pointsFactorFromDaysPassed",
+    "pointsFactorFromAdaptDays",
+    "adaptDaysLossFromColonistLostByPostPopulation",
+    "adaptDaysLossFromColonistViolentlyDownedByPopulation",
+    "adaptDaysGrowthRateCurve",
+    "comps"
+  ],
+  "fields": {
+    "listOrder": {
+      "label": "List order",
+      "description": "Sort order in the storyteller selection screen. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 9999,
+      "xml": "element"
+    },
+    "listVisible": {
+      "label": "List visible",
+      "description": "Whether this storyteller appears in the selection screen.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "tutorialMode": {
+      "label": "Tutorial mode",
+      "description": "If true, this storyteller uses tutorial pacing instead of normal incident scheduling.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disableAdaptiveTraining": {
+      "label": "Disable adaptive training",
+      "description": "If true, adaptive training tips are suppressed for this storyteller.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disableAlerts": {
+      "label": "Disable alerts",
+      "description": "If true, all alerts are hidden when this storyteller is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disablePermadeath": {
+      "label": "Disable permadeath",
+      "description": "If true, permadeath mode is disabled for this storyteller.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forcedDifficulty": {
+      "label": "Forced difficulty",
+      "description": "Forces a specific DifficultyDef when this storyteller is selected. Leave unset to allow player choice.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DifficultyDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "portraitLarge": {
+      "label": "Portrait (large)",
+      "description": "Texture path for the large storyteller portrait shown in the selection screen.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/HeroArt/Storytellers/CassandraClassic"]
+    },
+    "portraitTiny": {
+      "label": "Portrait (tiny)",
+      "description": "Texture path for the small storyteller icon shown in the HUD.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/HeroArt/Storytellers/CassandraClassicTiny"]
+    },
+    "adaptDaysMin": {
+      "label": "Adapt days (min)",
+      "description": "Minimum value of the adaptation-days accumulator.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -60,
+      "xml": "element"
+    },
+    "adaptDaysMax": {
+      "label": "Adapt days (max)",
+      "description": "Maximum value of the adaptation-days accumulator.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 100,
+      "xml": "element"
+    },
+    "adaptDaysGameStartGraceDays": {
+      "label": "Adapt days game-start grace",
+      "description": "Days of grace at game start before adaptation tracking begins.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 30,
+      "xml": "element"
+    },
+    "populationIntentFactorFromPopCurve": {
+      "label": "Population intent factor from population curve",
+      "description": "Multiplier to population intent based on current colony population. X = population, Y = factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "populationIntentFactorFromPopAdaptDaysCurve": {
+      "label": "Population intent factor from adapt-days curve",
+      "description": "Multiplier to population intent based on current adapt-days value. X = adapt days, Y = factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "pointsFactorFromDaysPassed": {
+      "label": "Points factor from days passed",
+      "description": "Multiplier to incident threat points based on days since game start. X = days, Y = factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "pointsFactorFromAdaptDays": {
+      "label": "Points factor from adapt days",
+      "description": "Multiplier to incident threat points based on adapt-days value. X = adapt days, Y = factor.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "adaptDaysLossFromColonistLostByPostPopulation": {
+      "label": "Adapt days loss from colonist lost (by post-loss population)",
+      "description": "Adapt-days subtracted when a colonist dies, based on the remaining population. X = remaining population, Y = days lost.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "adaptDaysLossFromColonistViolentlyDownedByPopulation": {
+      "label": "Adapt days loss from colonist violently downed (by population)",
+      "description": "Adapt-days subtracted when a colonist is violently downed, based on population. X = population, Y = days lost.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "adaptDaysGrowthRateCurve": {
+      "label": "Adapt days growth rate curve",
+      "description": "Daily rate at which adapt-days accumulates, based on the current value. X = current adapt days, Y = growth rate.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "comps": {
+      "label": "Comps",
+      "description": "List of storyteller comp properties that drive incident scheduling. Each item carries a Class attribute naming the concrete StorytellerCompProperties subclass.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StorytellerCompProperties" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "basic-storyteller": {
+      "label": "Basic storyteller",
+      "description": "Storyteller with portrait paths and an empty comps list.",
+      "includeRequiredFields": true,
+      "promptFields": ["portraitLarge", "portraitTiny"],
+      "fieldValues": {
+        "listVisible": "true",
+        "comps": []
+      }
+    }
+  }
+}

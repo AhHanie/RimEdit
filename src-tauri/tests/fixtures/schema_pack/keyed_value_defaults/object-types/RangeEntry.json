@@ -1,0 +1,17 @@
+{
+  "objectType": "RangeEntry",
+  "fieldOrder": ["key", "range"],
+  "fields": {
+    "key": {
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "range": {
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    }
+  }
+}

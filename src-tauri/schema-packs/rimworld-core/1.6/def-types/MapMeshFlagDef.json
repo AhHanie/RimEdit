@@ -1,0 +1,8 @@
+{
+  "defType": "MapMeshFlagDef",
+  "label": "Map mesh flag",
+  "description": "Defines a bit flag used by RimWorld's map drawer to mark section layers dirty when terrain, buildings, fog, snow, gas, plans, zones, power grids, and similar map systems change. The runtime mask is derived from def load order and is not XML-authored.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {}
+}

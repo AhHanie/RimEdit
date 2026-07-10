@@ -1,0 +1,27 @@
+{
+  "objectType": "PawnExpectationsQualityOffset",
+  "label": "Pawn expectations quality offset",
+  "description": "Maps an ExpectationDef to a quality offset value inside RitualOutcomeComp_PawnExpectations. Loaded via LoadDataFromXmlCustom: the element name is the ExpectationDef defName; scalar text is the offset.",
+  "fieldOrder": ["expectation", "offset"],
+  "fields": {
+    "expectation": {
+      "label": "Expectation",
+      "description": "ExpectationDef defName. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": {
+        "defType": "ExpectationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Quality offset applied when a pawn matches this expectation level. Populated from scalar element text by the keyedObjectList loader.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "text"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_DisableMapGen",
+  "label": "Disable map gen",
+  "description": "Disables a specific map generation step. The gen step is defined on the ScenPartDef.",
+  "inherits": ["ScenPart"]
+}

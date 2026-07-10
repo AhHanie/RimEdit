@@ -1,0 +1,36 @@
+{
+  "objectType": "Branch",
+  "label": "Branch",
+  "description": "A potential branch river that may spawn at a river junction. Defines which smaller river type appears based on flow level and probability.",
+  "fieldOrder": ["minFlow", "child", "chance"],
+  "fields": {
+    "minFlow": {
+      "label": "Min flow",
+      "description": "Minimum flow value required for this branch to be eligible at a junction.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "child": {
+      "label": "Child",
+      "description": "RiverDef that will be placed as the branching tributary at a junction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RiverDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0.0 to 1.0) that this branch spawns at an eligible junction. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1.0
+    }
+  }
+}

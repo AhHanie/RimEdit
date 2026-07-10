@@ -1,0 +1,84 @@
+{
+  "defType": "CreepJoinerBaseDef",
+  "label": "Creep joiner base",
+  "description": "Abstract base for all creep joiner choice Defs (benefits, downsides, aggressives, rejections). Marked abstractType so it is not offered as a concrete create target.",
+  "abstractType": true,
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "weight",
+    "minCombatPoints",
+    "canOccurRandomly",
+    "excludes",
+    "requires",
+    "surgicalInspectionLetterExtra"
+  ],
+  "fields": {
+    "weight": {
+      "label": "Weight",
+      "description": "Relative selection weight used by CreepJoinerUtility.GetRandom when choosing a random creep joiner option.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "minCombatPoints": {
+      "label": "Min combat points",
+      "description": "Minimum raid threat-point threshold required before this Def can be randomly selected.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "canOccurRandomly": {
+      "label": "Can occur randomly",
+      "description": "When false, excludes this Def from random selection while still allowing explicit selection.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "excludes": {
+      "label": "Excludes",
+      "description": "Blacklists compatible CreepJoiner choices after this Def is selected. References any concrete CreepJoinerBaseDef subtype (benefit, downside, aggressive, or rejection).",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "CreepJoinerBaseDef",
+        "allowAbstract": false,
+        "scope": "allSources",
+        "acceptedDefTypes": [
+          "CreepJoinerBenefitDef",
+          "CreepJoinerDownsideDef",
+          "CreepJoinerAggressiveDef",
+          "CreepjoinerRejectionDef"
+        ]
+      }
+    },
+    "requires": {
+      "label": "Requires",
+      "description": "Whitelists compatible CreepJoiner choices after this Def is selected. References any concrete CreepJoinerBaseDef subtype (benefit, downside, aggressive, or rejection).",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "CreepJoinerBaseDef",
+        "allowAbstract": false,
+        "scope": "allSources",
+        "acceptedDefTypes": [
+          "CreepJoinerBenefitDef",
+          "CreepJoinerDownsideDef",
+          "CreepJoinerAggressiveDef",
+          "CreepjoinerRejectionDef"
+        ]
+      }
+    },
+    "surgicalInspectionLetterExtra": {
+      "label": "Surgical inspection letter extra",
+      "description": "Extra formatted text revealed by surgical inspection. Marked [MustTranslate] in source.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

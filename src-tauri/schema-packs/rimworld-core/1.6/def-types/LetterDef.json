@@ -1,0 +1,101 @@
+{
+  "defType": "LetterDef",
+  "label": "Letter",
+  "description": "Defines a letter type that appears in the message pane. Controls the display color, flash behavior, icon, sound, and automatic pause behavior.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "letterClass",
+    "color",
+    "flashColor",
+    "flashInterval",
+    "bounce",
+    "arriveSound",
+    "icon",
+    "pauseMode",
+    "forcedSlowdown"
+  ],
+  "fields": {
+    "letterClass": {
+      "label": "Letter class",
+      "description": "C# class that implements the letter behavior. Defaults to StandardLetter.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "color": {
+      "label": "Color",
+      "description": "Color used to render the letter icon and header text.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "flashColor": {
+      "label": "Flash color",
+      "description": "Color used when the letter icon flashes in the message pane.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "flashInterval": {
+      "label": "Flash interval",
+      "description": "Interval in ticks between letter icon flashes.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 90,
+      "xml": "element"
+    },
+    "bounce": {
+      "label": "Bounce",
+      "description": "If true, the letter icon plays a bounce animation when it arrives.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "arriveSound": {
+      "label": "Arrive sound",
+      "description": "Sound played when this letter arrives. Falls back to LetterArrive if not set.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "icon": {
+      "label": "Icon",
+      "description": "Texture path for the letter icon shown in the message pane.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "UI/Letters/LetterUnopened",
+      "xml": "element",
+      "examples": ["UI/Letters/LetterUnopened", "UI/Letters/LetterBad", "UI/Letters/LetterGood"]
+    },
+    "pauseMode": {
+      "label": "Pause mode",
+      "description": "When the game automatically pauses upon receiving this letter type.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "AnyLetter",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Never", "MajorThreat", "AnyThreat", "AnyLetter"]
+      }
+    },
+    "forcedSlowdown": {
+      "label": "Forced slowdown",
+      "description": "If true, receiving this letter forces the game to slow to 1x speed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-letter": {
+      "label": "Basic letter",
+      "description": "Minimal letter type with a label and default display settings.",
+      "includeRequiredFields": true,
+      "promptFields": ["label"],
+      "fieldValues": {}
+    }
+  }
+}

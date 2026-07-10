@@ -1,0 +1,23 @@
+{
+  "objectType": "MineableCountConfig",
+  "label": "Mineable count config",
+  "description": "Maps a mineable ThingDef to a random count range for asteroid ore generation.",
+  "fieldOrder": ["mineable", "countRange"],
+  "fields": {
+    "mineable": {
+      "label": "Mineable",
+      "description": "ThingDef of the mineable ore this config applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "Random range for the number of ore cells of this type to scatter on the asteroid.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

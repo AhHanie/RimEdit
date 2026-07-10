@@ -1,0 +1,31 @@
+{
+  "objectType": "QuestNode_LoopCount",
+  "label": "QuestNode LoopCount",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_LoopCount.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "count",
+    "node"
+  ],
+  "fields": {
+    "count": {
+      "description": "SlateRef<int> literal, expression, or $varName iteration count.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "node": {
+      "description": "QuestNode run for each iteration.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

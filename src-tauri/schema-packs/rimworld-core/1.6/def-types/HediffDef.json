@@ -1,0 +1,783 @@
+{
+  "defType": "HediffDef",
+  "label": "Health condition",
+  "description": "Defines a health condition, injury, disease, implant, or other hediff that can be applied to a pawn.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "hediffClass",
+    "comps",
+    "descriptionShort",
+    "debugLabelExtra",
+    "initialSeverity",
+    "lethalSeverity",
+    "stages",
+    "tendable",
+    "isBad",
+    "spawnThingOnRemoved",
+    "chanceToCauseNoPain",
+    "canApplyDodChanceForCapacityChanges",
+    "makesSickThought",
+    "makesAlert",
+    "chemicalNeed",
+    "minSeverity",
+    "maxSeverity",
+    "scenarioCanAdd",
+    "hediffGivers",
+    "cureAllAtOnceIfCuredByItem",
+    "taleOnVisible",
+    "recordDownedTale",
+    "everCurableByItem",
+    "tags",
+    "priceImpact",
+    "priceOffset",
+    "chronic",
+    "keepOnBodyPartRestoration",
+    "countsAsAddedPartOrImplant",
+    "blocksSocialInteraction",
+    "blocksSleeping",
+    "overrideTooltip",
+    "extraTooltip",
+    "inspectString",
+    "levelIsQuantity",
+    "removeOnDeathrestStart",
+    "preventsCrawling",
+    "preventsPregnancy",
+    "preventsLungRot",
+    "pregnant",
+    "allowMothballIfLowPriorityWorldPawn",
+    "removeWithTags",
+    "onlyLifeThreateningTo",
+    "canAffectBionicOrImplant",
+    "alwaysShowSeverity",
+    "showGizmosOnCorpse",
+    "defaultInstallPart",
+    "hairColorOverride",
+    "possiblePathways",
+    "givesInfectionPathways",
+    "duplicationAllowed",
+    "preventsDeath",
+    "allowedMeditationFocusTypes",
+    "abilities",
+    "isInfection",
+    "forceRemoveOnResurrection",
+    "organicAddedBodypart",
+    "deprioritizeHealing",
+    "clearsEgo",
+    "aptitudes",
+    "removeOnRedressChanceByDaysCurve",
+    "removeOnQuestLodgers",
+    "removeOnRedressIfNotOfKind",
+    "displayWound",
+    "woundAnchorRange",
+    "defaultLabelColor",
+    "renderNodeProperties",
+    "skinColorOverride",
+    "skinColorTint",
+    "skinColorTintStrength",
+    "skinShader",
+    "forceRenderTreeRecache",
+    "injuryProps",
+    "addedPartProps",
+    "reportStringOverrides",
+    "labelNoun",
+    "battleStateLabel",
+    "labelNounPretty",
+    "targetPrefix"
+  ],
+  "fields": {
+    "hediffClass": {
+      "label": "Hediff class",
+      "description": "C# Hediff subclass used at runtime.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Hediff", "Hediff_AddedPart", "Hediff_Injury", "Hediff_MissingPart", "Hediff_Immunizable"]
+    },
+    "comps": {
+      "label": "Components",
+      "description": "List of HediffCompProperties that attach modular behaviors.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "HediffCompProperties" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "descriptionShort": {
+      "label": "Short description",
+      "description": "Brief description shown in compact UI contexts.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "debugLabelExtra": {
+      "label": "Debug label extra",
+      "description": "Extra text appended to the label in debug mode.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "initialSeverity": {
+      "label": "Initial severity",
+      "description": "Starting severity when applied without an explicit value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "lethalSeverity": {
+      "label": "Lethal severity",
+      "description": "Severity at which this hediff kills the pawn. -1 means never lethal by severity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "stages": {
+      "label": "Stages",
+      "description": "Ordered list of stages. Active stage determined by severity.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "HediffStage" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "tendable": {
+      "label": "Tendable",
+      "description": "If true, doctors can tend this hediff to slow progression.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isBad": {
+      "label": "Is bad",
+      "description": "If true, this hediff is harmful. Used to prioritize treatment.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "spawnThingOnRemoved": {
+      "label": "Spawn thing on removed",
+      "description": "ThingDef spawned when this hediff is removed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chanceToCauseNoPain": {
+      "label": "Chance to cause no pain",
+      "description": "Probability (0–1) that this hediff produces no pain despite stage pain settings.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "canApplyDodChanceForCapacityChanges": {
+      "label": "Can apply dodge chance for capacity changes",
+      "description": "If true, moving pawns may dodge capacity changes from this hediff.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "makesSickThought": {
+      "label": "Makes sick thought",
+      "description": "If true, colonists get a mood debuff for seeing a colonist with this hediff.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "makesAlert": {
+      "label": "Makes alert",
+      "description": "If true, an alert is shown when a colonist has this hediff.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "chemicalNeed": {
+      "label": "Chemical need",
+      "description": "NeedDef satisfied when used as a drug effect.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "NeedDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minSeverity": {
+      "label": "Min severity",
+      "description": "Hediff is removed when severity drops below this value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxSeverity": {
+      "label": "Max severity",
+      "description": "Severity is clamped to this maximum. Defaults to uncapped (float.MaxValue) when omitted.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "scenarioCanAdd": {
+      "label": "Scenario can add",
+      "description": "If true, this hediff can be added as a scenario starting condition.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hediffGivers": {
+      "label": "Hediff givers",
+      "description": "Givers that spontaneously add secondary hediffs while this hediff is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "HediffGiver" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "cureAllAtOnceIfCuredByItem": {
+      "label": "Cure all at once if cured by item",
+      "description": "If true, all instances are removed at once when an item cures it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "taleOnVisible": {
+      "label": "Tale on visible",
+      "description": "TaleDef recorded when this hediff becomes visible for the first time.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TaleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "recordDownedTale": {
+      "label": "Record downed tale",
+      "description": "If true, a tale is recorded when this hediff downs the pawn.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "everCurableByItem": {
+      "label": "Ever curable by item",
+      "description": "If false, no item or surgery can ever cure this hediff.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "String tags used for grouping and removal operations.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "priceImpact": {
+      "label": "Price impact",
+      "description": "If true, this hediff affects the pawn's market value.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "priceOffset": {
+      "label": "Price offset",
+      "description": "Silver value added to pawn market price while this hediff is present.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "chronic": {
+      "label": "Chronic",
+      "description": "If true, treated as a chronic condition that cannot be fully healed without surgery.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "keepOnBodyPartRestoration": {
+      "label": "Keep on body part restoration",
+      "description": "If true, kept when the affected body part is restored.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "countsAsAddedPartOrImplant": {
+      "label": "Counts as added part or implant",
+      "description": "If true, treated as an installed body part for stat and UI purposes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blocksSocialInteraction": {
+      "label": "Blocks social interaction",
+      "description": "If true, a pawn with this hediff cannot participate in social interactions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blocksSleeping": {
+      "label": "Blocks sleeping",
+      "description": "If true, a pawn with this hediff cannot sleep.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "overrideTooltip": {
+      "label": "Override tooltip",
+      "description": "If set, completely replaces the default hediff tooltip.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "extraTooltip": {
+      "label": "Extra tooltip",
+      "description": "Extra text appended to the hediff tooltip.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "inspectString": {
+      "label": "Inspect string",
+      "description": "Text shown in the inspect panel when the pawn is selected.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "levelIsQuantity": {
+      "label": "Level is quantity",
+      "description": "If true, severity is displayed as a quantity rather than a progress bar.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "removeOnDeathrestStart": {
+      "label": "Remove on deathrest start",
+      "description": "If true, removed when the pawn begins a Biotech deathrest.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventsCrawling": {
+      "label": "Prevents crawling",
+      "description": "If true, a downed pawn with this hediff cannot crawl.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventsPregnancy": {
+      "label": "Prevents pregnancy",
+      "description": "If true, a pawn with this hediff cannot become pregnant.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventsLungRot": {
+      "label": "Prevents lung rot",
+      "description": "If true, prevents the pawn from contracting lung rot.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "pregnant": {
+      "label": "Pregnant",
+      "description": "If true, this hediff represents a pregnancy state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowMothballIfLowPriorityWorldPawn": {
+      "label": "Allow mothball if low priority world pawn",
+      "description": "If true, a world pawn with this hediff can be mothballed when low priority.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "removeWithTags": {
+      "label": "Remove with tags",
+      "description": "Tags identifying other hediffs removed when this hediff is applied.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "onlyLifeThreateningTo": {
+      "label": "Only life threatening to",
+      "description": "BodyPartDefs for which this hediff is life-threatening.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "BodyPartDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "canAffectBionicOrImplant": {
+      "label": "Can affect bionic or implant",
+      "description": "If true, can be applied to artificial body parts.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "alwaysShowSeverity": {
+      "label": "Always show severity",
+      "description": "If true, severity bar is always shown in the health tab.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showGizmosOnCorpse": {
+      "label": "Show gizmos on corpse",
+      "description": "If true, ability gizmos remain visible when the pawn is dead.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "defaultInstallPart": {
+      "label": "Default install part",
+      "description": "BodyPartDef where this implant is installed when no specific part is specified.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyPartDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "hairColorOverride": {
+      "label": "Hair color override",
+      "description": "Color applied to pawn hair while active. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1, 1, 1, 1)", "(0.2, 0.2, 0.2, 1)"]
+    },
+    "possiblePathways": {
+      "label": "Possible pathways",
+      "description": "Infection pathways this hediff can spread through. Element name is the InfectionPathwayDef defName; optional element text is the localized explanation shown to the player.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "HediffInfectionPathway" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "pathway",
+      "valueField": "explanation",
+      "keyReference": {
+        "defType": "InfectionPathwayDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "givesInfectionPathways": {
+      "label": "Gives infection pathways",
+      "description": "InfectionPathwayDefs emitted by this pawn while infected.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "InfectionPathwayDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "duplicationAllowed": {
+      "label": "Duplication allowed",
+      "description": "If true, multiple instances can coexist on the same pawn.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "preventsDeath": {
+      "label": "Prevents death",
+      "description": "If true, having this hediff prevents the pawn from dying from other causes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedMeditationFocusTypes": {
+      "label": "Allowed meditation focus types",
+      "description": "MeditationFocusDefs unlocked for pawns with this hediff.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "MeditationFocusDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "abilities": {
+      "label": "Abilities",
+      "description": "AbilityDefs granted while this hediff is active.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "AbilityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "isInfection": {
+      "label": "Is infection",
+      "description": "If true, interacts with immunity systems.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forceRemoveOnResurrection": {
+      "label": "Force remove on resurrection",
+      "description": "If true, forcibly removed when the pawn is resurrected.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "organicAddedBodypart": {
+      "label": "Organic added body part",
+      "description": "If true, this replacement body part is organic rather than artificial.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "deprioritizeHealing": {
+      "label": "Deprioritize healing",
+      "description": "If true, natural healing deprioritizes this hediff.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "clearsEgo": {
+      "label": "Clears ego",
+      "description": "If true, applying this hediff clears the pawn's ego.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "aptitudes": {
+      "label": "Aptitudes",
+      "description": "Skill aptitude adjustments. Child element names are SkillDef defNames; text is the integer level.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Aptitude" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "skill",
+      "valueField": "level",
+      "keyReference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "removeOnRedressChanceByDaysCurve": {
+      "label": "Remove on redress chance by days curve",
+      "description": "Curve mapping days since last dressed to chance of removal on redress.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "removeOnQuestLodgers": {
+      "label": "Remove on quest lodgers",
+      "description": "If true, removed when a quest lodger joins the colony.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "removeOnRedressIfNotOfKind": {
+      "label": "Remove on redress if not of kind",
+      "description": "List of PawnKindDefs. If set, this hediff is removed on redress unless the pawn is one of these kinds.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "displayWound": {
+      "label": "Display wound",
+      "description": "If true, a wound graphic is shown on the pawn's body.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "woundAnchorRange": {
+      "label": "Wound anchor range",
+      "description": "Radius within which the wound graphic anchor is randomly placed on the body part.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "defaultLabelColor": {
+      "label": "Default label color",
+      "description": "Color used for this hediff's label in UI. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1, 1, 1, 1)", "(0.9, 0.2, 0.2, 1)"]
+    },
+    "renderNodeProperties": {
+      "label": "Render node properties",
+      "description": "Pawn render node configurations while this hediff is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnRenderNodeProperties" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "skinColorOverride": {
+      "label": "Skin color override",
+      "description": "Color replacing the pawn's skin color. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.3, 0.8, 0.3, 1)"]
+    },
+    "skinColorTint": {
+      "label": "Skin color tint",
+      "description": "Color multiplied with the pawn's skin color. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.5, 0.5, 1, 1)"]
+    },
+    "skinColorTintStrength": {
+      "label": "Skin color tint strength",
+      "description": "How strongly the skin tint is applied (0–1).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "skinShader": {
+      "label": "Skin shader",
+      "description": "ShaderTypeDef used to render pawn skin while active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ShaderTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "forceRenderTreeRecache": {
+      "label": "Force render tree recache",
+      "description": "If true, pawn render tree cache is invalidated on add/remove.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "injuryProps": {
+      "label": "Injury props",
+      "description": "Physical injury properties such as bleeding rate and pain coefficients.",
+      "type": { "kind": "object", "schemaRef": "InjuryProps" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "addedPartProps": {
+      "label": "Added part props",
+      "description": "Properties for prosthetics, bionics, and other replacement body parts.",
+      "type": { "kind": "object", "schemaRef": "AddedBodyPartProps" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "reportStringOverrides": {
+      "label": "Report string overrides",
+      "description": "Custom inspect strings for specific jobs while the pawn has this hediff.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ReportStringOverride" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "labelNoun": {
+      "label": "Label noun",
+      "description": "Noun form of the hediff label for grammatical contexts.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "battleStateLabel": {
+      "label": "Battle state label",
+      "description": "Label shown in the battle log when referenced as a cause or effect.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelNounPretty": {
+      "label": "Label noun (pretty)",
+      "description": "Prettier noun form for formal UI contexts.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "targetPrefix": {
+      "label": "Target prefix",
+      "description": "Prefix used when naming targeted body-part variants of this hediff.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-hediff": {
+      "label": "Basic hediff",
+      "description": "A simple hediff with one stage.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": { "initialSeverity": 0.001, "stages": [{}] }
+    },
+    "staged-hediff": {
+      "label": "Staged hediff",
+      "description": "A hediff with multiple severity-based stages.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": { "initialSeverity": 0.001, "lethalSeverity": 1.0, "stages": [{}, {}] }
+    }
+  }
+}

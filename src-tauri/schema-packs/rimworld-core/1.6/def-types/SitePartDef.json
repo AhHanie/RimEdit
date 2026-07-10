@@ -1,0 +1,343 @@
+{
+  "defType": "SitePartDef",
+  "label": "Site part",
+  "description": "Defines one component of a world site. Multiple site parts can be stacked to compose a site's threat level, worker behavior, incoming letter, and loot.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "conditionCauserDef",
+    "activeThreatDisturbanceFactor",
+    "defaultHidden",
+    "workerClass",
+    "siteTexture",
+    "expandingIconTexture",
+    "forceMutators",
+    "applyFactionColorToSiteTexture",
+    "showFactionInInspectString",
+    "requiresFaction",
+    "disallowsAutomaticDetectionTimerStart",
+    "minFactionTechLevel",
+    "approachOrderString",
+    "approachingReportString",
+    "tags",
+    "excludesTags",
+    "arrivedLetter",
+    "arrivedLetterLabelPart",
+    "arrivedLetterHediffHyperlinks",
+    "arrivedLetterDef",
+    "wantsThreatPoints",
+    "minThreatPoints",
+    "increasesPopulation",
+    "badEvenIfNoMap",
+    "forceExitAndRemoveMapCountdownDurationDays",
+    "handlesWorldObjectTimeoutInspectString",
+    "mainPartAllThreatsLabel",
+    "minMapSize",
+    "selectionWeight",
+    "considerEnteringAsAttack",
+    "gravShipsCanLandOn",
+    "copyQuestName",
+    "leaveAbandonedSettlement",
+    "displayOnInspectPane",
+    "lootTable"
+  ],
+  "fields": {
+    "conditionCauserDef": {
+      "label": "Condition causer def",
+      "description": "ThingDef for the game condition causer spawned on the map when this site part is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "activeThreatDisturbanceFactor": {
+      "label": "Active threat disturbance factor",
+      "description": "Multiplier applied to disturbance events while the site part's threat is active. Default 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "defaultHidden": {
+      "label": "Default hidden",
+      "description": "If true, this site part is hidden from the player by default and does not show in the site description.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# SitePartWorker subclass that implements this part's runtime behavior. Defaults to SitePartWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "siteTexture": {
+      "label": "Site texture",
+      "description": "Texture path used as the primary icon for the world site when this part is the main part.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["World/WorldObjects/Sites/Mining", "World/WorldObjects/Sites/Outpost"]
+    },
+    "expandingIconTexture": {
+      "label": "Expanding icon texture",
+      "description": "Texture path shown in the expanding world view icon for this site part.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["World/WorldObjects/Expanding/Sites/Mining"]
+    },
+    "forceMutators": {
+      "label": "Force mutators",
+      "description": "TileMutatorDefs that are always applied to the world tile when this site part generates a map.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "TileMutatorDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "applyFactionColorToSiteTexture": {
+      "label": "Apply faction color to site texture",
+      "description": "If true, the site texture is tinted to the owning faction's color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showFactionInInspectString": {
+      "label": "Show faction in inspect string",
+      "description": "If true, the owning faction is shown in the site inspect pane.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiresFaction": {
+      "label": "Requires faction",
+      "description": "If true, this site part can only be generated for sites that have an owning faction.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disallowsAutomaticDetectionTimerStart": {
+      "label": "Disallows automatic detection timer start",
+      "description": "If true, the automatic detection countdown does not start when the player first sees this site.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minFactionTechLevel": {
+      "label": "Min faction tech level",
+      "description": "Minimum TechLevel required for the owning faction for this site part to be eligible.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Undefined",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Animal", "Neolithic", "Medieval", "Industrial", "Spacer", "Ultra", "Archotech"]
+      }
+    },
+    "approachOrderString": {
+      "label": "Approach order string",
+      "description": "Translated string shown as the action label for approaching or raiding this site.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "approachingReportString": {
+      "label": "Approaching report string",
+      "description": "Translated string shown in the caravan report while the player's caravan is travelling to this site.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "Free-form string tags for this site part. Used by CompatibleWith checks and quest generation filters.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "excludesTags": {
+      "label": "Excludes tags",
+      "description": "Tags of site parts that cannot coexist on the same site as this part.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "arrivedLetter": {
+      "label": "Arrived letter",
+      "description": "Translated letter body text sent to the player when the caravan arrives at this site.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "arrivedLetterLabelPart": {
+      "label": "Arrived letter label part",
+      "description": "Translated string appended to the letter title when the caravan arrives at this site.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "arrivedLetterHediffHyperlinks": {
+      "label": "Arrived letter hediff hyperlinks",
+      "description": "HediffDefs shown as hyperlinks in the arrival letter for this site part.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "arrivedLetterDef": {
+      "label": "Arrived letter def",
+      "description": "LetterDef that determines the color, icon, and pause behavior of the arrival letter.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LetterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "wantsThreatPoints": {
+      "label": "Wants threat points",
+      "description": "If true, threat points from the storyteller are passed to this site part to scale enemy strength.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minThreatPoints": {
+      "label": "Min threat points",
+      "description": "Minimum threat point value used when wantsThreatPoints is true.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "increasesPopulation": {
+      "label": "Increases population",
+      "description": "If true, entering this site and completing it counts toward colony population growth for the storyteller.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "badEvenIfNoMap": {
+      "label": "Bad even if no map",
+      "description": "If true, this site part is considered a negative presence even if no map was generated for it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forceExitAndRemoveMapCountdownDurationDays": {
+      "label": "Force exit and remove map countdown duration days",
+      "description": "Number of in-game days before the game forces the player's caravan to exit and removes the map.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 4,
+      "xml": "element"
+    },
+    "handlesWorldObjectTimeoutInspectString": {
+      "label": "Handles world object timeout inspect string",
+      "description": "If true, this site part is responsible for displaying the timeout countdown in the inspect pane instead of the default handler.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mainPartAllThreatsLabel": {
+      "label": "Main part all threats label",
+      "description": "Label string used when listing all active threats on a site in the UI. Can be empty to suppress the label.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "minMapSize": {
+      "label": "Min map size",
+      "description": "Minimum map size (x, y, z) required when this site part generates a map. Written as '(200, 0, 200)'.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(200, 0, 200)", "(250, 1, 250)"]
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative weight for random selection of this site part by the quest or site generation system.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "considerEnteringAsAttack": {
+      "label": "Consider entering as attack",
+      "description": "If true, the player's caravan entering this site counts as an attack and triggers appropriate faction reactions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "gravShipsCanLandOn": {
+      "label": "Grav ships can land on",
+      "description": "If true, gravity ships are allowed to land at this site.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "copyQuestName": {
+      "label": "Copy quest name",
+      "description": "If true, this site part copies the quest name as its own label in the world view.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "leaveAbandonedSettlement": {
+      "label": "Leave abandoned settlement",
+      "description": "If true, an abandoned settlement world object is left on the tile after the site is cleared.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayOnInspectPane": {
+      "label": "Display on inspect pane",
+      "description": "If true, this site part is listed in the site's inspect pane.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "lootTable": {
+      "label": "Loot table",
+      "description": "List of things that can be looted from this site part, each with a selection weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "WorkSiteLootThing" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "basic-site-part": {
+      "label": "Basic site part",
+      "description": "Minimal site part with a label and default behavior.",
+      "includeRequiredFields": true,
+      "promptFields": ["label"],
+      "fieldValues": {}
+    },
+    "threat-site-part": {
+      "label": "Threat site part",
+      "description": "Site part that uses threat points to scale enemy strength.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "workerClass"],
+      "fieldValues": {
+        "wantsThreatPoints": "true",
+        "considerEnteringAsAttack": "true"
+      }
+    }
+  }
+}

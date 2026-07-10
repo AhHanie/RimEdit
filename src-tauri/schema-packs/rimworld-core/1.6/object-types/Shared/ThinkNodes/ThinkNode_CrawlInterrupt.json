@@ -1,0 +1,23 @@
+{
+  "objectType": "ThinkNode_CrawlInterrupt",
+  "label": "Think node crawl interrupt",
+  "description": "Alternates the crawling pawn between active crawl ticks and rest-pause ticks. Controls the rhythm via two IntRange durations.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": ["crawlDurationTicksRange", "ticksBetweenCrawlsRange"],
+  "fields": {
+    "crawlDurationTicksRange": {
+      "label": "Crawl duration ticks range",
+      "description": "Random range in ticks for how long the pawn actively crawls before the next rest pause.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "ticksBetweenCrawlsRange": {
+      "label": "Ticks between crawls range",
+      "description": "Random range in ticks for how long the pawn rests between crawl bursts.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

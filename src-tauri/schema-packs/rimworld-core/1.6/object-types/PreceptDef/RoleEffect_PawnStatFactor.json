@@ -1,0 +1,45 @@
+{
+  "objectType": "RoleEffect_PawnStatFactor",
+  "label": "Role effect (pawn stat factor)",
+  "description": "Multiplies a pawn stat while holding this role.",
+  "fieldOrder": ["Class", "label", "labelKey", "statDef", "modifier"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleEffect subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Label shown for this role effect.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the role effect label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "statDef": {
+      "label": "Stat def",
+      "description": "The stat to multiply.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "modifier": {
+      "label": "Modifier",
+      "description": "Multiplicative factor applied to the stat.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

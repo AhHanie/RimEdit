@@ -1,0 +1,74 @@
+{
+  "defType": "ExpectationDef",
+  "label": "Expectation",
+  "description": "Defines an expectation tier used for colony wealth, pawn mood, recreation requirements, titles, roles, and ritual quality.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "order",
+    "thoughtStage",
+    "maxMapWealth",
+    "joyToleranceDropPerDay",
+    "ritualQualityOffset",
+    "joyKindsNeeded",
+    "forRoles"
+  ],
+  "fields": {
+    "order": {
+      "label": "Order",
+      "description": "Numeric rank used to sort and compare expectation tiers. Must be zero or greater; the runtime reports a config error for negative values.",
+      "type": { "kind": "integer" },
+      "required": true,
+      "xml": "element",
+      "validationHints": { "min": 0 }
+    },
+    "thoughtStage": {
+      "label": "Thought stage",
+      "description": "Zero-based stage index selected by ThoughtWorker_Expectations for the active expectation thought. Negative one means no stage is assigned.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "maxMapWealth": {
+      "label": "Maximum map wealth",
+      "description": "Exclusive colony wealth threshold used during expectation-tier selection. Values below zero disable wealth-triggered selection for this tier; a non-negative value makes the tier eligible when the current map wealth is less than this threshold.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "joyToleranceDropPerDay": {
+      "label": "Joy tolerance drop per day",
+      "description": "Daily rate at which recreation tolerance decays for pawns at this expectation tier, used by JoyToleranceSet and displayed in pawn recreation information.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "ritualQualityOffset": {
+      "label": "Ritual quality offset",
+      "description": "Signed offset applied to ritual outcome quality calculations for pawns at this expectation tier. Negative values lower ritual quality; positive values raise it.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "joyKindsNeeded": {
+      "label": "Joy kinds needed",
+      "description": "Number of distinct recreation kinds that must be available before the insufficient-joy-sources alert is considered satisfied for pawns at this tier.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "forRoles": {
+      "label": "For roles",
+      "description": "When true, this tier is included in the role-specific expectation lookup used by Ideology roles. Wealth-triggered and role-triggered tiers are tracked independently.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {}
+}

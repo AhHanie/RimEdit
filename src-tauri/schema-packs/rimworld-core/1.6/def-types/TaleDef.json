@@ -1,0 +1,177 @@
+{
+  "defType": "TaleDef",
+  "label": "Tale",
+  "description": "Defines an event recorded by the tale recorder and used for history, memories, art generation, and generated text.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "type",
+    "taleClass",
+    "usableForArt",
+    "colonistOnly",
+    "usableWithChildren",
+    "maxPerPawn",
+    "ignoreChance",
+    "expireDays",
+    "rulePack",
+    "firstPawnSymbol",
+    "secondPawnSymbol",
+    "defSymbol",
+    "defType",
+    "baseInterest",
+    "historyGraphColor"
+  ],
+  "fields": {
+    "type": {
+      "label": "Type",
+      "description": "Lifetime and history behavior of this tale. Volatile tales are discarded when unused; Expirable tales age out after expireDays; PermanentHistorical tales persist indefinitely.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Volatile",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Volatile", "Expirable", "PermanentHistorical"] }
+    },
+    "taleClass": {
+      "label": "Tale class",
+      "description": "C# Tale subclass used to record data when this tale fires. Common values: Tale, Tale_SinglePawn, Tale_DoublePawn, Tale_SinglePawnAndDef, Tale_DoublePawnAndDef, Tale_SinglePawnAndThing, Tale_DoublePawnKilledBy. Modders can add custom subclasses.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Tale",
+        "Tale_SinglePawn",
+        "Tale_DoublePawn",
+        "Tale_SinglePawnAndThing",
+        "Tale_SinglePawnAndDef",
+        "Tale_DoublePawnAndDef",
+        "Tale_DoublePawnAndTrader",
+        "Tale_DoublePawnKilledBy"
+      ]
+    },
+    "usableForArt": {
+      "label": "Usable for art",
+      "description": "Whether this tale can be selected as the subject for art descriptions and inspiration text. Should pair with a positive baseInterest.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "colonistOnly": {
+      "label": "Colonist only",
+      "description": "Whether recording is restricted to colonist-related events. If true, the tale is not recorded for non-colonist pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "usableWithChildren": {
+      "label": "Usable with children",
+      "description": "Whether child pawns can participate in this tale.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "maxPerPawn": {
+      "label": "Max per pawn",
+      "description": "Maximum number of this tale that can be recorded for one pawn. -1 means unlimited.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "ignoreChance": {
+      "label": "Ignore chance",
+      "description": "Probability (0–1) that the tale is silently skipped when the triggering event fires.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element",
+      "validationHints": { "min": 0, "max": 1 }
+    },
+    "expireDays": {
+      "label": "Expire days",
+      "description": "Age in in-game days before an Expirable tale is discarded if unused. -1 means no expiry. Non-Expirable types should leave this at -1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "rulePack": {
+      "label": "Rule pack",
+      "description": "Grammar rules used when this tale is referenced in generated text, art descriptions, or battle logs.",
+      "type": { "kind": "object", "schemaRef": "RulePack" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": false
+    },
+    "firstPawnSymbol": {
+      "label": "First pawn symbol",
+      "description": "Grammar variable prefix for the first pawn in double-pawn tale classes (e.g. Tale_DoublePawn). The source warns if this is missing or set to the default string 'pawn'.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "secondPawnSymbol": {
+      "label": "Second pawn symbol",
+      "description": "Grammar variable prefix for the second pawn in double-pawn tale classes (e.g. Tale_DoublePawn). The source warns if this is missing or set to the default string 'pawn'.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "defSymbol": {
+      "label": "Def symbol",
+      "description": "Grammar variable prefix for the Def payload in AndDef tale classes (e.g. Tale_SinglePawnAndDef, Tale_DoublePawnAndDef).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "defType": {
+      "label": "Def type",
+      "description": "Def class used to generate test data and interpret the Def payload in AndDef tale classes. This is a type name (e.g. ThingDef, SkillDef), not a specific Def instance. Defaults to ThingDef.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "ThingDef",
+      "xml": "element",
+      "examples": ["ThingDef", "HediffDef", "PawnCapacityDef", "ResearchProjectDef", "SkillDef", "TrainableDef"]
+    },
+    "baseInterest": {
+      "label": "Base interest",
+      "description": "Contribution to art selection and tale interest scoring. Should pair with usableForArt = true when positive.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "historyGraphColor": {
+      "label": "History graph color",
+      "description": "Color used for this tale's entry in the history graph.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1,1,1)", "(0.8, 0.45, 0.45)", "(0.46, 0.98, 0.97)"]
+    }
+  },
+  "templates": {
+    "basic-tale": {
+      "label": "Basic tale",
+      "description": "Minimal single-pawn tale with a rule pack for generated text.",
+      "includeRequiredFields": true,
+      "promptFields": ["type", "taleClass"],
+      "fieldValues": {
+        "taleClass": "Tale_SinglePawn",
+        "usableForArt": "true",
+        "baseInterest": "1"
+      }
+    },
+    "art-tale": {
+      "label": "Art-eligible tale",
+      "description": "Tale configured for art and history graph display with interest scoring.",
+      "includeRequiredFields": true,
+      "promptFields": ["type", "taleClass", "firstPawnSymbol"],
+      "fieldValues": {
+        "usableForArt": "true",
+        "baseInterest": "1"
+      }
+    }
+  }
+}

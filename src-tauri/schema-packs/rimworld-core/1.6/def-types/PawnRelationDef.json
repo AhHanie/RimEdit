@@ -1,0 +1,202 @@
+{
+  "defType": "PawnRelationDef",
+  "label": "Pawn relation",
+  "description": "Defines a social relationship between two pawns (e.g. Spouse, Parent, Sibling). Referenced by FactionDef.royalTitleInheritanceRelations to specify which family relations can inherit royal titles.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "labelFemale",
+    "importance",
+    "implied",
+    "reflexive",
+    "opinionOffset",
+    "generationChanceFactor",
+    "romanceChanceFactor",
+    "incestOpinionOffset",
+    "familyByBloodRelation",
+    "removeOnDeath",
+    "removeOnLeftBehind",
+    "inbredChanceOnChild",
+    "diedThought",
+    "diedThoughtFemale",
+    "lostThought",
+    "lostThoughtFemale",
+    "soldThoughts",
+    "killedThought",
+    "killedThoughtFemale"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class that implements the generation and logic for this relation. Must be a subclass of PawnRelationWorker.",
+      "type": { "kind": "typeName" },
+      "xml": "element",
+      "required": false,
+      "examples": [
+        "PawnRelationWorker_Parent",
+        "PawnRelationWorker_Child",
+        "PawnRelationWorker_Sibling",
+        "PawnRelationWorker_Spouse",
+        "PawnRelationWorker_Fiance",
+        "PawnRelationWorker_Lover",
+        "PawnRelationWorker_ExSpouse",
+        "PawnRelationWorker_ExLover",
+        "PawnRelationWorker_Overseer"
+      ]
+    },
+    "labelFemale": {
+      "label": "Label (female)",
+      "description": "Gender-specific label used when the pawn with this relation is female.",
+      "type": { "kind": "localizedString" },
+      "xml": "element",
+      "required": false
+    },
+    "importance": {
+      "label": "Importance",
+      "description": "Numeric weight controlling how significant this relation is relative to others.",
+      "type": { "kind": "float" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": 0
+    },
+    "implied": {
+      "label": "Implied",
+      "description": "If true, this relation is automatically generated from other relations rather than stored explicitly. Cannot be true at the same time as reflexive.",
+      "type": { "kind": "boolean" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": false
+    },
+    "reflexive": {
+      "label": "Reflexive",
+      "description": "If true, creating this relation from A to B also creates it from B to A. Cannot be true at the same time as implied.",
+      "type": { "kind": "boolean" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": false
+    },
+    "opinionOffset": {
+      "label": "Opinion offset",
+      "description": "Flat bonus or penalty to opinion between the two pawns in this relation.",
+      "type": { "kind": "integer" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": 0
+    },
+    "generationChanceFactor": {
+      "label": "Generation chance factor",
+      "description": "Multiplier on the chance that this relation is generated during pawn generation.",
+      "type": { "kind": "float" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": 0
+    },
+    "romanceChanceFactor": {
+      "label": "Romance chance factor",
+      "description": "Multiplier on the chance that romance attempts occur between pawns with this relation.",
+      "type": { "kind": "float" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": 1
+    },
+    "incestOpinionOffset": {
+      "label": "Incest opinion offset",
+      "description": "Opinion modifier applied when a pawn in this relation is involved in an incestuous romance.",
+      "type": { "kind": "integer" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": 0
+    },
+    "familyByBloodRelation": {
+      "label": "Family by blood",
+      "description": "If true, this is a blood family relation (parent, child, sibling, etc.) rather than a chosen relation.",
+      "type": { "kind": "boolean" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": false
+    },
+    "removeOnDeath": {
+      "label": "Remove on death",
+      "description": "If true, this relation is removed from the surviving pawn when the other pawn dies.",
+      "type": { "kind": "boolean" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": false
+    },
+    "removeOnLeftBehind": {
+      "label": "Remove on left behind",
+      "description": "If true, this relation is removed when one pawn leaves the colony map and is not recoverable.",
+      "type": { "kind": "boolean" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": false
+    },
+    "inbredChanceOnChild": {
+      "label": "Inbred chance on child",
+      "description": "Chance that a child born from parents with this relation to each other has the Inbred trait.",
+      "type": { "kind": "float" },
+      "xml": "element",
+      "required": false,
+      "defaultValue": 0
+    },
+    "diedThought": {
+      "label": "Died thought",
+      "description": "Thought given when the pawn with this relation dies.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" },
+      "xml": "element",
+      "required": false
+    },
+    "diedThoughtFemale": {
+      "label": "Died thought (female)",
+      "description": "Gender-specific died thought used when the pawn with this relation is female.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" },
+      "xml": "element",
+      "required": false
+    },
+    "lostThought": {
+      "label": "Lost thought",
+      "description": "Thought given when the pawn with this relation goes missing or is lost.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" },
+      "xml": "element",
+      "required": false
+    },
+    "lostThoughtFemale": {
+      "label": "Lost thought (female)",
+      "description": "Gender-specific lost thought used when the pawn with this relation is female.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" },
+      "xml": "element",
+      "required": false
+    },
+    "soldThoughts": {
+      "label": "Sold thoughts",
+      "description": "Thoughts given when the pawn with this relation is sold into slavery.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+      },
+      "xml": "listOfLi",
+      "required": false
+    },
+    "killedThought": {
+      "label": "Killed thought",
+      "description": "Thought given when the pawn with this relation is killed by someone.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" },
+      "xml": "element",
+      "required": false
+    },
+    "killedThoughtFemale": {
+      "label": "Killed thought (female)",
+      "description": "Gender-specific killed thought used when the pawn with this relation is female.",
+      "type": { "kind": "defReference" },
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" },
+      "xml": "element",
+      "required": false
+    }
+  }
+}

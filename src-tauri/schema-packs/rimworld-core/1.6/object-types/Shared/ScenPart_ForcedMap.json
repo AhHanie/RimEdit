@@ -1,0 +1,33 @@
+{
+  "objectType": "ScenPart_ForcedMap",
+  "label": "Forced map",
+  "description": "Forces the starting map to be generated with a specific map generator and planet layer.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "mapGenerator", "layerDef"],
+  "fields": {
+    "mapGenerator": {
+      "label": "Map generator",
+      "description": "MapGeneratorDef used to generate the starting map.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MapGeneratorDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "layerDef": {
+      "label": "Layer def",
+      "description": "PlanetLayerDef for the planet layer on which the starting map is generated.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PlanetLayerDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

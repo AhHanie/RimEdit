@@ -1,0 +1,34 @@
+{
+  "defType": "SurgeryOutcomeEffectDef",
+  "label": "Surgery outcome effect",
+  "description": "Defines the comp-based quality modifiers and concrete outcome list for a surgery. Referenced by RecipeDef via surgeryOutcomeEffect.",
+  "inherits": ["Def"],
+  "fieldOrder": ["comps", "outcomes"],
+  "fields": {
+    "comps": {
+      "label": "Comps",
+      "description": "List of quality modifier comps evaluated to compute the final surgery quality. Each li element selects a comp class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SurgeryOutcomeComp" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "outcomes": {
+      "label": "Outcomes",
+      "description": "List of possible surgery outcomes in ascending quality order. Each li element selects an outcome class via the Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SurgeryOutcome" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "new-surgery-outcome-effect": {
+      "label": "New surgery outcome effect",
+      "description": "Minimal surgery outcome effect scaffold with empty comps and outcomes lists.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

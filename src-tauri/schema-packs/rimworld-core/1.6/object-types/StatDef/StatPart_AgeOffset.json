@@ -1,0 +1,46 @@
+{
+  "objectType": "StatPart_AgeOffset",
+  "label": "Stat part (age offset)",
+  "description": "Adds an offset to the stat determined by a curve evaluated against the pawn's age.",
+  "fieldOrder": ["Class", "priority", "curve", "useBiologicalYears", "humanlikeOnly"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Piecewise linear curve mapping age to the stat offset.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "useBiologicalYears": {
+      "label": "Use biological years",
+      "description": "If true, biological age is used instead of chronological age.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "humanlikeOnly": {
+      "label": "Humanlike only",
+      "description": "If true, this part only applies to humanlike pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

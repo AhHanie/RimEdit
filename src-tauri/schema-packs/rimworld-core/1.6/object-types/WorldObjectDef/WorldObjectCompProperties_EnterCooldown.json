@@ -1,0 +1,25 @@
+{
+  "objectType": "WorldObjectCompProperties_EnterCooldown",
+  "label": "Enter cooldown comp",
+  "description": "Adds a cooldown after the player enters or leaves a map at this world object.",
+  "inherits": ["WorldObjectCompProperties"],
+  "fieldOrder": ["autoStartOnMapRemoved", "durationDays"],
+  "fields": {
+    "autoStartOnMapRemoved": {
+      "label": "Auto start on map removed",
+      "description": "If true, the cooldown timer starts automatically when the map is removed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "durationDays": {
+      "label": "Duration days",
+      "description": "Length of the enter cooldown in in-game days.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

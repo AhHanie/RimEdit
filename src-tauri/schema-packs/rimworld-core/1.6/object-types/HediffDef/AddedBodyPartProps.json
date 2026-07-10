@@ -1,0 +1,45 @@
+{
+  "objectType": "AddedBodyPartProps",
+  "label": "Added body part props",
+  "description": "Properties for prosthetics, bionics, and other replacement body part hediffs.",
+  "fieldOrder": [
+    "betterThanNatural",
+    "solid",
+    "isGoodImplant",
+    "partEfficiency"
+  ],
+  "fields": {
+    "betterThanNatural": {
+      "label": "Better than natural",
+      "description": "If true, this replacement part is superior to the natural body part and provides enhanced capacity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "solid": {
+      "label": "Solid",
+      "description": "If true, this part is rigid and cannot be damaged by most injury types.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isGoodImplant": {
+      "label": "Is good implant",
+      "description": "If true, this implant is considered beneficial and does not count against prisoner sale value.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "partEfficiency": {
+      "label": "Part efficiency",
+      "description": "Efficiency of this replacement part relative to the natural body part. 1.0 equals natural; higher values improve capacity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

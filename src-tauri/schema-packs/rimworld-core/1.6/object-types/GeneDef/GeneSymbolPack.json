@@ -1,0 +1,36 @@
+{
+  "objectType": "GeneSymbolPack",
+  "label": "Gene symbol pack",
+  "description": "Provides weighted lists of name symbols used when generating gene-named xenotype names.",
+  "fieldOrder": [
+    "prefixSymbols",
+    "suffixSymbols",
+    "wholeNameSymbols"
+  ],
+  "fields": {
+    "prefixSymbols": {
+      "label": "Prefix symbols",
+      "description": "Weighted symbols placed before the root in generated names.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "GeneSymbolPackWeightedSymbol" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "suffixSymbols": {
+      "label": "Suffix symbols",
+      "description": "Weighted symbols placed after the root in generated names.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "GeneSymbolPackWeightedSymbol" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "wholeNameSymbols": {
+      "label": "Whole name symbols",
+      "description": "Weighted symbols used as the entire generated name.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "GeneSymbolPackWeightedSymbol" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

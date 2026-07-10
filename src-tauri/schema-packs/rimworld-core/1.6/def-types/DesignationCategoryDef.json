@@ -1,0 +1,79 @@
+{
+  "defType": "DesignationCategoryDef",
+  "label": "Designation category",
+  "description": "Defines an Architect menu tab that groups related designators and build options. Each category appears as a tab button in the lower Architect panel.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "specialDesignatorClasses",
+    "order",
+    "showPowerGrid",
+    "researchPrerequisites",
+    "minMonolithLevel",
+    "preferredColumn"
+  ],
+  "fields": {
+    "specialDesignatorClasses": {
+      "label": "Special designator classes",
+      "description": "C# Designator subclass names added to this category at startup. These are type names, not def references.",
+      "type": { "kind": "list" },
+      "items": { "kind": "typeName" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "order": {
+      "label": "Order",
+      "description": "Sort order of this tab in the Architect panel. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "showPowerGrid": {
+      "label": "Show power grid",
+      "description": "If true, the power grid overlay is drawn while this category tab is selected.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "researchPrerequisites": {
+      "label": "Research prerequisites",
+      "description": "ResearchProjectDef entries that must be completed before this category tab becomes visible.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": {
+          "defType": "ResearchProjectDef",
+          "allowAbstract": false,
+          "scope": "allSources"
+        }
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "minMonolithLevel": {
+      "label": "Min monolith level",
+      "description": "Minimum monolith activation level required before this category tab becomes visible. Used by Anomaly content.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "preferredColumn": {
+      "label": "Preferred column",
+      "description": "Preferred column index in the Architect panel for designators in this category. Absent means no preference.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-category": {
+      "label": "Basic category",
+      "description": "Minimal Architect category with a def name, label, sort order, and designator class list.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "order", "specialDesignatorClasses"],
+      "fieldValues": {}
+    }
+  }
+}

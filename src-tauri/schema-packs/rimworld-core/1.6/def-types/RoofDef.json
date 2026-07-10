@@ -1,0 +1,64 @@
+{
+  "defType": "RoofDef",
+  "label": "Roof",
+  "description": "Defines a type of roof that can cover map cells. Controls collapse behavior, filth, and thickness.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "isNatural",
+    "isThickRoof",
+    "collapseLeavingThingDef",
+    "filthLeaving",
+    "soundPunchThrough",
+    "canCollapse"
+  ],
+  "fields": {
+    "isNatural": {
+      "label": "Is natural",
+      "description": "If true, this roof is a natural rock roof rather than a constructed one.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isThickRoof": {
+      "label": "Is thick roof",
+      "description": "If true, this roof is a thick rock roof that does not vanish on collapse.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "collapseLeavingThingDef": {
+      "label": "Collapse leaving thing def",
+      "description": "ThingDef spawned when this roof collapses.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "filthLeaving": {
+      "label": "Filth leaving",
+      "description": "ThingDef used as the filth type left behind when this roof collapses.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundPunchThrough": {
+      "label": "Sound punch through",
+      "description": "SoundDef played when something punches through this roof.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canCollapse": {
+      "label": "Can collapse",
+      "description": "If true, this roof can collapse when the supporting walls are destroyed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

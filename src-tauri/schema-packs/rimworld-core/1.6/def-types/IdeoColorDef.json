@@ -1,0 +1,30 @@
+{
+  "defType": "IdeoColorDef",
+  "label": "Ideo color",
+  "description": "Defines an ideology color option by referencing a ColorDef and optional meme or culture filters. Inherits meme and culture filters from IdeoSymbolPartDef.",
+  "inherits": ["IdeoSymbolPartDef"],
+  "fieldOrder": ["colorDef"],
+  "fields": {
+    "colorDef": {
+      "label": "Color def",
+      "description": "ColorDef used when this ideology color option is selected. At runtime this should reference a ColorDef whose colorType is Ideo.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ColorDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "basic-ideo-color": {
+      "label": "Basic ideo color",
+      "description": "Minimal ideology color option with a def name and referenced ColorDef.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "colorDef"],
+      "fieldValues": {}
+    }
+  }
+}

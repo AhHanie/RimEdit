@@ -1,0 +1,31 @@
+{
+  "objectType": "IconForStuffAppearance",
+  "label": "Icon for stuff appearance",
+  "description": "Associates a build-menu icon path with a specific stuff appearance category.",
+  "fieldOrder": ["appearance", "iconPath"],
+  "fields": {
+    "appearance": {
+      "label": "Appearance",
+      "description": "StuffAppearanceDef reference identifying the stuff appearance this icon is used for.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StuffAppearanceDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path for the build-menu icon shown when the player has selected a stuff material with this appearance.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

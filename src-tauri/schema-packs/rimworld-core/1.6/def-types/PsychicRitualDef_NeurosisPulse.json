@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualDef_NeurosisPulse",
+  "label": "Psychic ritual -- neurosis pulse",
+  "description": "Ritual that sends a neurosis pulse to all nearby colonists, inducing mental breaks. Duration scales with ritual quality.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "durationDaysFromQualityCurve"
+  ],
+  "fields": {
+    "durationDaysFromQualityCurve": {
+      "label": "Duration days from quality curve",
+      "description": "Curve mapping ritual quality to the neurosis mood effect duration in days.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

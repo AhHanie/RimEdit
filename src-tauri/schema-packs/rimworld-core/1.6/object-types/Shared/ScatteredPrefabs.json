@@ -1,0 +1,43 @@
+{
+  "objectType": "ScatteredPrefabs",
+  "label": "Scattered prefabs",
+  "description": "A group of prefabs scattered around a generated structure.",
+  "fieldOrder": ["prefabs", "countPer10kCellsRange", "minSpacing", "maxDistFromStructure"],
+  "fields": {
+    "prefabs": {
+      "label": "Prefabs",
+      "description": "Weighted prefab entries. Each element name is the PrefabDef defName; scalar text is the weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PrefabScatterGroup" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "prefab",
+      "keyReference": { "defType": "PrefabDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "weight"
+    },
+    "countPer10kCellsRange": {
+      "label": "Count per 10k cells range",
+      "description": "How many scatter attempts per 10,000 map cells.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "0~0"
+    },
+    "minSpacing": {
+      "label": "Min spacing",
+      "description": "Minimum distance in cells between scattered prefab instances.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "maxDistFromStructure": {
+      "label": "Max dist from structure",
+      "description": "Maximum distance from the main structure that prefabs can be placed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    }
+  }
+}

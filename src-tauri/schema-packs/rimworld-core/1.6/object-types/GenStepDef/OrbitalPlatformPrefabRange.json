@@ -1,0 +1,23 @@
+{
+  "objectType": "OrbitalPlatformPrefabRange",
+  "label": "Orbital platform prefab range",
+  "description": "A PrefabDef with a count range for spawning exterior prefabs around an orbital platform.",
+  "fieldOrder": ["prefab", "countRange"],
+  "fields": {
+    "prefab": {
+      "label": "Prefab",
+      "description": "PrefabDef to spawn on the exterior of the orbital platform.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PrefabDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "Random range for the number of times this prefab is spawned.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AncientArmory",
+  "label": "Sketch resolver: Ancient armory",
+  "description": "Concrete RimWorld SketchResolver_AncientArmory resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

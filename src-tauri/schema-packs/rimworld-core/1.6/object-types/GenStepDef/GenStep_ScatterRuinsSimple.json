@@ -1,0 +1,94 @@
+{
+  "objectType": "GenStep_ScatterRuinsSimple",
+  "label": "Scatter ruins simple",
+  "description": "Scatters procedurally generated ruined structures of varying sizes across the map.",
+  "inherits": ["GenStep_Scatterer"],
+  "fieldOrder": [
+    "Class",
+    "count",
+    "countPer10kCellsRange",
+    "nearPlayerStart",
+    "nearMapCenter",
+    "minSpacing",
+    "spotMustBeStandable",
+    "minDistToPlayerStart",
+    "minDistToPlayerStartPct",
+    "minEdgeDist",
+    "minEdgeDistPct",
+    "extraNoBuildEdgeDist",
+    "validators",
+    "fallbackValidators",
+    "allowInWaterBiome",
+    "allowFoggedPositions",
+    "allowRoofed",
+    "onlyOnStartingMap",
+    "minPollution",
+    "allowMechanoidDatacoreReadOrLost",
+    "isJunk",
+    "warnOnFail",
+    "ruinSizeChanceCurve",
+    "destroyChanceExp",
+    "usedRectsPadding",
+    "clearSurroundingArea",
+    "mustBeStandable",
+    "canBeOnEdge",
+    "ignoreUsedRects"
+  ],
+  "fields": {
+    "ruinSizeChanceCurve": {
+      "label": "Ruin size chance curve",
+      "description": "SimpleCurve mapping room count to relative probability. Controls the distribution of ruin sizes.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "destroyChanceExp": {
+      "label": "Destroy chance exponent",
+      "description": "Exponent controlling how aggressively generated ruin structures are damaged.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.32,
+      "xml": "element"
+    },
+    "usedRectsPadding": {
+      "label": "Used rects padding",
+      "description": "Number of cells by which used rects are expanded when checking for overlap with ruin placement.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 2,
+      "xml": "element"
+    },
+    "clearSurroundingArea": {
+      "label": "Clear surrounding area",
+      "description": "Private field. When true, natural rock edifices adjacent to ruin walls are destroyed during placement.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mustBeStandable": {
+      "label": "Must be standable",
+      "description": "Private field. When true, the candidate scatter cell must be standable.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canBeOnEdge": {
+      "label": "Can be on edge",
+      "description": "Private field. When true, ruins may be placed at map edge cells.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreUsedRects": {
+      "label": "Ignore used rects",
+      "description": "Private field. When true, ruins are placed without checking or registering used rects.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

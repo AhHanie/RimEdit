@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_ScatterThingsNearPlayerStart",
+  "label": "Scatter things near player start",
+  "description": "Scatters a specific item around the player starting area on the map.",
+  "inherits": ["ScenPart_ThingCount"]
+}

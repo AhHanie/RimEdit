@@ -1,0 +1,17 @@
+{
+  "defType": "WorkGiverEquivalenceGroupDef",
+  "label": "Work giver equivalence group",
+  "description": "Marker Def that groups WorkGiverDefs the AI scheduler should treat as interchangeable within a single work slot. The class has no fields beyond the inherited Def identity block.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {},
+  "templates": {
+    "new-equivalence-group": {
+      "label": "New equivalence group",
+      "description": "A named group for interchangeable WorkGiverDefs.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName"],
+      "fieldValues": {}
+    }
+  }
+}

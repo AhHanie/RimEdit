@@ -1,0 +1,31 @@
+{
+  "objectType": "LayoutRoomWeight",
+  "label": "Layout room weight",
+  "description": "A weighted room type entry for a LayoutDef. The element name is the LayoutRoomDef defName; scalar text is the weight.",
+  "fieldOrder": ["def", "weight", "countRange"],
+  "fields": {
+    "def": {
+      "label": "Room def",
+      "description": "LayoutRoomDef defName. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "LayoutRoomDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative weight for random room type selection. May also be provided as a scalar text node on the element.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "How many rooms of this type can appear in the layout.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "0~2147483647"
+    }
+  }
+}

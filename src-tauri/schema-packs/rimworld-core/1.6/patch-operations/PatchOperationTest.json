@@ -1,0 +1,17 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationTest",
+  "label": "Test",
+  "description": "Succeeds only if xpath resolves to at least one node. Applies no changes; typically used with success=Invert or inside a Sequence/Conditional.",
+  "fieldOrder": ["xpath"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Condition checked against the current document.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    }
+  }
+}

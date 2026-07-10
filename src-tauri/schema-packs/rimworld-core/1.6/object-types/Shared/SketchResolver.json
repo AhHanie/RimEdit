@@ -1,0 +1,56 @@
+{
+  "objectType": "SketchResolver",
+  "label": "Sketch resolver",
+  "description": "Base schema for all SketchResolver objects. The Class attribute selects the concrete resolver type. Unknown class values are allowed so modded resolver classes remain editable.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "SketchResolver",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "SketchResolver_AddColumns": "SketchResolver_AddColumns",
+      "SketchResolver_AddCornerThings": "SketchResolver_AddCornerThings",
+      "SketchResolver_AddInnerMonuments": "SketchResolver_AddInnerMonuments",
+      "SketchResolver_AddThingsCentral": "SketchResolver_AddThingsCentral",
+      "SketchResolver_AddWallEdgeThings": "SketchResolver_AddWallEdgeThings",
+      "SketchResolver_AncientArmory": "SketchResolver_AncientArmory",
+      "SketchResolver_AncientBandNodeRoom": "SketchResolver_AncientBandNodeRoom",
+      "SketchResolver_AncientBarracks": "SketchResolver_AncientBarracks",
+      "SketchResolver_AncientConcretePad": "SketchResolver_AncientConcretePad",
+      "SketchResolver_AncientEquipmentRoom": "SketchResolver_AncientEquipmentRoom",
+      "SketchResolver_AncientHatch": "SketchResolver_AncientHatch",
+      "SketchResolver_AncientLab": "SketchResolver_AncientLab",
+      "SketchResolver_AncientLandingPad": "SketchResolver_AncientLandingPad",
+      "SketchResolver_AncientMechGeneratorRoom": "SketchResolver_AncientMechGeneratorRoom",
+      "SketchResolver_AncientMechGestatorRoom": "SketchResolver_AncientMechGestatorRoom",
+      "SketchResolver_AncientPowerRoom": "SketchResolver_AncientPowerRoom",
+      "SketchResolver_AncientRechargeRoom": "SketchResolver_AncientRechargeRoom",
+      "SketchResolver_AncientStorageRoom": "SketchResolver_AncientStorageRoom",
+      "SketchResolver_AncientUtilityBuilding": "SketchResolver_AncientUtilityBuilding",
+      "SketchResolver_AssignRandomStuff": "SketchResolver_AssignRandomStuff",
+      "SketchResolver_CerebrexCore": "SketchResolver_CerebrexCore",
+      "SketchResolver_DamageBuildings": "SketchResolver_DamageBuildings",
+      "SketchResolver_DamageBuildingsLight": "SketchResolver_DamageBuildingsLight",
+      "SketchResolver_FloorFill": "SketchResolver_FloorFill",
+      "SketchResolver_Gravship": "SketchResolver_Gravship",
+      "SketchResolver_MechCluster": "SketchResolver_MechCluster",
+      "SketchResolver_MechClusterWalls": "SketchResolver_MechClusterWalls",
+      "SketchResolver_MechhiveGuardOutpost": "SketchResolver_MechhiveGuardOutpost",
+      "SketchResolver_MechhiveLaunchPad": "SketchResolver_MechhiveLaunchPad",
+      "SketchResolver_MechhiveProcessorArray": "SketchResolver_MechhiveProcessorArray",
+      "SketchResolver_Monument": "SketchResolver_Monument",
+      "SketchResolver_MonumentRuin": "SketchResolver_MonumentRuin",
+      "SketchResolver_Symmetry": "SketchResolver_Symmetry"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# SketchResolver subclass selected by DirectXmlLoader.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "defType": "IdeoFoundationDef",
+  "label": "Ideo foundation",
+  "description": "Defines a foundation for an ideoligion (e.g. deity-based). The foundationClass implements the generation and UI behavior for ideoligions built on this foundation.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "foundationClass"
+  ],
+  "fields": {
+    "foundationClass": {
+      "label": "Foundation class",
+      "description": "C# IdeoFoundation subclass implementing this foundation's generation and UI behavior. Must derive from IdeoFoundation, which is abstract and cannot be used directly.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "IdeoFoundation_Deity"
+      ]
+    }
+  },
+  "templates": {
+    "new-ideo-foundation": {
+      "label": "New ideo foundation",
+      "description": "Minimal ideo foundation with a def name and label, leaving foundationClass for the user to fill in.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

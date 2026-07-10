@@ -1,0 +1,30 @@
+{
+  "objectType": "SkillGain",
+  "label": "Skill gain",
+  "description": "A skill level offset applied when this backstory is assigned to a pawn. Loaded from keyed child elements via LoadDataFromXmlCustom: element name is the SkillDef defName, text is the integer amount.",
+  "fieldOrder": [
+    "skill",
+    "amount"
+  ],
+  "fields": {
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef that this gain entry modifies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "amount": {
+      "label": "Amount",
+      "description": "Integer offset applied to the skill level. May be negative to penalize the skill.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

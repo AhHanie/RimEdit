@@ -1,0 +1,8 @@
+{
+  "objectType": "SoundParamSource_Underground",
+  "label": "Sound param source: underground",
+  "description": "Returns 1 if the sound source is underground, 0 otherwise.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class"],
+  "fields": {}
+}

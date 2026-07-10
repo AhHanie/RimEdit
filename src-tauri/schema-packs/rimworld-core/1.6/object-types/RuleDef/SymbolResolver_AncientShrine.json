@@ -1,0 +1,37 @@
+{
+  "objectType": "SymbolResolver_AncientShrine",
+  "label": "Ancient shrine resolver",
+  "description": "Generates an ancient shrine. Inherits base SymbolResolver fields and adds loot probability fields.",
+  "inherits": ["SymbolResolver"],
+  "fieldOrder": [
+    "Class",
+    "minRectSize",
+    "selectionWeight",
+    "techprintChance",
+    "bladelinkChance",
+    "psychicChance"
+  ],
+  "fields": {
+    "techprintChance": {
+      "label": "Techprint chance",
+      "description": "Probability (0–1) that a techprint is spawned inside the shrine.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "bladelinkChance": {
+      "label": "Bladelink chance",
+      "description": "Probability (0–1) that a bladelink weapon is spawned inside the shrine.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "psychicChance": {
+      "label": "Psychic chance",
+      "description": "Probability (0–1) that a psychic item is spawned inside the shrine.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

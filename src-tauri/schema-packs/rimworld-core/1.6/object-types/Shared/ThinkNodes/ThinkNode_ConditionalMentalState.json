@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalMentalState",
+  "label": "Think node conditional mental state",
+  "description": "Satisfied when the pawn's current mental state matches the specified MentalStateDef.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["state"],
+  "fields": {
+    "state": {
+      "label": "State",
+      "description": "The mental state the pawn must be in for this conditional to be satisfied.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "MentalStateDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

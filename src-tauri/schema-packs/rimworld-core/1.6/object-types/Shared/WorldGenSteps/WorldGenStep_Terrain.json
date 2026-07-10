@@ -1,0 +1,15 @@
+{
+  "objectType": "WorldGenStep_Terrain",
+  "label": "Terrain world gen step",
+  "description": "Assigns terrain types to world tiles based on noise and biome data.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

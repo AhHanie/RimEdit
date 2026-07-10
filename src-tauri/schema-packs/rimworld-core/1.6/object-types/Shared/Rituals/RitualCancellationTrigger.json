@@ -1,0 +1,24 @@
+{
+  "objectType": "RitualCancellationTrigger",
+  "label": "Ritual cancellation trigger",
+  "description": "Base schema for ritual cancellation triggers that abort the ritual when activated. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RitualCancellationTrigger",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "RitualCancellationTrigger_CannotScarify": "RitualCancellationTrigger_CannotScarify"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualCancellationTrigger subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

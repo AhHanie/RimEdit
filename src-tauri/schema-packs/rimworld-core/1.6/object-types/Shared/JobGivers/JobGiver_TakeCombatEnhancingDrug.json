@@ -1,0 +1,19 @@
+{
+  "objectType": "JobGiver_TakeCombatEnhancingDrug",
+  "label": "Job giver take combat enhancing drug",
+  "description": "Directs the pawn to consume a combat-enhancing drug from its inventory. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "onlyIfInDanger"
+  ],
+  "fields": {
+    "onlyIfInDanger": {
+      "label": "Only if in danger",
+      "description": "If true, the pawn takes the drug only when it is currently in danger.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

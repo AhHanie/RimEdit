@@ -1,0 +1,84 @@
+{
+  "objectType": "CompProperties_GravshipThruster",
+  "label": "Gravship thruster comp",
+  "description": "Comp properties for a gravship thruster building. Extends the gravship facility comp with visual flame and exhaust particle settings.",
+  "inherits": ["CompProperties_GravshipFacility"],
+  "fieldOrder": [
+    "exclusionAreaSize",
+    "exclusionAreaOffset",
+    "directionInfluence",
+    "flameOffsetsPerDirection",
+    "flameSize",
+    "flameShaderType",
+    "flameShaderParameters",
+    "exhaustSettings"
+  ],
+  "fields": {
+    "exclusionAreaSize": {
+      "label": "Exclusion area size",
+      "description": "Size of the cell area excluded by this thruster as (x, y, z) with integer components.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0, 0, 0)",
+      "xml": "element"
+    },
+    "exclusionAreaOffset": {
+      "label": "Exclusion area offset",
+      "description": "Offset of the exclusion area from the thruster position as (x, y, z) with integer components.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0, 0, 0)",
+      "xml": "element"
+    },
+    "directionInfluence": {
+      "label": "Direction influence",
+      "description": "How much this thruster contributes to the gravship's direction of travel.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "flameOffsetsPerDirection": {
+      "label": "Flame offsets per direction",
+      "description": "World-space flame draw offsets per rotation direction. Typically four entries in order: North, East, South, West.",
+      "type": { "kind": "list" },
+      "items": { "kind": "vector3" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "flameSize": {
+      "label": "Flame size",
+      "description": "Visual size of the flame mote.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "flameShaderType": {
+      "label": "Flame shader type",
+      "description": "ShaderTypeDef used for the flame mote. Private field in source; set by XML directly. Resolved at runtime to MoteGlow if absent.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ShaderTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "flameShaderParameters": {
+      "label": "Flame shader parameters",
+      "description": "Named shader property overrides for the flame mote. Each child element name is a Unity shader property name (e.g. _MainTex, _Color); values are texture paths (starting with '/'), floats, or vectors.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap"
+    },
+    "exhaustSettings": {
+      "label": "Exhaust settings",
+      "description": "Particle exhaust emission settings for this thruster.",
+      "type": { "kind": "object", "schemaRef": "ExhaustSettings" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

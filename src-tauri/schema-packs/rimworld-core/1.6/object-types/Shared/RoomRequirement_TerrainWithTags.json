@@ -1,0 +1,38 @@
+{
+  "objectType": "RoomRequirement_TerrainWithTags",
+  "label": "Room requirement (terrain with tags)",
+  "description": "Requires all floor cells in the room to be terrain with specific tags.",
+  "fieldOrder": ["Class", "labelKey", "disablingPrecepts", "tags"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoomRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the room requirement label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "disablingPrecepts": {
+      "label": "Disabling precepts",
+      "description": "Precepts that disable this room requirement.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "All floor cells must be terrain that has at least one of these tags.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

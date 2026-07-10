@@ -1,0 +1,45 @@
+{
+  "objectType": "HediffCompProperties_MessageAfterTicks",
+  "label": "Message after ticks comp",
+  "description": "Shows a message a set number of ticks after this hediff is applied.",
+  "fieldOrder": ["Class", "compClass", "message", "messageType", "ticks"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "message": {
+      "label": "Message",
+      "description": "Message text.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "messageType": {
+      "label": "Message type",
+      "description": "Visual style of the message.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "MessageTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ticks": {
+      "label": "Ticks",
+      "description": "Ticks after which the message fires.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

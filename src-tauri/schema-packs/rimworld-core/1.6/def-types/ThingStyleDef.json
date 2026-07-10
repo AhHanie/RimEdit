@@ -1,0 +1,87 @@
+{
+  "defType": "ThingStyleDef",
+  "label": "Thing style",
+  "description": "A per-object visual style override applied by ideologies, expansion packs, and random-style systems to alter how a thing looks without changing its game behavior.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "overrideLabel",
+    "graphicData",
+    "uiIconPath",
+    "uiIconScale",
+    "wornGraphicPath",
+    "color",
+    "useWornGraphicMask"
+  ],
+  "fields": {
+    "overrideLabel": {
+      "label": "Override label",
+      "description": "Optional display-name override shown in style pickers in place of the base thing's label.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element",
+      "examples": ["samurai helmet", "cultist robe"]
+    },
+    "graphicData": {
+      "label": "Graphic data",
+      "description": "Full graphic definition supplying the styled texture. Present in almost every shipped ThingStyleDef.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object"
+    },
+    "uiIconPath": {
+      "label": "UI icon path",
+      "description": "Explicit texture path for the icon shown in style pickers. Most styles derive their icon from graphicData instead.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Icons/Things/SomeStyle"]
+    },
+    "uiIconScale": {
+      "label": "UI icon scale",
+      "description": "Scale multiplier applied to the UI icon. Shipped values range from about 1.06 to 2.0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "wornGraphicPath": {
+      "label": "Worn graphic path",
+      "description": "Texture path for the alternate graphic shown when apparel is worn on a pawn. Used by cultist masks and robe styles.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Things/Pawn/Humanlike/Apparel/CultistMask/CultistMask"]
+    },
+    "color": {
+      "label": "Color",
+      "description": "RGBA tint applied to the resolved graphic. Rarely set in shipped data.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "useWornGraphicMask": {
+      "label": "Use worn graphic mask",
+      "description": "Enables worn-graphic masking for apparel. Private in source but present in Anomaly data (cultist masks).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-style": {
+      "label": "Basic style",
+      "description": "Minimal style with a graphicData block supplying the texture path and graphic class.",
+      "includeRequiredFields": true,
+      "promptFields": ["graphicData"],
+      "fieldValues": {}
+    },
+    "apparel-style": {
+      "label": "Apparel style",
+      "description": "Style for apparel with a world graphic and a worn-pawn graphic path.",
+      "includeRequiredFields": true,
+      "promptFields": ["graphicData", "wornGraphicPath"],
+      "fieldValues": {}
+    }
+  }
+}

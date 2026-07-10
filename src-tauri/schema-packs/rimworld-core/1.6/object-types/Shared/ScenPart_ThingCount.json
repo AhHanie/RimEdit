@@ -1,0 +1,51 @@
+{
+  "objectType": "ScenPart_ThingCount",
+  "label": "Scenario part (thing count)",
+  "description": "Abstract base for scenario parts that deal with a specific thing and a count, such as starting items and scattered things. Adds thingDef, stuff, count, and optional quality fields.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "thingDef", "stuff", "count", "quality"],
+  "fields": {
+    "thingDef": {
+      "label": "Thing def",
+      "description": "ThingDef that this part creates, scatters, or references.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "stuff": {
+      "label": "Stuff",
+      "description": "Material ThingDef used to make the thing, if applicable.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "count": {
+      "label": "Count",
+      "description": "Number of things to create or scatter. Defaults to 1.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "quality": {
+      "label": "Quality",
+      "description": "Quality level of the created thing, if applicable. Leave absent to use default quality.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Awful", "Poor", "Normal", "Good", "Excellent", "Masterwork", "Legendary"]
+      }
+    }
+  }
+}

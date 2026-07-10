@@ -1,0 +1,74 @@
+{
+  "objectType": "RitualOutcomeComp_PawnExpectations",
+  "label": "Ritual outcome comp (pawn expectations)",
+  "description": "Applies a quality offset based on the expectation level of the pawn in the specified role. Each ExpectationDef maps to a quality offset via offsetPerExpectation.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "roleId", "offsetForSlave", "offsetPerExpectation"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Not used directly; quality is looked up from offsetPerExpectation for the role pawn.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve; not typically used by this variant.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "roleId": {
+      "label": "Role ID",
+      "description": "Ritual role ID string identifying which pawn's expectation level to evaluate.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "offsetForSlave": {
+      "label": "Offset for slave",
+      "description": "Quality offset applied when the role pawn is a colony slave (bypasses the offsetPerExpectation lookup).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "offsetPerExpectation": {
+      "label": "Offset per expectation",
+      "description": "Keyed list mapping ExpectationDef defNames to quality offsets. Element name is the ExpectationDef defName; scalar text is the float offset.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnExpectationsQualityOffset" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "expectation",
+      "keyReference": {
+        "defType": "ExpectationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "defaultValueField": "offset"
+    }
+  }
+}

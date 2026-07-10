@@ -1,0 +1,17 @@
+{
+  "defType": "PlanetLayerDef",
+  "label": "Planet layer",
+  "description": "Defines a layer on the world map (e.g. surface, underground) that governs where factions and incidents can exist or arrive. Referenced by FactionDef layer white/blacklists.",
+  "inherits": ["Def"],
+  "fieldOrder": ["worldGenSteps"],
+  "fields": {
+    "worldGenSteps": {
+      "label": "World gen steps",
+      "description": "WorldGenStepDefs used to generate this planet layer, sorted by the referenced step order.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "WorldGenStepDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

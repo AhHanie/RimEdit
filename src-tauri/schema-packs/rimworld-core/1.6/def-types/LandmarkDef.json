@@ -1,0 +1,138 @@
+{
+  "defType": "LandmarkDef",
+  "label": "Landmark",
+  "description": "Defines a named world-map landmark: a special tile that combines required and optional TileMutatorDefs, a world icon, and optional coast rotation behavior.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass", "commonality", "mutatorChances", "comboLandmarkMutators",
+    "nameMaker", "iconTexturePath", "atlasSize", "drawScale", "drawType",
+    "coastRotateMode", "drawAboveRoads", "category", "terrainParameters"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class that implements the landmark generation and placement logic. Defaults to RimWorld.Landmark.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight used by WorldGenStep_Landmarks when choosing among valid landmarks for a tile. Higher values are chosen more often.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.5", "0.25", "1"]
+    },
+    "mutatorChances": {
+      "label": "Mutator chances",
+      "description": "Weighted TileMutatorDef list for this landmark. Each child element name is the TileMutatorDef defName; scalar text is the chance; Required=\"True\" marks mandatory mutators.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "MutatorChance" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "mutator",
+      "keyReference": {
+        "defType": "TileMutatorDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "defaultValueField": "chance"
+    },
+    "comboLandmarkMutators": {
+      "label": "Combo landmark mutators",
+      "description": "Additional mutators applied when this landmark overlaps with another compatible landmark. Same format as mutatorChances.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "MutatorChance" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "mutator",
+      "keyReference": {
+        "defType": "TileMutatorDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "defaultValueField": "chance"
+    },
+    "nameMaker": {
+      "label": "Name maker",
+      "description": "RulePackDef used to generate a name for this landmark on the world map.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RulePackDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "iconTexturePath": {
+      "label": "Icon texture path",
+      "description": "Content path to the world icon texture for this landmark. Not translated.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["World/Landmarks/Oasis", "World/Landmarks/Lake"]
+    },
+    "atlasSize": {
+      "label": "Atlas size",
+      "description": "Size of this landmark's slot in the world icon texture atlas, as '(columns, rows)'. Defaults to (1, 1).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1, 1)", "(2, 2)"]
+    },
+    "drawScale": {
+      "label": "Draw scale",
+      "description": "Uniform scale multiplier applied when rendering the landmark icon on the world map. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1,
+      "examples": ["1", "0.7", "1.5"]
+    },
+    "drawType": {
+      "label": "Draw type",
+      "description": "Rendering mode for the landmark icon. Standard draws the icon normally; TerrainMask blends it with the underlying terrain.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Standard", "TerrainMask"]
+      }
+    },
+    "coastRotateMode": {
+      "label": "Coast rotate mode",
+      "description": "Whether and how the landmark icon rotates relative to a nearby coast. None disables rotation; ToCoast faces toward a coast tile; AwayFromCoast faces away.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "ToCoast", "AwayFromCoast"]
+      }
+    },
+    "drawAboveRoads": {
+      "label": "Draw above roads",
+      "description": "When true, the landmark icon is rendered above road overlays on the world map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "category": {
+      "label": "Category",
+      "description": "Grouping tag for this landmark. Not displayed to players; used internally to group related landmark types. Not translated.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["lake", "mountain", "ruin"]
+    },
+    "terrainParameters": {
+      "label": "Terrain parameters",
+      "description": "Shader property overrides applied to the terrain material on this landmark tile. Each child element name is a shader property identifier; scalar text is the value.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap"
+    }
+  }
+}

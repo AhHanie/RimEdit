@@ -1,0 +1,29 @@
+{
+  "objectType": "RoleEffect_NoRangedWeapons",
+  "label": "Role effect (no ranged weapons)",
+  "description": "Prevents the role pawn from equipping ranged weapons.",
+  "fieldOrder": ["Class", "label", "labelKey"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleEffect subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Label shown for this role effect.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the role effect label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

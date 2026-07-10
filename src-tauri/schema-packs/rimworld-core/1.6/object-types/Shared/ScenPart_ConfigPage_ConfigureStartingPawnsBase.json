@@ -1,0 +1,17 @@
+{
+  "objectType": "ScenPart_ConfigPage_ConfigureStartingPawnsBase",
+  "label": "Scenario part (configure starting pawns base)",
+  "description": "Abstract base for starting pawn configuration pages. Adds pawnChoiceCount that controls how many pawns the player can choose from.",
+  "inherits": ["ScenPart_ConfigPage"],
+  "fieldOrder": ["def", "visible", "pawnChoiceCount"],
+  "fields": {
+    "pawnChoiceCount": {
+      "label": "Pawn choice count",
+      "description": "Number of randomly generated pawns the player can choose from during starting pawn selection.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 10
+    }
+  }
+}

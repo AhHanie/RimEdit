@@ -1,0 +1,23 @@
+{
+  "objectType": "BodyTypeGraphicData",
+  "label": "Body type graphic data",
+  "description": "A BodyTypeDef-keyed texture path entry. Used by PawnRenderNodeProperties.bodyTypeGraphicPaths and similar fields on FurDef, MutantDef, and CreepJoinerFormKindDef. Child element name is the BodyTypeDef defName; text is the texture path.",
+  "fieldOrder": ["bodyType", "texturePath"],
+  "fields": {
+    "bodyType": {
+      "label": "Body type",
+      "description": "BodyTypeDef this graphic entry applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "BodyTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "texturePath": {
+      "label": "Texture path",
+      "description": "Texture atlas path used when the pawn has this body type.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "defType": "JoyGiverDef",
+  "label": "Joy giver",
+  "description": "Defines an activity that satisfies a pawn's joy need. JobGiver_GetJoy selects among all JoyGiverDefs using baseChance, pctPawnsEverDo, and required capacity checks, then creates the appropriate job via the giverClass worker.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "giverClass",
+    "baseChance",
+    "requireChair",
+    "thingDefs",
+    "jobDef",
+    "desireSit",
+    "pctPawnsEverDo",
+    "unroofedOnly",
+    "joyKind",
+    "requiredCapacities",
+    "canDoWhileInBed",
+    "requiresEnjoyOutdoors",
+    "countsForRecRoom"
+  ],
+  "fields": {
+    "giverClass": {
+      "label": "Giver class",
+      "description": "C# JoyGiver subclass that implements how this activity is started and validated. The Worker property instantiates this type at runtime.",
+      "type": { "kind": "typeName" },
+      "required": true,
+      "xml": "element",
+      "examples": [
+        "JoyGiver_Meditate",
+        "JoyGiver_InPrivateRoom",
+        "JoyGiver_Skygaze",
+        "JoyGiver_GoForWalk",
+        "JoyGiver_VisitGrave",
+        "JoyGiver_ViewArt",
+        "JoyGiver_BuildSnowman",
+        "JoyGiver_SocialRelax",
+        "JoyGiver_VisitSickPawn",
+        "JoyGiver_WatchBuilding",
+        "JoyGiver_PlayBilliards",
+        "JoyGiver_InteractBuildingSitAdjacent",
+        "JoyGiver_InteractBuildingInteractionCell",
+        "JoyGiver_TakeDrug",
+        "JoyGiver_Ingest",
+        "JoyGiver_Read",
+        "JoyGiver_GoSwimming"
+      ]
+    },
+    "baseChance": {
+      "label": "Base chance",
+      "description": "Relative weight used by JobGiver_GetJoy when rolling across all eligible joy givers. Higher values make this activity more likely to be chosen. Source default is 0; shipped data always sets an explicit value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "requireChair": {
+      "label": "Require chair",
+      "description": "If true, building-interaction workers such as JoyGiver_InteractBuildingSitAdjacent require a chair adjacent to the target thing before assigning the job.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "thingDefs": {
+      "label": "Thing defs",
+      "description": "Things (buildings or items) that workers such as JoyGiver_InteractBuilding, JoyGiver_WatchBuilding, and JoyGiver_Ingest search for when finding a target.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "jobDef": {
+      "label": "Job def",
+      "description": "JobDef the worker creates when starting the activity. Optional -- ingestible and drug givers such as TakeDrug and EatChocolate derive the job from the thing rather than from this field.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "JobDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "desireSit": {
+      "label": "Desire sit",
+      "description": "If true, building-interaction workers prefer a seated position adjacent to the target when starting the activity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "pctPawnsEverDo": {
+      "label": "Pct pawns ever do",
+      "description": "Fraction of pawns (0-1) that are eligible to receive this joy activity at all. Acts as a permanent exclusion filter applied before the baseChance roll.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "unroofedOnly": {
+      "label": "Unroofed only",
+      "description": "If true, building-interaction workers only consider targets that are not under a roof.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "joyKind": {
+      "label": "Joy kind",
+      "description": "JoyKindDef that classifies the type of joy this activity provides. Used by JoyGiver.CanBeGivenTo and cross-checked against jobDef.joyKind in ConfigErrors.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "xml": "element",
+      "reference": {
+        "defType": "JoyKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredCapacities": {
+      "label": "Required capacities",
+      "description": "Pawn capacities that must not be fully disabled for this giver to be assigned. JoyGiver.CanBeGivenTo rejects pawns lacking any listed capacity.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "PawnCapacityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "canDoWhileInBed": {
+      "label": "Can do while in bed",
+      "description": "If true, JobGiver_GetJoyInBed can assign this activity to a pawn that is resting in a bed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiresEnjoyOutdoors": {
+      "label": "Requires enjoy outdoors",
+      "description": "If true, this activity is restricted to pawns that prefer the outdoors. When genes are active, pawns that avoid sunlight are also excluded.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "countsForRecRoom": {
+      "label": "Counts for rec room",
+      "description": "If true, performing this activity in a room contributes to that room's recreation room role stat.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-joy-giver": {
+      "label": "Basic joy giver",
+      "description": "Minimal joy giver with a worker class, base chance, joy kind, and optional job.",
+      "includeRequiredFields": true,
+      "promptFields": ["giverClass", "baseChance", "joyKind", "jobDef"],
+      "fieldValues": {}
+    },
+    "building-joy-giver": {
+      "label": "Building joy giver",
+      "description": "Building or furniture interaction joy giver using a target thing list and an interaction job.",
+      "includeRequiredFields": true,
+      "promptFields": ["giverClass", "baseChance", "thingDefs", "jobDef", "joyKind"],
+      "fieldValues": {}
+    },
+    "outdoor-joy-giver": {
+      "label": "Outdoor joy giver",
+      "description": "Outdoor activity such as skygazing, walking, snowman building, or swimming.",
+      "includeRequiredFields": true,
+      "promptFields": ["giverClass", "baseChance", "jobDef", "joyKind"],
+      "fieldValues": {
+        "requiresEnjoyOutdoors": true
+      }
+    },
+    "ingestible-joy-giver": {
+      "label": "Ingestible joy giver",
+      "description": "Food or drug joy giver where jobDef may be absent and the worker derives the job from the ingestible thing.",
+      "includeRequiredFields": true,
+      "promptFields": ["giverClass", "baseChance", "thingDefs", "joyKind"],
+      "fieldValues": {}
+    }
+  }
+}

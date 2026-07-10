@@ -1,0 +1,32 @@
+{
+  "objectType": "ComplexCurve",
+  "label": "Complex curve",
+  "description": "A Unity AnimationCurve wrapper that serializes as a list of keyframes plus optional wrap modes. Used by CurveKeyAnimationPart for the angle channel and by Vector3Curve for each axis.",
+  "fieldOrder": ["keyframes", "preWrapMode", "postWrapMode"],
+  "fields": {
+    "keyframes": {
+      "label": "Keyframes",
+      "description": "List of keyframe control points defining the curve.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ComplexCurveKeyframe" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "preWrapMode": {
+      "label": "Pre wrap mode",
+      "description": "How the curve extrapolates before the first keyframe. Default is ClampForever.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Default", "Once", "Loop", "PingPong", "ClampForever", "Clamp"] }
+    },
+    "postWrapMode": {
+      "label": "Post wrap mode",
+      "description": "How the curve extrapolates after the last keyframe. Default is ClampForever.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Default", "Once", "Loop", "PingPong", "ClampForever", "Clamp"] }
+    }
+  }
+}

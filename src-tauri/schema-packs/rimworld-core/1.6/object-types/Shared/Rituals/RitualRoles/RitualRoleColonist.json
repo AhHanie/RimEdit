@@ -1,0 +1,67 @@
+{
+  "objectType": "RitualRoleColonist",
+  "label": "Ritual role (colonist)",
+  "description": "Role for a colonist participant. Optionally restricts by work type, skill, or stat.",
+  "fieldOrder": [
+    "Class", "label", "categoryLabel", "missingDesc", "noCandidatesGizmoDesc",
+    "customChildDisallowMessage", "id", "precept", "maxCount", "mergeId",
+    "required", "substitutable", "ignoreBleeding", "countsAsParticipant",
+    "addToLord", "allowNonAggroMentalState", "defaultForSelectedColonist",
+    "allowOtherIdeos", "allowDowned", "allowKeepLayingDown", "allowChild",
+    "allowBaby", "removeFromAssignmentsOnDeath", "endJobOnRitualCleanup",
+    "mustBeAbleToReachTarget", "blocksSocialInteraction",
+    "requiredWorkType", "usedSkill", "usedStat"
+  ],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "label": { "label": "Label", "type": { "kind": "localizedString" }, "required": false, "xml": "element" },
+    "categoryLabel": { "label": "Category label", "type": { "kind": "localizedString" }, "required": false, "xml": "element" },
+    "missingDesc": { "label": "Missing desc", "type": { "kind": "localizedString" }, "required": false, "xml": "element" },
+    "noCandidatesGizmoDesc": { "label": "No candidates gizmo desc", "type": { "kind": "localizedString" }, "required": false, "xml": "element" },
+    "customChildDisallowMessage": { "label": "Custom child disallow message", "type": { "kind": "localizedString" }, "required": false, "xml": "element" },
+    "id": { "label": "ID", "type": { "kind": "string" }, "required": false, "xml": "element" },
+    "precept": { "label": "Precept", "type": { "kind": "defReference" }, "required": false, "xml": "element", "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" } },
+    "maxCount": { "label": "Max count", "type": { "kind": "integer" }, "required": false, "defaultValue": 0, "xml": "element" },
+    "mergeId": { "label": "Merge ID", "type": { "kind": "string" }, "required": false, "xml": "element" },
+    "required": { "label": "Required", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "substitutable": { "label": "Substitutable", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "ignoreBleeding": { "label": "Ignore bleeding", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "countsAsParticipant": { "label": "Counts as participant", "type": { "kind": "boolean" }, "required": false, "defaultValue": true, "xml": "element" },
+    "addToLord": { "label": "Add to lord", "type": { "kind": "boolean" }, "required": false, "defaultValue": true, "xml": "element" },
+    "allowNonAggroMentalState": { "label": "Allow non-aggro mental state", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "defaultForSelectedColonist": { "label": "Default for selected colonist", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "allowOtherIdeos": { "label": "Allow other ideos", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "allowDowned": { "label": "Allow downed", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "allowKeepLayingDown": { "label": "Allow keep laying down", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "allowChild": { "label": "Allow child", "type": { "kind": "boolean" }, "required": false, "defaultValue": true, "xml": "element" },
+    "allowBaby": { "label": "Allow baby", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "removeFromAssignmentsOnDeath": { "label": "Remove from assignments on death", "type": { "kind": "boolean" }, "required": false, "defaultValue": true, "xml": "element" },
+    "endJobOnRitualCleanup": { "label": "End job on ritual cleanup", "type": { "kind": "boolean" }, "required": false, "defaultValue": true, "xml": "element" },
+    "mustBeAbleToReachTarget": { "label": "Must be able to reach target", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "blocksSocialInteraction": { "label": "Blocks social interaction", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "requiredWorkType": {
+      "label": "Required work type",
+      "description": "WorkTypeDef that the colonist must be capable of to fill this role.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WorkTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "usedSkill": {
+      "label": "Used skill",
+      "description": "SkillDef used when evaluating this role pawn's desirability.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SkillDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "usedStat": {
+      "label": "Used stat",
+      "description": "StatDef used when evaluating this role pawn's desirability.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

@@ -1,0 +1,140 @@
+.row {
+  min-height: var(--h-tree-row);
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px 6px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.rowActive {
+  background: var(--accent-muted);
+}
+
+.rowEditing {
+  background: var(--surface-hover);
+  gap: 6px;
+}
+
+.rowMain {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.rowInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nameText {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.pathText {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badgeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.badge {
+  font-size: 10px;
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--surface-active, var(--surface-hover));
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.badgeActive {
+  background: var(--accent-muted);
+  color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding-top: 1px;
+}
+
+.editFields {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.nameInput,
+.sourceTypeSelect {
+  background: var(--surface-editor, var(--surface-panel));
+  border: 1px solid var(--border-focus, var(--border-subtle));
+  border-radius: 3px;
+  padding: 3px 7px;
+  font-size: 12.5px;
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nameInput:focus,
+.sourceTypeSelect:focus {
+  border-color: var(--accent);
+}
+
+.nameInput:disabled,
+.sourceTypeSelect:disabled {
+  opacity: 0.5;
+}
+
+.sourceTypeSelect option {
+  background: var(--surface-editor, var(--surface-panel));
+  color: var(--text-primary);
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.metaItem {
+  font-size: 10.5px;
+  font-family: var(--font-ui);
+  color: var(--text-muted);
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,37 @@
+{
+  "objectType": "RoleEffect_HuntingRevengeChanceFactor",
+  "label": "Role effect (hunting revenge chance factor)",
+  "description": "Multiplies the chance that hunted animals seek revenge on the role pawn.",
+  "fieldOrder": ["Class", "label", "labelKey", "modifier"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleEffect subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Label shown for this role effect.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the role effect label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "modifier": {
+      "label": "Modifier",
+      "description": "Factor applied to the hunting revenge chance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

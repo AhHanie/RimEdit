@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_NoPossessions",
+  "label": "No possessions",
+  "description": "Removes all starting equipment and inventory from colonists so they begin the game with nothing.",
+  "inherits": ["ScenPart"]
+}

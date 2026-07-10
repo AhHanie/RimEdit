@@ -1,0 +1,48 @@
+{
+  "defType": "KnowledgeCategoryDef",
+  "label": "Knowledge category",
+  "description": "Defines a category for anomaly research knowledge, controlling overflow routing and the UI marker texture shown in the research tab.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "overflowCategory",
+    "color",
+    "texPath"
+  ],
+  "fields": {
+    "overflowCategory": {
+      "label": "Overflow category",
+      "description": "KnowledgeCategoryDef that receives excess knowledge points when this category is full. Used by Advanced to route overflow to Basic.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "KnowledgeCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "color": {
+      "label": "Color",
+      "description": "RGBA tint applied to the research category marker and related UI elements. Format: (r, g, b, a).",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "texPath": {
+      "label": "Texture path",
+      "description": "Asset path for the research category marker texture shown in the anomaly research tab.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-knowledge-category": {
+      "label": "Basic knowledge category",
+      "description": "A knowledge category with required fields plus color and texture.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "color", "texPath"],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AncientMechGeneratorRoom",
+  "label": "Sketch resolver: Ancient mech generator room",
+  "description": "Concrete RimWorld SketchResolver_AncientMechGeneratorRoom resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

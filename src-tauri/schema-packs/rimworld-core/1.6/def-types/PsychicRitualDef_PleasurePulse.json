@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualDef_PleasurePulse",
+  "label": "Psychic ritual -- pleasure pulse",
+  "description": "Ritual that sends a pleasure pulse to all nearby colonists. Duration scales with ritual quality.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "durationDaysFromQualityCurve"
+  ],
+  "fields": {
+    "durationDaysFromQualityCurve": {
+      "label": "Duration days from quality curve",
+      "description": "Curve mapping ritual quality to the pleasure mood effect duration in days.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

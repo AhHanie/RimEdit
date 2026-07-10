@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+    <NotAnOperation />
+    <Operation Class="PatchOperationRemove">
+        <xpath>Defs/ThingDef/foo</xpath>
+    </Operation>
+</Patch>

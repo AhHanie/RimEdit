@@ -1,0 +1,32 @@
+{
+  "objectType": "SurgeryOutcomeComp",
+  "label": "Surgery outcome comp",
+  "description": "Base schema for SurgeryOutcomeEffectDef comps. The specific comp schema is selected by the li Class attribute. Unknown Class values fall back to this base schema.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "SurgeryOutcomeComp",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "SurgeryOutcomeComp_SurgeonSuccessChance": "SurgeryOutcomeComp_SurgeonSuccessChance",
+      "SurgeryOutcomeComp_BedAndRoomQuality": "SurgeryOutcomeComp_BedAndRoomQuality",
+      "SurgeryOutcomeComp_MedicineQuality": "SurgeryOutcomeComp_MedicineQuality",
+      "SurgeryOutcomeComp_RecipeSuccessChance": "SurgeryOutcomeComp_RecipeSuccessChance",
+      "SurgeryOutcomeComp_Inspired": "SurgeryOutcomeComp_Inspired",
+      "SurgeryOutcomeComp_ClampToRange": "SurgeryOutcomeComp_ClampToRange",
+      "SurgeryOutcomeComp_XenogermComplexity": "SurgeryOutcomeComp_XenogermComplexity",
+      "SurgeryOutcomeComp_PatientAge": "SurgeryOutcomeComp_PatientAge",
+      "SurgeryOutcomeComp_Factor": "SurgeryOutcomeComp_Factor"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# SurgeryOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "objectType": "QuestNode_Sequence",
+  "label": "QuestNode Sequence",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_Sequence.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "nodes"
+  ],
+  "fields": {
+    "nodes": {
+      "description": "Ordered QuestNode children executed in sequence.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

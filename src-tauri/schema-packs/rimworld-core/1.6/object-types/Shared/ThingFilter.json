@@ -1,0 +1,253 @@
+{
+  "objectType": "ThingFilter",
+  "label": "Thing filter",
+  "description": "Defines which ThingDefs are allowed or disallowed based on categories, trade tags, quality, hit points, comps, and other criteria. Used for ingredient filters, storage settings, and trade restrictions.",
+  "fieldOrder": [
+    "overrideRootDef",
+    "onlySpecialFilters",
+    "allowedHitPointsPercents",
+    "allowedMentalBreakChance",
+    "allowedHitPointsConfigurable",
+    "allowedQualities",
+    "allowedQualitiesConfigurable",
+    "customSummary",
+    "thingDefs",
+    "categories",
+    "tradeTagsToAllow",
+    "tradeTagsToDisallow",
+    "thingSetMakerTagsToAllow",
+    "thingSetMakerTagsToDisallow",
+    "disallowedCategories",
+    "specialFiltersToAllow",
+    "specialFiltersToDisallow",
+    "stuffCategoriesToAllow",
+    "allowAllWhoCanMake",
+    "disallowWorsePreferability",
+    "disallowInedibleByHuman",
+    "disallowDoesntProduceMeat",
+    "disallowMedicalDrugs",
+    "disallowNotEverStorable",
+    "allowWithComp",
+    "disallowWithComp",
+    "disallowCheaperThan",
+    "disallowedThingDefs"
+  ],
+  "fields": {
+    "overrideRootDef": {
+      "label": "Override root def",
+      "description": "ThingCategoryDef used as the root of the category tree shown in the filter UI, replacing the global root.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "onlySpecialFilters": {
+      "label": "Only special filters",
+      "description": "When true, the filter allows only things matched by active special filters, ignoring category and thingDef lists.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedHitPointsPercents": {
+      "label": "Allowed hit points percents",
+      "description": "Hit-point fraction range (0-1) a thing must fall within to be allowed by this filter.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowedMentalBreakChance": {
+      "label": "Allowed mental break chance",
+      "description": "Mental break chance range (0-1) a pawn must fall within to be accepted by this filter.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowedHitPointsConfigurable": {
+      "label": "Allowed hit points configurable",
+      "description": "Whether the player can adjust the allowed hit-point range in the storage UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowedQualities": {
+      "label": "Allowed qualities",
+      "description": "Quality range a thing must fall within to be allowed. Serialized as min~max quality category names.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Awful~Legendary", "Normal~Legendary", "Good~Masterwork"]
+    },
+    "allowedQualitiesConfigurable": {
+      "label": "Allowed qualities configurable",
+      "description": "Whether the player can adjust the allowed quality range in the storage UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "customSummary": {
+      "label": "Custom summary",
+      "description": "Override display text for this filter in the UI, replacing the auto-generated ingredient summary.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "thingDefs": {
+      "label": "Thing defs",
+      "description": "Explicit list of ThingDefs that are allowed by this filter.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "categories": {
+      "label": "Categories",
+      "description": "ThingCategoryDef names whose members are allowed by this filter.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "tradeTagsToAllow": {
+      "label": "Trade tags to allow",
+      "description": "Trade tag strings. Things carrying any of these tags are explicitly allowed.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "tradeTagsToDisallow": {
+      "label": "Trade tags to disallow",
+      "description": "Trade tag strings. Things carrying any of these tags are explicitly disallowed.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "thingSetMakerTagsToAllow": {
+      "label": "Thing set maker tags to allow",
+      "description": "ThingSetMaker tag strings. Things carrying any of these tags are explicitly allowed.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "thingSetMakerTagsToDisallow": {
+      "label": "Thing set maker tags to disallow",
+      "description": "ThingSetMaker tag strings. Things carrying any of these tags are explicitly disallowed.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "disallowedCategories": {
+      "label": "Disallowed categories",
+      "description": "ThingCategoryDef names whose members are explicitly disallowed even if matched by other allow rules.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "specialFiltersToAllow": {
+      "label": "Special filters to allow",
+      "description": "SpecialThingFilterDef names to activate in allow mode.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "SpecialThingFilterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "specialFiltersToDisallow": {
+      "label": "Special filters to disallow",
+      "description": "SpecialThingFilterDef names to activate in disallow mode.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "SpecialThingFilterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "stuffCategoriesToAllow": {
+      "label": "Stuff categories to allow",
+      "description": "StuffCategoryDef references. Things belonging to these stuff categories are allowed.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "StuffCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "allowAllWhoCanMake": {
+      "label": "Allow all who can make",
+      "description": "ThingDef references. All things that can be made from any listed ThingDef are allowed.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "disallowWorsePreferability": {
+      "label": "Disallow worse preferability",
+      "description": "Disallows things with a FoodPreferability value worse than this threshold.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "NeverForNutrition", "DesperateOnly", "DesperateOnlyForHumanlikes", "RawBad", "RawTasty", "MealTerrible", "MealAwful", "MealSimple", "MealFine", "MealLavish"]
+      }
+    },
+    "disallowInedibleByHuman": {
+      "label": "Disallow inedible by human",
+      "description": "When true, things that humans cannot eat are disallowed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disallowDoesntProduceMeat": {
+      "label": "Disallow doesn't produce meat",
+      "description": "When true, things that do not produce meat when butchered are disallowed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disallowMedicalDrugs": {
+      "label": "Disallow medical drugs",
+      "description": "When true, medical drugs are disallowed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disallowNotEverStorable": {
+      "label": "Disallow not ever storable",
+      "description": "When true, things that can never be stored in a stockpile zone are disallowed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowWithComp": {
+      "label": "Allow with comp",
+      "description": "C# ThingComp type name. Things carrying this comp are explicitly allowed.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "disallowWithComp": {
+      "label": "Disallow with comp",
+      "description": "C# ThingComp type name. Things carrying this comp are explicitly disallowed.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "disallowCheaperThan": {
+      "label": "Disallow cheaper than",
+      "description": "Disallows things with a base market value below this threshold.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "disallowedThingDefs": {
+      "label": "Disallowed thing defs",
+      "description": "Explicit list of ThingDefs that are disallowed even if matched by other allow rules.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

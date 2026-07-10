@@ -1,0 +1,20 @@
+{
+  "objectType": "ThingSetMaker_Books",
+  "label": "Books maker",
+  "description": "Generates book items, optionally scaled by a market value factor.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "marketValueFactor"
+  ],
+  "fields": {
+    "marketValueFactor": {
+      "label": "Market value factor",
+      "description": "Multiplier applied to the market value of generated books. Private in source but serialized in shipped XML.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

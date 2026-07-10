@@ -1,0 +1,56 @@
+{
+  "objectType": "LayoutThing",
+  "label": "Layout thing",
+  "description": "A ThingDef with an offset position and rotation used in GenStep_ScatterLayout.",
+  "fieldOrder": ["thing", "offset", "rotation", "filthDef", "filthExpandBy", "filthChance"],
+  "fields": {
+    "thing": {
+      "label": "Thing",
+      "description": "ThingDef to spawn at the offset position.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "Cell offset from the scatter center where this thing is placed. Serialized as (x, y, z).",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "(0, 0, 0)",
+      "xml": "element"
+    },
+    "rotation": {
+      "label": "Rotation",
+      "description": "Rotation of the placed thing as an integer (0=North, 1=East, 2=South, 3=West).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "filthDef": {
+      "label": "Filth def",
+      "description": "Filth ThingDef spawned around this thing after placement.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "filthExpandBy": {
+      "label": "Filth expand by",
+      "description": "Number of cells to expand the occupied rect when spawning filth.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "filthChance": {
+      "label": "Filth chance",
+      "description": "Probability (0-1) that each eligible cell around this thing receives filth.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    }
+  }
+}

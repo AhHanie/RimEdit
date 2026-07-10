@@ -1,0 +1,31 @@
+{
+  "objectType": "GeneticTraitData",
+  "label": "Genetic trait data",
+  "description": "A trait and degree pair used to specify which trait degree a gene forces or suppresses.",
+  "fieldOrder": [
+    "def",
+    "degree"
+  ],
+  "fields": {
+    "def": {
+      "label": "Trait",
+      "description": "TraitDef that this entry references.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "degree": {
+      "label": "Degree",
+      "description": "Degree of the trait to force or suppress. 0 is the default degree; other values correspond to the trait's defined degrees.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

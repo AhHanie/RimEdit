@@ -1,0 +1,194 @@
+{
+  "defType": "InteractionDef",
+  "label": "Interaction",
+  "description": "Defines a social interaction that pawns can perform on one another, including the worker logic, grammar rules for the interaction log, optional mote effects, and XP or thought outcomes.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "interactionMote",
+    "socialFightBaseChance",
+    "initiatorThought",
+    "initiatorXpGainSkill",
+    "initiatorXpGainAmount",
+    "recipientThought",
+    "recipientXpGainSkill",
+    "recipientXpGainAmount",
+    "ignoreTimeSinceLastInteraction",
+    "symbol",
+    "symbolSource",
+    "logRulesInitiator",
+    "logRulesRecipient"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# InteractionWorker subclass that controls when this interaction fires and what it does. Defaults to the base InteractionWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "InteractionWorker",
+      "xml": "element",
+      "examples": [
+        "InteractionWorker",
+        "InteractionWorker_RomanceAttempt",
+        "InteractionWorker_RecruitAttempt",
+        "InteractionWorker_Insult",
+        "InteractionWorker_KindWords",
+        "InteractionWorker_DeepTalk"
+      ]
+    },
+    "interactionMote": {
+      "label": "Interaction mote",
+      "description": "ThingDef for the speech bubble mote spawned during the interaction. Defaults to Mote_Speech when omitted.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "socialFightBaseChance": {
+      "label": "Social fight base chance",
+      "description": "Base probability that this interaction triggers a social fight between the two pawns.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element",
+      "validationHints": { "min": 0, "max": 1 }
+    },
+    "initiatorThought": {
+      "label": "Initiator thought",
+      "description": "ThoughtDef added to the initiating pawn's memory after this interaction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "initiatorXpGainSkill": {
+      "label": "Initiator XP gain skill",
+      "description": "SkillDef that the initiating pawn gains XP in when this interaction fires.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "initiatorXpGainAmount": {
+      "label": "Initiator XP gain amount",
+      "description": "Amount of XP the initiating pawn gains in initiatorXpGainSkill.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "recipientThought": {
+      "label": "Recipient thought",
+      "description": "ThoughtDef added to the receiving pawn's memory after this interaction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "recipientXpGainSkill": {
+      "label": "Recipient XP gain skill",
+      "description": "SkillDef that the receiving pawn gains XP in when this interaction fires.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "recipientXpGainAmount": {
+      "label": "Recipient XP gain amount",
+      "description": "Amount of XP the receiving pawn gains in recipientXpGainSkill.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "ignoreTimeSinceLastInteraction": {
+      "label": "Ignore time since last interaction",
+      "description": "If true, the normal cooldown preventing repeated interactions is bypassed for this interaction type.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "symbol": {
+      "label": "Symbol",
+      "description": "Texture path for the interaction icon shown in the social tab and interaction log. Not translated.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Things/Pawn/Social/Chat",
+        "Things/Pawn/Social/Romance",
+        "Things/Pawn/Social/Insult"
+      ]
+    },
+    "symbolSource": {
+      "label": "Symbol source",
+      "description": "Where the interaction symbol is drawn from. Def uses the symbol field; InitiatorIdeo and InitiatorFaction pull the icon from the initiating pawn's ideology or faction.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Def",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Def", "InitiatorIdeo", "InitiatorFaction"]
+      }
+    },
+    "logRulesInitiator": {
+      "label": "Log rules (initiator)",
+      "description": "Grammar rules for generating the interaction log entry from the initiating pawn's perspective.",
+      "type": { "kind": "object", "schemaRef": "RulePack" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": false
+    },
+    "logRulesRecipient": {
+      "label": "Log rules (recipient)",
+      "description": "Grammar rules for generating the interaction log entry from the receiving pawn's perspective.",
+      "type": { "kind": "object", "schemaRef": "RulePack" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": false
+    }
+  },
+  "templates": {
+    "basic-interaction": {
+      "label": "Basic interaction",
+      "description": "Minimal social interaction with a symbol and initiator log rules.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "symbol", "workerClass"],
+      "fieldValues": {
+        "ignoreTimeSinceLastInteraction": "false"
+      }
+    },
+    "skill-interaction": {
+      "label": "Skill-training interaction",
+      "description": "Social interaction that grants XP and optionally a thought to both participants.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "symbol", "workerClass", "initiatorXpGainSkill", "initiatorXpGainAmount"],
+      "fieldValues": {
+        "ignoreTimeSinceLastInteraction": "false",
+        "initiatorXpGainAmount": "6000",
+        "recipientXpGainAmount": "0"
+      }
+    }
+  }
+}

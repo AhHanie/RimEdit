@@ -1,0 +1,211 @@
+{
+  "defType": "PawnCapacityDef",
+  "label": "Pawn capacity",
+  "description": "Defines a measurable aspect of a pawn's physical or mental functioning, such as Moving, Consciousness, or BloodPumping. Capacities gate activities, drive stat calculations, and can be lethal when absent.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "listOrder",
+    "workerClass",
+    "labelMechanoids",
+    "labelAnimals",
+    "labelAnomalyEntity",
+    "labelDrones",
+    "showOnHumanlikes",
+    "showOnAnimals",
+    "showOnMechanoids",
+    "showOnAnomalyEntities",
+    "showOnDrones",
+    "lethalFlesh",
+    "lethalMechanoids",
+    "minForCapable",
+    "minValue",
+    "zeroIfCannotBeAwake",
+    "showOnCaravanHealthTab"
+  ],
+  "fields": {
+    "listOrder": {
+      "label": "List order",
+      "description": "Sort key used when displaying capacities in the health tab and tooltips. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# PawnCapacityWorker subclass that computes this capacity's efficiency at runtime. Defaults to PawnCapacityWorker when absent.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "PawnCapacityWorker_Consciousness",
+        "PawnCapacityWorker_Moving",
+        "PawnCapacityWorker_Manipulation",
+        "PawnCapacityWorker_Talking",
+        "PawnCapacityWorker_Eating",
+        "PawnCapacityWorker_Sight",
+        "PawnCapacityWorker_Hearing",
+        "PawnCapacityWorker_Breathing",
+        "PawnCapacityWorker_BloodFiltration",
+        "PawnCapacityWorker_BloodPumping",
+        "PawnCapacityWorker_Metabolism"
+      ]
+    },
+    "labelMechanoids": {
+      "label": "Label mechanoids",
+      "description": "Display label override used when showing this capacity for mechanoid pawns. Falls back to label when empty.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "",
+      "xml": "element"
+    },
+    "labelAnimals": {
+      "label": "Label animals",
+      "description": "Display label override used when showing this capacity for flesh animal pawns. Falls back to label when empty.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "",
+      "xml": "element"
+    },
+    "labelAnomalyEntity": {
+      "label": "Label anomaly entity",
+      "description": "Display label override used when showing this capacity for anomaly entity pawns. Falls back to label when empty.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "",
+      "xml": "element"
+    },
+    "labelDrones": {
+      "label": "Label drones",
+      "description": "Display label override used when showing this capacity for drone pawns. Falls back to label when empty.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "",
+      "xml": "element"
+    },
+    "showOnHumanlikes": {
+      "label": "Show on humanlikes",
+      "description": "If true, this capacity is displayed in the health tab for humanlike pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnAnimals": {
+      "label": "Show on animals",
+      "description": "If true, this capacity is displayed in the health tab for flesh animal pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnMechanoids": {
+      "label": "Show on mechanoids",
+      "description": "If true, this capacity is displayed in the health tab for mechanoid pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnAnomalyEntities": {
+      "label": "Show on anomaly entities",
+      "description": "If true, this capacity is displayed in the health tab for anomaly entity pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnDrones": {
+      "label": "Show on drones",
+      "description": "If true, this capacity is displayed in the health tab for drone pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "lethalFlesh": {
+      "label": "Lethal flesh",
+      "description": "If true, a flesh pawn whose capacity reaches zero dies from incapacitation of this capacity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "lethalMechanoids": {
+      "label": "Lethal mechanoids",
+      "description": "If true, a mechanoid pawn whose capacity reaches zero dies from incapacitation of this capacity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minForCapable": {
+      "label": "Min for capable",
+      "description": "Minimum efficiency threshold required for a pawn to be considered capable of activities gated by this capacity. Below this value the pawn is treated as completely incapacitated for that activity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minValue": {
+      "label": "Min value",
+      "description": "Floor applied to this capacity's calculated efficiency before it is used in stat and activity checks. Prevents the value from going below this amount even if body part damage would otherwise reduce it further.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "zeroIfCannotBeAwake": {
+      "label": "Zero if cannot be awake",
+      "description": "If true, this capacity is forced to zero whenever the pawn is asleep or otherwise cannot be awake.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOnCaravanHealthTab": {
+      "label": "Show on caravan health tab",
+      "description": "If true, this capacity is shown in the compact caravan health overview tab.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-pawn-capacity": {
+      "label": "Basic pawn capacity",
+      "description": "Minimal pawn capacity with a worker class and list order.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "listOrder", "workerClass"],
+      "fieldValues": {}
+    },
+    "health-tab-capacity": {
+      "label": "Health tab capacity",
+      "description": "Pawn capacity that appears in the caravan health overview tab.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "listOrder", "workerClass"],
+      "fieldValues": {
+        "showOnCaravanHealthTab": true
+      }
+    },
+    "lethal-flesh-capacity": {
+      "label": "Lethal flesh capacity",
+      "description": "Pawn capacity whose loss kills flesh pawns.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "listOrder", "workerClass"],
+      "fieldValues": {
+        "lethalFlesh": true
+      }
+    },
+    "lethal-mechanoid-capacity": {
+      "label": "Lethal mechanoid capacity",
+      "description": "Pawn capacity whose loss kills mechanoid pawns.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "listOrder", "workerClass"],
+      "fieldValues": {
+        "lethalMechanoids": true
+      }
+    }
+  }
+}

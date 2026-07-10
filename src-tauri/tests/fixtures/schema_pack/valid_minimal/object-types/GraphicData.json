@@ -1,0 +1,12 @@
+{
+  "objectType": "GraphicData",
+  "label": "Graphic data",
+  "fieldOrder": ["texPath"],
+  "fields": {
+    "texPath": {
+      "label": "Texture path",
+      "type": { "kind": "string" },
+      "required": false
+    }
+  }
+}

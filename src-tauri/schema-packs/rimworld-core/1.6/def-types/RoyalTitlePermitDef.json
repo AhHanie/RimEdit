@@ -1,0 +1,125 @@
+{
+  "defType": "RoyalTitlePermitDef",
+  "label": "Royal title permit",
+  "description": "Defines a permit in a faction's royal title system. Permits grant callable abilities (drop resources, call aid, orbital strike, etc.) that pawns earn by spending permit points when receiving a royal title.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "royalAid",
+    "cooldownDays",
+    "minTitle",
+    "permitPointCost",
+    "faction",
+    "usableOnWorldMap",
+    "prerequisite",
+    "uiPosition",
+    "layerBlacklist"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class that implements the permit's callable ability. Defaults to RoyalTitlePermitWorker when omitted (trade-only permits with no active ability).",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "RoyalTitlePermitWorker",
+      "examples": [
+        "RoyalTitlePermitWorker",
+        "RoyalTitlePermitWorker_DropResources",
+        "RoyalTitlePermitWorker_CallAid",
+        "RoyalTitlePermitWorker_CallLaborers",
+        "RoyalTitlePermitWorker_CallShuttle",
+        "RoyalTitlePermitWorker_OrbitalStrike"
+      ]
+    },
+    "royalAid": {
+      "label": "Royal aid",
+      "description": "Configuration for the permit's callable aid action. Omit for passive or trade-only permits.",
+      "type": { "kind": "object", "schemaRef": "RoyalAid" },
+      "required": false,
+      "xml": "object"
+    },
+    "cooldownDays": {
+      "label": "Cooldown days",
+      "description": "Number of in-game days before the permit can be used again for free. Omit for permits with no cooldown.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "minTitle": {
+      "label": "Min title",
+      "description": "Minimum royal title required for the player to hold this permit.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RoyalTitleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "permitPointCost": {
+      "label": "Permit point cost",
+      "description": "Number of permit points spent when a pawn selects this permit upon receiving a royal title. Defaults to 0.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "faction": {
+      "label": "Faction",
+      "description": "FactionDef whose members can grant or be affected by this permit.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FactionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "usableOnWorldMap": {
+      "label": "Usable on world map",
+      "description": "If true, this permit can be called while the player is on the world map. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "prerequisite": {
+      "label": "Prerequisite",
+      "description": "Another RoyalTitlePermitDef that must already be held before this permit can be selected.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RoyalTitlePermitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "uiPosition": {
+      "label": "UI position",
+      "description": "Position of this permit in the permit selection grid UI, as (column, row). Example: (0,6).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element"
+    },
+    "layerBlacklist": {
+      "label": "Layer blacklist",
+      "description": "PlanetLayerDefs on which this permit cannot be called.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "basic": {
+      "label": "Basic permit",
+      "description": "A minimal permit definition with a defName and label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "permitPointCost"]
+    }
+  }
+}

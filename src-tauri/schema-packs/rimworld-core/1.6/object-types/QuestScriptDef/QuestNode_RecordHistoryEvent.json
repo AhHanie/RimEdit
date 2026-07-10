@@ -1,0 +1,44 @@
+{
+  "objectType": "QuestNode_RecordHistoryEvent",
+  "label": "QuestNode RecordHistoryEvent",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_RecordHistoryEvent.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignal",
+    "historyEvent",
+    "doerPawn"
+  ],
+  "fields": {
+    "inSignal": {
+      "description": "Signal name that records the history event.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "historyEvent": {
+      "description": "HistoryEventDef def name or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HistoryEventDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "doerPawn": {
+      "description": "Slate variable for the pawn credited with the event.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

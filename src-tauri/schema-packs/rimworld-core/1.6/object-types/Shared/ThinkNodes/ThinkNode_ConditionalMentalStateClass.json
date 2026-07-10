@@ -1,0 +1,16 @@
+{
+  "objectType": "ThinkNode_ConditionalMentalStateClass",
+  "label": "Think node conditional mental state class",
+  "description": "Satisfied when the pawn's active mental state is an instance of the specified C# class.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["stateClass"],
+  "fields": {
+    "stateClass": {
+      "label": "State class",
+      "description": "Fully-qualified C# class name; the conditional is satisfied when the pawn's mental state is an instance of this type.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

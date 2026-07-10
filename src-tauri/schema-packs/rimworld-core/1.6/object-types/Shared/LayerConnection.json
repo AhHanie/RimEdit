@@ -1,0 +1,32 @@
+{
+  "objectType": "LayerConnection",
+  "label": "Layer connection",
+  "description": "Defines a connection from one planet layer to another. When stored inside ScenPart_PlanetLayer.connections, the XML element name is the target layer tag (keyField), which populates the tag field.",
+  "fieldOrder": ["tag", "fuelCost", "zoomMode"],
+  "fields": {
+    "tag": {
+      "label": "Tag",
+      "description": "Target layer tag identifying which layer this connection leads to. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "string" },
+      "required": false
+    },
+    "fuelCost": {
+      "label": "Fuel cost",
+      "description": "Fuel consumed when the player travels through this connection. Defaults to 0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "zoomMode": {
+      "label": "Zoom mode",
+      "description": "Camera transition behavior when moving through this connection.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "ZoomIn", "ZoomOut"]
+      }
+    }
+  }
+}

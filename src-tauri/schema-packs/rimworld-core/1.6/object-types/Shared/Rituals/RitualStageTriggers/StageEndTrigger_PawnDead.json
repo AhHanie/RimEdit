@@ -1,0 +1,17 @@
+{
+  "objectType": "StageEndTrigger_PawnDead",
+  "label": "Stage end trigger (pawn dead)",
+  "description": "Ends the stage when the pawn assigned to the specified role dies.",
+  "fieldOrder": ["Class", "countsTowardsProgress", "roleId"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "roleId": {
+      "label": "Role ID",
+      "description": "ID of the role whose assigned pawn death fires this trigger.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

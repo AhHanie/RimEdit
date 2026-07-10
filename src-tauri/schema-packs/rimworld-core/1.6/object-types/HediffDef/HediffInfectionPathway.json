@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffInfectionPathway",
+  "label": "Hediff infection pathway",
+  "description": "One entry in a possiblePathways list. Loaded via LoadDataFromXmlCustom: element name is the InfectionPathwayDef defName (or 'li' with defName as text), optional element text is the localized explanation shown to the player.",
+  "fieldOrder": [
+    "pathway",
+    "explanation"
+  ],
+  "fields": {
+    "pathway": {
+      "label": "Pathway",
+      "description": "InfectionPathwayDef that this entry describes. Loaded from the XML element name.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "InfectionPathwayDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "explanation": {
+      "label": "Explanation",
+      "description": "Localized text shown to the player explaining how this hediff spreads via the pathway. Optional; omit to show no explanation.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

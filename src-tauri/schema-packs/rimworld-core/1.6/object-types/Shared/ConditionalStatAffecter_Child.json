@@ -1,0 +1,31 @@
+{
+  "objectType": "ConditionalStatAffecter_Child",
+  "label": "Conditional stat affecter (child)",
+  "description": "Applies stat modifications when the pawn is a child.",
+  "fieldOrder": ["Class", "statFactors", "statOffsets"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# ConditionalStatAffecter subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers applied when the pawn is a child.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Stat additive offsets applied when the pawn is a child.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

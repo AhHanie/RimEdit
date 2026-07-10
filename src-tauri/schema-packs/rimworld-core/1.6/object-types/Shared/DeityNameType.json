@@ -1,0 +1,22 @@
+{
+  "objectType": "DeityNameType",
+  "label": "Deity name type",
+  "description": "Pairs a deity name with a type label. Used by structure memes to define specific deity name-type combinations, and by FactionDef.deityPresets.",
+  "fieldOrder": ["name", "type"],
+  "fields": {
+    "name": {
+      "label": "Name",
+      "description": "The deity name string.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "type": {
+      "label": "Type",
+      "description": "Human-readable label describing the deity type (e.g. 'god', 'spirit'). Must be translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

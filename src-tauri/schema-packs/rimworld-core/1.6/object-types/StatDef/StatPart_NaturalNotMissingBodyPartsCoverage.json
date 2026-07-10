@@ -1,0 +1,22 @@
+{
+  "objectType": "StatPart_NaturalNotMissingBodyPartsCoverage",
+  "label": "Stat part (natural body parts coverage)",
+  "description": "Scales the stat based on the fraction of natural, non-missing body part coverage.",
+  "fieldOrder": ["Class", "priority"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

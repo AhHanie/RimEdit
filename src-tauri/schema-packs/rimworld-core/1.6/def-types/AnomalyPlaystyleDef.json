@@ -1,0 +1,64 @@
+{
+  "defType": "AnomalyPlaystyleDef",
+  "label": "Anomaly playstyle",
+  "description": "Defines an Anomaly playstyle preset that controls threat sliders, study factor, monolith generation, and codex visibility.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "displayThreatFractionSliders",
+    "overrideThreatFraction",
+    "displayStudyFactorSlider",
+    "generateMonolith",
+    "enableAnomalyContent",
+    "alwaysShowCodex"
+  ],
+  "fields": {
+    "displayThreatFractionSliders": {
+      "label": "Display threat fraction sliders",
+      "description": "If true, the threat fraction sliders are visible in the storyteller difficulty UI for this playstyle.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "overrideThreatFraction": {
+      "label": "Override threat fraction",
+      "description": "If true, this playstyle sets a fixed threat fraction instead of using the slider value.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayStudyFactorSlider": {
+      "label": "Display study factor slider",
+      "description": "If true, the study factor slider is visible in the storyteller difficulty UI for this playstyle.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "generateMonolith": {
+      "label": "Generate monolith",
+      "description": "If true, a void monolith is generated on new maps when this playstyle is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "enableAnomalyContent": {
+      "label": "Enable anomaly content",
+      "description": "If true, Anomaly content (entities, incidents, research) is active for this playstyle.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "alwaysShowCodex": {
+      "label": "Always show codex",
+      "description": "If true, the entity codex is always visible regardless of entity discovery status.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "objectType": "ScattererValidator_Roof",
+  "label": "Roof validator",
+  "description": "Rejects scatter positions where cells within the given radius do not have the specified roof type.",
+  "fieldOrder": ["Class", "radius", "roofDef"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be ScattererValidator_Roof.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Cell radius around the candidate position to check for the roof type.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "roofDef": {
+      "label": "Roof def",
+      "description": "RoofDef all cells in the radius must have.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RoofDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "objectType": "RitualPosition_BehindThingCenter",
+  "label": "Ritual position (behind thing center)",
+  "description": "Places the pawn behind the center of the ritual target thing.",
+  "fieldOrder": ["Class", "highlight", "offset"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "offset": {
+      "label": "Offset",
+      "description": "IntVec3 offset added to the computed behind-center position.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

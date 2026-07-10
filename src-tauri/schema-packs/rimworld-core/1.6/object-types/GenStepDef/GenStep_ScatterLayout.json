@@ -1,0 +1,50 @@
+{
+  "objectType": "GenStep_ScatterLayout",
+  "label": "Scatter layout",
+  "description": "Scatters a fixed arrangement of things defined by a layout list at each scatter position.",
+  "inherits": ["GenStep_Scatterer"],
+  "fieldOrder": [
+    "Class",
+    "count",
+    "countPer10kCellsRange",
+    "nearPlayerStart",
+    "nearMapCenter",
+    "minSpacing",
+    "spotMustBeStandable",
+    "minDistToPlayerStart",
+    "minDistToPlayerStartPct",
+    "minEdgeDist",
+    "minEdgeDistPct",
+    "extraNoBuildEdgeDist",
+    "validators",
+    "fallbackValidators",
+    "allowInWaterBiome",
+    "allowFoggedPositions",
+    "allowRoofed",
+    "onlyOnStartingMap",
+    "minPollution",
+    "allowMechanoidDatacoreReadOrLost",
+    "isJunk",
+    "warnOnFail",
+    "layout",
+    "checkEveryLayoutCell"
+  ],
+  "fields": {
+    "layout": {
+      "label": "Layout",
+      "description": "List of things with offsets and rotations that form the scatter layout.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutThing" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "checkEveryLayoutCell": {
+      "label": "Check every layout cell",
+      "description": "When true, every cell occupied by the layout is validated with the base scatterer cell check.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

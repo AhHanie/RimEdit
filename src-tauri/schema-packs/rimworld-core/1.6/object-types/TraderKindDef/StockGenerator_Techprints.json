@@ -1,0 +1,17 @@
+{
+  "objectType": "StockGenerator_Techprints",
+  "label": "Techprints generator",
+  "description": "Generates techprint items from the available researchable technology tree, selected at random. The number to generate is drawn from the countChances weighted table.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": ["countChances"],
+  "fields": {
+    "countChances": {
+      "label": "Count chances",
+      "description": "Weighted count table. Each entry specifies how many techprints to generate and the relative probability of that count.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "CountChance" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

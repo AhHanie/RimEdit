@@ -1,0 +1,26 @@
+{
+  "objectType": "ThinkNode_Tagger",
+  "label": "Think node tagger",
+  "description": "Wraps child nodes and stamps any issued job with the specified JobTag. Private in source but tagToGive is XML-backed. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "tagToGive"
+  ],
+  "fields": {
+    "tagToGive": {
+      "label": "Tag to give",
+      "description": "JobTag stamped onto any job issued by this node's children. Private in C# source but loaded from XML.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Misc", "MiscWork", "Fieldwork", "Idle", "InMentalState", "SatisfyingNeeds",
+          "DraftedOrder", "UnspecifiedLordDuty", "WaitingForOthersToFinishGatheringItems",
+          "TuckedIntoBed", "RestingForMedicalReasons", "ChangingApparel", "Escaping",
+          "JoiningCaravan", "TrainedAnimalBehavior", "UnloadingOwnInventory", "TakeForInventoryStock"
+        ]
+      }
+    }
+  }
+}

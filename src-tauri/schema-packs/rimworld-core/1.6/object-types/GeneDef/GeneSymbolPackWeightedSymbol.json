@@ -1,0 +1,26 @@
+{
+  "objectType": "GeneSymbolPackWeightedSymbol",
+  "label": "Weighted symbol",
+  "description": "A translatable symbol string with a selection weight used when building gene-based xenotype names.",
+  "fieldOrder": [
+    "symbol",
+    "weight"
+  ],
+  "fields": {
+    "symbol": {
+      "label": "Symbol",
+      "description": "The name fragment inserted at the symbol's position in generated names.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative probability that this symbol is chosen during name generation. Higher values make this symbol more likely.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

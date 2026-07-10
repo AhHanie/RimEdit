@@ -1,0 +1,94 @@
+{
+  "objectType": "WoundAnchor",
+  "label": "Wound anchor",
+  "description": "A spatial anchor that maps a wound zone to a position on the body graphic. Nested class inside BodyTypeDef.",
+  "fieldOrder": [
+    "tag",
+    "group",
+    "narrowCrown",
+    "rotation",
+    "canMirror",
+    "offset",
+    "layer",
+    "debugColor",
+    "range"
+  ],
+  "fields": {
+    "tag": {
+      "label": "Tag",
+      "description": "String tag identifying the wound zone. Used instead of group to select the anchor zone by tag name.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "group": {
+      "label": "Group",
+      "description": "BodyPartGroupDef identifying the wound zone by body part group. Used instead of tag.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyPartGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "narrowCrown": {
+      "label": "Narrow crown",
+      "description": "If set, restricts the wound zone to a narrow crown band on the head graphic. Only used for head eye anchors.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "rotation": {
+      "label": "Rotation",
+      "description": "Cardinal rotation of the anchor view. Corresponds to Verse.Rot4 values.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["North", "East", "South", "West"]
+      }
+    },
+    "canMirror": {
+      "label": "Can mirror",
+      "description": "Whether the wound anchor may be mirrored for opposite-side rendering. Defaults to true; set to false for eye or side-specific anchors.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "World-space offset from the graphic origin as (x, y, z).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0, 0, 0)", "(0.05, 0, 0.1)"]
+    },
+    "layer": {
+      "label": "Layer",
+      "description": "Whether the wound renders on the body or head overlay layer. Corresponds to PawnOverlayDrawer.OverlayLayer.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Body", "Head"]
+      }
+    },
+    "debugColor": {
+      "label": "Debug color",
+      "description": "Color used to visualize this anchor in debug overlay mode. Has no effect in normal play.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "range": {
+      "label": "Range",
+      "description": "Radius of the wound area in graphic space. Controls how large the wound decal region is.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationSequence",
+  "label": "Sequence",
+  "description": "Runs a list of child operations in order, stopping at the first one that fails.",
+  "fieldOrder": ["operations"],
+  "fields": {
+    "operations": {
+      "label": "Operations",
+      "description": "Child operations to run in order.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object" },
+      "xml": "listOfLi",
+      "role": "operationList",
+      "required": true
+    }
+  }
+}

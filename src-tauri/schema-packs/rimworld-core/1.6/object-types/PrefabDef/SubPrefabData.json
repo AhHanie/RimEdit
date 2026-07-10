@@ -1,0 +1,51 @@
+{
+  "objectType": "SubPrefabData",
+  "description": "A nested sub-prefab entry inside a PrefabDef. The containing element name is the PrefabDef defName (the 'def' field). Supports an optional single text node mapping to 'position' (XmlHelper.ParseElements default-value behavior).",
+  "fieldOrder": ["def", "chance", "position", "positions", "relativeRotation"],
+  "fields": {
+    "def": {
+      "label": "Prefab",
+      "description": "PrefabDef defName. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": {
+        "defType": "PrefabDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability this sub-prefab is placed (0-1). Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "validationHints": { "min": 0.0, "max": 1.0 },
+      "examples": ["1", "0.5"]
+    },
+    "position": {
+      "label": "Position",
+      "description": "Placement offset from this prefab's origin, as '(x, y, z)'. May also be provided as a single text node on the element when using the ParseElements default-value shorthand.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "examples": ["(0, 0, 0)", "(2, 0, 1)"]
+    },
+    "positions": {
+      "label": "Positions",
+      "description": "List of specific spawn offsets. Each <li> is an IntVec3 as '(x, y, z)'.",
+      "type": { "kind": "list" },
+      "xml": "listOfLi",
+      "required": false,
+      "examples": ["(0, 0, 0)", "(1, 0, 2)"]
+    },
+    "relativeRotation": {
+      "label": "Relative rotation",
+      "description": "Rotation offset for the sub-prefab relative to this prefab's rotation.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "validationHints": {
+        "allowedValues": ["None", "Clockwise", "Opposite", "Counterclockwise"]
+      }
+    }
+  }
+}

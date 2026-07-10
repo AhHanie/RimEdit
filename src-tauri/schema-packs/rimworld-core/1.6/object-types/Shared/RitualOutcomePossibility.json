@@ -1,0 +1,76 @@
+{
+  "objectType": "RitualOutcomePossibility",
+  "label": "Ritual outcome possibility",
+  "description": "One weighted outcome entry for a RitualOutcomeEffectDef. Describes a label, mood memory, and occurrence chance.",
+  "fieldOrder": [
+    "label", "description", "potentialExtraOutcomeDesc",
+    "chance", "memory", "positivityIndex",
+    "roleIdsNotGainingMemory", "ideoCertaintyOffset"
+  ],
+  "fields": {
+    "label": {
+      "label": "Label",
+      "description": "Short display label for this outcome shown in the ritual outcome UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Longer description explaining what happens when this outcome occurs.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "potentialExtraOutcomeDesc": {
+      "label": "Potential extra outcome description",
+      "description": "Additional description shown as a tooltip hint about possible extra effects.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Relative weight for this outcome. All outcome chances in a def should sum to 1.0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "memory": {
+      "label": "Memory",
+      "description": "ThoughtDef added to participants when this outcome occurs.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "positivityIndex": {
+      "label": "Positivity index",
+      "description": "Signed integer indicating how positive this outcome is. Used to rank best and worst outcomes. Negative values are bad outcomes.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "roleIdsNotGainingMemory": {
+      "label": "Role IDs not gaining memory",
+      "description": "Role IDs whose assigned pawns do not receive the memory thought for this outcome.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "ideoCertaintyOffset": {
+      "label": "Ideo certainty offset",
+      "description": "Amount added to the ideo certainty of participants when this outcome occurs. Positive values increase certainty.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "defType": "WeaponClassPairDef",
+  "label": "Weapon class pair",
+  "description": "Defines a pair of weapon classes used by Ideology to model ideological stances on weapon categories.",
+  "inherits": ["Def"],
+  "fieldOrder": ["first", "second"],
+  "fields": {
+    "first": {
+      "label": "First",
+      "description": "The first WeaponClassDef in the pair.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WeaponClassDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "second": {
+      "label": "Second",
+      "description": "The second WeaponClassDef in the pair.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WeaponClassDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

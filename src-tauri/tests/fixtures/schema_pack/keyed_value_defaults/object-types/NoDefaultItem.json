@@ -1,0 +1,16 @@
+{
+  "objectType": "NoDefaultItem",
+  "fieldOrder": ["key", "count"],
+  "fields": {
+    "key": {
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "count": {
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

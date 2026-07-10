@@ -1,0 +1,6 @@
+{
+  "objectType": "ThinkNode_Priority_GetJoy",
+  "label": "Think node priority get joy",
+  "description": "Priority node that returns a non-zero priority when the pawn is allowed to seek joy based on timetable and current joy level.",
+  "inherits": ["ThinkNode"]
+}

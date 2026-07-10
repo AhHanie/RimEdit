@@ -1,0 +1,61 @@
+{
+  "objectType": "GenStep_FleshSacks",
+  "label": "Flesh sacks",
+  "description": "Spawns flesh sack structures with loot based on site threat points.",
+  "fieldOrder": [
+    "Class",
+    "sackClumpSize",
+    "numFleshSacksFromPoints",
+    "forceAtLeastOneShard",
+    "spawnSurroundingFleshmass",
+    "trySpawnInRoom"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_FleshSacks.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "sackClumpSize": {
+      "label": "Sack clump size",
+      "description": "Number of cells in the irregular lump of fleshmass generated around each sack.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 50,
+      "xml": "element"
+    },
+    "numFleshSacksFromPoints": {
+      "label": "Num flesh sacks from points",
+      "description": "SimpleCurve mapping threat points to the number of flesh sacks to spawn.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "forceAtLeastOneShard": {
+      "label": "Force at least one shard",
+      "description": "When true, the first flesh sack always contains a shard instead of random loot.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "spawnSurroundingFleshmass": {
+      "label": "Spawn surrounding fleshmass",
+      "description": "When true, fleshmass edifices are spawned in the clump around each sack.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "trySpawnInRoom": {
+      "label": "Try spawn in room",
+      "description": "When true, the step attempts to place sacks inside an enclosed room before falling back to open placement.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

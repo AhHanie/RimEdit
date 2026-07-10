@@ -1,0 +1,121 @@
+{
+  "objectType": "ReverbSetup",
+  "label": "Reverb setup",
+  "description": "Unity AudioReverbFilter preset values used by SoundFilterReverb and SoundParamTarget_PropertyReverb.",
+  "fieldOrder": [
+    "dryLevel",
+    "room",
+    "roomHF",
+    "roomLF",
+    "decayTime",
+    "decayHFRatio",
+    "reflectionsLevel",
+    "reflectionsDelay",
+    "reverbLevel",
+    "reverbDelay",
+    "hfReference",
+    "lfReference",
+    "diffusion",
+    "density"
+  ],
+  "fields": {
+    "dryLevel": {
+      "label": "Dry level",
+      "description": "Mix level of the dry signal in mB. Range -10000 to 0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "room": {
+      "label": "Room",
+      "description": "Room effect level in mB. Range -10000 to 0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "roomHF": {
+      "label": "Room HF",
+      "description": "High-frequency room effect level in mB. Range -10000 to 0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "roomLF": {
+      "label": "Room LF",
+      "description": "Low-frequency room effect level in mB. Range -10000 to 0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "decayTime": {
+      "label": "Decay time",
+      "description": "Reverberation decay time in seconds.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "decayHFRatio": {
+      "label": "Decay HF ratio",
+      "description": "High-frequency to mid-frequency decay time ratio.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "reflectionsLevel": {
+      "label": "Reflections level",
+      "description": "Early reflections level relative to room in mB.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "reflectionsDelay": {
+      "label": "Reflections delay",
+      "description": "Time delay of the first reflection in seconds.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "reverbLevel": {
+      "label": "Reverb level",
+      "description": "Late reverberation level relative to room in mB.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "reverbDelay": {
+      "label": "Reverb delay",
+      "description": "Late reverberation delay time relative to first reflection in seconds.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "hfReference": {
+      "label": "HF reference",
+      "description": "Reference high frequency in Hz.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "lfReference": {
+      "label": "LF reference",
+      "description": "Reference low frequency in Hz.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "diffusion": {
+      "label": "Diffusion",
+      "description": "Reverberation diffusion (echo density) percentage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "density": {
+      "label": "Density",
+      "description": "Modal density of the reverberation as a percentage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

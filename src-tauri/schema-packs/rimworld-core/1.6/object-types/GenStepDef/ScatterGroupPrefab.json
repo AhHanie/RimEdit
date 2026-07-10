@@ -1,0 +1,64 @@
+{
+  "objectType": "ScatterGroupPrefab",
+  "label": "Scatter group prefab",
+  "description": "A PrefabDef entry used by GenStep_ScatterGroupPrefabs with optional weight, max count, and filth settings.",
+  "fieldOrder": ["prefab", "weight", "max", "indoorRuin", "filthDef", "filthExpandBy", "filthChance"],
+  "fields": {
+    "prefab": {
+      "label": "Prefab",
+      "description": "PrefabDef to spawn at this scatter position.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PrefabDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative probability of this prefab being chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "max": {
+      "label": "Max",
+      "description": "Maximum number of times this prefab may be spawned. Use -1 for unlimited.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "indoorRuin": {
+      "label": "Indoor ruin",
+      "description": "When true, this prefab requires the scatter cell to be inside an existing ruined structure.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "filthDef": {
+      "label": "Filth def",
+      "description": "Filth ThingDef spawned around the placed prefab.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "filthExpandBy": {
+      "label": "Filth expand by",
+      "description": "Number of cells to expand the prefab's occupied rect when spawning filth.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "filthChance": {
+      "label": "Filth chance",
+      "description": "Probability (0-1) that each eligible cell around the prefab receives filth.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    }
+  }
+}

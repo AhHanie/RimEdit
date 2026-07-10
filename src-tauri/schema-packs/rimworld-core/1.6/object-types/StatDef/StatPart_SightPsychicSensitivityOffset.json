@@ -1,0 +1,54 @@
+{
+  "objectType": "StatPart_SightPsychicSensitivityOffset",
+  "label": "Stat part (sight psychic sensitivity offset)",
+  "description": "Adds a psychic sensitivity offset that scales with the pawn's sight capacity.",
+  "fieldOrder": ["Class", "priority", "startsAt", "minBonus", "maxBonus", "endsAt"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "startsAt": {
+      "label": "Starts at",
+      "description": "Sight efficiency level at which the bonus begins to apply.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "minBonus": {
+      "label": "Min bonus",
+      "description": "Minimum psychic sensitivity offset applied.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxBonus": {
+      "label": "Max bonus",
+      "description": "Maximum psychic sensitivity offset applied.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "endsAt": {
+      "label": "Ends at",
+      "description": "Sight efficiency level at which the bonus reaches its maximum.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

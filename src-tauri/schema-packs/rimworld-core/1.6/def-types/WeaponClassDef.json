@@ -1,0 +1,8 @@
+{
+  "defType": "WeaponClassDef",
+  "label": "Weapon class",
+  "description": "Defines a weapon class used to express ideological preferences for noble or despised weapons.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {}
+}

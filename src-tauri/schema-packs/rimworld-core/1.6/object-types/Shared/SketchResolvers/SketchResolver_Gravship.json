@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_Gravship",
+  "label": "Sketch resolver: Gravship",
+  "description": "Concrete RimWorld SketchResolver_Gravship resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

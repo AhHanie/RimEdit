@@ -1,0 +1,67 @@
+{
+  "objectType": "PawnRenderNodeProperties_Spastic",
+  "label": "Render node properties (spastic)",
+  "description": "Render node properties for spastic jitter and rotation movement effects.",
+  "inherits": ["PawnRenderNodeProperties"],
+  "fieldOrder": [
+    "rotateFacing",
+    "scaleRange",
+    "rotationRange",
+    "offsetRangeX",
+    "offsetRangeZ",
+    "durationTicksRange",
+    "nextSpasmTicksRange"
+  ],
+  "fields": {
+    "rotateFacing": {
+      "label": "Rotate facing",
+      "description": "If true, the spastic node rotates to face a random direction during each spasm.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scaleRange": {
+      "label": "Scale range",
+      "description": "Range of random scale multipliers applied during each spasm.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "rotationRange": {
+      "label": "Rotation range",
+      "description": "Range of random rotation angles in degrees applied during each spasm.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "offsetRangeX": {
+      "label": "Offset range X",
+      "description": "Range of random X-axis position offset applied during each spasm.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "offsetRangeZ": {
+      "label": "Offset range Z",
+      "description": "Range of random Z-axis position offset applied during each spasm.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "durationTicksRange": {
+      "label": "Duration ticks range",
+      "description": "Range of random tick durations for each spasm event.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "nextSpasmTicksRange": {
+      "label": "Next spasm ticks range",
+      "description": "Range of random tick delays between spasm events.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

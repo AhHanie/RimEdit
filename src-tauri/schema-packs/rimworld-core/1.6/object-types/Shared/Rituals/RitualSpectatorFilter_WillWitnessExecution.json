@@ -1,0 +1,10 @@
+{
+  "objectType": "RitualSpectatorFilter_WillWitnessExecution",
+  "label": "Ritual spectator filter (will witness execution)",
+  "description": "Filters spectators to colonists who will witness the execution.",
+  "fieldOrder": ["Class", "description"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "description": { "label": "Description", "type": { "kind": "localizedString" }, "required": false, "xml": "element" }
+  }
+}

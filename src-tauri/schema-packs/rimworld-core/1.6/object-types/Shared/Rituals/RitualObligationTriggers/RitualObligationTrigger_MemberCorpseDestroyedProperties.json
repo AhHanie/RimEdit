@@ -1,0 +1,30 @@
+{
+  "objectType": "RitualObligationTrigger_MemberCorpseDestroyedProperties",
+  "label": "Ritual obligation trigger (member corpse destroyed)",
+  "description": "Triggers a ritual obligation when a member's corpse is destroyed.",
+  "fieldOrder": ["Class", "triggerClass", "mustBePlayerIdeo"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "triggerClass": {
+      "label": "Trigger class",
+      "description": "C# RitualObligationTrigger subclass instantiated at runtime.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBePlayerIdeo": {
+      "label": "Must be player ideo",
+      "description": "If true, this obligation trigger only fires for the player ideology.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "objectType": "QuestNode",
+  "label": "Quest node",
+  "description": "Base polymorphic QuestNode schema. The XML Class attribute selects the concrete node type; unknown classes fall back to this base schema.",
+  "fieldOrder": [
+    "Class",
+    "selectionWeight"
+  ],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "QuestNode",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "QuestNode_Sequence": "QuestNode_Sequence",
+      "QuestNode_RandomNode": "QuestNode_RandomNode",
+      "QuestNode_IsSet": "QuestNode_IsSet",
+      "QuestNode_IsNull": "QuestNode_IsNull",
+      "QuestNode_IsTrue": "QuestNode_IsTrue",
+      "QuestNode_ViolentQuestsAllowed": "QuestNode_ViolentQuestsAllowed",
+      "QuestNode_LoopCount": "QuestNode_LoopCount",
+      "QuestNode_Chance": "QuestNode_Chance",
+      "QuestNode_Signal": "QuestNode_Signal",
+      "QuestNode_AllSignals": "QuestNode_AllSignals",
+      "QuestNode_AnySignal": "QuestNode_AnySignal",
+      "QuestNode_AllSignalsActivable": "QuestNode_AllSignalsActivable",
+      "QuestNode_AnySignalActivable": "QuestNode_AnySignalActivable",
+      "QuestNode_SendSignals": "QuestNode_SendSignals",
+      "QuestNode_Delay": "QuestNode_Delay",
+      "QuestNode_WorldObjectTimeout": "QuestNode_WorldObjectTimeout",
+      "QuestNode_NoWorldObject": "QuestNode_NoWorldObject",
+      "QuestNode_Set": "QuestNode_Set",
+      "QuestNode_Unset": "QuestNode_Unset",
+      "QuestNode_SetAndRestore": "QuestNode_SetAndRestore",
+      "QuestNode_Add": "QuestNode_Add",
+      "QuestNode_Multiply": "QuestNode_Multiply",
+      "QuestNode_Divide": "QuestNode_Divide",
+      "QuestNode_Subtract": "QuestNode_Subtract",
+      "QuestNode_Clamp": "QuestNode_Clamp",
+      "QuestNode_EvaluateSimpleCurve": "QuestNode_EvaluateSimpleCurve",
+      "QuestNode_End": "QuestNode_End",
+      "QuestNode_Letter": "QuestNode_Letter",
+      "QuestNode_SubScript": "QuestNode_SubScript",
+      "QuestNode_GetMap": "QuestNode_GetMap",
+      "QuestNode_GetPawn": "QuestNode_GetPawn",
+      "QuestNode_GetFaction": "QuestNode_GetFaction",
+      "QuestNode_GetFactionOf": "QuestNode_GetFactionOf",
+      "QuestNode_GeneratePawn": "QuestNode_GeneratePawn",
+      "QuestNode_GetSiteTile": "QuestNode_GetSiteTile",
+      "QuestNode_GetSitePartDefsByTagsAndFaction": "QuestNode_GetSitePartDefsByTagsAndFaction",
+      "QuestNode_GetDefaultSitePartsParams": "QuestNode_GetDefaultSitePartsParams",
+      "QuestNode_SpawnWorldObjects": "QuestNode_SpawnWorldObjects",
+      "QuestNode_CreateIncidents": "QuestNode_CreateIncidents",
+      "QuestNode_GiveRewards": "QuestNode_GiveRewards",
+      "QuestNode_AddToList": "QuestNode_AddToList",
+      "QuestNode_SetChallengeRating": "QuestNode_SetChallengeRating",
+      "QuestNode_ResolveQuestName": "QuestNode_ResolveQuestName",
+      "QuestNode_ResolveQuestDescription": "QuestNode_ResolveQuestDescription",
+      "QuestNode_RecordHistoryEvent": "QuestNode_RecordHistoryEvent"
+    }
+  },
+  "fields": {
+    "Class": {
+      "description": "Concrete QuestNode C# class selected by DirectXmlLoader.",
+      "type": {
+        "kind": "typeName"
+      },
+      "required": false,
+      "xml": "attribute"
+    },
+    "selectionWeight": {
+      "description": "SlateRef<float?> literal, expression, or $varName used as this node's random selection weight.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "defaultValue": "1",
+      "xml": "element"
+    }
+  }
+}

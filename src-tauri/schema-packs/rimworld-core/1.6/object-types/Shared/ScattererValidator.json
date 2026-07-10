@@ -1,0 +1,30 @@
+{
+  "objectType": "ScattererValidator",
+  "label": "Scatterer validator",
+  "description": "Base schema for scatterer placement validators. The Class attribute selects the concrete validator type.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "ScattererValidator",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "ScattererValidator_Buildable": "ScattererValidator_Buildable",
+      "ScattererValidator_NoNonNaturalEdifices": "ScattererValidator_NoNonNaturalEdifices",
+      "ScattererValidator_AvoidSpecialThings": "ScattererValidator_AvoidSpecialThings",
+      "ScattererValidator_TerrainDef": "ScattererValidator_TerrainDef",
+      "ScattererValidator_Roof": "ScattererValidator_Roof",
+      "ScattererValidator_AvoidThingsOfDef": "ScattererValidator_AvoidThingsOfDef",
+      "ScatterValidator_AvoidUsedRects": "ScatterValidator_AvoidUsedRects"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# ScattererValidator subclass that determines what placement condition is checked.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

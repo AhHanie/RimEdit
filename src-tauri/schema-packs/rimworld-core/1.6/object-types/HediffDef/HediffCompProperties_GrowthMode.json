@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_GrowthMode",
+  "label": "Growth mode comp",
+  "description": "Defines growth thresholds for hediff mode transitions.",
+  "fieldOrder": ["Class", "compClass", "growthPoints"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "growthPoints": {
+      "label": "Growth points",
+      "description": "Growth thresholds for mode transitions.",
+      "type": { "kind": "list" },
+      "items": { "kind": "float" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

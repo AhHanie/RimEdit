@@ -1,0 +1,6 @@
+{
+  "objectType": "ThinkNode_Priority_Learn",
+  "label": "Think node priority learn",
+  "description": "Priority node that returns a high priority when a child pawn needs and is allowed to engage in learning activities (Biotech DLC).",
+  "inherits": ["ThinkNode"]
+}

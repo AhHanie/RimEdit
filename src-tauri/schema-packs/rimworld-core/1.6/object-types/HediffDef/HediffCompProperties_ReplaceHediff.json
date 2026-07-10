@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_ReplaceHediff",
+  "label": "Replace hediff comp",
+  "description": "Replaces this hediff with another when removed or at a given severity.",
+  "fieldOrder": ["Class", "compClass", "replaceWith", "replaceAtSeverity"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "replaceWith": {
+      "label": "Replace with",
+      "description": "Hediff to apply when this one is removed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "replaceAtSeverity": {
+      "label": "Replace at severity",
+      "description": "Severity at which to replace. -1 means on any removal.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "objectType": "RitualOutcomeComp_GravshipFacilities",
+  "label": "Ritual outcome comp (gravship facilities)",
+  "description": "Accumulates quality offsets from gravship facility components present on the target gravship engine. Each facility ThingDef maps to a float quality offset per unit.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "facilityQualityOffsets"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Not used directly; quality is the sum of individual facility offsets.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve; not typically used by this variant.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "facilityQualityOffsets": {
+      "label": "Facility quality offsets",
+      "description": "Named map from ThingDef defName to float quality offset per unit of that facility. Child element names are ThingDef defNames; text values are floats.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "valueType": { "kind": "float" }
+    }
+  }
+}

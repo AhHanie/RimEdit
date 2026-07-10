@@ -1,0 +1,41 @@
+{
+  "objectType": "QuestNode_IsNull",
+  "label": "QuestNode IsNull",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_IsNull.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "name",
+    "node",
+    "elseNode"
+  ],
+  "fields": {
+    "name": {
+      "description": "Slate variable name to test.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "node": {
+      "description": "QuestNode run when the condition passes.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "elseNode": {
+      "description": "QuestNode run when the condition fails.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

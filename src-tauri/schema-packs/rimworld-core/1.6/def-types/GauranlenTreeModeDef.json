@@ -1,0 +1,75 @@
+{
+  "defType": "GauranlenTreeModeDef",
+  "label": "Gauranlen tree mode",
+  "description": "Defines a dryad caste mode for the Gauranlen tree, including its pawn kind, UI position, required memes, displayed stats, and info-card hyperlinks.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "previousStage",
+    "pawnKindDef",
+    "requiredMemes",
+    "drawPosition",
+    "displayedStats",
+    "hyperlinks"
+  ],
+  "fields": {
+    "previousStage": {
+      "label": "Previous stage",
+      "description": "The dryad caste that must be unlocked before this one becomes available in the selection dialog. Unused in shipped defs but present in source as an optional progression link.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GauranlenTreeModeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "pawnKindDef": {
+      "label": "Pawn kind",
+      "description": "PawnKindDef that identifies the dryad caste spawned when this mode is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredMemes": {
+      "label": "Required memes",
+      "description": "MemeDefs that must be present in the colony ideology before this caste becomes selectable. Leave empty for castes available to all ideologies.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "drawPosition": {
+      "label": "Draw position",
+      "description": "UI grid position of this caste's icon in the dryad selection dialog, as (x, y).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0, 0)", "(1, 0)", "(2, 0)"]
+    },
+    "displayedStats": {
+      "label": "Displayed stats",
+      "description": "StatDefs shown in the mode selection panel when the player hovers over or selects this caste.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "hyperlinks": {
+      "label": "Hyperlinks",
+      "description": "Def links shown in the mode info panel. Each element tag identifies the target def type (e.g. ThingDef). Same mechanism as descriptionHyperlinks on Def but stored separately.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "typedReferenceList",
+      "typedReference": {
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "defType": "EffecterDef",
+  "label": "Effecter",
+  "description": "Defines a visual and audio effect composed of sub-effecter children. Used by gameplay code to spawn particles, sounds, and motes at locations or on things.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "children",
+    "positionRadius",
+    "offsetTowardsTarget",
+    "maintainTicks",
+    "randomWeight",
+    "offsetMode"
+  ],
+  "fields": {
+    "children": {
+      "label": "Children",
+      "description": "List of sub-effecters that make up this effect. Each child defines a visual or audio sub-effect.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SubEffecterDef" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "positionRadius": {
+      "label": "Position radius",
+      "description": "Radius in world units around the effect origin within which sub-effecters may spawn.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "offsetTowardsTarget": {
+      "label": "Offset towards target",
+      "description": "Distance the effect origin is shifted toward the target before spawning sub-effecters. Supports scalar and min~max range formats.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.25~0.25", "0~0.5"]
+    },
+    "maintainTicks": {
+      "label": "Maintain ticks",
+      "description": "Number of ticks the effecter is kept alive by the effecter maintainer after its initial trigger. 0 means the effecter is cleaned up immediately.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "randomWeight": {
+      "label": "Random weight",
+      "description": "Relative weight for random effecter selection when multiple effecters are candidates. Source default is 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "offsetMode": {
+      "label": "Offset mode",
+      "description": "Controls how the effect origin is calculated when spawned on a Thing. TrueCenterCompensated shifts the origin to the thing's true center; Free uses the tile position directly.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["TrueCenterCompensated", "Free"]
+      }
+    }
+  }
+}

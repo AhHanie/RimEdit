@@ -1,0 +1,106 @@
+{
+  "objectType": "DrawData",
+  "label": "Draw data",
+  "description": "Rendering transform data for a pawn render node, containing per-direction rotational data plus scale and anchor settings.",
+  "fieldOrder": [
+    "defaultData",
+    "dataNorth",
+    "dataEast",
+    "dataSouth",
+    "dataWest",
+    "scaleOffsetByBodySize",
+    "useBodyPartAnchor",
+    "scale",
+    "childScale",
+    "bodyTypeScales"
+  ],
+  "fields": {
+    "defaultData": {
+      "label": "Default data",
+      "description": "Fallback rotational data used for any direction not covered by a directional override.",
+      "type": { "kind": "object", "schemaRef": "DrawDataRotationalData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "dataNorth": {
+      "label": "Data (north)",
+      "description": "Rotational data for the north-facing direction. Implies rotation = North.",
+      "type": { "kind": "object", "schemaRef": "DrawDataRotationalData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "dataEast": {
+      "label": "Data (east)",
+      "description": "Rotational data for the east-facing direction. Implies rotation = East.",
+      "type": { "kind": "object", "schemaRef": "DrawDataRotationalData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "dataSouth": {
+      "label": "Data (south)",
+      "description": "Rotational data for the south-facing direction. Implies rotation = South.",
+      "type": { "kind": "object", "schemaRef": "DrawDataRotationalData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "dataWest": {
+      "label": "Data (west)",
+      "description": "Rotational data for the west-facing direction. Implies rotation = West.",
+      "type": { "kind": "object", "schemaRef": "DrawDataRotationalData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "scaleOffsetByBodySize": {
+      "label": "Scale offset by body size",
+      "description": "If true, the offset is scaled proportionally to the pawn's body size.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useBodyPartAnchor": {
+      "label": "Use body part anchor",
+      "description": "If true, positioning is anchored to the body part rather than the pawn origin.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Uniform scale multiplier applied to this node's draw size.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "childScale": {
+      "label": "Child scale",
+      "description": "Uniform scale multiplier propagated to child nodes of this node.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "bodyTypeScales": {
+      "label": "Body type scales",
+      "description": "Per-BodyTypeDef scale overrides. Child element names are BodyTypeDef defNames; text is the scale float.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DrawDataBodyTypeScale" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "bodyType",
+      "valueField": "scale",
+      "keyReference": {
+        "defType": "BodyTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

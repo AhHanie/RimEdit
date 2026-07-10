@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_WanderInRoofedCellsInPen",
+  "label": "Job giver wander in roofed cells in pen",
+  "description": "Wanders toward roofed cells within the pawn's pen when game conditions require shelter. No additional XML-loadable fields beyond the Wander base.",
+  "inherits": ["JobGiver_Wander"]
+}

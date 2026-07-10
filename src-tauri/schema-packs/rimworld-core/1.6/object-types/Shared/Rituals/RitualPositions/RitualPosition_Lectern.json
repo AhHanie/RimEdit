@@ -1,0 +1,10 @@
+{
+  "objectType": "RitualPosition_Lectern",
+  "label": "Ritual position (lectern)",
+  "description": "Places the pawn at a lectern near the ritual target.",
+  "fieldOrder": ["Class", "highlight"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" }
+  }
+}

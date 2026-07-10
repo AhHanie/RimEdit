@@ -1,0 +1,28 @@
+{
+  "defType": "ImpactSoundTypeDef",
+  "label": "Impact sound type",
+  "description": "Groups a SoundDef for damage impacts. Referenced by DamageDef.impactSoundType to play a hit sound on projectile or melee impact.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "playOnlyIfHitPawn",
+    "soundDef"
+  ],
+  "fields": {
+    "playOnlyIfHitPawn": {
+      "label": "Play only if hit pawn",
+      "description": "If true, the impact sound only plays when the target is a pawn.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "soundDef": {
+      "label": "Sound def",
+      "description": "SoundDef played when this impact type triggers.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

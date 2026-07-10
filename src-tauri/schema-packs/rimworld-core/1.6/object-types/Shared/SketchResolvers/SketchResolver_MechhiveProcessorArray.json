@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_MechhiveProcessorArray",
+  "label": "Sketch resolver: Mechhive processor array",
+  "description": "Concrete RimWorld SketchResolver_MechhiveProcessorArray resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_VacuumExposure",
+  "label": "Vacuum exposure comp",
+  "description": "Increases hediff severity when the pawn is exposed to vacuum.",
+  "fieldOrder": ["Class", "compClass", "maxSeverity", "severityPerSecond"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxSeverity": {
+      "label": "Max severity",
+      "description": "Maximum severity this comp can push the hediff to.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "severityPerSecond": {
+      "label": "Severity per second",
+      "description": "Severity gain per second in vacuum.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

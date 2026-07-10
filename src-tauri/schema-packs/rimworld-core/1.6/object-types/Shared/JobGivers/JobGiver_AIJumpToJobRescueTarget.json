@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_AIJumpToJobRescueTarget",
+  "label": "Job giver AI jump to job rescue target",
+  "description": "Variant of AIJumpToJobTarget that only jumps when the target is a downed pawn or a bed being used to place one.",
+  "inherits": ["JobGiver_AIJumpToJobTarget"]
+}

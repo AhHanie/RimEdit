@@ -1,0 +1,80 @@
+{
+  "defType": "SpecialThingFilterDef",
+  "label": "Special thing filter",
+  "description": "Defines a special toggle in ThingFilter category trees, backed by a worker class that tests whether a Thing matches the filter.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "parentCategory",
+    "saveKey",
+    "allowedByDefault",
+    "configurable",
+    "workerClass"
+  ],
+  "fields": {
+    "parentCategory": {
+      "label": "Parent category",
+      "description": "ThingCategoryDef whose tree node owns this special filter in storage, ingredient, apparel, food, and similar ThingFilter UIs.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "saveKey": {
+      "label": "Save key",
+      "description": "Stable key used when saving this special filter's allowed/disallowed state in a ThingFilter.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowedByDefault": {
+      "label": "Allowed by default",
+      "description": "Whether this special filter starts allowed when a ThingFilter resolves its default allowances.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "configurable": {
+      "label": "Configurable",
+      "description": "Whether users can toggle this special filter in the ThingFilter UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class deriving from SpecialThingFilterWorker. The worker decides whether a concrete Thing matches this special filter.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "SpecialThingFilterWorker_Fresh",
+        "SpecialThingFilterWorker_CorpsesColonist",
+        "SpecialThingFilterWorker_AllowBookShooting"
+      ]
+    }
+  },
+  "templates": {
+    "basic-special-thing-filter": {
+      "label": "Basic special thing filter",
+      "description": "Special ThingFilter toggle with a category, save key, and worker class.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "defName",
+        "label",
+        "parentCategory",
+        "saveKey",
+        "workerClass"
+      ],
+      "fieldValues": {
+        "allowedByDefault": true,
+        "configurable": true
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "defType": "AnimationDef",
+  "label": "Animation",
+  "description": "Defines a pawn render animation: a timed sequence of keyframe or curve parts applied to named pawn render nodes.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "durationTicks",
+    "startOnRandomTick",
+    "playWhenDowned",
+    "posRotScale",
+    "loopMode",
+    "keyframeParts",
+    "curveParts"
+  ],
+  "fields": {
+    "durationTicks": {
+      "label": "Duration ticks",
+      "description": "Total length of the animation in game ticks. Default is 0.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "startOnRandomTick": {
+      "label": "Start on random tick",
+      "description": "If true, the animation starts at a random tick offset instead of tick 0.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "playWhenDowned": {
+      "label": "Play when downed",
+      "description": "If true, the animation continues to play when the pawn is downed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "posRotScale": {
+      "label": "Pos/rot scale",
+      "description": "Global scale applied to position and rotation animation values. Does not scale the scale channel. Default is 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "loopMode": {
+      "label": "Loop mode",
+      "description": "How the animation behaves when it reaches its end. Loop repeats, Clamp holds the last frame, End stops.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Loop", "Clamp", "End"] }
+    },
+    "keyframeParts": {
+      "label": "Keyframe parts",
+      "description": "Per-node keyframe animation parts. Each entry maps a PawnRenderNodeTagDef key to a KeyframeAnimationPart that drives that node's position, rotation, and scale over time.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "KeyframeAnimationPart" },
+      "required": false,
+      "xml": "keyedObjectMap",
+      "keyReference": { "defType": "PawnRenderNodeTagDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "curveParts": {
+      "label": "Curve parts",
+      "description": "Per-node curve animation parts. Each entry maps a PawnRenderNodeTagDef key to a CurveKeyAnimationPart that drives that node using AnimationCurve data.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "CurveKeyAnimationPart" },
+      "required": false,
+      "xml": "keyedObjectMap",
+      "keyReference": { "defType": "PawnRenderNodeTagDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  },
+  "templates": {
+    "basic-keyframe-animation": {
+      "label": "Basic keyframe animation",
+      "description": "A minimal keyframe-based animation with a 60-tick loop.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "durationTicks"],
+      "fieldValues": {
+        "durationTicks": 60,
+        "startOnRandomTick": false,
+        "playWhenDowned": false,
+        "posRotScale": 1,
+        "loopMode": "Loop"
+      }
+    }
+  }
+}

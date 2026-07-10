@@ -1,0 +1,42 @@
+{
+  "objectType": "QuestNode_SendSignals",
+  "label": "QuestNode SendSignals",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_SendSignals.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "outSignals",
+    "outSignalsFormat",
+    "outSignalsFormattedCount"
+  ],
+  "fields": {
+    "outSignals": {
+      "description": "Signals emitted immediately.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "outSignalsFormat": {
+      "description": "Format string for generated output signal names.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "outSignalsFormattedCount": {
+      "description": "SlateRef<int> count for generated output signals.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

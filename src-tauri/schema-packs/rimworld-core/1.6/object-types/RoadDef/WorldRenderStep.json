@@ -1,0 +1,23 @@
+{
+  "objectType": "WorldRenderStep",
+  "label": "World render step",
+  "description": "One rendering pass applied when drawing a road on the world map. Each step names a layer def and the road width for that layer.",
+  "fieldOrder": ["layer", "width"],
+  "fields": {
+    "layer": {
+      "label": "Layer",
+      "description": "RoadWorldLayerDef that this step renders onto.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RoadWorldLayerDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "width": {
+      "label": "Width",
+      "description": "Width of the road in this layer as a fraction of the world tile size. Typical range is 0.0 to 1.0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

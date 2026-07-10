@@ -1,0 +1,35 @@
+{
+  "objectType": "BossGroupWave",
+  "label": "Boss group wave",
+  "description": "Defines the composition of a single boss encounter wave: how many boss instances appear, their equipped apparel, and the escort mechs.",
+  "fieldOrder": ["bossCount", "bossApparel", "escorts"],
+  "fields": {
+    "bossCount": {
+      "label": "Boss count",
+      "description": "Number of boss instances that appear in this wave.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "bossApparel": {
+      "label": "Boss apparel",
+      "description": "Apparel items equipped on each boss instance in this wave. Each li element is a ThingDef defName. Shipped XML uses a <thing> child wrapper inside each li; RimWorld resolves both formats via InnerText.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "defReference",
+        "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "escorts": {
+      "label": "Escorts",
+      "description": "Escort mechs that appear alongside the boss. Each child element name is a PawnKindDef defName; the text content is the escort count.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

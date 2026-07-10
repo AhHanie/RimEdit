@@ -1,0 +1,87 @@
+{
+  "objectType": "CompProperties_EquippableAbilityReloadable",
+  "label": "Equippable ability reloadable comp",
+  "description": "Extends the equippable ability comp to add charge-based ammo reloading for the granted ability.",
+  "inherits": ["CompProperties_EquippableAbility"],
+  "fieldOrder": [
+    "maxCharges",
+    "ammoDef",
+    "ammoCountToRefill",
+    "ammoCountPerCharge",
+    "baseReloadTicks",
+    "replenishAfterCooldown",
+    "soundReload",
+    "chargeNoun",
+    "cooldownGerund"
+  ],
+  "fields": {
+    "maxCharges": {
+      "label": "Max charges",
+      "description": "Maximum number of charges the weapon can hold.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "ammoDef": {
+      "label": "Ammo def",
+      "description": "ThingDef used as ammo to reload this weapon's ability charges.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ammoCountToRefill": {
+      "label": "Ammo count to refill",
+      "description": "Amount of ammo consumed to completely refill all charges. Mutually exclusive with ammoCountPerCharge.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "ammoCountPerCharge": {
+      "label": "Ammo count per charge",
+      "description": "Amount of ammo consumed per charge refilled. Mutually exclusive with ammoCountToRefill.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "baseReloadTicks": {
+      "label": "Base reload ticks",
+      "description": "Ticks required to complete one reload cycle.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 60,
+      "xml": "element"
+    },
+    "replenishAfterCooldown": {
+      "label": "Replenish after cooldown",
+      "description": "If true, charges refill automatically after the ability cooldown ends instead of requiring manual reloading.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "soundReload": {
+      "label": "Sound reload",
+      "description": "SoundDef played when this weapon is reloaded.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "chargeNoun": {
+      "label": "Charge noun",
+      "description": "Localized noun for a single charge shown in the gizmo UI (e.g., \"charge\", \"arrow\").",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "charge",
+      "xml": "element"
+    },
+    "cooldownGerund": {
+      "label": "Cooldown gerund",
+      "description": "Localized gerund phrase shown during the ability cooldown (e.g., \"on cooldown\").",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "on cooldown",
+      "xml": "element"
+    }
+  }
+}

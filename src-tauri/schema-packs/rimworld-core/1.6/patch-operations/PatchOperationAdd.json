@@ -1,0 +1,35 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationAdd",
+  "label": "Add",
+  "description": "Appends (or prepends, with order=Prepend) value as a child of the node matched by xpath.",
+  "fieldOrder": ["xpath", "value", "order"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Target node whose children the value is added to.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    },
+    "value": {
+      "label": "Value",
+      "description": "XML content to add as a new child of the matched node.",
+      "type": { "kind": "object" },
+      "xml": "object",
+      "role": "xmlValue",
+      "required": true
+    },
+    "order": {
+      "label": "Order",
+      "description": "Append (default) or Prepend the value among the matched node's existing children.",
+      "type": { "kind": "enum" },
+      "xml": "element",
+      "required": false,
+      "validationHints": {
+        "allowedValues": ["Append", "Prepend"]
+      }
+    }
+  }
+}

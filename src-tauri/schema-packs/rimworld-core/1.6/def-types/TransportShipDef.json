@@ -1,0 +1,73 @@
+{
+  "defType": "TransportShipDef",
+  "label": "Transport ship",
+  "description": "Defines a transport ship archetype, linking its in-map ThingDef, world skyfaller visuals, and world object representation.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "shipThing",
+    "arrivingSkyfaller",
+    "leavingSkyfaller",
+    "worldObject",
+    "maxLaunchDistance",
+    "playerShuttle"
+  ],
+  "fields": {
+    "shipThing": {
+      "label": "Ship thing",
+      "description": "ThingDef placed on the local map when this transport ship is landed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "arrivingSkyfaller": {
+      "label": "Arriving skyfaller",
+      "description": "ThingDef spawned as the skyfaller visual when this ship arrives at a map.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "leavingSkyfaller": {
+      "label": "Leaving skyfaller",
+      "description": "ThingDef spawned as the skyfaller visual when this ship departs a map. Omitted for crash-landing variants that never leave.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "worldObject": {
+      "label": "World object",
+      "description": "WorldObjectDef spawned on the world map when this ship is in transit. Omitted for crash-landing variants.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WorldObjectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "maxLaunchDistance": {
+      "label": "Max launch distance",
+      "description": "Maximum world tiles this ship can travel in a single launch. 0 means unlimited.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "playerShuttle": {
+      "label": "Player shuttle",
+      "description": "If true, this ship is treated as a player-controlled shuttle for landing pad and permit mechanics.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-transport-ship": {
+      "label": "Basic transport ship",
+      "description": "Minimal transport ship with a landed thing and arriving skyfaller.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "shipThing", "arrivingSkyfaller"],
+      "fieldValues": {}
+    }
+  }
+}

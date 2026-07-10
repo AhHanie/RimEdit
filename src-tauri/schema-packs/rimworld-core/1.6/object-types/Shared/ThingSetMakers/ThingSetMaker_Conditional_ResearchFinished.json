@@ -1,0 +1,22 @@
+{
+  "objectType": "ThingSetMaker_Conditional_ResearchFinished",
+  "label": "Research finished conditional maker",
+  "description": "Runs the nested maker only when the specified research project has been completed by the player.",
+  "inherits": ["ThingSetMaker_Conditional"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "thingSetMaker",
+    "researchProject"
+  ],
+  "fields": {
+    "researchProject": {
+      "label": "Research project",
+      "description": "ResearchProjectDef that must be finished for the condition to pass.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ResearchProjectDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

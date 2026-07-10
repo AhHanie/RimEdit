@@ -1,0 +1,25 @@
+{
+  "objectType": "RitualPosition_ClaimedBed",
+  "label": "Ritual position (claimed bed)",
+  "description": "Places the pawn in the bed claimed by the specified other pawn's role.",
+  "fieldOrder": ["Class", "highlight", "ofPawn", "tryClaimIfNoneClaimed"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "ofPawn": {
+      "label": "Of pawn",
+      "description": "Role ID of the pawn whose claimed bed should be used.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "tryClaimIfNoneClaimed": {
+      "label": "Try claim if none claimed",
+      "description": "If true, tries to claim a bed if the pawn does not already have one claimed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "objectType": "SurgeryOutcome_Death",
+  "label": "Surgery outcome: death",
+  "description": "Patient dies during the surgery. Chance is further gated by recipe.deathOnFailedSurgeryChance at runtime.",
+  "inherits": ["SurgeryOutcome"],
+  "fieldOrder": [],
+  "fields": {}
+}

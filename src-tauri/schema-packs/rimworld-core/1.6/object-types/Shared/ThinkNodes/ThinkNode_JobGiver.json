@@ -1,0 +1,23 @@
+{
+  "objectType": "ThinkNode_JobGiver",
+  "label": "Think node job giver",
+  "description": "Abstract base for all JobGiver_* classes. Provides optional localized report string overrides shown in the pawn's activity readout.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": ["reportStringOverride", "crawlingReportStringOverride"],
+  "fields": {
+    "reportStringOverride": {
+      "label": "Report string override",
+      "description": "Localized string shown in the pawn activity readout while this job giver is active. Overrides the default job label.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "crawlingReportStringOverride": {
+      "label": "Crawling report string override",
+      "description": "Localized string shown when the pawn is crawling and this job giver is active. Falls back to reportStringOverride when absent.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "objectType": "MissingPart",
+  "label": "Missing part",
+  "description": "Specifies a body part that may be absent on pawns of this kind at spawn time, along with the injury responsible and the probability.",
+  "fieldOrder": [
+    "bodyPart",
+    "injury",
+    "chance"
+  ],
+  "fields": {
+    "bodyPart": {
+      "label": "Body part",
+      "description": "BodyPartDef identifying the part that may be missing.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyPartDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "injury": {
+      "label": "Injury",
+      "description": "HediffDef applied to represent the missing-part wound, such as MissingBodyPart.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0–1) that this part will be missing when the pawn is generated.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

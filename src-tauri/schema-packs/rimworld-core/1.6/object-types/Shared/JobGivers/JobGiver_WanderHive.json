@@ -1,0 +1,19 @@
+{
+  "objectType": "JobGiver_WanderHive",
+  "label": "Job giver wander hive",
+  "description": "Directs a hive insect to wander near its hive up to a configurable danger level. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "maxDanger"
+  ],
+  "fields": {
+    "maxDanger": {
+      "label": "Max danger",
+      "description": "Maximum danger level the pawn tolerates while wandering near the hive.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Some", "Deadly"] }
+    }
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "objectType": "ApparelProperties",
+  "label": "Apparel properties",
+  "description": "Properties for wearable items covering body coverage, layers, outfit tags, graphic paths, ideology desire, and rendering.",
+  "fieldOrder": [
+    "bodyPartGroups",
+    "layers",
+    "tags",
+    "defaultOutfitTags",
+    "countsAsClothingForNudity",
+    "developmentalStageFilter",
+    "wornGraphicPath",
+    "hatRenderedFrontOfFace",
+    "hatRenderedAboveBody",
+    "shellRenderedBehindHead",
+    "canBeGeneratedToSatisfyWarmth",
+    "canBeDesiredByAnyFaction",
+    "canBeDesiredForIdeo",
+    "scoreOffset",
+    "renderSkipFlags",
+    "useWornGraphicMask",
+    "coversFace",
+    "wearForced",
+    "ungeneratable",
+    "characterCreationEnabled"
+  ],
+  "fields": {
+    "bodyPartGroups": {
+      "label": "Body part groups",
+      "description": "BodyPartGroupDef references for the body regions this apparel covers.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "BodyPartGroupDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "layers": {
+      "label": "Layers",
+      "description": "ApparelLayerDef references for the clothing layers this item occupies.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ApparelLayerDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "String tags used by apparel requirement precepts and pawn generation rules.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "defaultOutfitTags": {
+      "label": "Default outfit tags",
+      "description": "Outfit policy tags controlling which auto-assigned outfits include this item.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "countsAsClothingForNudity": {
+      "label": "Counts as clothing for nudity",
+      "description": "Whether wearing this item prevents the 'unclothed' nudity condition for mood purposes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "developmentalStageFilter": {
+      "label": "Developmental stage filter",
+      "description": "DevelopmentalStage flags (comma-separated) limiting which life stages can wear this item.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["Newborn", "Baby", "Child", "Adult"]
+      },
+      "examples": ["Adult", "Newborn, Baby, Child, Adult", "Child, Adult"]
+    },
+    "wornGraphicPath": {
+      "label": "Worn graphic path",
+      "description": "Texture path prefix for the on-body graphic shown when this item is worn.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "hatRenderedFrontOfFace": {
+      "label": "Hat rendered front of face",
+      "description": "If true, this hat is drawn in front of the face when the pawn faces the camera.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hatRenderedAboveBody": {
+      "label": "Hat rendered above body",
+      "description": "If true, this hat is drawn above the body layer instead of the head layer.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "shellRenderedBehindHead": {
+      "label": "Shell rendered behind head",
+      "description": "If true, shell-layer items (e.g. dusters) are drawn behind the pawn's head.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canBeGeneratedToSatisfyWarmth": {
+      "label": "Can be generated to satisfy warmth",
+      "description": "Whether random pawn generation can pick this item to meet a warmth threshold.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canBeDesiredByAnyFaction": {
+      "label": "Can be desired by any faction",
+      "description": "If true, all factions may include this item in style-desire lists.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canBeDesiredForIdeo": {
+      "label": "Can be desired for ideo",
+      "description": "Whether ideoligion precepts can require pawns to wear this item.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "scoreOffset": {
+      "label": "Score offset",
+      "description": "Flat bonus added to this item's selection score in apparel generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "renderSkipFlags": {
+      "label": "Render skip flags",
+      "description": "RenderSkipFlagDef references for render nodes that should be hidden while this apparel is worn.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "RenderSkipFlagDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "useWornGraphicMask": {
+      "label": "Use worn graphic mask",
+      "description": "If true, a mask texture is applied to the worn graphic to blend with the pawn's skin color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "coversFace": {
+      "label": "Covers face",
+      "description": "If true, the pawn's face is hidden while wearing this item.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "wearForced": {
+      "label": "Wear forced",
+      "description": "If true, pawns in the appropriate role are forced to wear this item and cannot remove it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ungeneratable": {
+      "label": "Ungeneratable",
+      "description": "If true, random pawn generation never assigns this item.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "characterCreationEnabled": {
+      "label": "Character creation enabled",
+      "description": "Whether this item appears in the pawn starting gear character creation screen.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "objectType": "BiomeAnimalRecord",
+  "label": "Biome animal record",
+  "description": "Associates a PawnKindDef with a relative commonality weight for biome wild animal spawning. The XML element name is the PawnKindDef defName; scalar text is the commonality.",
+  "fieldOrder": ["animal", "commonality"],
+  "fields": {
+    "animal": {
+      "label": "Animal",
+      "description": "PawnKindDef of the animal. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight controlling how often this animal spawns. Populated from XML scalar text by the keyedObjectList loader.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "objectType": "ThinkNode_ChancePerHour_Constant",
+  "label": "Think node chance per hour (constant)",
+  "description": "Chance-gated node with a fixed mean time between triggers. Private fields mtbHours and mtbDays are XML-backed. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode_ChancePerHour"],
+  "fieldOrder": [
+    "mtbHours",
+    "mtbDays"
+  ],
+  "fields": {
+    "mtbHours": {
+      "label": "MTB hours",
+      "description": "Mean time between triggers in game hours. Private in C# source but loaded from XML. -1 means disabled; overridden by mtbDays when mtbDays > 0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "mtbDays": {
+      "label": "MTB days",
+      "description": "Mean time between triggers in game days. Private in C# source but loaded from XML. When > 0, overrides mtbHours (converted to hours internally).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    }
+  }
+}

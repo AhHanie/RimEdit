@@ -1,0 +1,26 @@
+{
+  "defType": "PsychicRitualDef_Chronophagy",
+  "label": "Psychic ritual -- chronophagy",
+  "description": "Ritual where the invoker psychically consumes years of the target's biological age, transferring them to themselves.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "yearsTransferredFromQualityRange",
+    "brainDamageFromAgeCurve"
+  ],
+  "fields": {
+    "yearsTransferredFromQualityRange": {
+      "label": "Years transferred from quality range",
+      "description": "Range of biological years transferred from target to invoker, lerped through by ritual quality.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "brainDamageFromAgeCurve": {
+      "label": "Brain damage from age curve",
+      "description": "Curve mapping the target's age to the brain damage inflicted.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

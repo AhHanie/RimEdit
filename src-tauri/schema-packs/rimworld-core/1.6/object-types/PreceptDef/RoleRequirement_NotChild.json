@@ -1,0 +1,22 @@
+{
+  "objectType": "RoleRequirement_NotChild",
+  "label": "Role requirement (not child)",
+  "description": "Requires the role pawn to not be a child.",
+  "fieldOrder": ["Class", "labelKey"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the requirement label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

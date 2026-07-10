@@ -1,0 +1,17 @@
+{
+  "objectType": "JobGiver_AIJumpEscapeEnemies",
+  "label": "Job giver AI jump escape enemies",
+  "description": "Uses a jump ability to reposition the pawn away from nearby hostiles.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": ["ability"],
+  "fields": {
+    "ability": {
+      "label": "Ability",
+      "description": "The jump ability used to relocate the pawn away from enemy threat positions.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "defType": "FleshTypeDef",
+  "label": "Flesh type",
+  "description": "Defines the wound overlays, organic status, corpse category, and damage effecter for a category of creature flesh such as Normal, Mechanoid, or Insectoid.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "ateDirect",
+    "ateAsIngredient",
+    "corpseCategory",
+    "damageEffecter",
+    "isOrganic",
+    "genericWounds",
+    "bandagedWounds",
+    "hediffWounds"
+  ],
+  "fields": {
+    "ateDirect": {
+      "label": "Ate direct",
+      "description": "Thought fired when a pawn eats raw meat or flesh of this type directly.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "ateAsIngredient": {
+      "label": "Ate as ingredient",
+      "description": "Thought fired when a pawn eats a meal cooked with this flesh type as an ingredient.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThoughtDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "corpseCategory": {
+      "label": "Corpse category",
+      "description": "ThingCategoryDef that determines which loot category corpses of this flesh type belong to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "damageEffecter": {
+      "label": "Damage effecter",
+      "description": "Visual effecter played when a creature of this flesh type takes damage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "EffecterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "isOrganic": {
+      "label": "Is organic",
+      "description": "Whether this flesh type is organic. Drives bleeding, wound rendering, and organic-flesh-specific gameplay. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "genericWounds": {
+      "label": "Generic wounds",
+      "description": "Wound overlays rendered for standard injuries on pawns of this flesh type.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Wound" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "bandagedWounds": {
+      "label": "Bandaged wounds",
+      "description": "Wound overlays rendered when an injury on a pawn of this flesh type has been tended.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Wound" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "hediffWounds": {
+      "label": "Hediff wounds",
+      "description": "Wound overlay groups tied to specific hediffs (such as scarification or missing body parts) that replace the generic wound overlays when present.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "HediffWound" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

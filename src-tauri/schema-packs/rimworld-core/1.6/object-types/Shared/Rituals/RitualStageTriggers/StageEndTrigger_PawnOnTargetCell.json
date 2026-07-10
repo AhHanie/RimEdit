@@ -1,0 +1,25 @@
+{
+  "objectType": "StageEndTrigger_PawnOnTargetCell",
+  "label": "Stage end trigger (pawn on target cell)",
+  "description": "Ends the stage when the specified role pawn reaches the target cell and waits there for a given number of ticks.",
+  "fieldOrder": ["Class", "countsTowardsProgress", "roleId", "waitTicks"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "roleId": {
+      "label": "Role ID",
+      "description": "ID of the role whose assigned pawn must reach the target cell.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "waitTicks": {
+      "label": "Wait ticks",
+      "description": "Number of ticks the pawn must remain on the target cell before the trigger fires. Defaults to 50.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 50,
+      "xml": "element"
+    }
+  }
+}

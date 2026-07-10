@@ -1,0 +1,6 @@
+{
+  "objectType": "ThinkNode_ChancePerHour",
+  "label": "Think node chance per hour",
+  "description": "Abstract base for nodes that fire a random chance check once per game hour. Subclasses provide the mean time between triggers.",
+  "inherits": ["ThinkNode"]
+}

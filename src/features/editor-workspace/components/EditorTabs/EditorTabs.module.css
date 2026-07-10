@@ -1,0 +1,82 @@
+.root {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--surface-tab-inactive);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.root::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px 0 10px;
+  height: var(--h-tab);
+  min-width: 80px;
+  max-width: 180px;
+  background: var(--surface-tab-inactive);
+  border-right: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.tabActive {
+  background: var(--surface-tab-active);
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: -1px;
+  z-index: 1;
+}
+
+.tabLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  text-align: left;
+  padding: 0;
+}
+
+.tabActive .tabLabel {
+  color: var(--text-primary);
+}
+
+.dirtyDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.tabClose {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  opacity: 0;
+  border-radius: 3px;
+}
+
+.tab:hover .tabClose {
+  opacity: 1;
+}
+
+.tabActive .tabClose {
+  opacity: 0;
+}
+
+.tabActive:hover .tabClose {
+  opacity: 1;
+}

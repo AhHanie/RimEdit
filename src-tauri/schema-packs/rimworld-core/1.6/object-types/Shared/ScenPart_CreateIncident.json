@@ -1,0 +1,40 @@
+{
+  "objectType": "ScenPart_CreateIncident",
+  "label": "Create incident",
+  "description": "Fires a specific incident on a schedule, either once or repeatedly at a given interval.",
+  "inherits": ["ScenPart_IncidentBase"],
+  "fieldOrder": ["def", "visible", "incident", "intervalDays", "minDays", "maxDays", "repeat"],
+  "fields": {
+    "intervalDays": {
+      "label": "Interval (days)",
+      "description": "How often the incident fires, in days. Used as both min and max if minDays is not set separately.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "minDays": {
+      "label": "Min days",
+      "description": "Earliest day on which the incident first fires. Defaults to the intervalDays value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxDays": {
+      "label": "Max days",
+      "description": "Latest day on which the incident fires (for repeat = false) or upper bound of the interval window.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "repeat": {
+      "label": "Repeat",
+      "description": "When true, the incident fires repeatedly at the given interval. When false, it fires only once.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  }
+}

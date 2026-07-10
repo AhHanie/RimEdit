@@ -1,0 +1,180 @@
+{
+  "defType": "LayoutDef",
+  "label": "Layout",
+  "description": "Defines a procedural layout composed of weighted room types, global scatter and fill parameters, and generation settings.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "roomDefs", "workerClass", "clearRoomsEntirely", "canHaveMultipleLayoutsInRoom",
+    "multipleLayoutRoomChance", "shouldDamage", "noRoof",
+    "adjacentRoomMergeChance", "borderDoorRemoveChance",
+    "minRoomWidth", "minRoomHeight",
+    "junkScaterrers", "scatterTerrain", "fillEdges", "fillInterior",
+    "wallAttachments", "prefabs", "parts"
+  ],
+  "fields": {
+    "roomDefs": {
+      "label": "Room defs",
+      "description": "Weighted room type entries. Each element name is the LayoutRoomDef defName; scalar text is the weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutRoomWeight" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "LayoutRoomDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "weight"
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# LayoutWorker subclass that drives layout generation.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "clearRoomsEntirely": {
+      "label": "Clear rooms entirely",
+      "description": "When true, all existing contents are cleared from rooms before generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "canHaveMultipleLayoutsInRoom": {
+      "label": "Can have multiple layouts in room",
+      "description": "Whether a single room can have multiple sub-layouts applied.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "multipleLayoutRoomChance": {
+      "label": "Multiple layout room chance",
+      "description": "Probability that a room receives multiple layouts when allowed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.15,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "shouldDamage": {
+      "label": "Should damage",
+      "description": "Whether generated structures receive random damage after placement.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "noRoof": {
+      "label": "No roof",
+      "description": "When true, no roof is placed over rooms in this layout.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "adjacentRoomMergeChance": {
+      "label": "Adjacent room merge chance",
+      "description": "Probability that adjacent compatible rooms are merged during generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.65,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "borderDoorRemoveChance": {
+      "label": "Border door remove chance",
+      "description": "Probability that doors on room borders are removed during generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.8,
+      "validationHints": { "min": 0.0, "max": 1.0 }
+    },
+    "minRoomWidth": {
+      "label": "Min room width",
+      "description": "Minimum width in cells for generated rooms.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 6
+    },
+    "minRoomHeight": {
+      "label": "Min room height",
+      "description": "Minimum height in cells for generated rooms.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 6
+    },
+    "junkScaterrers": {
+      "label": "Junk scatterers",
+      "description": "Things scattered as junk throughout the layout. Each element name is the ThingDef defName. Note: field name preserves the source typo 'junkScaterrers'.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutScatterParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "scatterTerrain": {
+      "label": "Scatter terrain",
+      "description": "Terrain patches scattered throughout the layout. Each element name is the TerrainDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutScatterTerrainParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "fillEdges": {
+      "label": "Fill edges",
+      "description": "Things placed along room edges layout-wide. Each element name is the ThingDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutFillEdgesParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "fillInterior": {
+      "label": "Fill interior",
+      "description": "Things placed across room interiors layout-wide. Each element name is the ThingDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutFillInteriorParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "wallAttachments": {
+      "label": "Wall attachments",
+      "description": "Things attached to room walls layout-wide. Each element name is the ThingDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutWallAttatchmentParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "prefabs": {
+      "label": "Prefabs",
+      "description": "Prefabs placed layout-wide. Each element name is the PrefabDef defName.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutPrefabParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "PrefabDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "parts": {
+      "label": "Parts",
+      "description": "Room parts applied layout-wide. Each element name is the RoomPartDef defName; scalar text is the chance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "LayoutPartParms" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "def",
+      "keyReference": { "defType": "RoomPartDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "chance"
+    }
+  }
+}

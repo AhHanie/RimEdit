@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalTotalDamage",
+  "label": "Think node conditional total damage",
+  "description": "Satisfied when the pawn's total injury severity as a fraction of lethal threshold exceeds the specified percentage.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["thresholdPercent"],
+  "fields": {
+    "thresholdPercent": {
+      "label": "Threshold percent",
+      "description": "Ratio of total injury severity to lethal damage threshold that must be exceeded.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.25,
+      "xml": "element"
+    }
+  }
+}

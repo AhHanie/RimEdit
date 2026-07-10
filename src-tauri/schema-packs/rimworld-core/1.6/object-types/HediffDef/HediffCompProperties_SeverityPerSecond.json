@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_SeverityPerSecond",
+  "label": "Severity per second comp",
+  "description": "Changes hediff severity each real second.",
+  "fieldOrder": ["Class", "compClass", "severityPerSecond"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "severityPerSecond": {
+      "label": "Severity per second",
+      "description": "Severity change per real second.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

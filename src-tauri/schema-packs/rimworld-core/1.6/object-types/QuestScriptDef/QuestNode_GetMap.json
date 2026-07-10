@@ -1,0 +1,73 @@
+{
+  "objectType": "QuestNode_GetMap",
+  "label": "QuestNode GetMap",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_GetMap.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "storeAs",
+    "mustBeInfestable",
+    "canBeSpace",
+    "preferMapWithMinFreeColonists",
+    "layerWhitelist",
+    "layerBlacklist"
+  ],
+  "fields": {
+    "storeAs": {
+      "description": "Slate variable name to store the selected map.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "map"
+    },
+    "mustBeInfestable": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "canBeSpace": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "preferMapWithMinFreeColonists": {
+      "description": "SlateRef<int> minimum free colonists preference.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "layerWhitelist": {
+      "description": "PlanetLayerDef names or slate expressions allowed for map selection.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerBlacklist": {
+      "description": "PlanetLayerDef names or slate expressions excluded from map selection.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

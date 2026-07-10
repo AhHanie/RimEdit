@@ -1,0 +1,64 @@
+{
+  "objectType": "BiomeFishTypes",
+  "label": "Biome fish types",
+  "description": "Defines the fish populations available in a biome, split into freshwater and saltwater categories at common and uncommon tiers, plus an optional rare-catches set maker.",
+  "fieldOrder": [
+    "freshwater_Common", "saltwater_Common",
+    "freshwater_Uncommon", "saltwater_Uncommon",
+    "rareCatchesSetMaker"
+  ],
+  "fields": {
+    "freshwater_Common": {
+      "label": "Freshwater common",
+      "description": "Common freshwater fish. Each element name is the ThingDef defName; scalar text is the catch chance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "FishChance" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "fishDef",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "chance"
+    },
+    "saltwater_Common": {
+      "label": "Saltwater common",
+      "description": "Common saltwater fish. Each element name is the ThingDef defName; scalar text is the catch chance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "FishChance" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "fishDef",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "chance"
+    },
+    "freshwater_Uncommon": {
+      "label": "Freshwater uncommon",
+      "description": "Uncommon freshwater fish. Each element name is the ThingDef defName; scalar text is the catch chance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "FishChance" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "fishDef",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "chance"
+    },
+    "saltwater_Uncommon": {
+      "label": "Saltwater uncommon",
+      "description": "Uncommon saltwater fish. Each element name is the ThingDef defName; scalar text is the catch chance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "FishChance" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "fishDef",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "chance"
+    },
+    "rareCatchesSetMaker": {
+      "label": "Rare catches set maker",
+      "description": "ThingSetMakerDef used to generate rare fishing catches for this biome.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingSetMakerDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "objectType": "GenStep_SitePawns",
+  "label": "Gen step site pawns",
+  "description": "Generates site enemy pawns and sends a threat letter when the map loads.",
+  "fieldOrder": ["Class", "factionDef", "pawnGroupKindDef", "letterLabel", "letterDesc"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_SitePawns.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "factionDef": {
+      "label": "Faction def",
+      "description": "FactionDef whose pawns are spawned on the site.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "pawnGroupKindDef": {
+      "label": "Pawn group kind def",
+      "description": "PawnGroupKindDef controlling the type and composition of spawned pawns.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnGroupKindDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "Title of the threat letter shown when pawns are spawned.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterDesc": {
+      "label": "Letter desc",
+      "description": "Body text of the threat letter shown when pawns are spawned.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

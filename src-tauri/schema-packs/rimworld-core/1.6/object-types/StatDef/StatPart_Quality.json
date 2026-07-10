@@ -1,0 +1,147 @@
+{
+  "objectType": "StatPart_Quality",
+  "label": "Stat part (quality factor)",
+  "description": "Multiplies the stat by a per-quality-level factor. Optional maxGain caps how much a quality tier can increase the value.",
+  "fieldOrder": [
+    "Class", "priority",
+    "applyToNegativeValues",
+    "factorAwful", "factorPoor", "factorNormal", "factorGood", "factorExcellent", "factorMasterwork", "factorLegendary",
+    "maxGainAwful", "maxGainPoor", "maxGainNormal", "maxGainGood", "maxGainExcellent", "maxGainMasterwork", "maxGainLegendary"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "applyToNegativeValues": {
+      "label": "Apply to negative values",
+      "description": "If true, the quality factor is applied even when the base stat value is negative.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "factorAwful": {
+      "label": "Factor (awful)",
+      "description": "Stat multiplier for awful quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorPoor": {
+      "label": "Factor (poor)",
+      "description": "Stat multiplier for poor quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorNormal": {
+      "label": "Factor (normal)",
+      "description": "Stat multiplier for normal quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorGood": {
+      "label": "Factor (good)",
+      "description": "Stat multiplier for good quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorExcellent": {
+      "label": "Factor (excellent)",
+      "description": "Stat multiplier for excellent quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorMasterwork": {
+      "label": "Factor (masterwork)",
+      "description": "Stat multiplier for masterwork quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorLegendary": {
+      "label": "Factor (legendary)",
+      "description": "Stat multiplier for legendary quality items.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "maxGainAwful": {
+      "label": "Max gain (awful)",
+      "description": "Maximum absolute gain this part can contribute at awful quality.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999999,
+      "xml": "element"
+    },
+    "maxGainPoor": {
+      "label": "Max gain (poor)",
+      "description": "Maximum absolute gain this part can contribute at poor quality.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999999,
+      "xml": "element"
+    },
+    "maxGainNormal": {
+      "label": "Max gain (normal)",
+      "description": "Maximum absolute gain this part can contribute at normal quality.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999999,
+      "xml": "element"
+    },
+    "maxGainGood": {
+      "label": "Max gain (good)",
+      "description": "Maximum absolute gain this part can contribute at good quality.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999999,
+      "xml": "element"
+    },
+    "maxGainExcellent": {
+      "label": "Max gain (excellent)",
+      "description": "Maximum absolute gain this part can contribute at excellent quality.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999999,
+      "xml": "element"
+    },
+    "maxGainMasterwork": {
+      "label": "Max gain (masterwork)",
+      "description": "Maximum absolute gain this part can contribute at masterwork quality.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999999,
+      "xml": "element"
+    },
+    "maxGainLegendary": {
+      "label": "Max gain (legendary)",
+      "description": "Maximum absolute gain this part can contribute at legendary quality.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999999,
+      "xml": "element"
+    }
+  }
+}

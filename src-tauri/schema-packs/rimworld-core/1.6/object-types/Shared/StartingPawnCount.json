@@ -1,0 +1,24 @@
+{
+  "objectType": "StartingPawnCount",
+  "label": "Starting pawn count",
+  "description": "Abstract base for starting pawn count entries used in configured starting pawn lists. Tracks how many pawns of a type are required and whether they must be present from the start.",
+  "fieldOrder": ["count", "requiredAtStart"],
+  "fields": {
+    "count": {
+      "label": "Count",
+      "description": "Number of pawns of this type to include. Defaults to 1.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "requiredAtStart": {
+      "label": "Required at start",
+      "description": "When true, this pawn type is always included in the starting party and cannot be removed. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  }
+}

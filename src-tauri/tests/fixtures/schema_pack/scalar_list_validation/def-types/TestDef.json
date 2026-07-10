@@ -1,0 +1,75 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "intList": {
+      "label": "Integer list",
+      "type": { "kind": "list" },
+      "items": { "kind": "integer" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "floatList": {
+      "label": "Float list",
+      "type": { "kind": "list" },
+      "items": { "kind": "float" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "vec2List": {
+      "label": "Vector2 list",
+      "type": { "kind": "list" },
+      "items": { "kind": "vector2" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "boolList": {
+      "label": "Boolean list",
+      "type": { "kind": "list" },
+      "items": { "kind": "boolean" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "enumList": {
+      "label": "Enum list",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "refList": {
+      "label": "DefReference list",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "intRangeList": {
+      "label": "IntRange list",
+      "type": { "kind": "list" },
+      "items": { "kind": "intRange" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "floatRangeList": {
+      "label": "FloatRange list",
+      "type": { "kind": "list" },
+      "items": { "kind": "floatRange" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "colorList": {
+      "label": "Color list",
+      "type": { "kind": "list" },
+      "items": { "kind": "color" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

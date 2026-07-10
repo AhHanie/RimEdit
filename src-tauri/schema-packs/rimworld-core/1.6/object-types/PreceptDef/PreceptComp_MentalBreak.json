@@ -1,0 +1,30 @@
+{
+  "objectType": "PreceptComp_MentalBreak",
+  "label": "Precept comp (mental break)",
+  "description": "Associates a mental break with the precept.",
+  "fieldOrder": ["Class", "description", "mentalBreakDef"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "mentalBreakDef": {
+      "label": "Mental break def",
+      "description": "The mental break associated with this precept.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "MentalBreakDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

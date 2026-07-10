@@ -1,0 +1,35 @@
+{
+  "objectType": "MutatorChance",
+  "description": "A weighted TileMutatorDef chance entry inside a LandmarkDef mutator list. The containing element name is the TileMutatorDef defName; scalar text is the chance; the Required XML attribute marks mandatory mutators.",
+  "fieldOrder": ["mutator", "chance", "required"],
+  "fields": {
+    "mutator": {
+      "label": "Mutator",
+      "description": "TileMutatorDef defName. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": {
+        "defType": "TileMutatorDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability this mutator is applied. Populated from scalar element text; defaults to 1 when the element is self-closing.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "text",
+      "examples": ["1", "0.5", "0.05"]
+    },
+    "required": {
+      "label": "Required",
+      "description": "When true, this mutator must be present on the tile for the landmark to be valid. Stored as the Required XML attribute.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "attribute"
+    }
+  }
+}

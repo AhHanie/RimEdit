@@ -1,0 +1,105 @@
+{
+  "objectType": "GenStep_OrbitalPlatform",
+  "label": "Gen step orbital platform",
+  "description": "Generates an orbital platform layout with optional faction pawns, cannons, and exterior prefabs.",
+  "fieldOrder": [
+    "Class",
+    "factionDef",
+    "layoutDef",
+    "useSiteFaction",
+    "temperature",
+    "spawnSentryDrones",
+    "cannonDef",
+    "platformTerrain",
+    "orbitalDebrisDef",
+    "fogOfWarColor",
+    "exteriorPrefabs"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_OrbitalPlatform.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "factionDef": {
+      "label": "Faction def",
+      "description": "FactionDef whose faction controls this orbital platform.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "layoutDef": {
+      "label": "Layout def",
+      "description": "LayoutDef used to generate the main platform structure.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LayoutDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "useSiteFaction": {
+      "label": "Use site faction",
+      "description": "When true, uses the site's parent faction instead of factionDef.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "temperature": {
+      "label": "Temperature",
+      "description": "Override temperature for the orbital platform map in Celsius. Absent defaults to -75.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "spawnSentryDrones": {
+      "label": "Spawn sentry drones",
+      "description": "When true, sentry drones are spawned based on the platform's threat points.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "cannonDef": {
+      "label": "Cannon def",
+      "description": "ThingDef of the cannon buildings placed at the platform corners.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "platformTerrain": {
+      "label": "Platform terrain",
+      "description": "TerrainDef used for the platform surface and connecting catwalks.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "orbitalDebrisDef": {
+      "label": "Orbital debris def",
+      "description": "OrbitalDebrisDef assigned to the map for orbital debris rendering.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "OrbitalDebrisDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "fogOfWarColor": {
+      "label": "Fog of war color",
+      "description": "ColorInt used as the map's fog-of-war color. Serialized as (r, g, b).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "exteriorPrefabs": {
+      "label": "Exterior prefabs",
+      "description": "List of prefabs with count ranges to spawn on the platform exterior.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "OrbitalPlatformPrefabRange" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

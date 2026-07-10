@@ -1,0 +1,38 @@
+{
+  "objectType": "SoundParamSource_Perlin",
+  "label": "Sound param source: Perlin noise",
+  "description": "Generates a smoothly varying Perlin noise value as the parameter.",
+  "inherits": ["SoundParamSource"],
+  "fieldOrder": ["Class", "timeType", "perlinFrequency", "syncType"],
+  "fields": {
+    "timeType": {
+      "label": "Time type",
+      "description": "Whether the Perlin noise uses game ticks or real-time seconds as its input.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Ticks",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Ticks", "RealtimeSeconds"]
+      }
+    },
+    "perlinFrequency": {
+      "label": "Perlin frequency",
+      "description": "Frequency of the Perlin noise function (cycles per time unit).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "syncType": {
+      "label": "Sync type",
+      "description": "Whether multiple instances share the same noise phase (Sync) or run independently (Desync).",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Desync",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Sync", "Desync"]
+      }
+    }
+  }
+}

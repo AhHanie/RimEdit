@@ -1,0 +1,30 @@
+{
+  "objectType": "RitualStageAction",
+  "label": "Ritual stage action",
+  "description": "Base schema for ritual stage actions. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RitualStageAction",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "RitualStageAction_ClearTag": "RitualStageAction_ClearTag",
+      "RitualStageAction_DropThing": "RitualStageAction_DropThing",
+      "RitualStageAction_Message": "RitualStageAction_Message",
+      "RitualStageAction_Multi": "RitualStageAction_Multi",
+      "RitualStageAction_RemovePawnsFromLord": "RitualStageAction_RemovePawnsFromLord",
+      "RitualStageAction_SoundOneshotOnTarget": "RitualStageAction_SoundOneshotOnTarget",
+      "RitualStageAction_StunPawns": "RitualStageAction_StunPawns"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualStageAction subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

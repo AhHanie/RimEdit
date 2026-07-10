@@ -1,0 +1,28 @@
+{
+  "defType": "GeneCategoryDef",
+  "label": "Gene category",
+  "description": "Defines a category used to group genes in the gene editor UI.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "displayPriorityInXenotype",
+    "displayPriorityInGenepack"
+  ],
+  "fields": {
+    "displayPriorityInXenotype": {
+      "label": "Display priority in xenotype",
+      "description": "Sort order for this category in the xenotype gene editor. Higher values appear later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "displayPriorityInGenepack": {
+      "label": "Display priority in genepack",
+      "description": "Sort order for this category in the genepack gene editor. Higher values appear later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "defType": "RoomRoleDef",
+  "label": "Room role",
+  "description": "Defines a functional role that a room can fulfil - bedroom, workshop, kitchen - and which room stats are relevant to it.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "avoidViewingArtIfUnowned",
+    "relatedStats"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# RoomRoleWorker subclass that implements this room role's assignment logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["RoomRoleWorker_Bedroom", "RoomRoleWorker_Workshop", "RoomRoleWorker_Kitchen"]
+    },
+    "avoidViewingArtIfUnowned": {
+      "label": "Avoid viewing art if unowned",
+      "description": "If true, pawns avoid viewing art in rooms with this role when the room is not owned by them.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "relatedStats": {
+      "label": "Related stats",
+      "description": "RoomStatDefs that are evaluated for this room role. Private in source but XML-backed and present in shipped data.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "RoomStatDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "basic-room-role": {
+      "label": "Basic room role",
+      "description": "A minimal room role with a worker class.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass"],
+      "fieldValues": {}
+    }
+  }
+}

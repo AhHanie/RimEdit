@@ -1,0 +1,610 @@
+{
+  "defType": "StatDef",
+  "label": "Stat",
+  "description": "Defines a named numeric statistic used across RimWorld - covering pawns, items, buildings, and more. Stats control everything from move speed to market value.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "category",
+    "workerClass",
+    "labelForFullStatList",
+    "forInformationOnly",
+    "offsetLabel",
+    "hideAtValue",
+    "alwaysHide",
+    "showNonAbstract",
+    "showIfUndefined",
+    "showOnPawns",
+    "showOnHumanlikes",
+    "showOnNonWildManHumanlikes",
+    "showOnAnimals",
+    "showOnMechanoids",
+    "showOnNonWorkTables",
+    "showOnEntities",
+    "showOnDrones",
+    "showOnNonPowerPlants",
+    "showOnDefaultValue",
+    "showOnUnhaulables",
+    "showOnUntradeables",
+    "showIfModsLoaded",
+    "showIfModsLoadedAny",
+    "showIfHediffsPresent",
+    "neverDisabled",
+    "showZeroBaseValue",
+    "showOnSlavesOnly",
+    "showOnPlayerMechanoids",
+    "showDevelopmentalStageFilter",
+    "hideInClassicMode",
+    "showOnPawnKind",
+    "overridesHideStats",
+    "displayPriorityInCategory",
+    "toStringNumberSense",
+    "toStringStyle",
+    "toStringStyleUnfinalized",
+    "formatString",
+    "formatStringUnfinalized",
+    "finalizeEquippedStatOffset",
+    "statFactorsExplanationHeader",
+    "defaultBaseValue",
+    "skillNeedOffsets",
+    "noSkillOffset",
+    "capacityOffsets",
+    "statFactors",
+    "applyFactorsIfNegative",
+    "skillNeedFactors",
+    "noSkillFactor",
+    "capacityFactors",
+    "postProcessCurve",
+    "postProcessStatFactors",
+    "minValue",
+    "maxValue",
+    "valueIfMissing",
+    "roundValue",
+    "roundToFiveOver",
+    "minifiedThingInherits",
+    "supressDisabledError",
+    "cacheable",
+    "displayMaxWhenAboveOrEqual",
+    "scenarioRandomizable",
+    "disableIfSkillDisabled",
+    "parts"
+  ],
+  "fields": {
+    "category": {
+      "label": "Category",
+      "description": "StatCategoryDef that groups this stat under a heading in the info card.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# StatWorker subclass that computes this stat's value at runtime.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelForFullStatList": {
+      "label": "Label (full stat list)",
+      "description": "Alternate label shown when this stat appears in a full stat listing. Falls back to label when absent.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "forInformationOnly": {
+      "label": "For information only",
+      "description": "If true, this stat is displayed for reference only and does not affect gameplay calculations.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "offsetLabel": {
+      "label": "Offset label",
+      "description": "Label used when this stat appears as an offset modifier. Private in source but loaded from XML.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "hideAtValue": {
+      "label": "Hide at value",
+      "description": "If the computed stat value equals this number, the stat is hidden from the info card.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "alwaysHide": {
+      "label": "Always hide",
+      "description": "If true, this stat is never shown in the info card regardless of value or show flags.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showNonAbstract": {
+      "label": "Show non-abstract",
+      "description": "If true, the stat is shown on non-abstract defs even without a stat base entry.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showIfUndefined": {
+      "label": "Show if undefined",
+      "description": "If true, the stat is shown in the info card even when no stat base entry is defined.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnPawns": {
+      "label": "Show on pawns",
+      "description": "If true, this stat appears in the info card for all pawn types.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnHumanlikes": {
+      "label": "Show on humanlikes",
+      "description": "If true, this stat appears in the info card for humanlike pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnNonWildManHumanlikes": {
+      "label": "Show on non-wildman humanlikes",
+      "description": "If true, this stat appears for humanlike pawns who are not wild men.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOnAnimals": {
+      "label": "Show on animals",
+      "description": "If true, this stat appears in the info card for animal pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnMechanoids": {
+      "label": "Show on mechanoids",
+      "description": "If true, this stat appears in the info card for mechanoid pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnNonWorkTables": {
+      "label": "Show on non-work-tables",
+      "description": "If true, this stat appears for things that are not work tables.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOnEntities": {
+      "label": "Show on entities",
+      "description": "If true, this stat appears for anomaly entity pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOnDrones": {
+      "label": "Show on drones",
+      "description": "If true, this stat appears for mechanoid drone pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOnNonPowerPlants": {
+      "label": "Show on non-power-plants",
+      "description": "If true, this stat appears for buildings that are not power plants.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOnDefaultValue": {
+      "label": "Show on default value",
+      "description": "If true, the stat is shown even when its value equals defaultBaseValue.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnUnhaulables": {
+      "label": "Show on unhaulables",
+      "description": "If true, this stat appears for things that cannot be hauled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showOnUntradeables": {
+      "label": "Show on untradeables",
+      "description": "If true, this stat appears for things that cannot be traded.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "showIfModsLoaded": {
+      "label": "Show if mods loaded",
+      "description": "Mod package IDs; the stat is shown only when all listed mods are active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "showIfModsLoadedAny": {
+      "label": "Show if any mod loaded",
+      "description": "Mod package IDs; the stat is shown if at least one of the listed mods is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "showIfHediffsPresent": {
+      "label": "Show if hediffs present",
+      "description": "HediffDefs that must all be active on the pawn for this stat to be displayed.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "neverDisabled": {
+      "label": "Never disabled",
+      "description": "If true, the stat is never suppressed even when the pawn lacks the relevant skill.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showZeroBaseValue": {
+      "label": "Show zero base value",
+      "description": "If true, the stat is shown even when the thing has no stat base entry (effective zero base).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOnSlavesOnly": {
+      "label": "Show on slaves only",
+      "description": "If true, this stat is shown only for enslaved pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOnPlayerMechanoids": {
+      "label": "Show on player mechanoids",
+      "description": "If true, this stat is shown for player-controlled mechanoids.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showDevelopmentalStageFilter": {
+      "label": "Show developmental stage filter",
+      "description": "DevelopmentalStage flags (comma-separated) controlling which pawn life stages this stat is shown for.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      }
+    },
+    "hideInClassicMode": {
+      "label": "Hide in classic mode",
+      "description": "If true, this stat is hidden when the game is in classic ideology mode.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showOnPawnKind": {
+      "label": "Show on pawn kind",
+      "description": "PawnKindDefs that must match the pawn for this stat to be shown.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "overridesHideStats": {
+      "label": "Overrides hide stats",
+      "description": "If true, this stat's show rules override any alwaysHide flags set on the def.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayPriorityInCategory": {
+      "label": "Display priority in category",
+      "description": "Sort order within the stat category. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "toStringNumberSense": {
+      "label": "Number sense",
+      "description": "Controls whether the displayed value is treated as absolute, a factor (×), or an offset (±).",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Absolute",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Absolute", "Factor", "Offset"]
+      }
+    },
+    "toStringStyle": {
+      "label": "String style",
+      "description": "Controls how the numeric value is formatted in tooltips and the info card.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Integer", "FloatOne", "FloatTwo", "FloatThree",
+          "FloatMaxOne", "FloatMaxTwo", "FloatMaxThree", "FloatTwoOrThree",
+          "PercentZero", "PercentOne", "PercentTwo",
+          "Temperature", "TemperatureOffset", "WorkAmount", "Money"
+        ]
+      }
+    },
+    "toStringStyleUnfinalized": {
+      "label": "String style (unfinalized)",
+      "description": "Formatting style used before the stat is finalized (e.g., during construction). Private in source but loaded from XML. When absent, toStringStyle is used.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Integer", "FloatOne", "FloatTwo", "FloatThree",
+          "FloatMaxOne", "FloatMaxTwo", "FloatMaxThree", "FloatTwoOrThree",
+          "PercentZero", "PercentOne", "PercentTwo",
+          "Temperature", "TemperatureOffset", "WorkAmount", "Money"
+        ]
+      }
+    },
+    "formatString": {
+      "label": "Format string",
+      "description": "Custom C# format string for the stat value. Marked [MustTranslate].",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "formatStringUnfinalized": {
+      "label": "Format string (unfinalized)",
+      "description": "Format string used when the stat is unfinalized. Marked [MustTranslate].",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "finalizeEquippedStatOffset": {
+      "label": "Finalize equipped stat offset",
+      "description": "If true, equipped-item stat offsets are applied to the finalized value rather than the pre-finalization base.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "statFactorsExplanationHeader": {
+      "label": "Stat factors explanation header",
+      "description": "Header label shown above the stat factors section in the detailed explanation tooltip. Marked [MustTranslate].",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "defaultBaseValue": {
+      "label": "Default base value",
+      "description": "Value used when no explicit statBases entry is defined for the thing. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "skillNeedOffsets": {
+      "label": "Skill need offsets",
+      "description": "Pawn skill requirements that add an offset to the stat value. Each item may specify a Class for polymorphic evaluation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillNeed" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "noSkillOffset": {
+      "label": "No-skill offset",
+      "description": "Offset applied when the pawn has no relevant skill (skill is null or disabled).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "capacityOffsets": {
+      "label": "Capacity offsets",
+      "description": "Pawn capacity modifiers that add an offset to the stat value based on capacity efficiency.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnCapacityOffset" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Other stats whose values multiply into this stat's computed result.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "applyFactorsIfNegative": {
+      "label": "Apply factors if negative",
+      "description": "If true, stat factors and capacity factors are applied even when the value is negative.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "skillNeedFactors": {
+      "label": "Skill need factors",
+      "description": "Pawn skill requirements that multiply the stat value. Each item may specify a Class for polymorphic evaluation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillNeed" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "noSkillFactor": {
+      "label": "No-skill factor",
+      "description": "Multiplier applied when the pawn has no relevant skill.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "capacityFactors": {
+      "label": "Capacity factors",
+      "description": "Pawn capacity modifiers that multiply the stat value based on capacity efficiency.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnCapacityFactor" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "postProcessCurve": {
+      "label": "Post-process curve",
+      "description": "Piecewise linear curve applied to the stat value after all other modifiers are resolved.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "postProcessStatFactors": {
+      "label": "Post-process stat factors",
+      "description": "Stats whose values multiply the result after the post-process curve is applied.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minValue": {
+      "label": "Min value",
+      "description": "Lower bound clamped on the final computed stat value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxValue": {
+      "label": "Max value",
+      "description": "Upper bound clamped on the final computed stat value. Defaults to float.MaxValue (uncapped).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "valueIfMissing": {
+      "label": "Value if missing",
+      "description": "Value returned when the stat cannot be computed for the request.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "roundValue": {
+      "label": "Round value",
+      "description": "If true, the final stat value is rounded to the nearest integer.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "roundToFiveOver": {
+      "label": "Round to five over",
+      "description": "When the stat value exceeds this threshold, it is rounded to the nearest five.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "minifiedThingInherits": {
+      "label": "Minified thing inherits",
+      "description": "If true, a minified version of a thing inherits this stat from the inner thing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "supressDisabledError": {
+      "label": "Suppress disabled error",
+      "description": "If true, no config error is raised when this stat is disabled. Note: the field name is intentionally misspelled to match the source.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "cacheable": {
+      "label": "Cacheable",
+      "description": "If true, the computed stat value is cached per-request to avoid redundant recalculation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayMaxWhenAboveOrEqual": {
+      "label": "Display max when above or equal",
+      "description": "If true, the display shows a maximum symbol instead of the numeric value when the stat is at or above its max.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scenarioRandomizable": {
+      "label": "Scenario randomizable",
+      "description": "If true, the scenario editor can randomize this stat's base value.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disableIfSkillDisabled": {
+      "label": "Disable if skill disabled",
+      "description": "SkillDef; this stat is disabled for pawns who cannot use the specified skill.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "parts": {
+      "label": "Parts",
+      "description": "Polymorphic list of StatPart objects that modify the computed stat value. Each item specifies a Class attribute.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatPart" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    }
+  }
+}

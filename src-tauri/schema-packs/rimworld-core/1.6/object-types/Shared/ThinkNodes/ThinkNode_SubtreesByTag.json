@@ -1,0 +1,16 @@
+{
+  "objectType": "ThinkNode_SubtreesByTag",
+  "label": "Think node subtrees by tag",
+  "description": "At runtime, finds all ThinkTreeDef records whose insertTag matches this node's insertTag and tries their roots in priority order.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": ["insertTag"],
+  "fields": {
+    "insertTag": {
+      "label": "Insert tag",
+      "description": "Selects ThinkTreeDef records whose insertTag field equals this value.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "defType": "IssueDef",
+  "label": "Issue",
+  "description": "Defines an ideological issue that groups related precepts.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "allowMultiplePrecepts",
+    "forceWriteLabelInPreceptFloatMenuOption",
+    "iconPath"
+  ],
+  "fields": {
+    "allowMultiplePrecepts": {
+      "label": "Allow multiple precepts",
+      "description": "If true, an ideology can contain more than one precept for this issue.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "forceWriteLabelInPreceptFloatMenuOption": {
+      "label": "Force write label in precept float menu option",
+      "description": "If true, the precept add-menu option writes the issue label even when it would normally be omitted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path loaded for the issue icon.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "UI/Issues/Cannibalism",
+        "UI/Issues/Ranching",
+        "Things/Building/Misc/SlabBed/SlabBed_north"
+      ]
+    }
+  },
+  "templates": {
+    "basic-issue": {
+      "label": "Basic issue",
+      "description": "Minimal ideological issue with a label and optional icon path.",
+      "includeRequiredFields": true,
+      "promptFields": ["label"],
+      "fieldValues": {}
+    }
+  }
+}

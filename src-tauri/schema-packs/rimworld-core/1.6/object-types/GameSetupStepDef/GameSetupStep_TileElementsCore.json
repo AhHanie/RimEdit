@@ -1,0 +1,8 @@
+{
+  "objectType": "GameSetupStep_TileElementsCore",
+  "label": "Game setup step: Tile elements (Core)",
+  "description": "Initializes core world features (WorldFeatures). No loadable XML fields.",
+  "inherits": ["GameSetupStep"],
+  "fieldOrder": [],
+  "fields": {}
+}

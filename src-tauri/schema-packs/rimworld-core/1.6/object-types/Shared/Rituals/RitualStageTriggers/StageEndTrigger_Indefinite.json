@@ -1,0 +1,10 @@
+{
+  "objectType": "StageEndTrigger_Indefinite",
+  "label": "Stage end trigger (indefinite)",
+  "description": "Never automatically ends the stage -- requires an external trigger or manual completion.",
+  "fieldOrder": ["Class", "countsTowardsProgress"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" }
+  }
+}

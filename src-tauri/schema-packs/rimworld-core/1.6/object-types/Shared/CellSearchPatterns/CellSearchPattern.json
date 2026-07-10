@@ -1,0 +1,27 @@
+{
+  "objectType": "CellSearchPattern",
+  "label": "Cell search pattern",
+  "description": "Base schema for cell search pattern objects that determine which adjacent cells are tried for pawn positioning. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "CellSearchPattern",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "CellSearchPattern": "CellSearchPattern",
+      "BedCellSearchPattern": "BedCellSearchPattern",
+      "BedInteractionCellSearchPattern": "BedInteractionCellSearchPattern",
+      "ChildBirthCellSearchPattern": "ChildBirthCellSearchPattern"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# CellSearchPattern subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

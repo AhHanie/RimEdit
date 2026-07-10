@@ -1,0 +1,112 @@
+{
+  "objectType": "BodyPartRecord",
+  "label": "Body part record",
+  "description": "A single node in a pawn body tree. References a BodyPartDef for base stats and may contain recursive child records via parts.",
+  "fieldOrder": [
+    "def",
+    "customLabel",
+    "parts",
+    "height",
+    "depth",
+    "coverage",
+    "groups",
+    "woundAnchorTag",
+    "flipGraphic",
+    "visibleHediffRots"
+  ],
+  "fields": {
+    "def": {
+      "label": "Def",
+      "description": "The BodyPartDef that defines the base stats for this body part record.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyPartDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "customLabel": {
+      "label": "Custom label",
+      "description": "Overrides the display label for this specific body part record instance.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "parts": {
+      "label": "Parts",
+      "description": "Child body part records nested under this record. Each item is itself a BodyPartRecord.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BodyPartRecord" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "height": {
+      "label": "Height",
+      "description": "Vertical zone of this body part. Affects attack targeting and apparel coverage.",
+      "type": {
+        "kind": "enum",
+        "values": ["Undefined", "Bottom", "Middle", "Top"]
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "depth": {
+      "label": "Depth",
+      "description": "Whether this body part is inside or outside the body. Affects damage penetration and apparel coverage.",
+      "type": {
+        "kind": "enum",
+        "values": ["Undefined", "Inside", "Outside"]
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "coverage": {
+      "label": "Coverage",
+      "description": "Relative coverage of this body part under its parent, as a fraction of the parent's coverage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "groups": {
+      "label": "Groups",
+      "description": "BodyPartGroupDef groups this body part record belongs to.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "BodyPartGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "woundAnchorTag": {
+      "label": "Wound anchor tag",
+      "description": "String tag used to anchor wound and hediff graphics to this body part.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "flipGraphic": {
+      "label": "Flip graphic",
+      "description": "If true, the graphic for this body part is flipped horizontally.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "visibleHediffRots": {
+      "label": "Visible hediff rotations",
+      "description": "Cardinal directions in which hediff graphics on this body part are rendered.",
+      "type": { "kind": "list" },
+      "items": {
+        "kind": "enum",
+        "values": ["North", "East", "South", "West"]
+      },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

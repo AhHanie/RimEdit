@@ -1,0 +1,37 @@
+{
+  "defType": "MeditationFocusDef",
+  "label": "Meditation focus type",
+  "description": "Defines a type of meditation focus that pawns can use during meditation. Controls which pawns have access via royal title or backstory category requirements.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "requiresRoyalTitle",
+    "requiredBackstoriesAny",
+    "incompatibleBackstoriesAny"
+  ],
+  "fields": {
+    "requiresRoyalTitle": {
+      "label": "Requires royal title",
+      "description": "If true, only pawns with a royal title can use this meditation focus type. Used for the Dignified focus.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiredBackstoriesAny": {
+      "label": "Required backstories (any)",
+      "description": "A pawn can use this focus type if their backstory in the specified slot belongs to any one of the listed categories. An empty list means no backstory requirement.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BackstoryCategoryAndSlot" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "incompatibleBackstoriesAny": {
+      "label": "Incompatible backstories (any)",
+      "description": "A pawn cannot use this focus type if their backstory in the specified slot belongs to any one of the listed categories. An empty list means no backstory exclusion.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BackstoryCategoryAndSlot" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

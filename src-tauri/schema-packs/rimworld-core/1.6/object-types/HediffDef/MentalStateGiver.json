@@ -1,0 +1,30 @@
+{
+  "objectType": "MentalStateGiver",
+  "label": "Mental state giver",
+  "description": "Randomly triggers a mental state on the pawn at a mean time interval while the hediff stage is active.",
+  "fieldOrder": [
+    "mentalState",
+    "mtbDays"
+  ],
+  "fields": {
+    "mentalState": {
+      "label": "Mental state",
+      "description": "MentalStateDef triggered by this giver.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MentalStateDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "mtbDays": {
+      "label": "MTB (days)",
+      "description": "Mean time in days between trigger checks for this mental state.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

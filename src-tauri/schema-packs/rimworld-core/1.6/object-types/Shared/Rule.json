@@ -1,0 +1,63 @@
+{
+  "objectType": "Rule",
+  "label": "Grammar rule",
+  "description": "Base schema for raw grammar rule list items. The Class attribute selects the concrete rule subclass.",
+  "fieldOrder": ["Class", "keyword", "tag", "requiredTag", "usesLimit", "constantConstraints"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "Rule",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "Rule_String": "Rule_String",
+      "Rule_File": "Rule_File",
+      "Rule_Number": "Rule_Number",
+      "Rule_NamePerson": "Rule_NamePerson"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Rule class",
+      "description": "C# Rule subclass used by RimWorld DirectXmlLoader for this grammar rule item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "keyword": {
+      "label": "Keyword",
+      "description": "The grammar symbol name this rule defines. Referenced in grammar strings as [keyword].",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "tag": {
+      "label": "Tag",
+      "description": "Optional tag for categorizing or grouping rules.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "requiredTag": {
+      "label": "Required tag",
+      "description": "When set, this rule is only selected when the resolver has the specified tag active.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "usesLimit": {
+      "label": "Uses limit",
+      "description": "Maximum number of times this rule may fire during resolution. Null means unlimited.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "constantConstraints": {
+      "label": "Constant constraints",
+      "description": "Key-value constraints that must be satisfied for this rule to fire.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ConstantConstraint" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

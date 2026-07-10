@@ -1,0 +1,72 @@
+{
+  "defType": "ResearchTabDef",
+  "label": "Research tab",
+  "description": "Defines a tab in the research UI that groups related research projects and controls its title, description, and visibility.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "generalTitle",
+    "generalDescription",
+    "visibleByDefault",
+    "minMonolithLevelVisible",
+    "tutorTag"
+  ],
+  "fields": {
+    "generalTitle": {
+      "label": "General title",
+      "description": "Section header text shown for this research tab. Source default is an empty string.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "",
+      "xml": "element"
+    },
+    "generalDescription": {
+      "label": "General description",
+      "description": "Intro blurb text shown for this research tab. Source default is an empty string.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "",
+      "xml": "element"
+    },
+    "visibleByDefault": {
+      "label": "Visible by default",
+      "description": "Whether this tab is shown without any additional unlock condition.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "minMonolithLevelVisible": {
+      "label": "Min monolith level visible",
+      "description": "Minimum Anomaly monolith level required for this tab to become visible. -1 means always visible regardless of monolith level.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element",
+      "examples": ["-1", "1"]
+    },
+    "tutorTag": {
+      "label": "Tutor tag",
+      "description": "Optional UI highlight tag used to point tutorials at this tab.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-tab": {
+      "label": "Basic tab",
+      "description": "Always-visible top-level research tab, relying on source defaults for visibility and monolith gating.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "generalTitle", "generalDescription"]
+    },
+    "gated-tab": {
+      "label": "Gated tab",
+      "description": "Conditionally-visible research tab that becomes visible once a minimum monolith level is reached.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "generalTitle", "generalDescription", "minMonolithLevelVisible", "tutorTag"],
+      "fieldValues": {
+        "visibleByDefault": "false"
+      }
+    }
+  }
+}

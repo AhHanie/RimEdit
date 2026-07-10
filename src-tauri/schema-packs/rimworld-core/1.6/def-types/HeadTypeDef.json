@@ -1,0 +1,147 @@
+{
+  "defType": "HeadTypeDef",
+  "label": "Head type",
+  "description": "Defines a pawn head mesh/texture shape, gender restriction, render offsets, and optional gene requirements.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "graphicPath",
+    "gender",
+    "narrow",
+    "hairMeshSize",
+    "beardMeshSize",
+    "beardOffset",
+    "eyeOffsetEastWest",
+    "beardOffsetXEast",
+    "selectionWeight",
+    "randomChosen",
+    "requiredGenes"
+  ],
+  "fields": {
+    "graphicPath": {
+      "label": "Graphic path",
+      "description": "Content-relative path to the head texture, without directional suffix. The game appends _south, _east, etc. at runtime.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Things/Pawn/Humanlike/Heads/Male/Average_Average", "Things/Pawn/Humanlike/Heads/Female/Narrow_Narrow"]
+    },
+    "gender": {
+      "label": "Gender",
+      "description": "Gender restriction for this head type. None means any gender can use it.",
+      "type": {
+        "kind": "enum",
+        "values": ["None", "Male", "Female"]
+      },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element"
+    },
+    "narrow": {
+      "label": "Narrow",
+      "description": "If true, this head is narrow-shaped. Beard render offsets from BeardDef.offsetNarrowEast and offsetNarrowSouth are applied instead of the standard offsets.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hairMeshSize": {
+      "label": "Hair mesh size",
+      "description": "Scale of the hair mesh rendered on top of this head. Format: (x, y).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "defaultValue": "(1.5, 1.5)",
+      "xml": "element",
+      "examples": ["(1.5, 1.5)", "(1.35, 1.35)"]
+    },
+    "beardMeshSize": {
+      "label": "Beard mesh size",
+      "description": "Scale of the beard mesh rendered on this head. Format: (x, y).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "defaultValue": "(1.5, 1.5)",
+      "xml": "element",
+      "examples": ["(1.5, 1.5)", "(1.35, 1.35)"]
+    },
+    "beardOffset": {
+      "label": "Beard offset",
+      "description": "World-space render offset applied to the beard mesh. Format: (x, y, z).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0, 0, 0)",
+      "xml": "element",
+      "examples": ["(0, 0, 0)", "(0, 0, -0.04)"]
+    },
+    "eyeOffsetEastWest": {
+      "label": "Eye offset east/west",
+      "description": "World-space render offset applied to the eyes when facing east or west. Absent means no override is applied.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0, 0, 0)", "(-0.02, 0, 0)"]
+    },
+    "beardOffsetXEast": {
+      "label": "Beard offset X east",
+      "description": "Additional horizontal offset applied to the beard when the pawn faces east. West-facing pawns mirror this value.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative probability that this head type is chosen during random pawn generation. Higher values increase the chance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "randomChosen": {
+      "label": "Random chosen",
+      "description": "If true, this head type is eligible for random pawn generation. Set to false to restrict it to gene or backstory requirements only.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "requiredGenes": {
+      "label": "Required genes",
+      "description": "GeneDefs that a pawn must possess for this head type to be assigned. Used for gene-restricted head shapes such as skulls or stumps.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "GeneDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "basic-head-type": {
+      "label": "Basic head type",
+      "description": "Standard head type with a texture path and optional gender restriction.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "graphicPath", "gender", "eyeOffsetEastWest"],
+      "fieldValues": {}
+    },
+    "gene-required-head-type": {
+      "label": "Gene-required head type",
+      "description": "Head type restricted to pawns that carry specific genes, such as special mutant head shapes.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "graphicPath", "gender", "requiredGenes", "randomChosen"],
+      "fieldValues": {
+        "randomChosen": "false"
+      }
+    },
+    "abstract-head-base": {
+      "label": "Abstract head base",
+      "description": "Abstract XML inheritance base for head types that share mesh sizes and render offsets.",
+      "includeRequiredFields": true,
+      "promptFields": ["Name", "hairMeshSize", "beardMeshSize", "beardOffset", "beardOffsetXEast", "narrow"],
+      "fieldValues": {
+        "Abstract": "true"
+      }
+    }
+  }
+}

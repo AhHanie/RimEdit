@@ -1,0 +1,8 @@
+{
+  "objectType": "GameSetupStep_Components",
+  "label": "Game setup step: Components",
+  "description": "Constructs and exposes world components. No loadable XML fields.",
+  "inherits": ["GameSetupStep"],
+  "fieldOrder": [],
+  "fields": {}
+}

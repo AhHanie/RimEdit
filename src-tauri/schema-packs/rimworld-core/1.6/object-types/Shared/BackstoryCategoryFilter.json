@@ -1,0 +1,72 @@
+{
+  "objectType": "BackstoryCategoryFilter",
+  "label": "Backstory category filter",
+  "description": "A filter that controls which backstory categories are used or excluded when generating a pawn's backstory.",
+  "fieldOrder": [
+    "categories",
+    "exclude",
+    "categoriesChildhood",
+    "excludeChildhood",
+    "categoriesAdulthood",
+    "excludeAdulthood",
+    "commonality"
+  ],
+  "fields": {
+    "categories": {
+      "label": "Categories",
+      "description": "Backstory category tags matched against any backstory slot.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "exclude": {
+      "label": "Exclude",
+      "description": "Backstory category tags excluded from any backstory slot. Entries matching these tags are rejected.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "categoriesChildhood": {
+      "label": "Categories (childhood)",
+      "description": "Backstory category tags matched against the childhood slot only.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "excludeChildhood": {
+      "label": "Exclude (childhood)",
+      "description": "Backstory category tags excluded from the childhood slot.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "categoriesAdulthood": {
+      "label": "Categories (adulthood)",
+      "description": "Backstory category tags matched against the adulthood slot only.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "excludeAdulthood": {
+      "label": "Exclude (adulthood)",
+      "description": "Backstory category tags excluded from the adulthood slot.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight of this filter in random selection. Higher values increase the chance of picking backstories from the matched categories.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

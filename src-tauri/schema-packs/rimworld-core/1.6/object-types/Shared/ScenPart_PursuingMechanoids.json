@@ -1,0 +1,17 @@
+{
+  "objectType": "ScenPart_PursuingMechanoids",
+  "label": "Pursuing mechanoids",
+  "description": "Spawns a mechanoid pursuit force that periodically raids the colony. Requires the Anomaly DLC.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "initialMap"],
+  "fields": {
+    "initialMap": {
+      "label": "Initial map",
+      "description": "When true, the pursuing mechanoids start on the same map as the colony rather than arriving later.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  }
+}

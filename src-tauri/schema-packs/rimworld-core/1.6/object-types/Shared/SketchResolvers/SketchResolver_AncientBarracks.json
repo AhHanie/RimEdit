@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AncientBarracks",
+  "label": "Sketch resolver: Ancient barracks",
+  "description": "Concrete RimWorld SketchResolver_AncientBarracks resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

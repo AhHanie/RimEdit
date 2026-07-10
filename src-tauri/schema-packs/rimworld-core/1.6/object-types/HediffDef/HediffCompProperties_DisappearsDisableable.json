@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_DisappearsDisableable",
+  "label": "Disappears disableable comp",
+  "description": "Disappears after a set number of ticks, but can be disabled.",
+  "fieldOrder": ["Class", "compClass", "disappearAfterTicks", "showRemainingTime"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "disappearAfterTicks": {
+      "label": "Disappear after ticks",
+      "description": "Ticks after which this hediff disappears.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "showRemainingTime": {
+      "label": "Show remaining time",
+      "description": "Show remaining time in health tab.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

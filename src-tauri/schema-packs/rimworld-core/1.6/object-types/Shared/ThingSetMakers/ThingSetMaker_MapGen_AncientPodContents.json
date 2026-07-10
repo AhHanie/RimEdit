@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_MapGen_AncientPodContents",
+  "label": "Ancient pod contents maker",
+  "description": "Generates contents for ancient sleeping pods during map generation. The contents type is selected via fixedParams.podContentsType.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

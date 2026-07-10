@@ -1,0 +1,54 @@
+{
+  "objectType": "DifficultyConditionConfig",
+  "label": "Difficulty condition config",
+  "description": "Flags that gate behavior on active difficulty settings. All fields default to false.",
+  "fieldOrder": [
+    "bigThreatsDisabled",
+    "trapsDisabled",
+    "turretsDisabled",
+    "mortarsDisabled",
+    "extremeWeatherIncidentsDisabled"
+  ],
+  "fields": {
+    "bigThreatsDisabled": {
+      "label": "Big threats disabled",
+      "description": "Condition is met when the 'disable big threats' difficulty option is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "trapsDisabled": {
+      "label": "Traps disabled",
+      "description": "Condition is met when the 'disable traps' difficulty option is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "turretsDisabled": {
+      "label": "Turrets disabled",
+      "description": "Condition is met when the 'disable turrets' difficulty option is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mortarsDisabled": {
+      "label": "Mortars disabled",
+      "description": "Condition is met when the 'disable mortars' difficulty option is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "extremeWeatherIncidentsDisabled": {
+      "label": "Extreme weather incidents disabled",
+      "description": "Condition is met when the 'disable extreme weather incidents' difficulty option is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

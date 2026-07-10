@@ -1,0 +1,33 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationConditional",
+  "label": "Conditional",
+  "description": "Runs match if xpath resolves to at least one node, otherwise runs nomatch.",
+  "fieldOrder": ["xpath", "match", "nomatch"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Condition checked against the current document.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    },
+    "match": {
+      "label": "Match",
+      "description": "Operation to run when xpath resolves to at least one node.",
+      "type": { "kind": "object" },
+      "xml": "object",
+      "role": "operation",
+      "required": false
+    },
+    "nomatch": {
+      "label": "No Match",
+      "description": "Operation to run when xpath resolves to no nodes.",
+      "type": { "kind": "object" },
+      "xml": "object",
+      "role": "operation",
+      "required": false
+    }
+  }
+}

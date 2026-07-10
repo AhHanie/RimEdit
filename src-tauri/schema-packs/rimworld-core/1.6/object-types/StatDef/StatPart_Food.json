@@ -1,0 +1,54 @@
+{
+  "objectType": "StatPart_Food",
+  "label": "Stat part (food level)",
+  "description": "Scales the stat based on the pawn's current food level.",
+  "fieldOrder": ["Class", "priority", "factorStarving", "factorUrgentlyHungry", "factorHungry", "factorFed"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "factorStarving": {
+      "label": "Factor (starving)",
+      "description": "Stat multiplier when the pawn is starving.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorUrgentlyHungry": {
+      "label": "Factor (urgently hungry)",
+      "description": "Stat multiplier when the pawn is urgently hungry.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorHungry": {
+      "label": "Factor (hungry)",
+      "description": "Stat multiplier when the pawn is hungry.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "factorFed": {
+      "label": "Factor (fed)",
+      "description": "Stat multiplier when the pawn is fed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

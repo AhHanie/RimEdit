@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_ScatterThingsAnywhere",
+  "label": "Scatter things anywhere",
+  "description": "Scatters a specific item randomly across the entire starting map.",
+  "inherits": ["ScenPart_ThingCount"]
+}

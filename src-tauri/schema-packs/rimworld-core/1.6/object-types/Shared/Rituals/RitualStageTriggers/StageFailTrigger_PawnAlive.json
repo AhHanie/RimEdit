@@ -1,0 +1,25 @@
+{
+  "objectType": "StageFailTrigger_PawnAlive",
+  "label": "Stage fail trigger (pawn alive)",
+  "description": "Fails the stage if the specified role pawn is still alive when the check runs.",
+  "fieldOrder": ["Class", "desc", "allowanceTicks", "pawnId"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "desc": { "label": "Description", "type": { "kind": "localizedString" }, "required": false, "xml": "element" },
+    "allowanceTicks": {
+      "label": "Allowance ticks",
+      "description": "Number of ticks the condition is allowed to persist before the stage fails.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "pawnId": {
+      "label": "Pawn ID",
+      "description": "ID of the role pawn that must be dead for the stage to continue (fails if still alive).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

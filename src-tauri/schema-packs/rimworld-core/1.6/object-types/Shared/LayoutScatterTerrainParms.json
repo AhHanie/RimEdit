@@ -1,0 +1,54 @@
+{
+  "objectType": "LayoutScatterTerrainParms",
+  "label": "Layout scatter terrain parms",
+  "description": "Parameters for scattering terrain patches randomly inside a room. The element name is the TerrainDef defName (the 'def' field).",
+  "fieldOrder": ["def", "groupCount", "groupsPerHundredCells", "itemsPerGroup", "groupDistRange", "minGroups"],
+  "fields": {
+    "def": {
+      "label": "Terrain",
+      "description": "TerrainDef to scatter. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "groupCount": {
+      "label": "Group count",
+      "description": "Fixed number of groups to place. Uses IntRange.Invalid to derive count from groupsPerHundredCells instead.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "groupsPerHundredCells": {
+      "label": "Groups per hundred cells",
+      "description": "Random range for how many scatter groups appear per 100 room cells. Used when groupCount is invalid.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "0~2"
+    },
+    "itemsPerGroup": {
+      "label": "Items per group",
+      "description": "Random range for how many terrain cells appear in each scatter group.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "2~4"
+    },
+    "groupDistRange": {
+      "label": "Group dist range",
+      "description": "Random range for the spread radius of cells within a scatter group.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "2~5"
+    },
+    "minGroups": {
+      "label": "Min groups",
+      "description": "Minimum number of groups that must be placed regardless of cell count.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    }
+  }
+}

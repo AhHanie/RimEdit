@@ -1,0 +1,44 @@
+{
+  "objectType": "MiscDamage",
+  "label": "Misc damage",
+  "description": "A damage entry applied to specific body part groups on a pawn at spawn time, used to create pre-existing wounds.",
+  "fieldOrder": [
+    "damage",
+    "groups",
+    "chance"
+  ],
+  "fields": {
+    "damage": {
+      "label": "Damage type",
+      "description": "DamageDef that defines the type of damage inflicted.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "DamageDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "groups": {
+      "label": "Body part groups",
+      "description": "BodyPartGroupDefs targeted by this damage entry.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "BodyPartGroupDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0–1) that this damage is applied during generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

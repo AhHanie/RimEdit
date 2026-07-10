@@ -1,0 +1,8 @@
+{
+  "objectType": "SurgeryOutcomeComp_SurgeonSuccessChance",
+  "label": "Surgery outcome comp (surgeon success chance)",
+  "description": "Adjusts surgery quality based on the surgeon's medicine skill and success chance stat.",
+  "inherits": ["SurgeryOutcomeComp"],
+  "fieldOrder": [],
+  "fields": {}
+}

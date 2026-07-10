@@ -1,0 +1,29 @@
+{
+  "objectType": "ScenPart_ForcedTrait",
+  "label": "Forced trait",
+  "description": "Forces a specified trait onto starting pawns. Extends pawn modifier with trait selection.",
+  "inherits": ["ScenPart_PawnModifier"],
+  "fieldOrder": ["def", "visible", "chance", "context", "hideOffMap", "trait", "degree"],
+  "fields": {
+    "trait": {
+      "label": "Trait",
+      "description": "TraitDef to force onto eligible starting pawns.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "degree": {
+      "label": "Degree",
+      "description": "Degree index of the trait, for traits with multiple severity levels.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    }
+  }
+}

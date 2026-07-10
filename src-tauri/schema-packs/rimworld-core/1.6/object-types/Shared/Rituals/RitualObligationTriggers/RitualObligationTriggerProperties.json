@@ -1,0 +1,43 @@
+{
+  "objectType": "RitualObligationTriggerProperties",
+  "label": "Ritual obligation trigger properties",
+  "description": "Base schema for ritual obligation trigger property objects. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class", "triggerClass", "mustBePlayerIdeo"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RitualObligationTriggerProperties",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "RitualObligationTrigger_BlindingProperties": "RitualObligationTrigger_BlindingProperties",
+      "RitualObligationTrigger_DateProperties": "RitualObligationTrigger_DateProperties",
+      "RitualObligationTrigger_MemberCorpseDestroyedProperties": "RitualObligationTrigger_MemberCorpseDestroyedProperties",
+      "RitualObligationTrigger_MemberDiedProperties": "RitualObligationTrigger_MemberDiedProperties",
+      "RitualObligationTrigger_ScarificationProperties": "RitualObligationTrigger_ScarificationProperties"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualObligationTriggerProperties subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "triggerClass": {
+      "label": "Trigger class",
+      "description": "C# RitualObligationTrigger subclass instantiated at runtime by this properties object.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "mustBePlayerIdeo": {
+      "label": "Must be player ideo",
+      "description": "If true, this obligation trigger only fires for the player ideology.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

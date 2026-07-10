@@ -1,0 +1,110 @@
+{
+  "objectType": "SkyfallerProperties",
+  "label": "Skyfaller properties",
+  "description": "Properties for things that fall from the sky (drop pods, meteorites, toxic fallout), controlling movement, shadow, impact damage, and sound.",
+  "fieldOrder": [
+    "movementType",
+    "speed",
+    "shadowType",
+    "impactDef",
+    "impactExplosionRadius",
+    "impactDamageDef",
+    "impactDamage",
+    "cameraShake",
+    "screenShakeIntensity",
+    "soundHit",
+    "comeFromSide"
+  ],
+  "fields": {
+    "movementType": {
+      "label": "Movement type",
+      "description": "Controls how the skyfaller decelerates or accelerates during descent.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["ConstantSpeed", "Decelerate", "Accelerate"]
+      }
+    },
+    "speed": {
+      "label": "Speed",
+      "description": "Descent speed in cells per second.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "shadowType": {
+      "label": "Shadow type",
+      "description": "ShadowData for the ground shadow drawn beneath the falling object.",
+      "type": { "kind": "object", "schemaRef": "ShadowData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "impactDef": {
+      "label": "Impact def",
+      "description": "ThingDef spawned at the landing site on impact.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "impactExplosionRadius": {
+      "label": "Impact explosion radius",
+      "description": "Radius of an explosion triggered on landing. 0 means no explosion.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "impactDamageDef": {
+      "label": "Impact damage def",
+      "description": "DamageDef applied to things at the landing site on impact.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "impactDamage": {
+      "label": "Impact damage",
+      "description": "Amount of impact damage applied to things at the landing site.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "cameraShake": {
+      "label": "Camera shake",
+      "description": "Strength of the camera shake applied on landing.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "screenShakeIntensity": {
+      "label": "Screen shake intensity",
+      "description": "Additional screen shake intensity multiplier.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "soundHit": {
+      "label": "Sound hit",
+      "description": "SoundDef played when this skyfaller lands.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "comeFromSide": {
+      "label": "Come from side",
+      "description": "If true, this skyfaller approaches from the edge of the map rather than directly from overhead.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

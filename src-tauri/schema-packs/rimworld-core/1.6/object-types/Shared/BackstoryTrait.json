@@ -1,0 +1,31 @@
+{
+  "objectType": "BackstoryTrait",
+  "label": "Backstory trait",
+  "description": "A trait and degree pair used in forcedTraits and disallowedTraits (BackstoryDef) and in traits (CreepJoinerBenefitDef). Loaded from keyed child elements via LoadDataFromXmlCustom: element name is the TraitDef defName, text is the integer degree (defaults to 0 when omitted).",
+  "fieldOrder": [
+    "def",
+    "degree"
+  ],
+  "fields": {
+    "def": {
+      "label": "Trait",
+      "description": "TraitDef that is forced onto or disallowed for the pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "degree": {
+      "label": "Degree",
+      "description": "Specific trait degree. Defaults to 0 when the child element has no text content.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

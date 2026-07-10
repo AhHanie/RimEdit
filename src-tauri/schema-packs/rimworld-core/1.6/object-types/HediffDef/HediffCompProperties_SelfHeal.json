@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_SelfHeal",
+  "label": "Self heal comp",
+  "description": "Heals the affected body part's HP per day.",
+  "fieldOrder": ["Class", "compClass", "healPerDay"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "healPerDay": {
+      "label": "Heal per day",
+      "description": "HP healed per day on the affected body part.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

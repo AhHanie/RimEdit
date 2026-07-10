@@ -1,0 +1,27 @@
+{
+  "defType": "StuffAppearanceDef",
+  "label": "Stuff appearance",
+  "description": "Defines a visual appearance variant for stuff textures (smooth, planks, bricks, metal) used when rendering stuff-dependent buildings.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "pathPrefix"
+  ],
+  "fields": {
+    "pathPrefix": {
+      "label": "Path prefix",
+      "description": "Texture path prefix the game uses when selecting stuff appearance sprites. Not used by any shipped entry; intended as a mod customization point.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-stuff-appearance": {
+      "label": "New stuff appearance",
+      "description": "Minimal stuff appearance with a label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

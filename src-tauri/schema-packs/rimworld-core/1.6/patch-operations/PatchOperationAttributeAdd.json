@@ -1,0 +1,31 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationAttributeAdd",
+  "label": "Attribute Add",
+  "description": "Adds an XML attribute to the node(s) matched by xpath, if not already present.",
+  "fieldOrder": ["xpath", "attribute", "value"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Target node(s) to add the attribute to.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    },
+    "attribute": {
+      "label": "Attribute",
+      "description": "Name of the attribute to add.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "required": true
+    },
+    "value": {
+      "label": "Value",
+      "description": "Text value of the new attribute.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "required": true
+    }
+  }
+}

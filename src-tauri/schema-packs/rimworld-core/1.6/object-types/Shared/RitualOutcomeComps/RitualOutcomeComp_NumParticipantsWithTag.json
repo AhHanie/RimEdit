@@ -1,0 +1,51 @@
+{
+  "objectType": "RitualOutcomeComp_NumParticipantsWithTag",
+  "label": "Ritual outcome comp (participants with tag)",
+  "description": "Scores quality based on the number of participants that have a specific ritual tag set, evaluated via a curve.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "tag"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Not used directly; quality is computed from the curve.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "SimpleCurve mapping the count of tagged participants (X) to quality offset (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "tag": {
+      "label": "Tag",
+      "description": "Ritual participant tag string; participants with this tag count toward the score.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

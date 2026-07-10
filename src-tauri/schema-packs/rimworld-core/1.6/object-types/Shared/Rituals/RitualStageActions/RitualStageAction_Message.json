@@ -1,0 +1,23 @@
+{
+  "objectType": "RitualStageAction_Message",
+  "label": "Ritual stage action (message)",
+  "description": "Displays a message letter when the stage action fires.",
+  "fieldOrder": ["Class", "text", "messageTypeDef"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "text": {
+      "label": "Text",
+      "description": "Localized text of the message to display.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "messageTypeDef": {
+      "label": "Message type def",
+      "description": "MessageTypeDef controlling the appearance of the message.",
+      "type": { "kind": "defReference", "reference": { "defType": "MessageTypeDef" } },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "objectType": "ProjectileProperties",
+  "label": "Projectile properties",
+  "description": "Properties for projectile things covering speed, damage, arc, explosion, stopping power, and spawn behavior on impact.",
+  "fieldOrder": [
+    "speed",
+    "damageDef",
+    "damageAmountBase",
+    "armorPenetrationBase",
+    "stopPower",
+    "flyOverhead",
+    "arcHeightFactor",
+    "shadowSize",
+    "explosionRadius",
+    "explosionDamageFactor",
+    "screenShakeFactor",
+    "ai_IsIncendiary",
+    "ai_NeverAvoidsThis",
+    "applyDamageToExplosionCellsNeighbors",
+    "explosionSpeedFactor",
+    "preExplosionSpawnDef",
+    "preExplosionSpawnChance",
+    "preExplosionSpawnThingCount",
+    "postExplosionSpawnDef",
+    "postExplosionSpawnChance",
+    "postExplosionSpawnThingCount",
+    "extraDamages",
+    "soundHitThickRoof",
+    "soundExplode",
+    "soundImpactDefault",
+    "soundAmbient",
+    "explosionColorCenter",
+    "explosionColorEdge",
+    "explosionEffect"
+  ],
+  "fields": {
+    "speed": {
+      "label": "Speed",
+      "description": "Movement speed in cells per second.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "damageDef": {
+      "label": "Damage def",
+      "description": "DamageDef applied on impact. Private in source but used in shipped XML.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "damageAmountBase": {
+      "label": "Damage amount base",
+      "description": "Base damage on impact. Private in source but used in shipped XML.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "armorPenetrationBase": {
+      "label": "Armor penetration base",
+      "description": "Base armor penetration (0–1). Private in source but used in shipped XML.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "stopPower": {
+      "label": "Stop power",
+      "description": "How strongly this projectile staggers or stops moving targets on hit.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "flyOverhead": {
+      "label": "Fly overhead",
+      "description": "If true, this projectile arcs over obstacles and cannot be blocked by cover.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "arcHeightFactor": {
+      "label": "Arc height factor",
+      "description": "Height of the parabolic arc as a fraction of range. Used when flyOverhead is true.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "shadowSize": {
+      "label": "Shadow size",
+      "description": "Scale of the shadow drawn beneath this projectile during flight.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.25,
+      "xml": "element"
+    },
+    "explosionRadius": {
+      "label": "Explosion radius",
+      "description": "Radius of the explosion on impact. 0 means no explosion.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "explosionDamageFactor": {
+      "label": "Explosion damage factor",
+      "description": "Multiplier applied to all explosion damage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "screenShakeFactor": {
+      "label": "Screen shake factor",
+      "description": "Multiplier on camera shake intensity caused by this projectile's explosion.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "ai_IsIncendiary": {
+      "label": "AI: is incendiary",
+      "description": "Hint to the AI that this projectile sets things on fire.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ai_NeverAvoidsThis": {
+      "label": "AI: never avoids this",
+      "description": "If true, the AI will not dodge out of the way of this projectile.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "applyDamageToExplosionCellsNeighbors": {
+      "label": "Apply damage to explosion cell neighbors",
+      "description": "Whether cells adjacent to the explosion center also receive damage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "explosionSpeedFactor": {
+      "label": "Explosion speed factor",
+      "description": "Multiplier on the radial expansion speed of the explosion visual effect.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "preExplosionSpawnDef": {
+      "label": "Pre-explosion spawn def",
+      "description": "ThingDef spawned at the impact point before the explosion detonates.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "preExplosionSpawnChance": {
+      "label": "Pre-explosion spawn chance",
+      "description": "Probability (0–1) that the pre-explosion spawn actually occurs.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "preExplosionSpawnThingCount": {
+      "label": "Pre-explosion spawn thing count",
+      "description": "Number of pre-explosion things spawned.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "postExplosionSpawnDef": {
+      "label": "Post-explosion spawn def",
+      "description": "ThingDef scattered in the explosion radius after detonation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "postExplosionSpawnChance": {
+      "label": "Post-explosion spawn chance",
+      "description": "Probability (0–1) that each explosion cell spawns a post-explosion thing.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "postExplosionSpawnThingCount": {
+      "label": "Post-explosion spawn thing count",
+      "description": "Count of post-explosion things spawned per cell.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "extraDamages": {
+      "label": "Extra damages",
+      "description": "Additional damage instances applied alongside the primary impact damage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ExtraDamage" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "soundHitThickRoof": {
+      "label": "Sound hit thick roof",
+      "description": "SoundDef played when this projectile strikes a thick roof (e.g. mountain).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundExplode": {
+      "label": "Sound explode",
+      "description": "SoundDef played when this projectile explodes.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundImpactDefault": {
+      "label": "Sound impact default",
+      "description": "Default SoundDef played on impact when no terrain-specific sound applies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundAmbient": {
+      "label": "Sound ambient",
+      "description": "SoundDef looped while this projectile is in flight.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionColorCenter": {
+      "label": "Explosion color center",
+      "description": "RGBA color at the center of the explosion visual.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "explosionColorEdge": {
+      "label": "Explosion color edge",
+      "description": "RGBA color at the outer edge of the explosion visual.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "explosionEffect": {
+      "label": "Explosion effect",
+      "description": "EffecterDef played at the explosion center on detonation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

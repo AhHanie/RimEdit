@@ -1,0 +1,121 @@
+{
+  "objectType": "ExhaustSettings",
+  "label": "Exhaust settings",
+  "description": "Particle exhaust emission settings for a gravship thruster.",
+  "fieldOrder": [
+    "enabled",
+    "exhaustFleckDef",
+    "emissionsPerSecond",
+    "spawnOffset",
+    "spawnRadiusRange",
+    "inheritGravshipRotation",
+    "inheritThrusterRotation",
+    "velocity",
+    "velocityRotationRange",
+    "velocityMultiplierRange",
+    "rotationOverTimeRange",
+    "scaleRange"
+  ],
+  "fields": {
+    "enabled": {
+      "label": "Enabled",
+      "description": "Whether this thruster emits exhaust particles. Default true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "exhaustFleckDef": {
+      "label": "Exhaust fleck def",
+      "description": "FleckDef used for exhaust particles. Private field in source; set by XML directly. Resolved at runtime to GravshipThrusterExhaust if absent.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FleckDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "emissionsPerSecond": {
+      "label": "Emissions per second",
+      "description": "Number of exhaust particles emitted per second. Default 10.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    },
+    "spawnOffset": {
+      "label": "Spawn offset",
+      "description": "World-space offset from the thruster origin at which particles spawn, as (x, y, z).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0, 0, 0)",
+      "xml": "element"
+    },
+    "spawnRadiusRange": {
+      "label": "Spawn radius range",
+      "description": "Random radius around the spawn offset within which particles may appear.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "inheritGravshipRotation": {
+      "label": "Inherit gravship rotation",
+      "description": "Whether exhaust particles inherit the gravship's current rotation. Default true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "inheritThrusterRotation": {
+      "label": "Inherit thruster rotation",
+      "description": "Whether exhaust particles inherit this thruster's rotation. Default true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "velocity": {
+      "label": "Velocity",
+      "description": "Initial velocity of exhaust particles as (x, y, z). Source default is (0, 0, -1).",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0, 0, -1)",
+      "xml": "element"
+    },
+    "velocityRotationRange": {
+      "label": "Velocity rotation range",
+      "description": "Random rotation range in degrees applied to the initial velocity direction.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "velocityMultiplierRange": {
+      "label": "Velocity multiplier range",
+      "description": "Random multiplier applied to the initial velocity magnitude. Default 1~1.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element"
+    },
+    "rotationOverTimeRange": {
+      "label": "Rotation over time range",
+      "description": "Random rotation speed in degrees per second applied to particles over their lifetime.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "scaleRange": {
+      "label": "Scale range",
+      "description": "Random scale multiplier applied to particles at spawn. Default 1~1.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element"
+    }
+  }
+}

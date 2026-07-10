@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_BiostatTotal",
+  "label": "Stat part (biostat total base)",
+  "description": "Abstract intermediate schema for StatPart subclasses that scale the stat by a total biostat score evaluated against a curve. Not directly instantiable - use StatPart_MetabolismTotal.",
+  "fieldOrder": ["Class", "priority", "curve"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Piecewise linear curve mapping the biostat total to the stat factor. Inherited from StatPart_Curve.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    }
+  }
+}

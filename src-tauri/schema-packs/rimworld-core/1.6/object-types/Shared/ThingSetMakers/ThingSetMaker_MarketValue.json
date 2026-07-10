@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_MarketValue",
+  "label": "Market value maker",
+  "description": "Generates items until the total market value reaches the target range specified in fixedParams.totalMarketValueRange.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

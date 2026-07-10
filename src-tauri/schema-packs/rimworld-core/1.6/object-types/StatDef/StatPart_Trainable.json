@@ -1,0 +1,42 @@
+{
+  "objectType": "StatPart_Trainable",
+  "label": "Stat part (trainable)",
+  "description": "Scales the stat based on whether the pawn has been trained in a specific trainable task.",
+  "fieldOrder": ["Class", "priority", "trainableDef", "factor"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "trainableDef": {
+      "label": "Trainable",
+      "description": "TrainableDef that must be completed for this factor to apply.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TrainableDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Stat multiplier applied when the pawn has completed the trainable task.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

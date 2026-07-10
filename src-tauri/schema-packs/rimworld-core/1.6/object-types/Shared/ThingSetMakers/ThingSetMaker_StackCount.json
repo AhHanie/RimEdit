@@ -1,0 +1,11 @@
+{
+  "objectType": "ThingSetMaker_StackCount",
+  "label": "Stack count maker",
+  "description": "Generates a fixed number of thing stacks selected from the allowed pool according to fixedParams. One of the most frequently used makers in shipped data.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams"
+  ],
+  "fields": {}
+}

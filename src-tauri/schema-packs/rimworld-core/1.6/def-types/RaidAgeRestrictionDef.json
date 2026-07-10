@@ -1,0 +1,85 @@
+{
+  "defType": "RaidAgeRestrictionDef",
+  "label": "Raid age restriction",
+  "description": "Defines an age-based restriction that can be applied to raids (e.g. adults only, children only). Factions can disallow certain age restriction types via disallowedRaidAgeRestrictions.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "developmentStage",
+    "ageRange",
+    "threatPointsFactor",
+    "earliestDay",
+    "chance",
+    "arrivalTextExtra"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# RaidAgeRestrictionWorker subclass that determines eligibility and applies effects for this age restriction.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "RaidAgeRestrictionWorker",
+      "xml": "element",
+      "examples": ["RaidAgeRestrictionWorker_Children"]
+    },
+    "developmentStage": {
+      "label": "Development stage",
+      "description": "Single DevelopmentalStage value this restriction applies to.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      }
+    },
+    "ageRange": {
+      "label": "Age range",
+      "description": "Optional FloatRange of pawn ages this restriction applies to. Written as min~max. Unset means no age range restriction.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0~13", "13~999"]
+    },
+    "threatPointsFactor": {
+      "label": "Threat points factor",
+      "description": "Multiplier applied to the raid's threat points when this restriction is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "earliestDay": {
+      "label": "Earliest day",
+      "description": "Days passed since settling before this restriction becomes eligible.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Chance that this restriction is selected when eligible.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "arrivalTextExtra": {
+      "label": "Arrival text extra",
+      "description": "Extra letter/arrival text appended when this restriction applies.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-raid-age-restriction": {
+      "label": "Basic raid age restriction",
+      "description": "Raid age restriction with worker class, development stage, age range, threat points factor, earliest day, and chance.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "developmentStage", "ageRange", "threatPointsFactor", "earliestDay", "chance"],
+      "fieldValues": {}
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_RoyalImplant",
+  "label": "Royal implant comp",
+  "description": "Restricts use of this implant to pawns with a minimum royal title.",
+  "fieldOrder": ["Class", "compClass", "minTitle"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "minTitle": {
+      "label": "Min title",
+      "description": "Minimum royal title required to use this implant without penalty.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RoyalTitleDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

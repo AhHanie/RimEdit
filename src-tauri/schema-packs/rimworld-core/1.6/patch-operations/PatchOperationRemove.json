@@ -1,0 +1,17 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationRemove",
+  "label": "Remove",
+  "description": "Removes the node(s) matched by xpath.",
+  "fieldOrder": ["xpath"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Target node(s) to remove.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    }
+  }
+}

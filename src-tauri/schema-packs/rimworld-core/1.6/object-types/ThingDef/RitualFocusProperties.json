@@ -1,0 +1,36 @@
+{
+  "objectType": "RitualFocusProperties",
+  "label": "Ritual focus properties",
+  "description": "Properties for buildings used as the focal point of ideoligion rituals.",
+  "fieldOrder": [
+    "spectateDistance",
+    "spectateDistanceLax",
+    "maxAttachedInterval"
+  ],
+  "fields": {
+    "spectateDistance": {
+      "label": "Spectate distance",
+      "description": "Strict maximum distance in cells within which participants must stand during the ritual.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9,
+      "xml": "element"
+    },
+    "spectateDistanceLax": {
+      "label": "Spectate distance (lax)",
+      "description": "Lenient maximum distance used for the ritual quality bonus calculation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 14,
+      "xml": "element"
+    },
+    "maxAttachedInterval": {
+      "label": "Max attached interval",
+      "description": "Maximum ticks between ritual progress ticks before the ritual is considered abandoned.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 200,
+      "xml": "element"
+    }
+  }
+}

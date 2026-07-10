@@ -1,0 +1,114 @@
+{
+  "defType": "PsychicRitualDef_InvocationCircle",
+  "label": "Psychic ritual -- invocation circle",
+  "description": "Base class for rituals performed in an invocation circle. Adds timing, sensitivity scaling, role references, and an optional ingredient offering.",
+  "inherits": ["PsychicRitualDef"],
+  "fieldOrder": [
+    "hoursUntilHoraxEffect",
+    "hoursUntilOutcome",
+    "invocationCircleRadius",
+    "outcomeDescription",
+    "psychicSensitivityPowerFactor",
+    "invokerRole",
+    "chanterRole",
+    "targetRole",
+    "defenderRole",
+    "requiredOffering"
+  ],
+  "fields": {
+    "hoursUntilHoraxEffect": {
+      "label": "Hours until Horax effect",
+      "description": "Random time range in hours before the Horax effect triggers during the ritual.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "hoursUntilOutcome": {
+      "label": "Hours until outcome",
+      "description": "Random time range in hours for the ritual to resolve its outcome.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "invocationCircleRadius": {
+      "label": "Invocation circle radius",
+      "description": "Radius in cells of the invocation circle that pawns gather around.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 3.9,
+      "validationHints": { "min": 0 }
+    },
+    "outcomeDescription": {
+      "label": "Outcome description",
+      "description": "Text shown in the ritual info panel describing what this ritual does.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "psychicSensitivityPowerFactor": {
+      "label": "Psychic sensitivity power factor",
+      "description": "Multiplier that scales the invoker's psychic sensitivity contribution to ritual power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0.25,
+      "validationHints": { "min": 0 }
+    },
+    "invokerRole": {
+      "label": "Invoker role",
+      "description": "Role definition for the pawn who leads the invocation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PsychicRitualRoleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chanterRole": {
+      "label": "Chanter role",
+      "description": "Role definition for chanting support pawns.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PsychicRitualRoleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "targetRole": {
+      "label": "Target role",
+      "description": "Role definition for the pawn targeted by this ritual.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PsychicRitualRoleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "defenderRole": {
+      "label": "Defender role",
+      "description": "Role definition for defender pawns guarding the invocation circle.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PsychicRitualRoleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredOffering": {
+      "label": "Required offering",
+      "description": "Ingredient that must be consumed to perform this ritual.",
+      "type": { "kind": "object", "schemaRef": "IngredientCount" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

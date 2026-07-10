@@ -1,0 +1,49 @@
+{
+  "objectType": "QuestNode_EvaluateSimpleCurve",
+  "label": "QuestNode EvaluateSimpleCurve",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_EvaluateSimpleCurve.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "storeAs",
+    "curve",
+    "value",
+    "roundRandom"
+  ],
+  "fields": {
+    "storeAs": {
+      "description": "SlateRef<string> variable name for the evaluated result.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "curve": {
+      "description": "SlateRef<SimpleCurve> inline curve to evaluate.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "SimpleCurve"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "value": {
+      "description": "SlateRef<float> X value to evaluate.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "roundRandom": {
+      "description": "SlateRef<bool> literal, expression, or $varName; randomly rounds the curve result.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

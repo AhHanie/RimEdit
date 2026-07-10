@@ -1,0 +1,54 @@
+{
+  "objectType": "MapPortalProperties",
+  "label": "Map portal properties",
+  "description": "Properties for map portal things that act as entry or exit points between maps.",
+  "fieldOrder": [
+    "minPossibleMapSize",
+    "maxPossibleMapSize",
+    "mapTypeGateways",
+    "mapTypeEncounters",
+    "mapTypeSites"
+  ],
+  "fields": {
+    "minPossibleMapSize": {
+      "label": "Min possible map size",
+      "description": "Minimum map dimension (in cells) of the destination map.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 250,
+      "xml": "element"
+    },
+    "maxPossibleMapSize": {
+      "label": "Max possible map size",
+      "description": "Maximum map dimension (in cells) of the destination map.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 325,
+      "xml": "element"
+    },
+    "mapTypeGateways": {
+      "label": "Map type gateways",
+      "description": "If true, this portal can lead to gateway-type maps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mapTypeEncounters": {
+      "label": "Map type encounters",
+      "description": "If true, this portal can lead to encounter-type maps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mapTypeSites": {
+      "label": "Map type sites",
+      "description": "If true, this portal can lead to site-type maps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

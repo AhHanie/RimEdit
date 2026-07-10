@@ -1,0 +1,214 @@
+{
+  "defType": "MusicSequenceDef",
+  "label": "Music sequence",
+  "description": "Describes a playlist that loops or plays to completion. A MusicTransitionDef selects which sequence activates; the sequence controls which songs play, in what order, and how transitions between songs are handled.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerType",
+    "song",
+    "songs",
+    "nextSequence",
+    "loop",
+    "canBeInterrupted",
+    "useTransitionForLifetime",
+    "transitionOnDanger",
+    "transitionOnNoDanger",
+    "endOnNoDanger",
+    "endOnDanger",
+    "loopDelayRange",
+    "fadeoutLastSongDuration",
+    "fadeInDuration",
+    "loopFadeout",
+    "overrideFadeout",
+    "overrideVolume",
+    "minTimeToPlay",
+    "pausedVolumeFactor"
+  ],
+  "fields": {
+    "workerType": {
+      "label": "Worker type",
+      "description": "MusicSequenceWorker subclass that drives playback for this sequence. Defaults to MusicSequenceWorker (the base implementation).",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "MusicSequenceWorker",
+      "xml": "element",
+      "examples": [
+        "MusicSequenceWorker"
+      ]
+    },
+    "song": {
+      "label": "Song",
+      "description": "Single SongDef to play. Use this when the sequence plays exactly one track. Mutually exclusive with songs when using the default worker.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SongDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "songs": {
+      "label": "Songs",
+      "description": "List of SongDef items for a random or rotating playlist. Mutually exclusive with song when using the default worker.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "SongDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "nextSequence": {
+      "label": "Next sequence",
+      "description": "MusicSequenceDef to chain to when this sequence ends naturally. If omitted, playback returns to normal music selection after the sequence finishes.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "MusicSequenceDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "loop": {
+      "label": "Loop",
+      "description": "If true, the sequence repeats from the beginning when it finishes instead of ending. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canBeInterrupted": {
+      "label": "Can be interrupted",
+      "description": "If false, the sequence plays to completion before a new transition can take over. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "useTransitionForLifetime": {
+      "label": "Use transition for lifetime",
+      "description": "If true, the sequence ends as soon as its originating transition condition stops being met. If false, the sequence plays through regardless. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "transitionOnDanger": {
+      "label": "Transition on danger",
+      "description": "If true, the sequence ends and a new transition is evaluated when danger begins. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "transitionOnNoDanger": {
+      "label": "Transition on no danger",
+      "description": "If true, the sequence ends and a new transition is evaluated when danger ends. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "endOnNoDanger": {
+      "label": "End on no danger",
+      "description": "If true, playback stops entirely when danger ends rather than transitioning to another sequence. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "endOnDanger": {
+      "label": "End on danger",
+      "description": "If true, playback stops entirely when danger begins rather than transitioning to another sequence. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "loopDelayRange": {
+      "label": "Loop delay range",
+      "description": "Random delay range in seconds between loops when loop is true. Written as min~max. Defaults to 0~0 (no delay).",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "fadeoutLastSongDuration": {
+      "label": "Fadeout last song duration",
+      "description": "Duration in seconds of the crossfade applied to the final song when the sequence ends. Defaults to 10.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    },
+    "fadeInDuration": {
+      "label": "Fade-in duration",
+      "description": "Duration in seconds of the fade-in applied when the sequence starts. Defaults to 0 (no fade-in).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "loopFadeout": {
+      "label": "Loop fadeout",
+      "description": "If true, the fadeout duration is applied on every loop iteration rather than only the last song. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "overrideFadeout": {
+      "label": "Override fadeout",
+      "description": "Overrides the standard fadeout duration in seconds for this sequence. Absent from XML when not set (nullable float).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "overrideVolume": {
+      "label": "Override volume",
+      "description": "Overrides the volume multiplier for this sequence. Absent from XML when not set (nullable float).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "minTimeToPlay": {
+      "label": "Min time to play",
+      "description": "Minimum seconds the sequence must play before a transition can interrupt it. Absent from XML when not set (nullable float).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "pausedVolumeFactor": {
+      "label": "Paused volume factor",
+      "description": "Volume multiplier applied when the game is paused. Absent from XML when not set (nullable float).",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-song-list-sequence": {
+      "label": "New song list sequence",
+      "description": "Looping playlist sequence suitable for ambient or combat music.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName"],
+      "fieldValues": {
+        "loop": "true",
+        "loopDelayRange": "1~2"
+      }
+    },
+    "new-single-song-sequence": {
+      "label": "New single song sequence",
+      "description": "Sequence that plays one track and optionally loops.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "song"],
+      "fieldValues": {
+        "loop": "true"
+      }
+    }
+  }
+}

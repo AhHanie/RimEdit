@@ -1,0 +1,17 @@
+{
+  "defType": "HibernatableStateDef",
+  "label": "Hibernatable state",
+  "description": "Defines a named state for hibernatable structures such as ships. The three Core states are Hibernating, Starting, and Running.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {},
+  "templates": {
+    "new-hibernatable-state": {
+      "label": "New hibernatable state",
+      "description": "Minimal hibernatable state entry with a defName and label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

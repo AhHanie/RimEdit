@@ -1,0 +1,22 @@
+{
+  "objectType": "HediffCompProperties_RemoveIfApparelDropped",
+  "label": "Remove if apparel dropped comp",
+  "description": "Removes this hediff when the pawn drops their apparel.",
+  "fieldOrder": ["Class", "compClass"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

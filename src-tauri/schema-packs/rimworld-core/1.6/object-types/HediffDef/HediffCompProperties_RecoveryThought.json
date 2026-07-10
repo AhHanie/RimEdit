@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_RecoveryThought",
+  "label": "Recovery thought comp",
+  "description": "Gives the pawn a thought when this hediff is removed.",
+  "fieldOrder": ["Class", "compClass", "thought"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "thought": {
+      "label": "Thought",
+      "description": "Thought given to the pawn upon recovery.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

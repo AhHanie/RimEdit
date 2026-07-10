@@ -1,0 +1,15 @@
+{
+  "objectType": "WorldGenStep_Rivers",
+  "label": "Rivers world gen step",
+  "description": "Generates river networks across the world map.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

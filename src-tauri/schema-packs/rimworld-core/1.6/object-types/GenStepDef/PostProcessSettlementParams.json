@@ -1,0 +1,48 @@
+{
+  "objectType": "PostProcessSettlementParams",
+  "label": "Post-process settlement params",
+  "description": "Parameters controlling post-generation processing applied to newly placed settlement buildings.",
+  "fieldOrder": ["clearBuildingFaction", "noFuel", "ageCorpses", "damageBuildings", "canDamageWalls"],
+  "fields": {
+    "clearBuildingFaction": {
+      "label": "Clear building faction",
+      "description": "When true, the faction assignment is cleared from all newly placed buildings.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "noFuel": {
+      "label": "No fuel",
+      "description": "When true, fuel is removed from refuelable buildings in the settlement.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ageCorpses": {
+      "label": "Age corpses",
+      "description": "When true, corpses in the settlement are given random age to appear pre-existing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "damageBuildings": {
+      "label": "Damage buildings",
+      "description": "When true, settlement buildings receive random damage after generation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canDamageWalls": {
+      "label": "Can damage walls",
+      "description": "When damageBuildings is true, whether walls may also be damaged.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

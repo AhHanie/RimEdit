@@ -1,0 +1,6 @@
+{
+  "objectType": "ThinkNode_DutyConstant",
+  "label": "Think node duty constant",
+  "description": "Dispatches to the constant think node defined by the pawn's current DutyDef.constantThinkNode. Populated at runtime by resolving all DutyDef records.",
+  "inherits": ["ThinkNode"]
+}

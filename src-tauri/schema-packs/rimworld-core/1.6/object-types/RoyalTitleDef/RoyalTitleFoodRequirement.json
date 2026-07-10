@@ -1,0 +1,76 @@
+{
+  "objectType": "RoyalTitleFoodRequirement",
+  "label": "Food requirement",
+  "description": "Defines the minimum food quality and allowed food types or specific defs that satisfy a royal title's food requirement.",
+  "fieldOrder": [
+    "minQuality",
+    "allowedTypes",
+    "allowedDefs"
+  ],
+  "fields": {
+    "minQuality": {
+      "label": "Minimum quality",
+      "description": "Minimum FoodPreferability that satisfies this food requirement.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Undefined",
+          "NeverForNutrition",
+          "DesperateOnly",
+          "DesperateOnlyForHumanlikes",
+          "RawBad",
+          "RawTasty",
+          "MealTerrible",
+          "MealAwful",
+          "MealSimple",
+          "MealFine",
+          "MealLavish"
+        ]
+      }
+    },
+    "allowedTypes": {
+      "label": "Allowed types",
+      "description": "Comma-separated FoodTypeFlags values. Food with any matching flag satisfies the requirement regardless of quality.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": [
+          "None",
+          "VegetableOrFruit",
+          "Meat",
+          "Fluid",
+          "Corpse",
+          "Seed",
+          "AnimalProduct",
+          "Plant",
+          "Tree",
+          "Meal",
+          "Processed",
+          "Liquor",
+          "Kibble",
+          "Fungus",
+          "VegetarianAnimal",
+          "VegetarianRoughAnimal",
+          "CarnivoreAnimal",
+          "CarnivoreAnimalStrict",
+          "OmnivoreAnimal",
+          "OmnivoreRoughAnimal",
+          "DendrovoreAnimal",
+          "OvivoreAnimal",
+          "OmnivoreHuman"
+        ]
+      }
+    },
+    "allowedDefs": {
+      "label": "Allowed defs",
+      "description": "ThingDefs that are explicitly allowed to satisfy this requirement regardless of quality or type.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

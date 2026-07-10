@@ -1,0 +1,25 @@
+{
+  "objectType": "JobGiver_GetRest",
+  "label": "Job giver get rest",
+  "description": "Directs the pawn to sleep when sufficiently tired.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": ["minCategory", "maxLevelPercentage"],
+  "fields": {
+    "minCategory": {
+      "label": "Min category",
+      "description": "Minimum rest level at which the pawn begins looking for a place to sleep.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": { "allowedValues": ["Rested", "Tired", "VeryTired", "Exhausted"] }
+    },
+    "maxLevelPercentage": {
+      "label": "Max level percentage",
+      "description": "The pawn skips sleeping when rest level is above this fraction (0–1).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

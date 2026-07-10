@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/ThingDef[defName="Wall"]/xyzzy</xpath>
+    <nomatch Class="PatchOperationTest">
+      <xpath>Defs/ThingDef[defName="Wall"]</xpath>
+    </nomatch>
+  </Operation>
+</Patch>

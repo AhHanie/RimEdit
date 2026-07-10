@@ -1,0 +1,20 @@
+{
+  "objectType": "SoundParamTarget_Pitch",
+  "label": "Sound param target: pitch",
+  "description": "Applies the mapped parameter value to the pitch of the sound.",
+  "inherits": ["SoundParamTarget"],
+  "fieldOrder": ["Class", "pitchType"],
+  "fields": {
+    "pitchType": {
+      "label": "Pitch type",
+      "description": "Whether the value is applied as a direct multiplier or in semitone offsets.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Multiply",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Multiply", "Semitones"]
+      }
+    }
+  }
+}

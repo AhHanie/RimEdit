@@ -1,0 +1,7 @@
+{
+  "objectType": "ThinkNode_Priority",
+  "label": "Think node priority",
+  "description": "Container node that tries each child in order and returns the first successful job. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": []
+}

@@ -1,0 +1,1808 @@
+{
+  "objectType": "BuildingProperties",
+  "label": "Building properties",
+  "description": "Building-specific properties covering placement rules, bed and turret stats, door behavior, trap behavior, storage, work table roles, and mech gestator settings.",
+  "fieldOrder": [
+    "isEdifice",
+    "buildingTags",
+    "isInert",
+    "isTargetable",
+    "deconstructible",
+    "alwaysDeconstructible",
+    "alwaysUninstallable",
+    "leavingsBlacklist",
+    "forcedCostLeavings",
+    "claimable",
+    "isSittable",
+    "multiSittable",
+    "sitIgnoreOrientation",
+    "spawnedConceptLearnOpportunity",
+    "boughtConceptLearnOpportunity",
+    "expandHomeArea",
+    "blueprintClass",
+    "blueprintGraphicData",
+    "uninstallWork",
+    "forceShowRoomStats",
+    "neverBuildable",
+    "isWall",
+    "alwaysExchangeVacuum",
+    "canExchangeVacuum",
+    "draftAttackNonDeconstructable",
+    "wantsHopperAdjacent",
+    "allowWireConnection",
+    "shipPart",
+    "canPlaceOverImpassablePlant",
+    "heatPerTickWhileWorking",
+    "canBuildNonEdificesUnder",
+    "canPlaceOverWall",
+    "isPlaceOverableWall",
+    "allowAutoroof",
+    "preventDeteriorationOnTop",
+    "preventDeteriorationInside",
+    "isMealSource",
+    "isNaturalRock",
+    "isResourceRock",
+    "repairable",
+    "roofCollapseDamageMultiplier",
+    "hasFuelingPort",
+    "smoothedThing",
+    "naturalTerrain",
+    "leaveTerrain",
+    "combatPower",
+    "minMechClusterPoints",
+    "destroyShakeAmount",
+    "destroySound",
+    "soundMeleeHitOverride",
+    "destroyEffecter",
+    "buildingSizeCategory",
+    "isFence",
+    "relatedBuildCommands",
+    "relatedTerrain",
+    "alwaysShowRelatedBuildCommands",
+    "useIdeoColor",
+    "wakeDormantPawnsOnConstruction",
+    "maxItemsInCell",
+    "paintable",
+    "canBeDamagedByAttacks",
+    "isHopper",
+    "quickTargetable",
+    "displayAttackToDestroyOnInspectPane",
+    "isEscapableContainer",
+    "isPowerConduit",
+    "biomeSpecific",
+    "crater",
+    "canLandGravshipOn",
+    "isAirtight",
+    "isStuffableAirtight",
+    "canConstructInCorner",
+    "isAttachment",
+    "supportsWallAttachments",
+    "isPlayerEjectable",
+    "openingStartedSound",
+    "fullGraveGraphicData",
+    "bed_healPerDay",
+    "bed_defaultMedical",
+    "bed_showSleeperBody",
+    "bed_humanlike",
+    "bed_maxBodySize",
+    "bed_caravansCanUse",
+    "bed_slabBed",
+    "bed_crib",
+    "bed_pawnDrawOffset",
+    "bed_canBeMedical",
+    "bed_DisplayOwnerType",
+    "bed_DisplayOwnersInInspectString",
+    "bed_countsForBedroomOrBarracks",
+    "bed_emptyCountsForBarracks",
+    "bed_UseSheetColor",
+    "nutritionCostPerDispense",
+    "soundDispense",
+    "turretGunDef",
+    "turretBurstWarmupTime",
+    "turretBurstCooldownTime",
+    "turretInitialCooldownTime",
+    "turretTopDrawSize",
+    "turretTopOffset",
+    "playTargetAcquiredSound",
+    "turretTopLoadedGraphic",
+    "requiredMechWeightClasses",
+    "ai_combatDangerous",
+    "ai_chillDestination",
+    "ai_neverTrashThis",
+    "preferConnectingToFences",
+    "roamerCanOpen",
+    "soundDoorOpenPowered",
+    "soundDoorClosePowered",
+    "soundDoorOpenManual",
+    "soundDoorCloseManual",
+    "soundDoorCloseEnd",
+    "poweredDoorOpenSpeedFactor",
+    "poweredDoorCloseSpeedFactor",
+    "unpoweredDoorOpenSpeedFactor",
+    "unpoweredDoorCloseSpeedFactor",
+    "doorTempEqualizeIntervalClosed",
+    "doorTempEqualizeIntervalOpen",
+    "doorTempEqualizeRate",
+    "sowTag",
+    "defaultPlantToGrow",
+    "mineableThing",
+    "mineableYield",
+    "veinMineable",
+    "mineableNonMinedEfficiency",
+    "mineableDropChance",
+    "mineableYieldWasteable",
+    "mineableScatterCommonality",
+    "mineableScatterLumpSizeRange",
+    "mineablePreventMeteorite",
+    "mineablePreventNaturalRockOnSurface",
+    "fixedStorageSettings",
+    "defaultStorageSettings",
+    "ignoreStoredThingsBeauty",
+    "storageGroupTag",
+    "groupingLabel",
+    "groupingOrder",
+    "isTrap",
+    "trapDestroyOnSpring",
+    "trapPeacefulWildAnimalsSpringChanceFactor",
+    "trapDamageCategory",
+    "trapUnarmedGraphicData",
+    "workTableRoomRole",
+    "workTableNotInRoomRoleFactor",
+    "unpoweredWorkTableWorkSpeedFactor",
+    "workTableCompleteSoundDef",
+    "watchBuildingStandDistanceRange",
+    "watchBuildingStandRectWidth",
+    "watchBuildingInSameRoom",
+    "joyKind",
+    "haulToContainerDuration",
+    "instrumentRange",
+    "minDistanceToSameTypeOfBuilding",
+    "artificialForMeditationPurposes",
+    "effectWatching",
+    "gibbetCageTopGraphicData",
+    "gibbetCorposeDrawOffset",
+    "gibbetCagePlaceCorpseEffecter",
+    "openingEffect",
+    "barDrawData",
+    "gestatorFormingMote",
+    "gestatorCycleCompleteMote",
+    "gestatorFormedMote",
+    "mechGestatorCylinderGraphic",
+    "mechGestatorTopGraphic",
+    "formingGraphicData",
+    "formingMechBobSpeed",
+    "formingMechYBobDistance",
+    "formingMechPerRotationOffset",
+    "maxFormedMechDrawSize",
+    "subcoreScannerFixedIngredients",
+    "subcoreScannerTicks",
+    "subcoreScannerHediff",
+    "destroyBrain",
+    "subcoreScannerOutputDef",
+    "subcoreScannerStartEffect",
+    "subcoreScannerWorking",
+    "subcoreScannerComplete",
+    "isInsectCocoon",
+    "wastepackAtomizerBottomGraphic",
+    "wastepackAtomizerWindowGraphic",
+    "wastepackAtomizerOperationEffecter",
+    "bookendGraphicEast",
+    "bookendGraphicNorth",
+    "isSupportDoor",
+    "doorTopGraphic",
+    "doorSupportGraphic",
+    "upperMoverGraphic",
+    "doorTopGraphicOffset",
+    "doorSupportGraphicOffset",
+    "doorTopHorizontalOffset",
+    "doorTopVerticalOffset",
+    "groundSpawnerThingToSpawn",
+    "groundSpawnerSpawnDelay",
+    "groundSpawnerDestroyAdjacent",
+    "groundSpawnerSustainerSound",
+    "groundSpawnerSustainedEffecter",
+    "groundSpawnerCompleteEffecter",
+    "groundSpawnerLetterLabel",
+    "groundSpawnerLetterText"
+  ],
+  "fields": {
+    "isEdifice": {
+      "label": "Is edifice",
+      "description": "If true, only one edifice can occupy a cell (walls, floors, beds). Most buildings are edifices.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "buildingTags": {
+      "label": "Building tags",
+      "description": "String tags used by mech cluster and other generation rules to categorize this building.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "isInert": {
+      "label": "Is inert",
+      "description": "If true, this building never ticks and has no active behavior.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isTargetable": {
+      "label": "Is targetable",
+      "description": "Whether this building can be targeted by attacks and abilities.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "deconstructible": {
+      "label": "Deconstructible",
+      "description": "Whether the player can deconstruct this building to recover materials. Private in source but used in shipped XML.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "alwaysDeconstructible": {
+      "label": "Always deconstructible",
+      "description": "If true, this building can always be deconstructed even if deconstructible is false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "alwaysUninstallable": {
+      "label": "Always uninstallable",
+      "description": "If true, this building can always be uninstalled regardless of other flags.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "leavingsBlacklist": {
+      "label": "Leavings blacklist",
+      "description": "ThingDef references excluded from the deconstruct leavings list for this building.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "forcedCostLeavings": {
+      "label": "Forced cost leavings",
+      "description": "ThingDef references always included in the leavings regardless of deconstruct efficiency.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "claimable": {
+      "label": "Claimable",
+      "description": "Whether colonists can claim this building when it is unowned.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "isSittable": {
+      "label": "Is sittable",
+      "description": "Whether pawns can sit on or at this building for comfort and joy.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "multiSittable": {
+      "label": "Multi-sittable",
+      "description": "If true, more than one pawn can sit at this building simultaneously.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "sitIgnoreOrientation": {
+      "label": "Sit ignore orientation",
+      "description": "If true, pawns can sit at this building from any direction regardless of its rotation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "spawnedConceptLearnOpportunity": {
+      "label": "Spawned concept learn opportunity",
+      "description": "ConceptDef marked as learned the first time this building is placed on the map.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ConceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "boughtConceptLearnOpportunity": {
+      "label": "Bought concept learn opportunity",
+      "description": "ConceptDef marked as learned the first time this building is purchased from a trader.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ConceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "expandHomeArea": {
+      "label": "Expand home area",
+      "description": "If true, placing this building expands the home area to cover its footprint.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "blueprintClass": {
+      "label": "Blueprint class",
+      "description": "C# class used to instantiate the construction blueprint for this building.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Blueprint_Build", "Blueprint_Install"]
+    },
+    "blueprintGraphicData": {
+      "label": "Blueprint graphic data",
+      "description": "Custom graphic shown on the construction blueprint instead of the default ghost graphic.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "uninstallWork": {
+      "label": "Uninstall work",
+      "description": "Work ticks required to uninstall this building.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 200,
+      "xml": "element"
+    },
+    "forceShowRoomStats": {
+      "label": "Force show room stats",
+      "description": "If true, room stats are always shown in the inspect pane for this building.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "neverBuildable": {
+      "label": "Never buildable",
+      "description": "If true, this building never appears in the architect menu and cannot be built by the player.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isWall": {
+      "label": "Is wall",
+      "description": "Whether this building behaves as a wall for room formation and linking purposes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "alwaysExchangeVacuum": {
+      "label": "Always exchange vacuum",
+      "description": "If true, this building always allows vacuum exchange through its cell.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canExchangeVacuum": {
+      "label": "Can exchange vacuum",
+      "description": "If true, this building can participate in vacuum exchange when open or powered.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "draftAttackNonDeconstructable": {
+      "label": "Draft attack non-deconstructable",
+      "description": "If true, drafted colonists can melee-attack this building even if it cannot be deconstructed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "wantsHopperAdjacent": {
+      "label": "Wants hopper adjacent",
+      "description": "If true, this building requires a hopper placed adjacent to it to function.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowWireConnection": {
+      "label": "Allow wire connection",
+      "description": "Whether power conduits can connect to this building.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "shipPart": {
+      "label": "Ship part",
+      "description": "If true, this building is treated as a spaceship component for the ship launch sequence.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canPlaceOverImpassablePlant": {
+      "label": "Can place over impassable plant",
+      "description": "If true, this building can be placed over impassable plants without requiring them to be cut first.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "heatPerTickWhileWorking": {
+      "label": "Heat per tick while working",
+      "description": "Heat units added to the room per game tick while this building is actively working.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "canBuildNonEdificesUnder": {
+      "label": "Can build non-edifices under",
+      "description": "If true, non-edifice buildings (floors, conduits) can be placed in cells under this building.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canPlaceOverWall": {
+      "label": "Can place over wall",
+      "description": "If true, this building can be placed on top of an existing wall.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isPlaceOverableWall": {
+      "label": "Is place-overable wall",
+      "description": "If true, other buildings with canPlaceOverWall can be placed on top of this wall.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowAutoroof": {
+      "label": "Allow autoroof",
+      "description": "Whether the auto-roof system can place a roof over this building.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "preventDeteriorationOnTop": {
+      "label": "Prevent deterioration on top",
+      "description": "If true, items placed on top of this building do not deteriorate.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventDeteriorationInside": {
+      "label": "Prevent deterioration inside",
+      "description": "If true, items stored inside this building (e.g. shelf) do not deteriorate.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isMealSource": {
+      "label": "Is meal source",
+      "description": "If true, this building is considered a meal dispenser for colonist dining behavior.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isNaturalRock": {
+      "label": "Is natural rock",
+      "description": "Whether this building is treated as a natural rock chunk or wall for mining purposes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isResourceRock": {
+      "label": "Is resource rock",
+      "description": "If true, this building yields resources when mined.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "repairable": {
+      "label": "Repairable",
+      "description": "Whether colonists can repair damage to this building.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "roofCollapseDamageMultiplier": {
+      "label": "Roof collapse damage multiplier",
+      "description": "Multiplier applied to damage received when a roof collapses on this building.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "hasFuelingPort": {
+      "label": "Has fueling port",
+      "description": "If true, this building has a fueling port for launching ships or other fuel-consuming actions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "smoothedThing": {
+      "label": "Smoothed thing",
+      "description": "ThingDef this building becomes when smoothed by a colonist (e.g. rough rock to smooth wall).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "naturalTerrain": {
+      "label": "Natural terrain",
+      "description": "TerrainDef placed under this building when it is first spawned on the map.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "leaveTerrain": {
+      "label": "Leave terrain",
+      "description": "TerrainDef left in the cell when this building is destroyed or deconstructed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "combatPower": {
+      "label": "Combat power",
+      "description": "Point value of this building when used in mech cluster budget calculations.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minMechClusterPoints": {
+      "label": "Min mech cluster points",
+      "description": "Minimum raid point budget at which this building can appear in a mech cluster.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "destroyShakeAmount": {
+      "label": "Destroy shake amount",
+      "description": "Camera shake intensity when this building is destroyed. -1 uses a default based on size.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "destroySound": {
+      "label": "Destroy sound",
+      "description": "SoundDef played when this building is destroyed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundMeleeHitOverride": {
+      "label": "Sound melee hit override",
+      "description": "SoundDef played when a pawn strikes this building in melee, overriding the default impact sound.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "destroyEffecter": {
+      "label": "Destroy effecter",
+      "description": "EffecterDef played at this building's location when it is destroyed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "buildingSizeCategory": {
+      "label": "Building size category",
+      "description": "Broad size classification used by stats and display logic.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Small", "Medium", "Large"]
+      }
+    },
+    "isFence": {
+      "label": "Is fence",
+      "description": "Whether this building acts as a fence that blocks certain animals from passing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "relatedBuildCommands": {
+      "label": "Related build commands",
+      "description": "ThingDef references shown as related build buttons in the architect menu when this building is selected.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "relatedTerrain": {
+      "label": "Related terrain",
+      "description": "TerrainDef references shown as related build options when this building is selected.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "alwaysShowRelatedBuildCommands": {
+      "label": "Always show related build commands",
+      "description": "If true, related build commands are always visible in the architect menu regardless of build mode.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useIdeoColor": {
+      "label": "Use ideo color",
+      "description": "If true, this building is tinted with the colony's ideoligion color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "wakeDormantPawnsOnConstruction": {
+      "label": "Wake dormant pawns on construction",
+      "description": "Whether placing this building wakes nearby dormant pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "maxItemsInCell": {
+      "label": "Max items in cell",
+      "description": "Maximum number of items allowed in a single cell of this building.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "paintable": {
+      "label": "Paintable",
+      "description": "Whether the player can change the color of this building using paint.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canBeDamagedByAttacks": {
+      "label": "Can be damaged by attacks",
+      "description": "Whether this building takes damage from ranged and melee attacks.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "isHopper": {
+      "label": "Is hopper",
+      "description": "If true, this building is a hopper that feeds adjacent processors with items.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "quickTargetable": {
+      "label": "Quick targetable",
+      "description": "If true, this building can be quickly targeted by abilities without manual selection.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayAttackToDestroyOnInspectPane": {
+      "label": "Display attack-to-destroy on inspect pane",
+      "description": "If true, the damage required to destroy this building is shown in its inspect pane.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isEscapableContainer": {
+      "label": "Is escapable container",
+      "description": "If true, pawns trapped inside this building can attempt to escape.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isPowerConduit": {
+      "label": "Is power conduit",
+      "description": "Whether this building acts as a power conduit for transmitting electricity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "biomeSpecific": {
+      "label": "Biome specific",
+      "description": "If true, this building only appears in biomes that explicitly list it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "crater": {
+      "label": "Crater",
+      "description": "If true, this building is treated as a blast crater.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canLandGravshipOn": {
+      "label": "Can land gravship on",
+      "description": "Whether a gravship can land on this building's footprint.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isAirtight": {
+      "label": "Is airtight",
+      "description": "If true, this building prevents atmosphere from passing through its cell.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isStuffableAirtight": {
+      "label": "Is stuffable airtight",
+      "description": "If true, airtightness depends on the stuff material this building is made from.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canConstructInCorner": {
+      "label": "Can construct in corner",
+      "description": "If true, this building can be placed in a diagonal corner cell.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isAttachment": {
+      "label": "Is attachment",
+      "description": "If true, this building is a wall attachment that must be placed adjacent to a wall.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "supportsWallAttachments": {
+      "label": "Supports wall attachments",
+      "description": "If true, wall attachments can be placed on this building's face.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isPlayerEjectable": {
+      "label": "Is player ejectable",
+      "description": "If true, the player can eject pawns from this building manually.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "openingStartedSound": {
+      "label": "Opening started sound",
+      "description": "SoundDef played at the moment this building begins its opening animation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "fullGraveGraphicData": {
+      "label": "Full grave graphic data",
+      "description": "Alternate graphic used when this grave building has a corpse inside it.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "bed_healPerDay": {
+      "label": "Bed: heal per day",
+      "description": "Additional hit points restored per day to a pawn sleeping in this bed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "bed_defaultMedical": {
+      "label": "Bed: default medical",
+      "description": "If true, this bed defaults to medical use for injured pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "bed_showSleeperBody": {
+      "label": "Bed: show sleeper body",
+      "description": "If true, the sleeping pawn's body is visible in this bed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "bed_humanlike": {
+      "label": "Bed: humanlike",
+      "description": "If true, only humanlike pawns can sleep in this bed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "bed_maxBodySize": {
+      "label": "Bed: max body size",
+      "description": "Maximum body size of pawn that can use this bed. 9999 means no limit.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999,
+      "xml": "element"
+    },
+    "bed_caravansCanUse": {
+      "label": "Bed: caravans can use",
+      "description": "Whether this bed is usable by caravan members when they rest at a campsite.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "bed_slabBed": {
+      "label": "Bed: slab bed",
+      "description": "If true, this is a slab-type bed (e.g. sleeping spot) with minimal comfort.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "bed_crib": {
+      "label": "Bed: crib",
+      "description": "If true, this bed is a crib for infants and young children.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "bed_pawnDrawOffset": {
+      "label": "Bed: pawn draw offset",
+      "description": "Vertical draw offset applied to the sleeping pawn graphic.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "bed_canBeMedical": {
+      "label": "Bed: can be medical",
+      "description": "Whether this bed can be switched to medical use.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "bed_DisplayOwnerType": {
+      "label": "Bed: display owner type",
+      "description": "Whether the owner type (colonist, prisoner, slave) is shown on this bed's inspect pane.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "bed_DisplayOwnersInInspectString": {
+      "label": "Bed: display owners in inspect string",
+      "description": "Whether the current owner names are listed in this bed's inspect string.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "bed_countsForBedroomOrBarracks": {
+      "label": "Bed: counts for bedroom or barracks",
+      "description": "Whether this bed counts toward the bedroom or barracks room role stat.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "bed_emptyCountsForBarracks": {
+      "label": "Bed: empty counts for barracks",
+      "description": "If true, an unowned instance of this bed still counts toward the barracks room role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "bed_UseSheetColor": {
+      "label": "Bed: use sheet color",
+      "description": "If true, this bed renders a sheet whose color matches the owner's ideo color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "nutritionCostPerDispense": {
+      "label": "Nutrition cost per dispense",
+      "description": "Nutrition consumed from a hopper per dispense action (e.g. nutrient paste dispenser).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "soundDispense": {
+      "label": "Sound dispense",
+      "description": "SoundDef played when this building dispenses an item.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "turretGunDef": {
+      "label": "Turret gun def",
+      "description": "ThingDef that defines the weapon used by this turret, including verb and projectile properties.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "turretBurstWarmupTime": {
+      "label": "Turret burst warmup time",
+      "description": "FloatRange (min~max) for the random warmup delay before this turret fires a burst.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.25~0.75", "1.0~2.0"]
+    },
+    "turretBurstCooldownTime": {
+      "label": "Turret burst cooldown time",
+      "description": "Seconds between burst fire cycles. -1 derives from the weapon's verb cooldown.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "turretInitialCooldownTime": {
+      "label": "Turret initial cooldown time",
+      "description": "Seconds this turret waits after being built before it can fire for the first time.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "turretTopDrawSize": {
+      "label": "Turret top draw size",
+      "description": "Scale of the rotating top graphic drawn above the turret base.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 2,
+      "xml": "element"
+    },
+    "turretTopOffset": {
+      "label": "Turret top offset",
+      "description": "Position offset (x, z) of the rotating gun graphic relative to the building center.",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element"
+    },
+    "playTargetAcquiredSound": {
+      "label": "Play target acquired sound",
+      "description": "Whether this turret plays a sound when it acquires a new target.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "turretTopLoadedGraphic": {
+      "label": "Turret top loaded graphic",
+      "description": "Alternate top graphic shown when this turret is loaded with a specific projectile type.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "requiredMechWeightClasses": {
+      "label": "Required mech weight classes",
+      "description": "MechWeightClassDef references for the mechanoid weight classes that can operate this turret.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MechWeightClassDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ai_combatDangerous": {
+      "label": "AI: combat dangerous",
+      "description": "If true, the AI considers this building an active combat threat and prioritizes destroying it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ai_chillDestination": {
+      "label": "AI: chill destination",
+      "description": "If true, idle AI pawns may wander toward this building as a chill hangout spot.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ai_neverTrashThis": {
+      "label": "AI: never trash this",
+      "description": "If true, raider AI will not intentionally destroy this building as part of a rampage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preferConnectingToFences": {
+      "label": "Prefer connecting to fences",
+      "description": "If true, this building visually links to adjacent fences instead of walls.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "roamerCanOpen": {
+      "label": "Roamer can open",
+      "description": "If true, roaming animals and non-player pawns can open this door.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "soundDoorOpenPowered": {
+      "label": "Sound: door open (powered)",
+      "description": "SoundDef played when this powered door opens.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundDoorClosePowered": {
+      "label": "Sound: door close (powered)",
+      "description": "SoundDef played when this powered door closes.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundDoorOpenManual": {
+      "label": "Sound: door open (manual)",
+      "description": "SoundDef played when this unpowered door is opened manually.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundDoorCloseManual": {
+      "label": "Sound: door close (manual)",
+      "description": "SoundDef played when this unpowered door closes manually.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundDoorCloseEnd": {
+      "label": "Sound: door close end",
+      "description": "SoundDef played at the end of the door-close animation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "poweredDoorOpenSpeedFactor": {
+      "label": "Powered door open speed factor",
+      "description": "Multiplier on open speed while this door has power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "poweredDoorCloseSpeedFactor": {
+      "label": "Powered door close speed factor",
+      "description": "Multiplier on close speed while this door has power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "unpoweredDoorOpenSpeedFactor": {
+      "label": "Unpowered door open speed factor",
+      "description": "Multiplier on open speed when this door has no power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "unpoweredDoorCloseSpeedFactor": {
+      "label": "Unpowered door close speed factor",
+      "description": "Multiplier on close speed when this door has no power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "doorTempEqualizeIntervalClosed": {
+      "label": "Door temp equalize interval (closed)",
+      "description": "Game ticks between temperature equalization steps while this door is closed.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 375,
+      "xml": "element"
+    },
+    "doorTempEqualizeIntervalOpen": {
+      "label": "Door temp equalize interval (open)",
+      "description": "Game ticks between temperature equalization steps while this door is open.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 34,
+      "xml": "element"
+    },
+    "doorTempEqualizeRate": {
+      "label": "Door temp equalize rate",
+      "description": "Fraction of the temperature difference equalized per interval.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "sowTag": {
+      "label": "Sow tag",
+      "description": "Grow zone tag that determines which plants can be sown in this building (e.g. 'Hydroponic').",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Hydroponic"]
+    },
+    "defaultPlantToGrow": {
+      "label": "Default plant to grow",
+      "description": "ThingDef of the plant initially selected when a new grow zone is placed on this building.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mineableThing": {
+      "label": "Mineable thing",
+      "description": "ThingDef dropped when this natural rock wall is mined.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mineableYield": {
+      "label": "Mineable yield",
+      "description": "Base count of mineableThing dropped per mining operation.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "veinMineable": {
+      "label": "Vein mineable",
+      "description": "If true, this rock generates as a contiguous ore vein rather than scattered chunks.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mineableNonMinedEfficiency": {
+      "label": "Mineable non-mined efficiency",
+      "description": "Fraction of yield obtained when this resource is obtained without mining (e.g. harvesting chunks).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.7,
+      "xml": "element"
+    },
+    "mineableDropChance": {
+      "label": "Mineable drop chance",
+      "description": "Probability (0–1) that the mineable thing actually drops after each mining hit.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "mineableYieldWasteable": {
+      "label": "Mineable yield wasteable",
+      "description": "If true, mining skill affects how much of the yield is wasted.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "mineableScatterCommonality": {
+      "label": "Mineable scatter commonality",
+      "description": "Relative frequency with which this ore appears in scattered surface deposits on map gen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "mineableScatterLumpSizeRange": {
+      "label": "Mineable scatter lump size range",
+      "description": "IntRange (min~max) for the number of cells in each scattered surface ore lump.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["20~40", "5~15"]
+    },
+    "mineablePreventMeteorite": {
+      "label": "Mineable prevent meteorite",
+      "description": "If true, meteorites cannot land on top of this ore deposit.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mineablePreventNaturalRockOnSurface": {
+      "label": "Mineable prevent natural rock on surface",
+      "description": "If true, surface generation does not place natural rock walls over this ore.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fixedStorageSettings": {
+      "label": "Fixed storage settings",
+      "description": "Storage filter and priority locked to this building and not changeable by the player.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "defaultStorageSettings": {
+      "label": "Default storage settings",
+      "description": "Initial storage filter and priority applied when this building is first placed, editable by the player.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "ignoreStoredThingsBeauty": {
+      "label": "Ignore stored things beauty",
+      "description": "If true, items stored inside this building do not contribute to room beauty calculations.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "storageGroupTag": {
+      "label": "Storage group tag",
+      "description": "Tag linking this building to a shared storage group with other buildings of the same tag.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "groupingLabel": {
+      "label": "Grouping label",
+      "description": "Display label for the storage group shown in the UI.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "groupingOrder": {
+      "label": "Grouping order",
+      "description": "Sort order of this building within its storage group.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "isTrap": {
+      "label": "Is trap",
+      "description": "Whether this building is a trap that triggers when pawns step on it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "trapDestroyOnSpring": {
+      "label": "Trap destroy on spring",
+      "description": "If true, this trap is destroyed when it triggers.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "trapPeacefulWildAnimalsSpringChanceFactor": {
+      "label": "Trap peaceful wild animals spring chance factor",
+      "description": "Multiplier on the chance that a peaceful wild animal triggers this trap.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "trapDamageCategory": {
+      "label": "Trap damage category",
+      "description": "DamageArmorCategoryDef used for armor penetration calculations when this trap damages a pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageArmorCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "trapUnarmedGraphicData": {
+      "label": "Trap unarmed graphic data",
+      "description": "Graphic shown when this trap has been triggered but not yet re-armed.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "workTableRoomRole": {
+      "label": "Work table room role",
+      "description": "RoomRoleDef for the optimal room type this work table benefits from (e.g. workshop).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RoomRoleDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workTableNotInRoomRoleFactor": {
+      "label": "Work table not-in-room-role factor",
+      "description": "Work speed multiplier applied when this table is not in its optimal room type.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "unpoweredWorkTableWorkSpeedFactor": {
+      "label": "Unpowered work table work speed factor",
+      "description": "Work speed multiplier applied when this work table has no power.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "workTableCompleteSoundDef": {
+      "label": "Work table complete sound",
+      "description": "SoundDef played when a recipe finishes at this work table.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "watchBuildingStandDistanceRange": {
+      "label": "Watch building stand distance range",
+      "description": "IntRange (min~max) of cells from this building within which watchers must stand.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["1~1", "1~3"]
+    },
+    "watchBuildingStandRectWidth": {
+      "label": "Watch building stand rect width",
+      "description": "Width in cells of the rectangle in front of this building where watchers can stand.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 3,
+      "xml": "element"
+    },
+    "watchBuildingInSameRoom": {
+      "label": "Watch building in same room",
+      "description": "If true, watchers must be in the same room as this building to receive the joy benefit.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "joyKind": {
+      "label": "Joy kind",
+      "description": "JoyKindDef for the type of recreation this building provides.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "JoyKindDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "haulToContainerDuration": {
+      "label": "Haul to container duration",
+      "description": "Game ticks a pawn spends hauling an item into this container.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "instrumentRange": {
+      "label": "Instrument range",
+      "description": "Radius in cells within which pawns can hear and enjoy this instrument building.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minDistanceToSameTypeOfBuilding": {
+      "label": "Min distance to same type of building",
+      "description": "Minimum cell distance required between two instances of this building.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "artificialForMeditationPurposes": {
+      "label": "Artificial for meditation purposes",
+      "description": "If true, this building counts as an artificial structure reducing meditation focus near nature.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "effectWatching": {
+      "label": "Effect watching",
+      "description": "EffecterDef played while a pawn is watching this building for joy.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "gibbetCageTopGraphicData": {
+      "label": "Gibbet cage top graphic data",
+      "description": "Graphic drawn on top of the gibbet cage structure.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "gibbetCorposeDrawOffset": {
+      "label": "Gibbet corpse draw offset",
+      "description": "Position offset applied when drawing the corpse inside the gibbet cage.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "gibbetCagePlaceCorpseEffecter": {
+      "label": "Gibbet cage place corpse effecter",
+      "description": "EffecterDef played when a corpse is placed in the gibbet cage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "openingEffect": {
+      "label": "Opening effect",
+      "description": "EffecterDef played while this building is in its opening animation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "barDrawData": {
+      "label": "Bar draw data",
+      "description": "Fillable bar configuration per rotation direction for displaying progress bars on this building.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "gestatorFormingMote": {
+      "label": "Gestator forming mote",
+      "description": "Mote played per rotation while a mech is forming inside this gestator.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "gestatorCycleCompleteMote": {
+      "label": "Gestator cycle complete mote",
+      "description": "Mote played per rotation when a gestator cycle completes.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "gestatorFormedMote": {
+      "label": "Gestator formed mote",
+      "description": "Mote played per rotation when a mech finishes forming.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "mechGestatorCylinderGraphic": {
+      "label": "Mech gestator cylinder graphic",
+      "description": "Graphic drawn for the cylinder portion of the mech gestator.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "mechGestatorTopGraphic": {
+      "label": "Mech gestator top graphic",
+      "description": "Graphic drawn for the top cap of the mech gestator.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "formingGraphicData": {
+      "label": "Forming graphic data",
+      "description": "Graphic shown for the mech being formed inside the gestator.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "formingMechBobSpeed": {
+      "label": "Forming mech bob speed",
+      "description": "Speed of the vertical bobbing animation applied to the forming mech graphic.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.001,
+      "xml": "element"
+    },
+    "formingMechYBobDistance": {
+      "label": "Forming mech Y bob distance",
+      "description": "Amplitude of the vertical bob in world units.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.1,
+      "xml": "element"
+    },
+    "formingMechPerRotationOffset": {
+      "label": "Forming mech per-rotation offset",
+      "description": "List of Vector3 position offsets (one per rotation direction N/E/S/W) for the forming mech graphic.",
+      "type": { "kind": "list" },
+      "items": { "kind": "vector3" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "maxFormedMechDrawSize": {
+      "label": "Max formed mech draw size",
+      "description": "Maximum draw size (x, z) clamp applied to the forming mech graphic.",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element"
+    },
+    "subcoreScannerFixedIngredients": {
+      "label": "Subcore scanner fixed ingredients",
+      "description": "Fixed list of ingredient counts consumed by the subcore scanner per operation.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "subcoreScannerTicks": {
+      "label": "Subcore scanner ticks",
+      "description": "Game ticks the subcore scanner takes to complete one operation.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 7500,
+      "xml": "element"
+    },
+    "subcoreScannerHediff": {
+      "label": "Subcore scanner hediff",
+      "description": "HediffDef applied to the pawn being scanned during the subcore extraction.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "destroyBrain": {
+      "label": "Destroy brain",
+      "description": "If true, the subcore scanner destroys the target pawn's brain on completion.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "subcoreScannerOutputDef": {
+      "label": "Subcore scanner output def",
+      "description": "ThingDef produced by the subcore scanner when the operation completes.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "subcoreScannerStartEffect": {
+      "label": "Subcore scanner start effect",
+      "description": "EffecterDef played when the subcore scanner begins a new operation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "subcoreScannerWorking": {
+      "label": "Subcore scanner working sound",
+      "description": "SoundDef looped while the subcore scanner is actively operating.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "subcoreScannerComplete": {
+      "label": "Subcore scanner complete sound",
+      "description": "SoundDef played when the subcore scanner finishes an operation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "isInsectCocoon": {
+      "label": "Is insect cocoon",
+      "description": "If true, this building is an insect cocoon that can hatch hostile insects.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "wastepackAtomizerBottomGraphic": {
+      "label": "Wastepack atomizer bottom graphic",
+      "description": "Bottom-layer graphic for the wastepack atomizer building.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "wastepackAtomizerWindowGraphic": {
+      "label": "Wastepack atomizer window graphic",
+      "description": "Window-layer graphic for the wastepack atomizer building.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "wastepackAtomizerOperationEffecter": {
+      "label": "Wastepack atomizer operation effecter",
+      "description": "EffecterDef played while the wastepack atomizer is processing waste.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "bookendGraphicEast": {
+      "label": "Bookend graphic (east)",
+      "description": "Graphic shown on the east-facing bookend of a bookcase building.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "bookendGraphicNorth": {
+      "label": "Bookend graphic (north)",
+      "description": "Graphic shown on the north-facing bookend of a bookcase building.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "isSupportDoor": {
+      "label": "Is support door",
+      "description": "If true, this door has a support structure that renders separately from the moving panel.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "doorTopGraphic": {
+      "label": "Door top graphic",
+      "description": "Graphic for the upper panel of this support door.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "doorSupportGraphic": {
+      "label": "Door support graphic",
+      "description": "Graphic for the fixed support frame of this door.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "upperMoverGraphic": {
+      "label": "Upper mover graphic",
+      "description": "Graphic for the upper moving section of this door.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "doorTopGraphicOffset": {
+      "label": "Door top graphic offset",
+      "description": "World-space position offset applied to the door top graphic.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "doorSupportGraphicOffset": {
+      "label": "Door support graphic offset",
+      "description": "World-space position offset applied to the door support graphic.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "doorTopHorizontalOffset": {
+      "label": "Door top horizontal offset",
+      "description": "Offset applied to the door top when the door is oriented horizontally.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "doorTopVerticalOffset": {
+      "label": "Door top vertical offset",
+      "description": "Offset applied to the door top when the door is oriented vertically.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "groundSpawnerThingToSpawn": {
+      "label": "Ground spawner thing to spawn",
+      "description": "ThingDef this ground-spawner building produces when its timer elapses.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "groundSpawnerSpawnDelay": {
+      "label": "Ground spawner spawn delay",
+      "description": "IntRange (min~max) of game ticks between ground spawner activation and the thing appearing.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["300~600", "1200~2400"]
+    },
+    "groundSpawnerDestroyAdjacent": {
+      "label": "Ground spawner destroy adjacent",
+      "description": "If true, adjacent buildings in the spawn footprint are destroyed when the thing appears.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "groundSpawnerSustainerSound": {
+      "label": "Ground spawner sustainer sound",
+      "description": "SoundDef looped while this ground spawner is active and counting down.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "groundSpawnerSustainedEffecter": {
+      "label": "Ground spawner sustained effecter",
+      "description": "EffecterDef played continuously while this ground spawner is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "groundSpawnerCompleteEffecter": {
+      "label": "Ground spawner complete effecter",
+      "description": "EffecterDef played when the ground spawner finishes and the thing appears.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "groundSpawnerLetterLabel": {
+      "label": "Ground spawner letter label",
+      "description": "Title of the alert letter shown when this ground spawner completes.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "groundSpawnerLetterText": {
+      "label": "Ground spawner letter text",
+      "description": "Body text of the alert letter shown when this ground spawner completes.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

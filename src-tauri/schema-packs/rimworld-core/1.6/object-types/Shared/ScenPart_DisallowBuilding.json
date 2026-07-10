@@ -1,0 +1,21 @@
+{
+  "objectType": "ScenPart_DisallowBuilding",
+  "label": "Disallow building",
+  "description": "Prevents the player from constructing a specific building for the entire game.",
+  "inherits": ["ScenPart_Rule"],
+  "fieldOrder": ["def", "visible", "building"],
+  "fields": {
+    "building": {
+      "label": "Building",
+      "description": "ThingDef for the building that players are forbidden from constructing.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

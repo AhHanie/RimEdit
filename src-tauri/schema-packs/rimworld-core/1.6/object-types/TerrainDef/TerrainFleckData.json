@@ -1,0 +1,58 @@
+{
+  "objectType": "TerrainFleckData",
+  "label": "Terrain fleck data",
+  "description": "Configuration for a fleck particle emitted by terrain on each tick.",
+  "fieldOrder": [
+    "fleck",
+    "velocitySpeedRange",
+    "velocityAngleRange",
+    "rotationSpeedRange",
+    "solidTicksRange",
+    "scaleRange"
+  ],
+  "fields": {
+    "fleck": {
+      "label": "Fleck",
+      "description": "FleckDef to spawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FleckDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "velocitySpeedRange": {
+      "label": "Velocity speed range",
+      "description": "Range of launch speed values for emitted flecks.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "velocityAngleRange": {
+      "label": "Velocity angle range",
+      "description": "Range of launch angle values in degrees for emitted flecks.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "rotationSpeedRange": {
+      "label": "Rotation speed range",
+      "description": "Range of rotation speed values in degrees per tick for emitted flecks.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "solidTicksRange": {
+      "label": "Solid ticks range",
+      "description": "Range of lifetimes in ticks during which the fleck is fully opaque.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "scaleRange": {
+      "label": "Scale range",
+      "description": "Range of initial scale values for emitted flecks.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

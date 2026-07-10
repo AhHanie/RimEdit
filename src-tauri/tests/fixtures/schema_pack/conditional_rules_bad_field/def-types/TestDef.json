@@ -1,0 +1,24 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    }
+  },
+  "validationRules": {
+    "bad-rule": {
+      "kind": "requiredWhen",
+      "field": "nonexistentTarget",
+      "when": {
+        "field": "nonexistentCondition",
+        "operator": "greaterThan",
+        "value": 0
+      },
+      "message": "This rule references non-existent fields."
+    }
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "objectType": "QuestNode_Letter",
+  "label": "QuestNode Letter",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_Letter.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignal",
+    "relatedFaction",
+    "letterDef",
+    "label",
+    "text",
+    "labelRules",
+    "textRules",
+    "lookTargets",
+    "signalListenMode",
+    "chosenPawnSignal",
+    "useColonistsOnMap",
+    "useColonistsFromCaravanArg",
+    "acceptedVisitorsSignal",
+    "visitors",
+    "filterDeadPawnsFromLookTargets"
+  ],
+  "fields": {
+    "inSignal": {
+      "description": "Signal name that sends the letter.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "relatedFaction": {
+      "description": "SlateRef<Faction> related faction variable or def-like literal.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "letterDef": {
+      "description": "LetterDef def name or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "LetterDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "label": {
+      "description": "Translatable letter label text, rule, or slate expression.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "text": {
+      "description": "Translatable letter body text, rule, or slate expression.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "labelRules": {
+      "description": "Inline RulePack for letter label generation.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "textRules": {
+      "description": "Inline RulePack for letter text generation.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "lookTargets": {
+      "description": "Slate variable or expression resolving to look targets.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "signalListenMode": {
+      "description": "SlateRef<SignalListenMode?>. Allowed SignalListenMode literals: OngoingOnly, NotYetAcceptedOnly, OngoingOrNotYetAccepted, HistoricalOnly, Always; also accepts $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "chosenPawnSignal": {
+      "description": "SlateRef<string> signal name or $varName fired when a pawn is chosen from the letter.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "useColonistsOnMap": {
+      "description": "SlateRef<MapParent> map parent variable whose colonists are used by the letter.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "useColonistsFromCaravanArg": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "acceptedVisitorsSignal": {
+      "description": "SlateRef<string> signal name or $varName fired when visitors are accepted.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "visitors": {
+      "description": "SlateRef<List<Pawn>> visitors variable or expression.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "filterDeadPawnsFromLookTargets": {
+      "description": "SlateRef<bool> literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

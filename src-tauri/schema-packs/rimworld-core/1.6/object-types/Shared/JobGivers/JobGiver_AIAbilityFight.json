@@ -1,0 +1,25 @@
+{
+  "objectType": "JobGiver_AIAbilityFight",
+  "label": "Job giver AI ability fight",
+  "description": "Combat job giver that uses a specific ability to engage enemies. Inherits all AIFightBase targeting fields.",
+  "inherits": ["JobGiver_AIFightBase"],
+  "fieldOrder": ["ability", "skipIfCantTargetNow"],
+  "fields": {
+    "ability": {
+      "label": "Ability",
+      "description": "The ability this job giver uses to fight enemies.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "skipIfCantTargetNow": {
+      "label": "Skip if can't target now",
+      "description": "If true, skips job generation when the ability is on cooldown or cannot currently target an enemy.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

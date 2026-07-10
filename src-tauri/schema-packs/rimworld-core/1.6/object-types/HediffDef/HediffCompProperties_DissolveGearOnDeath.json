@@ -1,0 +1,22 @@
+{
+  "objectType": "HediffCompProperties_DissolveGearOnDeath",
+  "label": "Dissolve gear on death comp",
+  "description": "Dissolves the pawn's gear when they die with this hediff.",
+  "fieldOrder": ["Class", "compClass"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

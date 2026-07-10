@@ -1,0 +1,25 @@
+{
+  "objectType": "XenotypeSet",
+  "label": "Xenotype set",
+  "description": "A named set of XenotypeChance entries used to control xenotype distribution when generating pawns.",
+  "fieldOrder": [
+    "xenotypeChances"
+  ],
+  "fields": {
+    "xenotypeChances": {
+      "label": "Xenotype chances",
+      "description": "Xenotype weights. Child element names are XenotypeDef defNames; text is the float chance.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "XenotypeChance" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "xenotype",
+      "valueField": "chance",
+      "keyReference": {
+        "defType": "XenotypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

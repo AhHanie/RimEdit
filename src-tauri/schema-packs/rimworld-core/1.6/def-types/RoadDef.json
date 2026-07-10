@@ -1,0 +1,130 @@
+{
+  "defType": "RoadDef",
+  "label": "Road",
+  "description": "Defines a road type that can appear on the world map, including its generation passes, world map rendering layers, movement cost, and pathing behavior.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "priority",
+    "ancientOnly",
+    "movementCostMultiplier",
+    "tilesPerSegment",
+    "pathingMode",
+    "roadGenSteps",
+    "worldRenderSteps",
+    "worldTransitionGroup",
+    "distortionFrequency",
+    "distortionIntensity"
+  ],
+  "fields": {
+    "priority": {
+      "label": "Priority",
+      "description": "Rendering and override priority. When world tiles overlap, the road with the highest priority is used for movement cost and visuals.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "ancientOnly": {
+      "label": "Ancient only",
+      "description": "When true, this road type only appears on worlds generated with ancient ruins enabled and cannot be built by players.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "movementCostMultiplier": {
+      "label": "Movement cost multiplier",
+      "description": "Multiplier applied to caravan travel time when moving through this road type. Values below 1.0 increase speed; shipped roads use 0.5 for 2x speed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "tilesPerSegment": {
+      "label": "Tiles per segment",
+      "description": "Number of map tiles in a single road segment during map generation. Higher values produce more evenly distributed road terrain.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 15,
+      "xml": "element"
+    },
+    "pathingMode": {
+      "label": "Pathing mode",
+      "description": "RoadPathingDef controlling how caravans interact with this road. Avoid keeps caravans on the road; Bulldoze clears obstacles when entering.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RoadPathingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "roadGenSteps": {
+      "label": "Road gen steps",
+      "description": "Ordered list of generation passes applied when this road crosses a map tile. Steps run in list order and use the Class attribute to select the concrete subclass.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RoadDefGenStep" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "worldRenderSteps": {
+      "label": "World render steps",
+      "description": "Ordered list of rendering passes that stack visually to draw this road on the world map. Earlier steps render below later steps.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "WorldRenderStep" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "worldTransitionGroup": {
+      "label": "World transition group",
+      "description": "Identifier used to group roads for world map transition blending. Roads in the same group blend together at tile borders. Not localized.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Dirt", "Stone", "Asphalt"]
+    },
+    "distortionFrequency": {
+      "label": "Distortion frequency",
+      "description": "Spatial frequency of the noise used to distort road edges on the world map. Higher values produce finer, more jagged edges.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "distortionIntensity": {
+      "label": "Distortion intensity",
+      "description": "Amplitude of the world map edge distortion. Zero produces straight-edged roads; shipped roads use 0.1 to 0.2.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-road": {
+      "label": "New road",
+      "description": "Basic road with standard movement speed and dirt-path style generation.",
+      "includeRequiredFields": true,
+      "promptFields": ["priority"],
+      "fieldValues": {
+        "movementCostMultiplier": "0.5",
+        "tilesPerSegment": "15",
+        "distortionFrequency": "0.5",
+        "distortionIntensity": "0.2",
+        "worldTransitionGroup": "Dirt"
+      }
+    },
+    "new-ancient-road": {
+      "label": "New ancient road",
+      "description": "Ancient-only road with bulldoze pathing, matching the asphalt road style.",
+      "includeRequiredFields": true,
+      "promptFields": ["priority"],
+      "fieldValues": {
+        "ancientOnly": "true",
+        "movementCostMultiplier": "0.5",
+        "tilesPerSegment": "100",
+        "pathingMode": "Bulldoze",
+        "distortionFrequency": "0.2",
+        "distortionIntensity": "0.1",
+        "worldTransitionGroup": "Asphalt"
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_GiveNeurocharge",
+  "label": "Give neurocharge comp",
+  "description": "Provides neurocharge to the pawn per day while this hediff is active.",
+  "fieldOrder": ["Class", "compClass", "neurochargePerDay"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "neurochargePerDay": {
+      "label": "Neurocharge per day",
+      "description": "Neurocharge units given per day.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

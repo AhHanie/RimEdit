@@ -1,0 +1,31 @@
+{
+  "objectType": "XenotypeChance",
+  "label": "Xenotype chance",
+  "description": "Associates a XenotypeDef with a probability used during pawn xenotype selection.",
+  "fieldOrder": [
+    "xenotype",
+    "chance"
+  ],
+  "fields": {
+    "xenotype": {
+      "label": "Xenotype",
+      "description": "XenotypeDef that can be assigned to the pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "XenotypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Relative weight for this xenotype in random selection.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

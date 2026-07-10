@@ -1,0 +1,10 @@
+{
+  "objectType": "RitualPosition_BesideThing",
+  "label": "Ritual position (beside thing)",
+  "description": "Places the pawn beside the ritual target thing.",
+  "fieldOrder": ["Class", "highlight"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" }
+  }
+}

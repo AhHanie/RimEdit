@@ -1,0 +1,44 @@
+{
+  "objectType": "RoleEffect",
+  "label": "Role effect",
+  "description": "Base schema for role effects. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class", "label", "labelKey"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RoleEffect",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "RoleEffect_GiveThoughtOnTend": "RoleEffect_GiveThoughtOnTend",
+      "RoleEffect_HuntingRevengeChanceFactor": "RoleEffect_HuntingRevengeChanceFactor",
+      "RoleEffect_NoMeleeWeapons": "RoleEffect_NoMeleeWeapons",
+      "RoleEffect_NoRangedWeapons": "RoleEffect_NoRangedWeapons",
+      "RoleEffect_PawnStatFactor": "RoleEffect_PawnStatFactor",
+      "RoleEffect_PawnStatOffset": "RoleEffect_PawnStatOffset",
+      "RoleEffect_ProductionQualityOffset": "RoleEffect_ProductionQualityOffset"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleEffect subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Label shown for this role effect in the UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the role effect label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

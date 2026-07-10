@@ -1,0 +1,158 @@
+{
+  "defType": "MainButtonDef",
+  "label": "Main button",
+  "description": "Defines a bottom-bar tab button in the RimWorld UI. Controls which tab window opens, the sort order, the default hotkey, and visibility conditions.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "tabWindowClass",
+    "buttonVisible",
+    "order",
+    "defaultHotKey",
+    "canBeTutorDenied",
+    "validWithoutMap",
+    "minimized",
+    "iconPath",
+    "closesWorldView",
+    "validWithClassicIdeo"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "MainButtonWorker subclass that drives visibility, disabled state, and click behavior for this button.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "MainButtonWorker_ToggleTab",
+      "xml": "element"
+    },
+    "tabWindowClass": {
+      "label": "Tab window class",
+      "description": "MainTabWindow subclass that is opened when this button is clicked. Omit for buttons that do not open a tab window (e.g. world view toggle).",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "buttonVisible": {
+      "label": "Button visible",
+      "description": "If false, this button is always hidden regardless of other conditions.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "order": {
+      "label": "Order",
+      "description": "Sort position of this button in the bottom bar. Lower values appear first (further left).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "defaultHotKey": {
+      "label": "Default hot key",
+      "description": "Unity KeyCode used as the default hotkey for this button. A KeyBindingDef named MainTab_<defName> is generated at runtime from this value. Use None for no default hotkey.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "None",
+          "Backspace", "Delete", "Tab", "Clear", "Return", "Pause", "Escape", "Space",
+          "Keypad0", "Keypad1", "Keypad2", "Keypad3", "Keypad4",
+          "Keypad5", "Keypad6", "Keypad7", "Keypad8", "Keypad9",
+          "KeypadPeriod", "KeypadDivide", "KeypadMultiply", "KeypadMinus",
+          "KeypadPlus", "KeypadEnter", "KeypadEquals",
+          "UpArrow", "DownArrow", "RightArrow", "LeftArrow",
+          "Insert", "Home", "End", "PageUp", "PageDown",
+          "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8",
+          "F9", "F10", "F11", "F12", "F13", "F14", "F15",
+          "Alpha0", "Alpha1", "Alpha2", "Alpha3", "Alpha4",
+          "Alpha5", "Alpha6", "Alpha7", "Alpha8", "Alpha9",
+          "Exclaim", "DoubleQuote", "Hash", "Dollar", "Percent",
+          "Ampersand", "Quote", "LeftParen", "RightParen",
+          "Asterisk", "Plus", "Comma", "Minus", "Period", "Slash",
+          "Colon", "Semicolon", "Less", "Equals", "Greater", "Question", "At",
+          "LeftBracket", "Backslash", "RightBracket", "Caret", "Underscore", "BackQuote",
+          "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+          "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+          "LeftCurlyBracket", "Pipe", "RightCurlyBracket", "Tilde",
+          "Numlock", "CapsLock", "ScrollLock",
+          "RightShift", "LeftShift", "RightControl", "LeftControl", "RightAlt", "LeftAlt",
+          "LeftMeta", "LeftCommand", "LeftApple", "LeftWindows",
+          "RightMeta", "RightCommand", "RightApple", "RightWindows",
+          "AltGr", "Help", "Print", "SysReq", "Break", "Menu",
+          "Mouse0", "Mouse1", "Mouse2", "Mouse3", "Mouse4", "Mouse5", "Mouse6",
+          "JoystickButton0", "JoystickButton1", "JoystickButton2", "JoystickButton3",
+          "JoystickButton4", "JoystickButton5", "JoystickButton6", "JoystickButton7",
+          "JoystickButton8", "JoystickButton9", "JoystickButton10", "JoystickButton11",
+          "JoystickButton12", "JoystickButton13", "JoystickButton14", "JoystickButton15",
+          "JoystickButton16", "JoystickButton17", "JoystickButton18", "JoystickButton19"
+        ]
+      }
+    },
+    "canBeTutorDenied": {
+      "label": "Can be tutor denied",
+      "description": "If true, the tutorial system can block this button from being clicked during scripted tutorial sequences.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "validWithoutMap": {
+      "label": "Valid without map",
+      "description": "If true, this button is not disabled when no map is loaded (e.g. at the main menu or during world travel).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minimized": {
+      "label": "Minimized",
+      "description": "If true, this button starts in a minimized state, showing only its icon without a label.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Content path to the texture used as this button's icon when the button is in minimized state.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "closesWorldView": {
+      "label": "Closes world view",
+      "description": "If true, clicking this button while the world view is open will close the world view and return to the map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "validWithClassicIdeo": {
+      "label": "Valid with classic ideo",
+      "description": "If false, this button is hidden when Ideology is active and classic mode is enabled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-tab": {
+      "label": "Basic tab",
+      "description": "A tab button that opens a tab window, with a sort order and optional description.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "description", "tabWindowClass", "order"],
+      "fieldValues": {}
+    },
+    "icon-tab": {
+      "label": "Icon tab",
+      "description": "A tab button that shows an icon when minimized, with sort order and visibility settings.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "description", "tabWindowClass", "order", "minimized", "iconPath"],
+      "fieldValues": {}
+    }
+  }
+}

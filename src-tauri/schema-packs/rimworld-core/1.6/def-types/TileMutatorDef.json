@@ -1,0 +1,444 @@
+{
+  "defType": "TileMutatorDef",
+  "label": "Tile mutator",
+  "description": "Defines a world tile modifier that can change map generation, terrain, biome resources, weather, landmarks, or placement rules.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass", "genOrder", "categories", "overrideCategories", "priority",
+    "displayPriority", "chanceOnNonLandmarkTile", "extraGenSteps", "preventGenSteps",
+    "overrideCoastalBeachTerrain", "overrideLakeBeachTerrain",
+    "overrideRiverbankTerrain", "overrideMudTerrain", "preventsPondGeneration",
+    "preventsLandmarks", "preventNaturalElevation", "preventPatches",
+    "animalDensityFactor", "plantDensityFactor", "junkDensityFactor",
+    "geyserCountFactor", "chunkDensityFactor", "fishPopulationFactor",
+    "additionalWildPlants", "overrideDensityForFertilityCurve",
+    "allowRoofedEdgeWalkIn", "blacklistedRaidStrategies", "additionalGameConditions",
+    "hillinessForElevationGen", "hillinessForOreGeneration", "hillinessLabel",
+    "biomeWhitelist", "biomeBlacklist", "animalDensityRange", "plantDensityRange",
+    "minHilliness", "maxHilliness", "coastSidesRange", "canSpawnOnRiver",
+    "canSpawnOnRoad", "canSpawnOnLandmark", "requiresFactionOfDef", "pollutionRange",
+    "averageTemperatureRange", "weatherFrequencyFactor", "weatherFrequencyOffset",
+    "weathersToAffect", "terrainPatchMakers", "plantKinds", "structureGenParms",
+    "resourceBlacklist"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class that implements the tile mutator logic. Loaded from XML even though private in source.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "genOrder": {
+      "label": "Gen order",
+      "description": "Execution order among mutators during map generation. Lower values run first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "categories": {
+      "label": "Categories",
+      "description": "Category tags this mutator belongs to. Used to group or filter mutators.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "overrideCategories": {
+      "label": "Override categories",
+      "description": "Category tags this mutator overrides when applied, replacing the default category set.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Selection priority when multiple mutators compete for the same tile. Higher values win.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "displayPriority": {
+      "label": "Display priority",
+      "description": "Sort order for displaying this mutator in UI lists. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "chanceOnNonLandmarkTile": {
+      "label": "Chance on non-landmark tile",
+      "description": "Probability (0-1) of this mutator being applied to tiles that are not landmark tiles.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "extraGenSteps": {
+      "label": "Extra gen steps",
+      "description": "Additional map generation steps injected when this mutator is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "GenStepDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "preventGenSteps": {
+      "label": "Prevent gen steps",
+      "description": "Map generation steps blocked from running when this mutator is active.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "GenStepDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "overrideCoastalBeachTerrain": {
+      "label": "Override coastal beach terrain",
+      "description": "TerrainDef that replaces the default coastal beach terrain on mutated tiles.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "overrideLakeBeachTerrain": {
+      "label": "Override lake beach terrain",
+      "description": "TerrainDef that replaces the default lake beach terrain on mutated tiles.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "overrideRiverbankTerrain": {
+      "label": "Override riverbank terrain",
+      "description": "TerrainDef that replaces the default riverbank terrain on mutated tiles.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "overrideMudTerrain": {
+      "label": "Override mud terrain",
+      "description": "TerrainDef that replaces the default mud terrain on mutated tiles.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "preventsPondGeneration": {
+      "label": "Prevents pond generation",
+      "description": "When true, pond generation is suppressed on tiles with this mutator.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "preventsLandmarks": {
+      "label": "Prevents landmarks",
+      "description": "When true, landmark generation is suppressed on tiles with this mutator.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "preventNaturalElevation": {
+      "label": "Prevent natural elevation",
+      "description": "When true, natural elevation variation is not applied to tiles with this mutator.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "preventPatches": {
+      "label": "Prevent patches",
+      "description": "When true, terrain patch generation is suppressed on tiles with this mutator.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "animalDensityFactor": {
+      "label": "Animal density factor",
+      "description": "Multiplier applied to the base animal population density on mutated tiles.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "plantDensityFactor": {
+      "label": "Plant density factor",
+      "description": "Multiplier applied to the base plant density on mutated tiles.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "junkDensityFactor": {
+      "label": "Junk density factor",
+      "description": "Multiplier applied to the base junk scatter density on mutated tiles.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "geyserCountFactor": {
+      "label": "Geyser count factor",
+      "description": "Multiplier applied to the base geyser count on mutated tiles.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "chunkDensityFactor": {
+      "label": "Chunk density factor",
+      "description": "Multiplier applied to the base rock chunk scatter density on mutated tiles.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "fishPopulationFactor": {
+      "label": "Fish population factor",
+      "description": "Multiplier applied to the base fish population on mutated tiles.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "additionalWildPlants": {
+      "label": "Additional wild plants",
+      "description": "Extra plants added to the wild plant roster on mutated tiles. Each element name is the ThingDef defName; scalar text is the commonality.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "BiomePlantRecord" },
+      "required": false,
+      "xml": "keyedObjectList",
+      "keyField": "plant",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "defaultValueField": "commonality"
+    },
+    "overrideDensityForFertilityCurve": {
+      "label": "Override density for fertility curve",
+      "description": "Curve mapping base fertility to a density multiplier, overriding the biome's default density-for-fertility relationship.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "allowRoofedEdgeWalkIn": {
+      "label": "Allow roofed edge walk-in",
+      "description": "When true, pawns can enter the map through roofed edge cells on tiles with this mutator.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "blacklistedRaidStrategies": {
+      "label": "Blacklisted raid strategies",
+      "description": "Raid strategies that cannot be used against colonies on tiles with this mutator.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "RaidStrategyDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "additionalGameConditions": {
+      "label": "Additional game conditions",
+      "description": "Game conditions that are active on tiles with this mutator.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "GameConditionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "hillinessForElevationGen": {
+      "label": "Hilliness for elevation gen",
+      "description": "Hilliness value used to determine elevation generation on tiles with this mutator, overriding the tile's natural hilliness.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Flat", "SmallHills", "LargeHills", "Mountainous", "Impassable"]
+      }
+    },
+    "hillinessForOreGeneration": {
+      "label": "Hilliness for ore generation",
+      "description": "Hilliness value used to determine ore vein generation on tiles with this mutator, overriding the tile's natural hilliness.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Flat", "SmallHills", "LargeHills", "Mountainous", "Impassable"]
+      }
+    },
+    "hillinessLabel": {
+      "label": "Hilliness label",
+      "description": "Hilliness value shown in UI labels for tiles with this mutator, overriding the tile's natural hilliness label.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Flat", "SmallHills", "LargeHills", "Mountainous", "Impassable"]
+      }
+    },
+    "biomeWhitelist": {
+      "label": "Biome whitelist",
+      "description": "Biomes on which this mutator can appear. If empty, the mutator can appear in any biome not on the blacklist.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "BiomeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "biomeBlacklist": {
+      "label": "Biome blacklist",
+      "description": "Biomes on which this mutator cannot appear.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "BiomeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "animalDensityRange": {
+      "label": "Animal density range",
+      "description": "Required range of the tile's animal density for this mutator to be eligible.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "plantDensityRange": {
+      "label": "Plant density range",
+      "description": "Required range of the tile's plant density for this mutator to be eligible.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "minHilliness": {
+      "label": "Min hilliness",
+      "description": "Minimum hilliness required for this mutator to be eligible on a tile.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Flat", "SmallHills", "LargeHills", "Mountainous", "Impassable"]
+      }
+    },
+    "maxHilliness": {
+      "label": "Max hilliness",
+      "description": "Maximum hilliness at which this mutator is eligible on a tile.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Undefined", "Flat", "SmallHills", "LargeHills", "Mountainous", "Impassable"]
+      }
+    },
+    "coastSidesRange": {
+      "label": "Coast sides range",
+      "description": "Required range of coastal sides (0-4) on a tile for this mutator to be eligible.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "canSpawnOnRiver": {
+      "label": "Can spawn on river",
+      "description": "Whether this mutator can appear on tiles that have a river.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "canSpawnOnRoad": {
+      "label": "Can spawn on road",
+      "description": "Whether this mutator can appear on tiles that have a road.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "canSpawnOnLandmark": {
+      "label": "Can spawn on landmark",
+      "description": "Whether this mutator can appear on tiles that are landmarks.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    },
+    "requiresFactionOfDef": {
+      "label": "Requires faction of def",
+      "description": "FactionDef that must be present in the world for this mutator to be eligible.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FactionDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "pollutionRange": {
+      "label": "Pollution range",
+      "description": "Required range of tile pollution level for this mutator to be eligible.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "averageTemperatureRange": {
+      "label": "Average temperature range",
+      "description": "Required range of average tile temperature (in Celsius) for this mutator to be eligible.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "weatherFrequencyFactor": {
+      "label": "Weather frequency factor",
+      "description": "Multiplier applied to all weather event frequencies on tiles with this mutator.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "weatherFrequencyOffset": {
+      "label": "Weather frequency offset",
+      "description": "Flat additive offset applied to weather event frequencies on tiles with this mutator.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "weathersToAffect": {
+      "label": "Weathers to affect",
+      "description": "Weather types whose frequency is modified by weatherFrequencyFactor and weatherFrequencyOffset.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "WeatherDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "terrainPatchMakers": {
+      "label": "Terrain patch makers",
+      "description": "Perlin-noise terrain patch generators run during map generation on tiles with this mutator.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TerrainPatchMaker" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "plantKinds": {
+      "label": "Plant kinds",
+      "description": "ThingDefs allowed to grow as wild plants on tiles with this mutator.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "structureGenParms": {
+      "label": "Structure gen parms",
+      "description": "Parameters controlling ancient structure generation on tiles with this mutator.",
+      "type": { "kind": "object", "schemaRef": "AncientStructureGenParms" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "resourceBlacklist": {
+      "label": "Resource blacklist",
+      "description": "ThingDefs that cannot appear as resources on tiles with this mutator.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

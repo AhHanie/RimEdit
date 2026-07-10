@@ -1,0 +1,31 @@
+{
+  "objectType": "ScattererValidator_TerrainDef",
+  "label": "Terrain def validator",
+  "description": "Rejects scatter positions where cells within the given radius are not the specified terrain type.",
+  "fieldOrder": ["Class", "radius", "terrainDef"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be ScattererValidator_TerrainDef.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "radius": {
+      "label": "Radius",
+      "description": "Cell radius around the candidate position to check terrain type.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "terrainDef": {
+      "label": "Terrain def",
+      "description": "TerrainDef all cells in the radius must match.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "objectType": "HediffCompProperties_SeverityPerDay",
+  "label": "Severity per day comp",
+  "description": "Changes hediff severity each in-game day.",
+  "fieldOrder": ["Class", "compClass", "severityPerDay", "overrideGrowthRateResistanceStat", "showHoursToRecover"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "severityPerDay": {
+      "label": "Severity per day",
+      "description": "Severity change per in-game day. Negative values heal.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "overrideGrowthRateResistanceStat": {
+      "label": "Override growth rate resistance stat",
+      "description": "If set, uses this stat to scale severity change.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "showHoursToRecover": {
+      "label": "Show hours to recover",
+      "description": "If true, time to recovery is shown.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

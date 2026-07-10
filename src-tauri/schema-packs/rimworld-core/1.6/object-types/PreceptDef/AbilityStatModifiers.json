@@ -1,0 +1,24 @@
+{
+  "objectType": "AbilityStatModifiers",
+  "label": "Ability stat modifiers",
+  "description": "A list of stat modifiers applied when a pawn has a specific ability.",
+  "fieldOrder": ["ability", "modifiers"],
+  "fields": {
+    "ability": {
+      "label": "Ability",
+      "description": "The ability that must be present for these modifiers to apply.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "modifiers": {
+      "label": "Modifiers",
+      "description": "Stat modifiers applied while the pawn has this ability.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

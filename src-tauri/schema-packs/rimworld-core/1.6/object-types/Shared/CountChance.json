@@ -1,0 +1,22 @@
+{
+  "objectType": "CountChance",
+  "label": "Count chance",
+  "description": "A count/probability pair for weighted item generation. Specifies how many items to generate and the probability of generating that many.",
+  "fieldOrder": ["count", "chance"],
+  "fields": {
+    "count": {
+      "label": "Count",
+      "description": "Number of items to generate.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability weight for this count entry.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

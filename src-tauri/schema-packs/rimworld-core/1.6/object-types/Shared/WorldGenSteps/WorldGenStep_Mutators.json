@@ -1,0 +1,15 @@
+{
+  "objectType": "WorldGenStep_Mutators",
+  "label": "Mutators world gen step",
+  "description": "Applies tile mutators to world tiles.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

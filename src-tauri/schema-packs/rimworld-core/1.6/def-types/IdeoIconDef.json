@@ -1,0 +1,30 @@
+{
+  "defType": "IdeoIconDef",
+  "label": "Ideo icon",
+  "description": "Defines an icon used to represent an ideology on the ideology screen. Inherits meme and culture filters from IdeoSymbolPartDef.",
+  "inherits": ["IdeoSymbolPartDef"],
+  "fieldOrder": ["iconPath"],
+  "fields": {
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path for the ideology icon. Not translated - use the raw asset path. All shipped universal icons use the UI/Ideoligions/Universal/ prefix and specific icons use UI/Ideoligions/Specific/.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "UI/Ideoligions/Universal/AbstractsA",
+        "UI/Ideoligions/Universal/CirclesA",
+        "UI/Ideoligions/Specific/Blindsight"
+      ]
+    }
+  },
+  "templates": {
+    "basic-icon": {
+      "label": "Basic icon",
+      "description": "Minimal ideology icon with a def name and texture path.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "iconPath"],
+      "fieldValues": {}
+    }
+  }
+}

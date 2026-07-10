@@ -1,0 +1,29 @@
+{
+  "objectType": "BackstoryCategoryAndSlot",
+  "label": "Backstory category and slot",
+  "description": "A backstory category name paired with a life stage slot. Used in MeditationFocusDef to match or exclude pawns based on whether their backstory in the given slot belongs to the named category.",
+  "fieldOrder": [
+    "categoryName",
+    "slot"
+  ],
+  "fields": {
+    "categoryName": {
+      "label": "Category name",
+      "description": "Backstory category identifier (e.g. Tribal, AdultTribal, ChildTribal). Must match a value listed in BackstoryDef.spawnCategories -- not a def name, just a plain string tag.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "slot": {
+      "label": "Slot",
+      "description": "Life stage slot to check against: Childhood or Adulthood.",
+      "type": {
+        "kind": "enum",
+        "values": ["Childhood", "Adulthood"]
+      },
+      "required": false,
+      "defaultValue": "Childhood",
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "defType": "SoundDef",
+  "label": "Sound",
+  "description": "Defines a RimWorld sound event, including its sub-sounds, grains, and audio parameter mappings.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "sustain",
+    "context",
+    "eventNames",
+    "maxVoices",
+    "maxSimultaneous",
+    "priorityMode",
+    "slot",
+    "sustainStartSound",
+    "sustainStopSound",
+    "sustainFadeoutTime",
+    "sustainFadeoutStartSound",
+    "subSounds"
+  ],
+  "fields": {
+    "sustain": {
+      "label": "Sustain",
+      "description": "If true, this sound is a sustainer with a defined beginning and end.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "context": {
+      "label": "Context",
+      "description": "When the sound is allowed to play: always, map-only, or world-only.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Any",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Any", "MapOnly", "WorldOnly"]
+      }
+    },
+    "eventNames": {
+      "label": "Event names",
+      "description": "Alternative event names for this sound. Obsolete in source but still loadable.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "maxVoices": {
+      "label": "Max voices",
+      "description": "Maximum number of simultaneous instances of this sound. Minimum 1.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 4,
+      "xml": "element",
+      "validationHints": { "min": 1 }
+    },
+    "maxSimultaneous": {
+      "label": "Max simultaneous",
+      "description": "Maximum number of instances that can play at nearly the same moment.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 3,
+      "xml": "element"
+    },
+    "priorityMode": {
+      "label": "Priority mode",
+      "description": "Determines which instances are dropped when maxVoices is exceeded.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "PrioritizeNewest",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["PrioritizeNewest", "PrioritizeExisting", "PrioritizeNearest"]
+      }
+    },
+    "slot": {
+      "label": "Slot",
+      "description": "Sound slot name. Only one sound in a slot plays at a time (on-camera only).",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "",
+      "xml": "element"
+    },
+    "sustainStartSound": {
+      "label": "Sustain start sound",
+      "description": "SoundDef played when this sustainer starts.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "xmlAliases": ["sustainerStartSound"],
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "sustainStopSound": {
+      "label": "Sustain stop sound",
+      "description": "SoundDef played when this sustainer ends.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "xmlAliases": ["sustainerStopSound"],
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "sustainFadeoutTime": {
+      "label": "Sustain fadeout time",
+      "description": "After the sustainer ends, it fades out over this many real-time seconds.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "sustainFadeoutStartSound": {
+      "label": "Sustain fadeout start sound",
+      "description": "SoundDef played when this sustainer starts fading out.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "xmlAliases": ["sustainerFadeoutStartSound"],
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "subSounds": {
+      "label": "Sub-sounds",
+      "description": "List of sub-sound definitions that play when this sound is triggered.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SubSoundDef" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

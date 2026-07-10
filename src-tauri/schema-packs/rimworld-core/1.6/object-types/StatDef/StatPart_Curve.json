@@ -1,0 +1,30 @@
+{
+  "objectType": "StatPart_Curve",
+  "label": "Stat part (curve base)",
+  "description": "Abstract intermediate schema for StatPart subclasses that evaluate a SimpleCurve. Not directly instantiable - use a concrete subclass such as StatPart_Health or StatPart_MetabolismTotal.",
+  "fieldOrder": ["Class", "priority", "curve"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Piecewise linear curve evaluated by concrete subclasses to produce the stat modifier.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "objectType": "ScenPart_Rule_DisallowDesignator",
+  "label": "Rule (disallow designator)",
+  "description": "Disallows the player from using a specific designator. The designator type is defined on the ScenPartDef.",
+  "inherits": ["ScenPart_Rule"]
+}

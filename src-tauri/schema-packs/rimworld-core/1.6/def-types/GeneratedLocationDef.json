@@ -1,0 +1,75 @@
+{
+  "defType": "GeneratedLocationDef",
+  "label": "Generated location",
+  "description": "Defines a generated world location, such as an asteroid field, that the world component location generator can spawn on a planet layer as a candidate world object.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "layerDefs",
+    "layerMaximum",
+    "worldObjectDef",
+    "preciousResources",
+    "TimeoutRangeDays",
+    "weight"
+  ],
+  "fields": {
+    "layerDefs": {
+      "label": "Layer defs",
+      "description": "Planet layers this generated location can appear on. If omitted, the game falls back to the surface layer only at runtime.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "layerMaximum": {
+      "label": "Layer maximum",
+      "description": "Maximum number of this generated location allowed to exist simultaneously on a layer. -1 means unlimited.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "worldObjectDef": {
+      "label": "World object def",
+      "description": "World object type instantiated when this generated location is placed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WorldObjectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "preciousResources": {
+      "label": "Precious resources",
+      "description": "Candidate mineable ThingDefs; one is chosen at random as the precious resource for world objects implementing IResourceWorldObject.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "TimeoutRangeDays": {
+      "label": "Timeout range days",
+      "description": "Range in days before the generated world object expires, used only when it implements IExpirableWorldObject and the range is non-zero.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "20~40",
+      "xml": "element"
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative selection weight used when randomly picking among candidate GeneratedLocationDefs valid for a given planet layer tile.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-generated-location": {
+      "label": "Basic generated location",
+      "description": "Generated location with a world object and the layers it can appear on.",
+      "includeRequiredFields": true,
+      "promptFields": ["worldObjectDef", "layerDefs"],
+      "fieldValues": {}
+    }
+  }
+}

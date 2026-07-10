@@ -1,0 +1,33 @@
+{
+  "objectType": "JobGiver_AIResurrectTarget",
+  "label": "Job giver AI resurrect target",
+  "description": "Finds a nearby corpse of the same faction and uses the configured ability to resurrect it.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": ["abilityDef", "expiryInterval", "maxRegions"],
+  "fields": {
+    "abilityDef": {
+      "label": "Ability def",
+      "description": "The resurrection ability to cast on the target corpse.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "expiryInterval": {
+      "label": "Expiry interval",
+      "description": "Ticks before the issued resurrection job expires.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 500,
+      "xml": "element"
+    },
+    "maxRegions": {
+      "label": "Max regions",
+      "description": "Region search limit when trying to find a cast position for the resurrection.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 50,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,582 @@
+{
+  "objectType": "HediffStage",
+  "label": "Hediff stage",
+  "description": "One severity-keyed state of a HediffDef that becomes active when severity meets or exceeds minSeverity.",
+  "fieldOrder": [
+    "minSeverity",
+    "label",
+    "overrideLabel",
+    "becomeVisible",
+    "lifeThreatening",
+    "tale",
+    "vomitMtbDays",
+    "deathMtbDays",
+    "mtbDeathDestroysBrain",
+    "painFactor",
+    "painOffset",
+    "totalBleedFactor",
+    "naturalHealingFactor",
+    "regeneration",
+    "showRegenerationStat",
+    "forgetMemoryThoughtMtbDays",
+    "pctConditionalThoughtsNullified",
+    "pctAllThoughtNullification",
+    "opinionOfOthersFactor",
+    "fertilityFactor",
+    "hungerRateFactor",
+    "hungerRateFactorOffset",
+    "restFallFactor",
+    "restFallFactorOffset",
+    "socialFightChanceFactor",
+    "foodPoisoningChanceFactor",
+    "mentalBreakMtbDays",
+    "mentalBreakExplanation",
+    "blocksMentalBreaks",
+    "blocksInspirations",
+    "overrideMoodBase",
+    "severityGainFactor",
+    "removeRoamMtb",
+    "preventVacuumBurns",
+    "allowedMentalBreakIntensities",
+    "makeImmuneTo",
+    "capMods",
+    "hediffGivers",
+    "mentalStateGivers",
+    "statOffsets",
+    "statFactors",
+    "statOffsetsBySeverity",
+    "statFactorsBySeverity",
+    "damageFactors",
+    "enablesNeeds",
+    "disablesNeeds",
+    "multiplyStatChangesBySeverity",
+    "statOffsetEffectMultiplier",
+    "statFactorEffectMultiplier",
+    "capacityFactorEffectMultiplier",
+    "disabledWorkTags",
+    "overrideTooltip",
+    "extraTooltip",
+    "blocksSleeping",
+    "partEfficiencyOffset",
+    "partIgnoreMissingHP",
+    "destroyPart"
+  ],
+  "fields": {
+    "minSeverity": {
+      "label": "Min severity",
+      "description": "Minimum severity at which this stage becomes active. Stages are selected by finding the highest minSeverity not exceeding current severity.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display name for this stage shown in the health tab and tooltips. Overrides the hediff label while this stage is active.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "overrideLabel": {
+      "label": "Override label",
+      "description": "If set, fully replaces the hediff label in all UI contexts while this stage is active.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "becomeVisible": {
+      "label": "Become visible",
+      "description": "If true, the hediff becomes visible in the health tab when this stage is reached.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "lifeThreatening": {
+      "label": "Life threatening",
+      "description": "If true, this stage is considered life-threatening and raises medical urgency.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tale": {
+      "label": "Tale",
+      "description": "TaleDef recorded when the pawn first enters this stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TaleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "vomitMtbDays": {
+      "label": "Vomit MTB (days)",
+      "description": "Mean time in days between vomiting events while in this stage. Negative means no vomiting.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "deathMtbDays": {
+      "label": "Death MTB (days)",
+      "description": "Mean time in days between random death rolls while in this stage. Negative disables random death.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "mtbDeathDestroysBrain": {
+      "label": "MTB death destroys brain",
+      "description": "If true, a random death triggered by deathMtbDays destroys the brain, preventing resurrection.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "painFactor": {
+      "label": "Pain factor",
+      "description": "Multiplier applied to pain produced by this hediff while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "painOffset": {
+      "label": "Pain offset",
+      "description": "Flat amount added to pawn pain while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "totalBleedFactor": {
+      "label": "Total bleed factor",
+      "description": "Multiplier applied to the pawn's total bleed rate while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "naturalHealingFactor": {
+      "label": "Natural healing factor",
+      "description": "Multiplier applied to natural healing rate while in this stage. -1 means no override.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "regeneration": {
+      "label": "Regeneration",
+      "description": "HP regenerated per day on the affected body part. -1 means no regeneration.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "showRegenerationStat": {
+      "label": "Show regeneration stat",
+      "description": "If true, displays the regeneration amount as a visible stat in the health tab.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "forgetMemoryThoughtMtbDays": {
+      "label": "Forget memory thought MTB (days)",
+      "description": "Mean time in days between forgetting a random memory thought while in this stage. Negative disables.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "pctConditionalThoughtsNullified": {
+      "label": "Pct conditional thoughts nullified",
+      "description": "Fraction (0–1) of conditional thoughts that are nullified while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "pctAllThoughtNullification": {
+      "label": "Pct all thought nullification",
+      "description": "Fraction (0–1) of all thoughts that are nullified while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "opinionOfOthersFactor": {
+      "label": "Opinion of others factor",
+      "description": "Multiplier applied to this pawn's opinion of all other pawns while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "fertilityFactor": {
+      "label": "Fertility factor",
+      "description": "Multiplier applied to pawn fertility while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "hungerRateFactor": {
+      "label": "Hunger rate factor",
+      "description": "Multiplier applied to the pawn's hunger rate while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "hungerRateFactorOffset": {
+      "label": "Hunger rate factor offset",
+      "description": "Flat amount added to the hunger rate factor while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "restFallFactor": {
+      "label": "Rest fall factor",
+      "description": "Multiplier applied to how quickly the pawn's rest need falls while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "restFallFactorOffset": {
+      "label": "Rest fall factor offset",
+      "description": "Flat amount added to the rest fall factor while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "socialFightChanceFactor": {
+      "label": "Social fight chance factor",
+      "description": "Multiplier applied to the probability of starting a social fight while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "foodPoisoningChanceFactor": {
+      "label": "Food poisoning chance factor",
+      "description": "Multiplier applied to the chance of food poisoning while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "mentalBreakMtbDays": {
+      "label": "Mental break MTB (days)",
+      "description": "Mean time in days between random mental break triggers while in this stage. Negative disables.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "mentalBreakExplanation": {
+      "label": "Mental break explanation",
+      "description": "Text displayed in the mental break alert explaining why this hediff stage triggered the break.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "blocksMentalBreaks": {
+      "label": "Blocks mental breaks",
+      "description": "If true, the pawn cannot have a mental break while in this stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blocksInspirations": {
+      "label": "Blocks inspirations",
+      "description": "If true, the pawn cannot gain inspirations while in this stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "overrideMoodBase": {
+      "label": "Override mood base",
+      "description": "If set, replaces the pawn's base mood value while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "severityGainFactor": {
+      "label": "Severity gain factor",
+      "description": "Multiplier applied to any severity gain while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "removeRoamMtb": {
+      "label": "Remove roam MTB",
+      "description": "If true, roaming world pawns at this stage have their hediff removed over time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventVacuumBurns": {
+      "label": "Prevent vacuum burns",
+      "description": "If true, prevents the pawn from receiving vacuum burn injuries while in this stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedMentalBreakIntensities": {
+      "label": "Allowed mental break intensities",
+      "description": "Mental break intensity levels that can be triggered while in this stage. If empty, all intensities are allowed.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": ["Minor", "Major", "Extreme"]
+      }
+    },
+    "makeImmuneTo": {
+      "label": "Make immune to",
+      "description": "HediffDefs that the pawn becomes immune to while in this stage.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "capMods": {
+      "label": "Capacity modifiers",
+      "description": "Pawn capacity modifications applied while in this stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PawnCapacityModifier" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "hediffGivers": {
+      "label": "Hediff givers",
+      "description": "Givers that can apply secondary hediffs while the pawn is in this stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "HediffGiver" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "mentalStateGivers": {
+      "label": "Mental state givers",
+      "description": "Givers that can trigger mental states while the pawn is in this stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "MentalStateGiver" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Flat values added to named stats while in this stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "stat",
+      "valueField": "value",
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "defaultCollapsed": true
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Multipliers applied to named stats while in this stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "stat",
+      "valueField": "value",
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "defaultCollapsed": true
+    },
+    "statOffsetsBySeverity": {
+      "label": "Stat offsets by severity",
+      "description": "Severity-scaled stat offsets. Each entry pairs a stat with a curve mapping severity to offset value.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifierBySeverity" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "statFactorsBySeverity": {
+      "label": "Stat factors by severity",
+      "description": "Severity-scaled stat factors. Each entry pairs a stat with a curve mapping severity to factor value.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifierBySeverity" },
+      "required": false,
+      "xml": "listOfLi",
+      "defaultCollapsed": true
+    },
+    "damageFactors": {
+      "label": "Damage factors",
+      "description": "Multipliers applied to incoming damage of specific types while in this stage.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DamageFactor" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "damageDef",
+      "valueField": "factor",
+      "keyReference": {
+        "defType": "DamageDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      },
+      "defaultCollapsed": true
+    },
+    "enablesNeeds": {
+      "label": "Enables needs",
+      "description": "NeedDefs that are unlocked for the pawn while in this stage.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "NeedDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disablesNeeds": {
+      "label": "Disables needs",
+      "description": "NeedDefs that are suppressed for the pawn while in this stage.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "NeedDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "multiplyStatChangesBySeverity": {
+      "label": "Multiply stat changes by severity",
+      "description": "If true, all stat offsets and factors are scaled proportionally by current severity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "statOffsetEffectMultiplier": {
+      "label": "Stat offset effect multiplier",
+      "description": "StatDef whose value multiplies the effect of all stat offsets in this stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "statFactorEffectMultiplier": {
+      "label": "Stat factor effect multiplier",
+      "description": "StatDef whose value multiplies the effect of all stat factors in this stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "capacityFactorEffectMultiplier": {
+      "label": "Capacity factor effect multiplier",
+      "description": "StatDef whose value multiplies the effect of all capacity modifiers in this stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disabledWorkTags": {
+      "label": "Disabled work tags",
+      "description": "Work tags disabled for the pawn while in this stage. Comma-separated flags.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "overrideTooltip": {
+      "label": "Override tooltip",
+      "description": "If set, completely replaces the default stage tooltip.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "extraTooltip": {
+      "label": "Extra tooltip",
+      "description": "Extra text appended to the stage tooltip.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "blocksSleeping": {
+      "label": "Blocks sleeping",
+      "description": "If true, the pawn cannot sleep while in this stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "partEfficiencyOffset": {
+      "label": "Part efficiency offset",
+      "description": "Flat amount added to the efficiency of the affected body part while in this stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "partIgnoreMissingHP": {
+      "label": "Part ignore missing HP",
+      "description": "If true, the affected body part ignores HP loss for efficiency calculations while in this stage.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "destroyPart": {
+      "label": "Destroy part",
+      "description": "If true, the affected body part is destroyed when this stage is reached.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

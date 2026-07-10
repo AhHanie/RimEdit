@@ -1,0 +1,33 @@
+{
+  "objectType": "StageEndTrigger_RoleArrivedOrInTargetBed",
+  "label": "Stage end trigger (role arrived or in target bed)",
+  "description": "Ends the stage when all specified roles have arrived or the target pawn is in their bed.",
+  "fieldOrder": ["Class", "countsTowardsProgress", "roleIds", "clearTag", "tag"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "roleIds": {
+      "label": "Role IDs",
+      "description": "List of role IDs that must have arrived or be in the target bed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "clearTag": {
+      "label": "Clear tag",
+      "description": "If true, removes the arrival tag from role pawns when the trigger fires.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tag": {
+      "label": "Tag",
+      "description": "Pawn tag checked for the arrival condition.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

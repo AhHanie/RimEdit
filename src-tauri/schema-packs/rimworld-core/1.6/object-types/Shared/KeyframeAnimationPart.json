@@ -1,0 +1,17 @@
+{
+  "objectType": "KeyframeAnimationPart",
+  "label": "Keyframe animation part",
+  "description": "A per-node animation part driven by discrete keyframes. Each Keyframe specifies the position offset, rotation angle, scale, and optional graphic state at a given tick. Default worker is AnimationWorker_Keyframes.",
+  "inherits": ["AnimationPart"],
+  "fieldOrder": ["keyframes"],
+  "fields": {
+    "keyframes": {
+      "label": "Keyframes",
+      "description": "Ordered list of keyframes for this node. The worker interpolates between them over the animation's durationTicks.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Keyframe" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

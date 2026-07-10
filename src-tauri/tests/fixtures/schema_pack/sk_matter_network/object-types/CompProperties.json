@@ -1,0 +1,10 @@
+{
+  "objectType": "CompProperties",
+  "discriminator": {
+    "attribute": "Class",
+    "variants": {
+      "SK_Matter_Network.CompProperties_DiskCapacity": "SK_Matter_Network.CompProperties_DiskCapacity"
+    }
+  },
+  "fields": {}
+}

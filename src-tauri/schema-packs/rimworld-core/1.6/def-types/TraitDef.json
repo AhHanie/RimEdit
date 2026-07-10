@@ -1,0 +1,195 @@
+{
+  "defType": "TraitDef",
+  "label": "Trait",
+  "description": "Defines a pawn personality or biological trait and one or more degree-specific effects.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "degreeDatas",
+    "conflictingTraits",
+    "exclusionTags",
+    "conflictingPassions",
+    "forcedPassions",
+    "requiredWorkTypes",
+    "requiredWorkTags",
+    "disabledWorkTypes",
+    "disabledWorkTags",
+    "disableHostilityFromAnimalType",
+    "disableHostilityFromFaction",
+    "canBeSuppressed",
+    "commonality",
+    "commonalityFemale",
+    "allowOnHostileSpawn"
+  ],
+  "fields": {
+    "degreeDatas": {
+      "label": "Degree datas",
+      "description": "One or more degree-level entries defining the effects of this trait at each degree.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TraitDegreeData" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "conflictingTraits": {
+      "label": "Conflicting traits",
+      "description": "TraitDefs that cannot coexist with this trait on the same pawn.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "exclusionTags": {
+      "label": "Exclusion tags",
+      "description": "String tags shared with conflicting traits. Any two traits sharing a tag cannot be assigned to the same pawn.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "conflictingPassions": {
+      "label": "Conflicting passions",
+      "description": "SkillDefs for which this trait prevents a pawn from having a passion.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "forcedPassions": {
+      "label": "Forced passions",
+      "description": "SkillDefs for which this trait forces a pawn to have a passion.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredWorkTypes": {
+      "label": "Required work types",
+      "description": "WorkTypeDefs the pawn must be capable of for this trait to be assigned during generation.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "WorkTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredWorkTags": {
+      "label": "Required work tags",
+      "description": "WorkTags flags that must be enabled for the pawn to receive this trait during generation.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "disabledWorkTypes": {
+      "label": "Disabled work types",
+      "description": "WorkTypeDefs permanently disabled for pawns with this trait.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "WorkTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "disabledWorkTags": {
+      "label": "Disabled work tags",
+      "description": "WorkTags flags permanently disabled for pawns with this trait.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting", "AllWork"
+        ]
+      }
+    },
+    "disableHostilityFromAnimalType": {
+      "label": "Disable hostility from animal type",
+      "description": "If set, animals of this type will not become hostile toward pawns with this trait.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Canine", "Dryad"]
+      }
+    },
+    "disableHostilityFromFaction": {
+      "label": "Disable hostility from faction",
+      "description": "FactionDef whose members will not become hostile toward pawns with this trait.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FactionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "canBeSuppressed": {
+      "label": "Can be suppressed",
+      "description": "If false, this trait cannot be suppressed by conflicting traits or other suppression mechanics.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight for random trait selection. Higher values make the trait more common.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "commonalityFemale": {
+      "label": "Commonality (female)",
+      "description": "Commonality override for female pawns. Uses the base commonality when negative.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1.0,
+      "xml": "element"
+    },
+    "allowOnHostileSpawn": {
+      "label": "Allow on hostile spawn",
+      "description": "If false, this trait is not assigned to pawns spawned as hostile NPCs.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-trait": {
+      "label": "Basic trait",
+      "description": "A single-degree trait with one degreeDatas entry.",
+      "includeRequiredFields": true,
+      "fieldValues": {
+        "degreeDatas": [{}]
+      }
+    }
+  }
+}

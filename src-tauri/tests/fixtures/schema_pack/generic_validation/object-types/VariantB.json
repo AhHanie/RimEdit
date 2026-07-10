@@ -1,0 +1,18 @@
+{
+  "objectType": "VariantB",
+  "label": "Variant B",
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "variantBField": {
+      "label": "Variant B field",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

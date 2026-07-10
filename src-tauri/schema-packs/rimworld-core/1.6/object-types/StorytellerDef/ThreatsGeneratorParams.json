@@ -1,0 +1,59 @@
+{
+  "objectType": "ThreatsGeneratorParams",
+  "label": "Threats generator params",
+  "description": "Parameters that control the ThreatsGenerator storyteller comp: which threats to include, timing window, and point floor.",
+  "fieldOrder": [
+    "allowedThreats",
+    "onDays",
+    "offDays",
+    "minSpacingDays",
+    "numIncidentsRange",
+    "minThreatPoints"
+  ],
+  "fields": {
+    "allowedThreats": {
+      "label": "Allowed threats",
+      "description": "Which threat categories are generated. Flags enum; combine with commas.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "Raids", "MechClusters", "All"] }
+    },
+    "onDays": {
+      "label": "On days",
+      "description": "Duration in days of the active threat phase.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "offDays": {
+      "label": "Off days",
+      "description": "Duration in days of the quiet phase.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "minSpacingDays": {
+      "label": "Min spacing days",
+      "description": "Minimum days between generated threats.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "numIncidentsRange": {
+      "label": "Num incidents range",
+      "description": "Number of incidents per active phase, sampled from this range.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "minThreatPoints": {
+      "label": "Min threat points",
+      "description": "Minimum threat points for generated incidents.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

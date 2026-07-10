@@ -1,0 +1,35 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationInsert",
+  "label": "Insert",
+  "description": "Inserts value as a sibling of the node matched by xpath (prepends before it by default; order=Append inserts after it).",
+  "fieldOrder": ["xpath", "value", "order"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Target node the value is inserted next to.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    },
+    "value": {
+      "label": "Value",
+      "description": "XML content to insert as a sibling of the matched node.",
+      "type": { "kind": "object" },
+      "xml": "object",
+      "role": "xmlValue",
+      "required": true
+    },
+    "order": {
+      "label": "Order",
+      "description": "Prepend (default) before or Append after the matched node.",
+      "type": { "kind": "enum" },
+      "xml": "element",
+      "required": false,
+      "validationHints": {
+        "allowedValues": ["Append", "Prepend"]
+      }
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "objectType": "ThingDefCountClass",
+  "label": "Thing count",
+  "description": "A ThingDef with a stack count and optional stuff, quality, chance, and color overrides. Used in fixed inventory lists.",
+  "fieldOrder": [
+    "thingDef",
+    "count",
+    "stuff",
+    "quality",
+    "color",
+    "chance"
+  ],
+  "fields": {
+    "thingDef": {
+      "label": "Thing",
+      "description": "ThingDef of the item to include.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "count": {
+      "label": "Count",
+      "description": "Stack count of the item.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "stuff": {
+      "label": "Stuff",
+      "description": "ThingDef used as the material for stuff-able items.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "quality": {
+      "label": "Quality",
+      "description": "Quality category for the item. Only applies to items that support quality.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Awful", "Poor", "Normal", "Good", "Excellent", "Masterwork", "Legendary"]
+      }
+    },
+    "color": {
+      "label": "Color",
+      "description": "Color override for the item. Format: (r, g, b, a).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1, 1, 1, 1)", "(0.5, 0.3, 0.1, 1)"]
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0–1) that this item is included during generation. Defaults to 1 when omitted.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "objectType": "RitualOutcomeComp_DestroyConsumableBuilding",
+  "label": "Ritual outcome comp (destroy consumable building)",
+  "description": "Applies when the ritual target building is destroyed as part of the ritual. Extends RitualOutcomeComp directly; does not use a quality curve.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Quality offset applied when the ritual target building is present and destroyed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

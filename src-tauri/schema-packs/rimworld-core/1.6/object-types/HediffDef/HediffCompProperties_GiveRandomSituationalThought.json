@@ -1,0 +1,37 @@
+{
+  "objectType": "HediffCompProperties_GiveRandomSituationalThought",
+  "label": "Give random situational thought comp",
+  "description": "Periodically gives the pawn a randomly selected thought from a pool.",
+  "fieldOrder": ["Class", "compClass", "thoughts", "mtbDays"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "thoughts": {
+      "label": "Thoughts",
+      "description": "Pool of thoughts to randomly give.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mtbDays": {
+      "label": "MTB days",
+      "description": "Mean time in days between thought applications.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

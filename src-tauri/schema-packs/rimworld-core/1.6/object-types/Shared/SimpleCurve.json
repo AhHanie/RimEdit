@@ -1,0 +1,16 @@
+{
+  "objectType": "SimpleCurve",
+  "label": "Simple curve",
+  "description": "A piecewise linear curve defined by a list of scalar (x, y) points.",
+  "fieldOrder": ["points"],
+  "fields": {
+    "points": {
+      "label": "Points",
+      "description": "Curve points. Each item is a compact '(x, y)' scalar string.",
+      "type": { "kind": "list" },
+      "items": { "kind": "vector2" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

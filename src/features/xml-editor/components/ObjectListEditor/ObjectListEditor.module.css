@@ -1,0 +1,414 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item {
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  background: var(--surface-sidebar);
+  border-bottom: 1px solid var(--border-subtle);
+  min-height: 28px;
+}
+
+.expandBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 2px;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.expandBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.itemLabel {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.removeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.removeBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-error);
+}
+
+.itemBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 4px 8px;
+}
+
+.fieldRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.fieldRow:last-child {
+  border-bottom: none;
+}
+
+.fieldLabel {
+  flex: 0 0 120px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fieldInput {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 2px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.fieldInput:focus {
+  border-color: var(--border-focus);
+}
+
+.fieldCheckbox {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.fieldSelect {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 2px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.fieldSelect:focus {
+  border-color: var(--border-focus);
+}
+
+.fieldSelect option {
+  background: var(--surface-editor);
+  color: var(--text-primary);
+}
+
+.readonlyValue {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-disabled);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unknownNotice {
+  font-size: 11px;
+  color: var(--text-disabled);
+  margin: 4px 0 0;
+  font-style: italic;
+}
+
+.addSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.addSelect {
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+.addSelect option {
+  background: var(--surface-editor);
+  color: var(--text-primary);
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  background: none;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-muted);
+  width: fit-content;
+}
+
+.addBtn:hover {
+  border-color: var(--border-focus);
+  color: var(--accent);
+}
+
+.cancelBtn {
+  padding: 3px 6px;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cancelBtn:hover {
+  background: var(--surface-hover);
+}
+
+.customRow {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.customInput {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.customInput:focus {
+  border-color: var(--border-focus);
+}
+
+/* fieldRow variant where content sits top-aligned (for multi-row editors) */
+.fieldRowTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.fieldRowTop:last-child {
+  border-bottom: none;
+}
+
+.fieldTextarea {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 2px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+  resize: vertical;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+.fieldTextarea:focus {
+  border-color: var(--border-focus);
+}
+
+/* Inline named-map / typed-ref-list editor */
+.mapRows {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mapRow {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.mapKeyInput {
+  flex: 0 0 80px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 4px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.mapValueInput {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 4px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.mapKeyInput:focus,
+.mapValueInput:focus {
+  border-color: var(--border-focus);
+}
+
+.mapRemoveBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 2px;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.mapRemoveBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-error);
+}
+
+.mapAddBtn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 4px;
+  background: none;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+  color: var(--text-muted);
+  width: fit-content;
+  margin-top: 1px;
+}
+
+.mapAddBtn:hover {
+  border-color: var(--border-focus);
+  color: var(--accent);
+}
+
+/* Nested object section (collapsible, inside an item body) */
+.nestedSection {
+  border-left: 2px solid var(--border-subtle);
+  margin: 2px 0;
+  border-radius: 0 3px 3px 0;
+}
+
+.nestedSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  color: var(--text-secondary);
+  border-radius: 3px;
+}
+
+.nestedSectionHeader:hover {
+  background: var(--surface-hover);
+}
+
+.nestedSectionHeaderLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hasDataDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.nestedSectionBody {
+  padding: 2px 6px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Nested object list (inline list inside a section or item body) */
+.nestedList {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 0 2px;
+}

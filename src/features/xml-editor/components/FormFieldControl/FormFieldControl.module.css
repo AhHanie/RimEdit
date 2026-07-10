@@ -1,0 +1,318 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.field[data-dirty] {
+  border-left: 2px solid var(--accent);
+  padding-left: 8px;
+}
+
+.field[data-nested] {
+  padding-left: 16px;
+  border-left: 2px solid var(--border-subtle);
+}
+
+.field[data-nested][data-dirty] {
+  border-left: 2px solid var(--accent);
+}
+
+.field:last-child {
+  border-bottom: none;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.required {
+  color: var(--text-error);
+  font-size: 11px;
+}
+
+.fieldState {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pending {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.resetBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 3px;
+}
+
+.resetBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.clearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 3px;
+}
+
+.clearBtn:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--text-error);
+}
+
+.clearBtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.description {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--text-disabled);
+  margin: 0;
+  font-family: var(--font-mono);
+}
+
+.error {
+  font-size: 11px;
+  color: var(--text-error);
+  margin: 0;
+}
+
+.input,
+.textarea,
+.select {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+  width: 100%;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: var(--border-focus);
+}
+
+.select option {
+  background: var(--surface-editor);
+  color: var(--text-primary);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+
+.checkbox {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.readonlyValue {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+
+.listEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.listRow {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.listInput {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.listInput:focus {
+  border-color: var(--border-focus);
+}
+
+.listRemove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.listRemove:hover {
+  background: var(--surface-hover);
+  color: var(--text-error);
+}
+
+.listAdd {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  background: none;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-muted);
+  width: fit-content;
+}
+
+.listAdd:hover {
+  border-color: var(--border-focus);
+  color: var(--accent);
+}
+
+.flagsEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flagsRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.flagsCustomSection {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.colorField {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.colorField .input {
+  flex: 1;
+}
+
+.colorSwatch {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  border: 1px solid var(--border-subtle);
+  background: repeating-conic-gradient(var(--border-subtle) 0% 25%, transparent 0% 50%) 0 0 / 8px 8px;
+}
+
+.namedMapEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mapRow {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.mapKey {
+  flex: 0 0 40%;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.mapValue {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.mapKeyContainer {
+  flex: 0 0 40%;
+}
+
+.mapKey:focus,
+.mapValue:focus {
+  border-color: var(--border-focus);
+}

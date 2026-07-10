@@ -1,0 +1,114 @@
+{
+  "objectType": "CompProperties_Facility",
+  "label": "Facility comp",
+  "description": "Comp properties for a facility building that links to adjacent things and provides stat offsets or effects.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": [
+    "statOffsets",
+    "maxSimultaneous",
+    "mustBePlacedAdjacent",
+    "mustBePlacedAdjacentCardinalToBedHead",
+    "mustBePlacedAdjacentCardinalToAndFacingBedHead",
+    "mustBePlacedFacingThingLinear",
+    "canLinkToMedBedsOnly",
+    "maxDistance",
+    "minDistance",
+    "showMaxSimultaneous",
+    "requiresLOS"
+  ],
+  "fields": {
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Flat stat offsets applied to linked things while this facility is active. Keys are StatDef defNames; values are float offsets.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "maxSimultaneous": {
+      "label": "Max simultaneous",
+      "description": "Maximum number of things this facility can link to at the same time. Default 1.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "mustBePlacedAdjacent": {
+      "label": "Must be placed adjacent",
+      "description": "Whether this facility must be directly adjacent to the things it links to.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mustBePlacedAdjacentCardinalToBedHead": {
+      "label": "Must be placed adjacent cardinal to bed head",
+      "description": "Whether this facility must be placed in a cardinal direction adjacent to the head of a linked bed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mustBePlacedAdjacentCardinalToAndFacingBedHead": {
+      "label": "Must be placed adjacent cardinal to and facing bed head",
+      "description": "Whether this facility must be placed cardinally adjacent to and rotated toward the head of a linked bed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mustBePlacedFacingThingLinear": {
+      "label": "Must be placed facing thing linear",
+      "description": "Whether this facility must be placed in a direct line facing the linked thing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canLinkToMedBedsOnly": {
+      "label": "Can link to med beds only",
+      "description": "Whether this facility can only link to medical beds.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "maxDistance": {
+      "label": "Max distance",
+      "description": "Maximum distance in cells at which this facility can link to a target. Default 8.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 8,
+      "xml": "element"
+    },
+    "minDistance": {
+      "label": "Min distance",
+      "description": "Minimum distance in cells at which this facility can link to a target. Default 0.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "showMaxSimultaneous": {
+      "label": "Show max simultaneous",
+      "description": "Whether to show the max simultaneous link count in the facility's inspect string. Default true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "requiresLOS": {
+      "label": "Requires line of sight",
+      "description": "Whether this facility requires line of sight to the things it links to. Default true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

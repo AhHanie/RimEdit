@@ -1,0 +1,47 @@
+{
+  "defType": "BabyPlayDef",
+  "label": "Baby play",
+  "description": "Defines a play activity available to baby pawns. The workerClass implements eligibility checks and issues the jobDef when the activity is triggered.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "workerClass",
+    "jobDef"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# BabyPlayGiver subclass that implements eligibility checks and issues the job for this play activity.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "BabyPlayGiver_PlayStatic",
+        "BabyPlayGiver_PlayWalking",
+        "BabyPlayGiver_PlayToys"
+      ]
+    },
+    "jobDef": {
+      "label": "Job def",
+      "description": "JobDef the worker issues when this play activity is triggered.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "JobDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "basic-baby-play": {
+      "label": "Basic baby play",
+      "description": "Baby play activity with a worker class and job.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "jobDef"],
+      "fieldValues": {}
+    }
+  }
+}

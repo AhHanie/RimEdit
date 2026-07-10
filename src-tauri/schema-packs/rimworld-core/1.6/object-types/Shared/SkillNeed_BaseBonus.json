@@ -1,0 +1,51 @@
+{
+  "objectType": "SkillNeed_BaseBonus",
+  "label": "Skill need (base + bonus)",
+  "description": "Evaluates to baseValue + bonusPerLevel × skill level. Private fields in source but XML-backed.",
+  "fieldOrder": ["Class", "skill", "required", "baseValue", "bonusPerLevel"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# SkillNeed subclass used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "skill": {
+      "label": "Skill",
+      "description": "SkillDef that this need evaluates.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SkillDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "required": {
+      "label": "Required",
+      "description": "If true, the pawn must have this skill for the stat to be enabled.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "baseValue": {
+      "label": "Base value",
+      "description": "Value applied at skill level 0. Private in source but loaded from XML. Default is 0.5.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "bonusPerLevel": {
+      "label": "Bonus per level",
+      "description": "Additional value added per skill level. Private in source but loaded from XML. Default is 0.05.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.05,
+      "xml": "element"
+    }
+  }
+}

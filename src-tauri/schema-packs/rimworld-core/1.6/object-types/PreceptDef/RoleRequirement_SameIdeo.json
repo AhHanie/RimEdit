@@ -1,0 +1,22 @@
+{
+  "objectType": "RoleRequirement_SameIdeo",
+  "label": "Role requirement (same ideo)",
+  "description": "Requires the role pawn to share the colony ideology.",
+  "fieldOrder": ["Class", "labelKey"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RoleRequirement subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "labelKey": {
+      "label": "Label key",
+      "description": "Translation key for the requirement label.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

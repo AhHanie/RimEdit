@@ -1,0 +1,72 @@
+{
+  "objectType": "ScenPart",
+  "label": "Scenario part",
+  "description": "Base class for all scenario parts. Every scenario part has a def reference and visibility flag. Polymorphic: the Class attribute on each list item selects the concrete schema.",
+  "fieldOrder": ["def", "visible"],
+  "fields": {
+    "def": {
+      "label": "Def",
+      "description": "ScenPartDef that defines the metadata for this scenario part instance.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ScenPartDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "visible": {
+      "label": "Visible",
+      "description": "Whether this part is shown in the scenario editor UI. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    }
+  },
+  "discriminator": {
+    "attribute": "Class",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "ScenPart_AutoActivateMonolith": "ScenPart_AutoActivateMonolith",
+      "ScenPart_ConfigPage_ConfigureStartingPawns": "ScenPart_ConfigPage_ConfigureStartingPawns",
+      "ScenPart_ConfigPage_ConfigureStartingPawns_KindDefs": "ScenPart_ConfigPage_ConfigureStartingPawns_KindDefs",
+      "ScenPart_ConfigPage_ConfigureStartingPawns_Mutants": "ScenPart_ConfigPage_ConfigureStartingPawns_Mutants",
+      "ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes": "ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes",
+      "ScenPart_CreateIncident": "ScenPart_CreateIncident",
+      "ScenPart_CreateQuest": "ScenPart_CreateQuest",
+      "ScenPart_DisableIncident": "ScenPart_DisableIncident",
+      "ScenPart_DisableMapGen": "ScenPart_DisableMapGen",
+      "ScenPart_DisableQuest": "ScenPart_DisableQuest",
+      "ScenPart_DisallowBuilding": "ScenPart_DisallowBuilding",
+      "ScenPart_ForcedHediff": "ScenPart_ForcedHediff",
+      "ScenPart_ForcedMap": "ScenPart_ForcedMap",
+      "ScenPart_ForcedTrait": "ScenPart_ForcedTrait",
+      "ScenPart_GameCondition": "ScenPart_GameCondition",
+      "ScenPart_GameStartDialog": "ScenPart_GameStartDialog",
+      "ScenPart_MonolithGeneration": "ScenPart_MonolithGeneration",
+      "ScenPart_Naked": "ScenPart_Naked",
+      "ScenPart_NoPossessions": "ScenPart_NoPossessions",
+      "ScenPart_OnPawnDeathExplode": "ScenPart_OnPawnDeathExplode",
+      "ScenPart_PawnFilter_Age": "ScenPart_PawnFilter_Age",
+      "ScenPart_PermaGameCondition": "ScenPart_PermaGameCondition",
+      "ScenPart_PlanetLayer": "ScenPart_PlanetLayer",
+      "ScenPart_PlanetLayerFixed": "ScenPart_PlanetLayerFixed",
+      "ScenPart_PlayerFaction": "ScenPart_PlayerFaction",
+      "ScenPart_PawnModifier": "ScenPart_PawnModifier",
+      "ScenPart_PlayerPawnsArriveMethod": "ScenPart_PlayerPawnsArriveMethod",
+      "ScenPart_PursuingMechanoids": "ScenPart_PursuingMechanoids",
+      "ScenPart_Rule_DisallowDesignator": "ScenPart_Rule_DisallowDesignator",
+      "ScenPart_ScatterThingsAnywhere": "ScenPart_ScatterThingsAnywhere",
+      "ScenPart_ScatterThingsNearPlayerStart": "ScenPart_ScatterThingsNearPlayerStart",
+      "ScenPart_SetNeedLevel": "ScenPart_SetNeedLevel",
+      "ScenPart_StartingAnimal": "ScenPart_StartingAnimal",
+      "ScenPart_StartingMech": "ScenPart_StartingMech",
+      "ScenPart_StartingResearch": "ScenPart_StartingResearch",
+      "ScenPart_StartingThing_Defined": "ScenPart_StartingThing_Defined",
+      "ScenPart_StatFactor": "ScenPart_StatFactor"
+    }
+  }
+}

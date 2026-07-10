@@ -1,0 +1,25 @@
+{
+  "objectType": "Rule_Number",
+  "label": "Number rule",
+  "description": "A grammar rule that produces a random integer within a range as its output string.",
+  "inherits": ["Rule"],
+  "fieldOrder": ["Class", "keyword", "tag", "requiredTag", "usesLimit", "constantConstraints", "range", "selectionWeight"],
+  "fields": {
+    "range": {
+      "label": "Range",
+      "description": "The integer range from which the output number is randomly selected.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative weight of this rule when multiple rules are available for the same keyword.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

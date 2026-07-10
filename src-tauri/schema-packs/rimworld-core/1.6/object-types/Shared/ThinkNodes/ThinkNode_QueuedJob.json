@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_QueuedJob",
+  "label": "Think node queued job",
+  "description": "Dequeues and starts the next job from the pawn's job queue. Optionally restricts to jobs that only begin in bed.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": ["inBedOnly"],
+  "fields": {
+    "inBedOnly": {
+      "label": "In bed only",
+      "description": "If true, only queued jobs that are valid to start while the pawn is in a bed are dequeued.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

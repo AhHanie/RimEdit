@@ -1,0 +1,25 @@
+{
+  "objectType": "JobGiver_PatientGoToBed",
+  "label": "Job giver patient go to bed",
+  "description": "Directs an injured pawn to seek a medical bed for rest or treatment.",
+  "inherits": ["ThinkNode_JobGiver"],
+  "fieldOrder": ["respectTimetable", "urgentOnly"],
+  "fields": {
+    "respectTimetable": {
+      "label": "Respect timetable",
+      "description": "If true, the pawn checks whether the timetable allows lying down before seeking a bed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "urgentOnly": {
+      "label": "Urgent only",
+      "description": "If true, only triggers when the pawn urgently needs medical rest, not merely when rest is recommended.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

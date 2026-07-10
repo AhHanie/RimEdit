@@ -1,0 +1,40 @@
+{
+  "objectType": "IngestibleModifiers",
+  "label": "Ingestible modifiers",
+  "description": "Modifiers applied to the optimality or poison chance when a pawn with a given trait degree ingests a specific item.",
+  "fieldOrder": [
+    "ingestible",
+    "optimalityOffset",
+    "poisonChanceOverride"
+  ],
+  "fields": {
+    "ingestible": {
+      "label": "Ingestible",
+      "description": "ThingDef of the ingestible these modifiers apply to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "optimalityOffset": {
+      "label": "Optimality offset",
+      "description": "Flat offset added to the pawn's food optimality score when ingesting this item.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    },
+    "poisonChanceOverride": {
+      "label": "Poison chance override",
+      "description": "Overrides the base poisoning chance when the pawn ingests this item. Applied instead of the default chance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.0,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "objectType": "RitualStageAction_RemovePawnsFromLord",
+  "label": "Ritual stage action (remove pawns from lord)",
+  "description": "Removes pawns of the specified roles from the ritual lord, freeing them from ritual duties.",
+  "fieldOrder": ["Class", "roleIds"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "roleIds": {
+      "label": "Role IDs",
+      "description": "IDs of roles whose assigned pawns will be removed from the ritual lord.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

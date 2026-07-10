@@ -1,0 +1,19 @@
+{
+  "objectType": "JobGiver_KeepLyingDown",
+  "label": "Job giver keep lying down",
+  "description": "Directs the pawn to remain lying down (e.g. after being downed or as part of a ritual). Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "useBed"
+  ],
+  "fields": {
+    "useBed": {
+      "label": "Use bed",
+      "description": "If true, the pawn seeks a bed to lie down in rather than lying on the ground.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

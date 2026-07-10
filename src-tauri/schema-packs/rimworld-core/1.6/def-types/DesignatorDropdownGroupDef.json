@@ -1,0 +1,49 @@
+{
+  "defType": "DesignatorDropdownGroupDef",
+  "label": "Designator dropdown group",
+  "description": "Defines a build-menu dropdown group that clusters multiple buildable defs into a single expandable button in the Architect panel.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "iconSource",
+    "useGridMenu",
+    "includeEyeDropperTool"
+  ],
+  "fields": {
+    "iconSource": {
+      "label": "Icon source",
+      "description": "Determines how the dropdown button icon is chosen. Cost uses the highest market-value ingredient icon; Placed uses the placed designator icon.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Cost",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Cost", "Placed"]
+      }
+    },
+    "useGridMenu": {
+      "label": "Use grid menu",
+      "description": "If true, the dropdown opens a grid-style menu instead of a float menu when any contained place designator belongs to this group.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "includeEyeDropperTool": {
+      "label": "Include eye dropper tool",
+      "description": "If true and the dropdown contains terrain designators, the floor color eyedropper option is included.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-dropdown-group": {
+      "label": "Basic dropdown group",
+      "description": "Minimal designator dropdown group with a def name and label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

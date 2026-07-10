@@ -1,0 +1,46 @@
+{
+  "objectType": "HediffCompProperties_DamageBrain",
+  "label": "Damage brain comp",
+  "description": "Periodically deals brain damage to the pawn.",
+  "fieldOrder": ["Class", "compClass", "chance", "damage", "onlyOnLifeThreatening"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Chance per day to deal brain damage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "damage": {
+      "label": "Damage",
+      "description": "Amount of brain damage dealt.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "onlyOnLifeThreatening": {
+      "label": "Only on life threatening",
+      "description": "Only deals brain damage when at life-threatening severity.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

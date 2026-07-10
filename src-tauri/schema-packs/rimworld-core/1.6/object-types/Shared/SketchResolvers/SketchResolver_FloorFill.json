@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_FloorFill",
+  "label": "Sketch resolver: Floor fill",
+  "description": "Concrete RimWorld SketchResolver_FloorFill resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

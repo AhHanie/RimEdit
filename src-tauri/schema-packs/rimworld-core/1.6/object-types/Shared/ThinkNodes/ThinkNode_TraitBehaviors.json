@@ -1,0 +1,6 @@
+{
+  "objectType": "ThinkNode_TraitBehaviors",
+  "label": "Think node trait behaviors",
+  "description": "Iterates the pawn's traits and runs the first trait's thinkTree, if any. No XML-loadable fields.",
+  "inherits": ["ThinkNode"]
+}

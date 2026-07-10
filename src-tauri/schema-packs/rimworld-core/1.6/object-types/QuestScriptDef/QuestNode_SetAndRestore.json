@@ -1,0 +1,40 @@
+{
+  "objectType": "QuestNode_SetAndRestore",
+  "label": "QuestNode SetAndRestore",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_SetAndRestore.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "name",
+    "value",
+    "node"
+  ],
+  "fields": {
+    "name": {
+      "description": "Slate variable name to temporarily set.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "value": {
+      "description": "SlateRef<object> literal, expression, or $varName value.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "node": {
+      "description": "QuestNode run while the temporary value is set.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

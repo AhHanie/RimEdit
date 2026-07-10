@@ -1,0 +1,44 @@
+{
+  "objectType": "IdeoSymbolPack",
+  "label": "Ideo symbol pack",
+  "description": "A set of translated strings used to generate the ideology's name, theme, and member title. Multiple packs are defined; one is chosen at ideology creation.",
+  "fieldOrder": ["ideoName", "theme", "adjective", "member", "prefix"],
+  "fields": {
+    "ideoName": {
+      "label": "Ideo name",
+      "description": "The ideology's primary name word. Used directly when present; falls back to theme. Must be translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "theme": {
+      "label": "Theme",
+      "description": "The core theme word used when ideoName is absent. Also serves as the primary symbol when ideoName is empty. Must be translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "adjective": {
+      "label": "Adjective",
+      "description": "Adjectival form used in compound ideology names. Must be translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "member": {
+      "label": "Member",
+      "description": "Title given to ideology members. Must be translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "prefix": {
+      "label": "Prefix",
+      "description": "When true, the symbol is used as a name prefix rather than a suffix.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

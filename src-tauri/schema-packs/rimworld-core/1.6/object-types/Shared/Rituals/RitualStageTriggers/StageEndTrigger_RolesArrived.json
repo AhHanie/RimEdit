@@ -1,0 +1,33 @@
+{
+  "objectType": "StageEndTrigger_RolesArrived",
+  "label": "Stage end trigger (roles arrived)",
+  "description": "Ends the stage when all specified roles have arrived at their positions (have the Arrived pawn tag set).",
+  "fieldOrder": ["Class", "countsTowardsProgress", "roleIds", "clearTag", "tag"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "roleIds": {
+      "label": "Role IDs",
+      "description": "List of role IDs that must have the Arrived tag for this trigger to fire.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "clearTag": {
+      "label": "Clear tag",
+      "description": "If true, removes the Arrived tag from role pawns when the trigger fires.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tag": {
+      "label": "Tag",
+      "description": "Pawn tag checked -- defaults to Arrived for this trigger subclass.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "objectType": "RitualOutcomeComp_TargetThingStat",
+  "label": "Ritual outcome comp (target thing stat)",
+  "description": "Scores quality based on a stat value of the ritual target Thing, evaluated via a curve.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "statDef", "mustBeBed"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Not used directly; quality is computed from the curve evaluated at the thing stat.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "SimpleCurve mapping the target thing stat value (X) to quality offset (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "statDef": {
+      "label": "Stat def",
+      "description": "StatDef read from the ritual target Thing.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "mustBeBed": {
+      "label": "Must be bed",
+      "description": "If true, the comp only applies when the ritual target is a bed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

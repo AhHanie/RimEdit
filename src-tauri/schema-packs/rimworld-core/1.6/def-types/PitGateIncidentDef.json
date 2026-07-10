@@ -1,0 +1,89 @@
+{
+  "defType": "PitGateIncidentDef",
+  "label": "Pit gate incident",
+  "description": "Defines a timed incident a PitGate map portal can fire, such as the Anomaly fleshbeast emergence.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "baseChance",
+    "durationRangeTicks",
+    "usesThreatPoints",
+    "disableEnteringTicks",
+    "disableEnteringReason",
+    "letterText",
+    "letterLabel"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "PitGateIncidentWorker subclass that implements this incident's execution logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": "PitGateIncidentWorker",
+      "examples": ["PitGateIncidentWorker_Fleshbeast"]
+    },
+    "baseChance": {
+      "label": "Base chance",
+      "description": "Relative selection weight used when the pit gate picks an incident to fire. Weights are normalized across all PitGateIncidentDefs on the active PitGate.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "durationRangeTicks": {
+      "label": "Duration range (ticks)",
+      "description": "Range in game ticks, sampled once per fire, for how long the incident worker stays active.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["600", "300~900"]
+    },
+    "usesThreatPoints": {
+      "label": "Uses threat points",
+      "description": "If true, the dev gizmo prompts for a threat-points value before force-firing this incident.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    },
+    "disableEnteringTicks": {
+      "label": "Disable entering ticks",
+      "description": "Ticks after the incident fires during which the pit gate cannot be entered while this incident is active.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 0
+    },
+    "disableEnteringReason": {
+      "label": "Disable entering reason",
+      "description": "Reason shown (capitalized) for why the portal cannot be entered while this incident is active.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterText": {
+      "label": "Letter text",
+      "description": "Body text of the notification letter sent when this incident fires.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "Title of the notification letter sent when this incident fires.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-pit-gate-incident": {
+      "label": "Basic pit gate incident",
+      "description": "A timed incident a PitGate can fire: worker class, selection weight, duration, and the notification letter.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "baseChance", "durationRangeTicks", "letterLabel", "letterText"],
+      "fieldValues": {}
+    }
+  }
+}

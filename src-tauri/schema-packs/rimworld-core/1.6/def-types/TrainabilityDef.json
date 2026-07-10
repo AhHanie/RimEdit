@@ -1,0 +1,25 @@
+{
+  "defType": "TrainabilityDef",
+  "label": "Trainability",
+  "description": "Defines an animal intelligence level that gates which training steps a pawn can learn. Referenced by TrainableDef.requiredTrainability and RaceProperties.trainability.",
+  "inherits": ["Def"],
+  "fieldOrder": ["intelligenceOrder"],
+  "fields": {
+    "intelligenceOrder": {
+      "label": "Intelligence order",
+      "description": "Numeric rank used to compare intelligence levels. Higher values represent greater trainability. Shipped values: None=0, Intermediate=20, Advanced=30.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-trainability": {
+      "label": "New trainability",
+      "description": "Minimal trainability def with a defName ready for authoring.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName"],
+      "fieldValues": {}
+    }
+  }
+}

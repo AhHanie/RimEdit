@@ -1,0 +1,41 @@
+.section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.headingRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.heading {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.readOnlyBadge {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  padding: 3px 0;
+  font-size: 11px;
+}
+
+.label {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  min-width: 160px;
+}
+
+.value {
+  color: var(--text-primary);
+  word-break: break-word;
+}

@@ -1,0 +1,21 @@
+{
+  "objectType": "ThingSetMaker_SubTree",
+  "label": "Sub-tree maker",
+  "description": "Delegates generation to another named ThingSetMakerDef, allowing maker trees to be reused across multiple defs.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "def"
+  ],
+  "fields": {
+    "def": {
+      "label": "Def",
+      "description": "ThingSetMakerDef whose root maker tree is invoked for generation.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingSetMakerDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

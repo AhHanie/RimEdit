@@ -1,0 +1,45 @@
+{
+  "objectType": "PreceptComp",
+  "label": "Precept comp",
+  "description": "Base schema for PreceptDef comps. Specific comp schemas are selected by the li Class attribute.",
+  "fieldOrder": ["Class", "description"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "PreceptComp",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "PreceptComp_Apparel": "PreceptComp_Apparel",
+      "PreceptComp_Apparel_Desired": "PreceptComp_Apparel_Desired",
+      "PreceptComp_Apparel_DesiredStrong": "PreceptComp_Apparel_DesiredStrong",
+      "PreceptComp_BedThought": "PreceptComp_BedThought",
+      "PreceptComp_DevelopmentPoints": "PreceptComp_DevelopmentPoints",
+      "PreceptComp_GoodwillSituation": "PreceptComp_GoodwillSituation",
+      "PreceptComp_KnowsMemoryThought": "PreceptComp_KnowsMemoryThought",
+      "PreceptComp_MentalBreak": "PreceptComp_MentalBreak",
+      "PreceptComp_SelfTookMemoryThought": "PreceptComp_SelfTookMemoryThought",
+      "PreceptComp_SituationalThought": "PreceptComp_SituationalThought",
+      "PreceptComp_Thought": "PreceptComp_Thought",
+      "PreceptComp_UnwillingToDo": "PreceptComp_UnwillingToDo",
+      "PreceptComp_UnwillingToDo_Chance": "PreceptComp_UnwillingToDo_Chance",
+      "PreceptComp_UnwillingToDo_Gendered": "PreceptComp_UnwillingToDo_Gendered",
+      "PreceptComp_UnwillingToDo_WithDef": "PreceptComp_UnwillingToDo_WithDef"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor for this comp.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

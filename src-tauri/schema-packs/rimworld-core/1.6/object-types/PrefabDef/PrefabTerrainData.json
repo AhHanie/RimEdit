@@ -1,0 +1,46 @@
+{
+  "objectType": "PrefabTerrainData",
+  "description": "A terrain patch entry inside a PrefabDef. The containing element name is the TerrainDef defName (the 'def' field). Entries with empty rects are ignored at runtime.",
+  "fieldOrder": ["def", "chance", "color", "rects"],
+  "fields": {
+    "def": {
+      "label": "Terrain",
+      "description": "TerrainDef defName. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": {
+        "defType": "TerrainDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability this terrain patch is placed (0-1). Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "validationHints": { "min": 0.0, "max": 1.0 },
+      "examples": ["1", "0.5", "0.1"]
+    },
+    "color": {
+      "label": "Color def",
+      "description": "ColorDef applied to the terrain tiles in this patch.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "reference": {
+        "defType": "ColorDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "rects": {
+      "label": "Rects",
+      "description": "List of cell rectangles to paint with this terrain. Each <li> is a CellRect in compact '(x, z, width, height)' format. Entries with empty rects are ignored at runtime.",
+      "type": { "kind": "list" },
+      "xml": "listOfLi",
+      "required": false,
+      "examples": ["(0, 0, 2, 2)", "(1, 1, 5, 3)"]
+    }
+  }
+}

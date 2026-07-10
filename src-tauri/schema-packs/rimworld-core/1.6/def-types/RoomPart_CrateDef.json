@@ -1,0 +1,44 @@
+{
+  "defType": "RoomPart_CrateDef",
+  "label": "Room part crate",
+  "description": "A room part that places loot crates. Inherits from RoomPartDef.",
+  "inherits": ["RoomPartDef"],
+  "fieldOrder": ["crateDef", "thingSetMaker", "rotations", "triggerThreatSignal"],
+  "fields": {
+    "crateDef": {
+      "label": "Crate def",
+      "description": "ThingDef used for the placed crate.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "thingSetMaker": {
+      "label": "Thing set maker",
+      "description": "ThingSetMakerDef used to generate the crate's loot contents.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingSetMakerDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "rotations": {
+      "label": "Rotations",
+      "description": "Allowed placement rotations for the crate as rotation flags.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["North", "East", "South", "West", "All"]
+      },
+      "defaultValue": "All"
+    },
+    "triggerThreatSignal": {
+      "label": "Trigger threat signal",
+      "description": "Whether opening this crate triggers a threat signal.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": true
+    }
+  }
+}

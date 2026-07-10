@@ -1,0 +1,32 @@
+{
+  "objectType": "ConstantConstraint",
+  "label": "Constant constraint",
+  "description": "A key-value constraint that must be satisfied in the grammar resolver context for the containing rule to fire.",
+  "fieldOrder": ["key", "value", "type"],
+  "fields": {
+    "key": {
+      "label": "Key",
+      "description": "The constraint key name checked against the resolver context.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "value": {
+      "label": "Value",
+      "description": "The expected value for the constraint key.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "type": {
+      "label": "Comparison type",
+      "description": "The comparison operator applied between the resolver context value and the constraint value.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Equal", "NotEqual", "Less", "Greater", "LessOrEqual", "GreaterOrEqual"]
+      }
+    }
+  }
+}

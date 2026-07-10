@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/ThingDef[defName="Wall"]</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>Defs/ThingDef[defName="Wall"]/statBases</xpath>
+      <value>
+        <MoveSpeed>1</MoveSpeed>
+      </value>
+    </match>
+  </Operation>
+</Patch>

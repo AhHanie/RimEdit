@@ -1,0 +1,29 @@
+{
+  "objectType": "StockGenerator_Slaves",
+  "label": "Slaves generator",
+  "description": "Generates humanlike slave pawns for sale. Only fires for factions whose ideos approve of slavery. Supports optional respect-population-intent gating and a specific pawn kind override.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": ["respectPopulationIntent", "slaveKindDef"],
+  "fields": {
+    "respectPopulationIntent": {
+      "label": "Respect population intent",
+      "description": "If true, generation is probabilistically skipped when the storyteller's population intent is high, reducing slave stock when the colony is well-populated.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "slaveKindDef": {
+      "label": "Slave kind def",
+      "description": "PawnKindDef used when generating slave pawns. Defaults to PawnKindDefOf.Slave when absent.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "objectType": "PawnRenderNodeProperties_Eye",
+  "label": "Render node properties (eye)",
+  "description": "Render node properties for pawn eye rendering. No additional loadable fields beyond the base; constructor and ResolveReferences set defaults.",
+  "inherits": ["PawnRenderNodeProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

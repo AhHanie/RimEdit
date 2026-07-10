@@ -1,0 +1,34 @@
+{
+  "defType": "PsychicRitualDef_VoidProvocation",
+  "label": "Psychic ritual -- void provocation",
+  "description": "Ritual that provokes a psychic shock from the void. The invoker risks a dark psychic shock and may trigger an incident.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "psychicShockChanceFromQualityCurve",
+    "darkPsychicShockDurarionHoursRange",
+    "incidentDelayHoursRange"
+  ],
+  "fields": {
+    "psychicShockChanceFromQualityCurve": {
+      "label": "Psychic shock chance from quality curve",
+      "description": "Curve mapping ritual quality to the chance that the invoker suffers a psychic shock.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "darkPsychicShockDurarionHoursRange": {
+      "label": "Dark psychic shock duration hours range",
+      "description": "Random duration in hours for the dark psychic shock applied to the invoker.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "incidentDelayHoursRange": {
+      "label": "Incident delay hours range",
+      "description": "Random delay in hours before the void provocation incident fires.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

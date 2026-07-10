@@ -1,0 +1,369 @@
+{
+  "defType": "ResearchProjectDef",
+  "label": "Research project",
+  "description": "Defines a node on the research tree that unlocks technology when completed.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "baseCost",
+    "prerequisites",
+    "hiddenPrerequisites",
+    "techLevel",
+    "requiredResearchBuilding",
+    "requiredResearchFacilities",
+    "tags",
+    "tab",
+    "researchViewX",
+    "researchViewY",
+    "discoveredLetterTitle",
+    "discoveredLetterText",
+    "discoveredLetterDisabledWhen",
+    "techprintCount",
+    "techprintCommonality",
+    "techprintMarketValue",
+    "heldByFactionCategoryTags",
+    "hideWhen",
+    "requiresMechanitor",
+    "requiredAnalyzed",
+    "recalculatePower",
+    "knowledgeCategory",
+    "knowledgeCost",
+    "teachConcept",
+    "generalRules",
+    "requireGravEngineInspected",
+    "customUnlockTexts"
+  ],
+  "fields": {
+    "baseCost": {
+      "label": "Base cost",
+      "description": "Research points required to complete this project before speed modifiers.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "prerequisites": {
+      "label": "Prerequisites",
+      "description": "ResearchProjectDef references that must be completed before this project becomes available.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ResearchProjectDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "hiddenPrerequisites": {
+      "label": "Hidden prerequisites",
+      "description": "Like prerequisites, but hidden from the UI until unlocked.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ResearchProjectDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "techLevel": {
+      "label": "Tech level",
+      "description": "TechLevel enum value restricting which colonies can research this project.",
+      "type": {
+        "kind": "enum"
+      },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "Undefined",
+        "Animal",
+        "Neolithic",
+        "Medieval",
+        "Industrial",
+        "Spacer",
+        "Ultra",
+        "Archotech"
+      ]
+    },
+    "requiredResearchBuilding": {
+      "label": "Required research building",
+      "description": "ThingDef reference for the research bench required to study this project.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "requiredResearchFacilities": {
+      "label": "Required research facilities",
+      "description": "ThingDef references for facility buildings that must be adjacent to the research bench.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "ResearchProjectTagDef references used for grouping or conditional effects.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ResearchProjectTagDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "tab": {
+      "label": "Research tab",
+      "description": "ResearchTabDef reference controlling which tab this project appears on in the research UI.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ResearchTabDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "researchViewX": {
+      "label": "Research view X",
+      "description": "Horizontal position of this node on the research tab grid.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "researchViewY": {
+      "label": "Research view Y",
+      "description": "Vertical position of this node on the research tab grid.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "discoveredLetterTitle": {
+      "label": "Discovered letter title",
+      "description": "Title of the letter shown when this research project is completed.",
+      "type": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "discoveredLetterText": {
+      "label": "Discovered letter text",
+      "description": "Body text of the letter shown when this research project is completed.",
+      "type": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "discoveredLetterDisabledWhen": {
+      "label": "Discovered letter disabled when",
+      "description": "Difficulty conditions under which the discovered letter is suppressed.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "DifficultyConditionConfig"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "techprintCount": {
+      "label": "Techprint count",
+      "description": "Number of techprints that must be applied before this project can be researched.",
+      "type": {
+        "kind": "integer"
+      },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "techprintCommonality": {
+      "label": "Techprint commonality",
+      "description": "Relative frequency at which techprints for this project appear in trade stock.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "techprintMarketValue": {
+      "label": "Techprint market value",
+      "description": "Base market value of a techprint for this project.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "defaultValue": 1000.0,
+      "xml": "element"
+    },
+    "heldByFactionCategoryTags": {
+      "label": "Held by faction category tags",
+      "description": "Faction category tag strings identifying factions that can hold techprints for this project.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "hideWhen": {
+      "label": "Hide when",
+      "description": "Difficulty conditions under which this research project is hidden from the research tree.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "DifficultyConditionConfig"
+      },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "requiresMechanitor": {
+      "label": "Requires mechanitor",
+      "description": "If true, a mechanitor must be present in the colony to research this project.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requiredAnalyzed": {
+      "label": "Required analyzed",
+      "description": "ThingDef references for items that must have been analyzed before this project unlocks.",
+      "type": {
+        "kind": "list"
+      },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "recalculatePower": {
+      "label": "Recalculate power",
+      "description": "If true, triggers a recalculation of the power grid when this research is completed.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "knowledgeCategory": {
+      "label": "Knowledge category",
+      "description": "KnowledgeCategoryDef reference controlling which anomaly knowledge track this research belongs to.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "KnowledgeCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "knowledgeCost": {
+      "label": "Knowledge cost",
+      "description": "Amount of knowledge points consumed from the associated category to unlock this project.",
+      "type": {
+        "kind": "float"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "teachConcept": {
+      "label": "Teach concept",
+      "description": "ConceptDef reference for the tutorial lesson taught when this research is completed.",
+      "type": {
+        "kind": "defReference"
+      },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ConceptDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "generalRules": {
+      "label": "General rules",
+      "description": "Free-form rule set object used by the faction ideology system for unlocking this project.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "RulePack"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "requireGravEngineInspected": {
+      "label": "Require grav engine inspected",
+      "description": "If true, a gravity engine must have been inspected before this project can be researched. Odyssey expansion.",
+      "type": {
+        "kind": "boolean"
+      },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "customUnlockTexts": {
+      "label": "Custom unlock texts",
+      "description": "List of localized strings shown in the research completed notification.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "localizedString"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "basic-research": {
+      "label": "Basic research project",
+      "description": "Research project with a base cost and tech level.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "baseCost"
+      ],
+      "fieldValues": {
+        "techLevel": "Industrial"
+      }
+    }
+  }
+}

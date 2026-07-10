@@ -1,0 +1,28 @@
+{
+  "defType": "BillStoreModeDef",
+  "label": "Bill store mode",
+  "description": "Defines a bill store mode that controls where crafted products are delivered after a production bill completes.",
+  "inherits": ["Def"],
+  "fieldOrder": ["listOrder"],
+  "fields": {
+    "listOrder": {
+      "label": "List order",
+      "description": "Controls the position of this store mode in the bill configuration dropdown. Shipped modes use multiples of 10 (0, 10, 20) to leave room for modded entries.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-bill-store-mode": {
+      "label": "New bill store mode",
+      "description": "Minimal bill store mode with a def name, label, and list order.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "listOrder": "0"
+      }
+    }
+  }
+}

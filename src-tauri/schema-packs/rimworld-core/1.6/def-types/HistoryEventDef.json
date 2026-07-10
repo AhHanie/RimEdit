@@ -1,0 +1,17 @@
+{
+  "defType": "HistoryEventDef",
+  "label": "History event",
+  "description": "An event recorded by RimWorld for ideology, goodwill, quest, memory, and related gameplay reactions.",
+  "inherits": ["Def"],
+  "fieldOrder": ["maxRemembered"],
+  "fields": {
+    "maxRemembered": {
+      "label": "Max remembered",
+      "description": "Maximum number of recent instances of this event remembered by the history event manager.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 20,
+      "xml": "element"
+    }
+  }
+}

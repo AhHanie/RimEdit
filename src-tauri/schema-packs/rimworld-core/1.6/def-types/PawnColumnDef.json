@@ -1,0 +1,178 @@
+{
+  "defType": "PawnColumnDef",
+  "label": "Pawn column",
+  "description": "Defines one column shown in pawn management tables such as the Assign, Restrict, Work, and Animals tabs.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "sortable",
+    "ignoreWhenCalculatingOptimalTableSize",
+    "headerIcon",
+    "headerIconSize",
+    "headerTip",
+    "headerAlwaysInteractable",
+    "paintable",
+    "groupable",
+    "trainable",
+    "gap",
+    "workType",
+    "moveWorkTypeLabelDown",
+    "showIcon",
+    "useLabelShort",
+    "widthPriority",
+    "width"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# PawnColumnWorker subclass that implements this column's drawing and interaction logic. Defaults to PawnColumnWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "sortable": {
+      "label": "Sortable",
+      "description": "If true, clicking the column header sorts the pawn table by this column's value.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreWhenCalculatingOptimalTableSize": {
+      "label": "Ignore when calculating optimal table size",
+      "description": "If true, this column is excluded from the optimal table width calculation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "headerIcon": {
+      "label": "Header icon",
+      "description": "Texture content path for the icon shown in the column header. Not a def reference - this is a path into the game's content directory.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Icons/ColonistBar/MedicalCare", "UI/Icons/Animal/Trainable"]
+    },
+    "headerIconSize": {
+      "label": "Header icon size",
+      "description": "Size override for the header icon as a 2D vector, e.g. (26, 26). If omitted, the icon uses the default 26x26 size.",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(26, 26)", "(32, 32)"]
+    },
+    "headerTip": {
+      "label": "Header tip",
+      "description": "Tooltip shown when hovering the column header. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "headerAlwaysInteractable": {
+      "label": "Header always interactable",
+      "description": "If true, the header is always interactive even when sortable is false and headerTip is empty.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "paintable": {
+      "label": "Paintable",
+      "description": "If true, the player can drag across this column to assign or unassign all pawns in one gesture.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "groupable": {
+      "label": "Groupable",
+      "description": "If true, this column can be grouped with adjacent columns of the same type in the header.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "trainable": {
+      "label": "Trainable",
+      "description": "TrainableDef this column represents. Used by generated trainable columns such as Tameness and Obedience.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TrainableDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "gap": {
+      "label": "Gap",
+      "description": "Pixel width of an empty gap column. Only meaningful for PawnColumnWorker_Gap columns.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "workType": {
+      "label": "Work type",
+      "description": "WorkTypeDef this column represents. Used by generated work-priority columns such as Mining and Cooking.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WorkTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "moveWorkTypeLabelDown": {
+      "label": "Move work type label down",
+      "description": "If true, the work type label is shifted downward in the column header. Generated work columns alternate this to stagger neighboring labels.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showIcon": {
+      "label": "Show icon",
+      "description": "If true, the pawn icon is shown inside this column's cell.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useLabelShort": {
+      "label": "Use label short",
+      "description": "If true, the column displays the pawn's short label instead of the full label.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "widthPriority": {
+      "label": "Width priority",
+      "description": "Priority used when distributing extra table width. Higher-priority columns receive additional width first. Can be negative.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "width": {
+      "label": "Width",
+      "description": "Fixed pixel width of this column. The default -1 means the column uses its worker's calculated preferred width.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-column": {
+      "label": "Basic column",
+      "description": "A column with a label and a custom worker class.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "workerClass"],
+      "fieldValues": {}
+    },
+    "icon-column": {
+      "label": "Icon column",
+      "description": "A column with a header icon and tooltip, suitable for checkbox or icon-based display.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "workerClass", "headerIcon", "headerTip"],
+      "fieldValues": {
+        "sortable": "true"
+      }
+    }
+  }
+}

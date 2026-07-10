@@ -1,0 +1,40 @@
+{
+  "objectType": "CurvedScaler",
+  "label": "Curved scaler",
+  "description": "Animates scale along one or more world axes over the fleck lifetime using a SimpleCurve.",
+  "fieldOrder": ["curve", "axisMask", "scaleAmt", "scaleTime"],
+  "fields": {
+    "curve": {
+      "label": "Curve",
+      "description": "SimpleCurve that maps normalized fleck lifetime (0–1) to a scale multiplier.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "axisMask": {
+      "label": "Axis mask",
+      "description": "World-space axes this scaler affects as (x, y, z). Use 1 to enable an axis and 0 to ignore it. Source default is Vector3.one.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(1, 1, 1)",
+      "xml": "element",
+      "examples": ["(1, 0, 0)", "(0, 0, 1)", "(1, 1, 1)"]
+    },
+    "scaleAmt": {
+      "label": "Scale amount",
+      "description": "Target scale multiplier as a FloatRange. The curve output is multiplied by this value.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["1", "1.5", "0.5~1"]
+    },
+    "scaleTime": {
+      "label": "Scale time",
+      "description": "Duration over which the curve plays as a FloatRange in seconds.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.65", "0.5~0.6", "3"]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "objectType": "PawnRenderNodeProperties_Swaddle",
+  "label": "Render node properties (swaddle)",
+  "description": "Render node properties for swaddled infant rendering. Adds brightness range and color offset fields.",
+  "inherits": ["PawnRenderNodeProperties"],
+  "fieldOrder": ["brightnessRange", "swaddleColorOffset"],
+  "fields": {
+    "brightnessRange": {
+      "label": "Brightness range",
+      "description": "Range of random brightness multipliers applied to the swaddle graphic.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "swaddleColorOffset": {
+      "label": "Swaddle color offset",
+      "description": "RGBA color offset added to the swaddle graphic's resolved color. Format: (r, g, b, a).",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

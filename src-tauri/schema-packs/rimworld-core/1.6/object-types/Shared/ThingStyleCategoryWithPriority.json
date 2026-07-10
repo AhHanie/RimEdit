@@ -1,0 +1,24 @@
+{
+  "objectType": "ThingStyleCategoryWithPriority",
+  "label": "Thing style category with priority",
+  "description": "Associates a StyleCategoryDef with a selection priority weight. Used by memes and cultures to influence which visual style an ideology adopts.",
+  "fieldOrder": ["category", "priority"],
+  "fields": {
+    "category": {
+      "label": "Category",
+      "description": "StyleCategoryDef that defines the visual theme for this priority entry.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StyleCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Selection weight for this style category. Must be positive; higher values increase the probability of selection.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

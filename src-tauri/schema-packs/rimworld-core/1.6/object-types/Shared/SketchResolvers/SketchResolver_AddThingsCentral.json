@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AddThingsCentral",
+  "label": "Sketch resolver: Add things central",
+  "description": "Concrete RimWorld SketchResolver_AddThingsCentral resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

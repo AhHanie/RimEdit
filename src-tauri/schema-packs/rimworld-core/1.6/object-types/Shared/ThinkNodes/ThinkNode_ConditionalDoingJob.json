@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalDoingJob",
+  "label": "Think node conditional doing job",
+  "description": "Satisfied when the pawn's current job matches the specified JobDef.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["jobDef"],
+  "fields": {
+    "jobDef": {
+      "label": "Job def",
+      "description": "The job the pawn must currently be performing for this conditional to be satisfied.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "JobDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

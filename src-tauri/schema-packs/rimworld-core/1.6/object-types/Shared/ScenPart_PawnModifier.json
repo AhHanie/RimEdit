@@ -1,0 +1,35 @@
+{
+  "objectType": "ScenPart_PawnModifier",
+  "label": "Scenario part (pawn modifier)",
+  "description": "Abstract base for scenario parts that apply modifications or filters to pawns during generation. Adds chance, context, and hideOffMap fields to the base ScenPart.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "chance", "context", "hideOffMap"],
+  "fields": {
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0-1) that this modifier is applied to each eligible pawn. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    },
+    "context": {
+      "label": "Context",
+      "description": "Which pawns this modifier targets during generation.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["All", "PlayerStarter", "NonPlayer"]
+      }
+    },
+    "hideOffMap": {
+      "label": "Hide off map",
+      "description": "When true, this modifier is not shown in the starting pawn configuration UI. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": false
+    }
+  }
+}

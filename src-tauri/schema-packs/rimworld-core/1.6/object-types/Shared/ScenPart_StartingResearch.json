@@ -1,0 +1,21 @@
+{
+  "objectType": "ScenPart_StartingResearch",
+  "label": "Starting research",
+  "description": "Grants a research project as already completed at the start of the game.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "project"],
+  "fields": {
+    "project": {
+      "label": "Project",
+      "description": "ResearchProjectDef that is marked as completed when the scenario starts.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ResearchProjectDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

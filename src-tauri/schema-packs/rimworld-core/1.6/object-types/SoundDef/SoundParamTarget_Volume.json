@@ -1,0 +1,8 @@
+{
+  "objectType": "SoundParamTarget_Volume",
+  "label": "Sound param target: volume",
+  "description": "Applies the mapped parameter value as a volume multiplier.",
+  "inherits": ["SoundParamTarget"],
+  "fieldOrder": ["Class"],
+  "fields": {}
+}

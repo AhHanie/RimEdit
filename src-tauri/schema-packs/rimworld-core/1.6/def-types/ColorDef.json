@@ -1,0 +1,57 @@
+{
+  "defType": "ColorDef",
+  "label": "Color",
+  "description": "Defines a named color entry used by carpets, paints, hair, ideologies, weapons, and planning overlays.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "color",
+    "colorType",
+    "displayOrder",
+    "displayInStylingStationUI",
+    "randomlyPickable"
+  ],
+  "fields": {
+    "color": {
+      "label": "Color",
+      "description": "The RGBA color value. Accepts integer (0–255) or float (0–1) components as (r, g, b) or (r, g, b, a).",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "colorType": {
+      "label": "Color type",
+      "description": "Category that controls where this color is offered in the UI.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Misc",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Misc", "Ideo", "Hair", "Structure", "Weapon", "Planning"]
+      }
+    },
+    "displayOrder": {
+      "label": "Display order",
+      "description": "Sort order within the color picker UI. Lower values appear first. Defaults to int.MaxValue (sort last).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 2147483647,
+      "xml": "element"
+    },
+    "displayInStylingStationUI": {
+      "label": "Display in styling station UI",
+      "description": "Whether this color appears as a player-selectable option in the styling station. Set to false for neutral infrastructure colors such as black and white.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "randomlyPickable": {
+      "label": "Randomly pickable",
+      "description": "Whether the game may randomly assign this color. Set to false for fixed-association colors such as unique weapon traits.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

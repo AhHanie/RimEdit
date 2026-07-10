@@ -1,0 +1,26 @@
+{
+  "defType": "GravshipComponentTypeDef",
+  "label": "Gravship component type",
+  "description": "Defines a category of gravship component, controlling whether the gravship requires at least one of this type installed to launch.",
+  "inherits": ["Def"],
+  "fieldOrder": ["requiredForLaunch"],
+  "fields": {
+    "requiredForLaunch": {
+      "label": "Required for launch",
+      "description": "Whether the gravship requires at least one building of this component type to be installed before it can launch. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-gravship-component-type": {
+      "label": "New gravship component type",
+      "description": "Minimal gravship component type with a label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

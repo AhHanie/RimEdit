@@ -1,0 +1,28 @@
+{
+  "defType": "MechWeightClassDef",
+  "label": "Mech weight class",
+  "description": "Defines a weight class for mechanoids (Light, Medium, Heavy, UltraHeavy), controlling resurrection eligibility.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "canResurrect"
+  ],
+  "fields": {
+    "canResurrect": {
+      "label": "Can resurrect",
+      "description": "Whether mechanoids of this weight class can be resurrected after death. Defaults to true; UltraHeavy sets this to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-mech-weight-class": {
+      "label": "Basic mech weight class",
+      "description": "Minimal mech weight class with a defName and label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

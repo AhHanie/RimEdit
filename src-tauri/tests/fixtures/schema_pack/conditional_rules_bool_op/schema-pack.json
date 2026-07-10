@@ -1,0 +1,8 @@
+{
+  "formatVersion": 1,
+  "packId": "conditional_rules_bool_op",
+  "name": "Conditional Rules Boolean Value",
+  "version": "1.0.0",
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": []
+}

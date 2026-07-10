@@ -1,0 +1,50 @@
+{
+  "objectType": "CompProperties_GravshipFacility",
+  "label": "Gravship facility comp",
+  "description": "Comp properties for a gravship facility building. Identifies which gravship component type this building counts as and whether it provides fuel.",
+  "inherits": ["CompProperties_Facility"],
+  "fieldOrder": [
+    "providesFuel",
+    "fuelSavingsPercent",
+    "componentTypeDef",
+    "onlyRequiresLooseConnection"
+  ],
+  "fields": {
+    "providesFuel": {
+      "label": "Provides fuel",
+      "description": "Whether this building provides fuel to the gravship.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fuelSavingsPercent": {
+      "label": "Fuel savings percent",
+      "description": "Fraction of fuel consumption saved per launch when this facility is active (0.0 to 1.0).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "componentTypeDef": {
+      "label": "Component type def",
+      "description": "The GravshipComponentTypeDef this building counts as. Used to determine whether the gravship has all required component types installed for launch.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "GravshipComponentTypeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "onlyRequiresLooseConnection": {
+      "label": "Only requires loose connection",
+      "description": "Whether this facility only requires a loose connection to the gravship substructure rather than a strict adjacency link.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

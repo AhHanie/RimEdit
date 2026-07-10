@@ -1,0 +1,79 @@
+{
+  "objectType": "HediffGiver_Refresh",
+  "label": "Hediff giver (refresh)",
+  "description": "Periodically refreshes a hediff on the pawn. No extra loadable fields beyond base.",
+  "fieldOrder": ["Class", "hediff", "partsToAffect", "canAffectAnyLivePart", "allowOnLodgers", "allowOnQuestRewardPawns", "allowOnQuestReservedPawns", "allowOnBeggars", "countToAffect"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# HediffGiver subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "hediff": {
+      "label": "Hediff",
+      "description": "HediffDef to apply.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "partsToAffect": {
+      "label": "Parts to affect",
+      "description": "Body parts this giver can affect. Empty means all parts.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "BodyPartDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canAffectAnyLivePart": {
+      "label": "Can affect any live part",
+      "description": "If true, this giver can affect any live body part.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowOnLodgers": {
+      "label": "Allow on lodgers",
+      "description": "If true, this giver can apply to lodger pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowOnQuestRewardPawns": {
+      "label": "Allow on quest reward pawns",
+      "description": "If true, this giver can apply to quest reward pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowOnQuestReservedPawns": {
+      "label": "Allow on quest reserved pawns",
+      "description": "If true, this giver can apply to quest reserved pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowOnBeggars": {
+      "label": "Allow on beggars",
+      "description": "If true, this giver can apply to beggar pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "countToAffect": {
+      "label": "Count to affect",
+      "description": "Number of body parts to affect.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

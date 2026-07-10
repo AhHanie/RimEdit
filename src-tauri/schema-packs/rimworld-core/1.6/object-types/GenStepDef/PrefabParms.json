@@ -1,0 +1,31 @@
+{
+  "objectType": "PrefabParms",
+  "label": "Prefab parms",
+  "description": "A PrefabDef with weight and optional min/max count range used in orbital relay prefab lists.",
+  "fieldOrder": ["def", "weight", "minMaxRange"],
+  "fields": {
+    "def": {
+      "label": "Def",
+      "description": "PrefabDef to spawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PrefabDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative probability of this prefab being chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "minMaxRange": {
+      "label": "Min max range",
+      "description": "Minimum and maximum number of times this prefab may be spawned. Invalid range means no limit.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

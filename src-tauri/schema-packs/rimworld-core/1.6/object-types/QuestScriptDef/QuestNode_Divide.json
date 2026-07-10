@@ -1,0 +1,39 @@
+{
+  "objectType": "QuestNode_Divide",
+  "label": "QuestNode Divide",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_Divide.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "value1",
+    "value2",
+    "storeAs"
+  ],
+  "fields": {
+    "value1": {
+      "description": "SlateRef<double> first numeric operand to divide; accepts literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "value2": {
+      "description": "SlateRef<double> second numeric operand to divide; accepts literal, expression, or $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "storeAs": {
+      "description": "SlateRef<string> variable name for the numeric result.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

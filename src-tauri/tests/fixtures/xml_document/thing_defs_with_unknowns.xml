@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- steel comment -->
+  <ThingDef>
+    <defName>Steel</defName>
+    <label>steel</label>
+    <unknownTag>some value</unknownTag>
+    <nestedUnknown>
+      <child>a</child>
+      <child>b</child>
+    </nestedUnknown>
+    <stackLimit>75</stackLimit>
+  </ThingDef>
+
+  <ThingDef ParentName="BaseOrganic">
+    <defName>WoodLog</defName>
+    <label>wood</label>
+    <category>Item</category>
+  </ThingDef>
+
+  <RecipeDef>
+    <defName>SmeltSteel</defName>
+    <label>smelt steel</label>
+  </RecipeDef>
+
+</Defs>

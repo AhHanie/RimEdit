@@ -1,0 +1,44 @@
+{
+  "objectType": "RoyalImplantRule",
+  "label": "Royal implant rule",
+  "description": "Specifies which hediff implant a royal title holder may have, and the maximum permitted implant level.",
+  "fieldOrder": [
+    "implantHediff",
+    "minTitle",
+    "maxLevel"
+  ],
+  "fields": {
+    "implantHediff": {
+      "label": "Implant hediff",
+      "description": "HediffDef representing the implant covered by this rule.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "minTitle": {
+      "label": "Min title",
+      "description": "Minimum RoyalTitleDef required to be permitted this implant.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "RoyalTitleDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "maxLevel": {
+      "label": "Max level",
+      "description": "Maximum implant upgrade level permitted for this title tier.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

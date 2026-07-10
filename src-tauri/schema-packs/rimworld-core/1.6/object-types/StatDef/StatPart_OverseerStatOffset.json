@@ -1,0 +1,41 @@
+{
+  "objectType": "StatPart_OverseerStatOffset",
+  "label": "Stat part (overseer stat offset)",
+  "description": "Adds an offset derived from a StatDef read from the pawn's overseer mechanitor.",
+  "fieldOrder": ["Class", "priority", "stat", "label"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "stat": {
+      "label": "Stat",
+      "description": "StatDef evaluated on the overseer mechanitor to produce the offset.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "label": {
+      "label": "Label",
+      "description": "Override label shown in the stat explanation for this part. Marked [MustTranslate].",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

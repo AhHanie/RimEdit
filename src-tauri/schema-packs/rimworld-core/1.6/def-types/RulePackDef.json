@@ -1,0 +1,41 @@
+{
+  "defType": "RulePackDef",
+  "label": "Rule pack",
+  "description": "Grammar rule pack used for names, art descriptions, battle logs, events, and generated text.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "include",
+    "rulePack",
+    "directTestable"
+  ],
+  "fields": {
+    "include": {
+      "label": "Include",
+      "description": "Other RulePackDefs whose resolved rules are merged into this pack at runtime.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "RulePackDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "rulePack": {
+      "label": "Rule pack",
+      "description": "The grammar rule data for this def, containing inline string rules, file references, and raw rule objects.",
+      "type": { "kind": "object", "schemaRef": "RulePack" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": false
+    },
+    "directTestable": {
+      "label": "Direct testable",
+      "description": "Whether this rule pack can be directly tested in the grammar tester tool.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

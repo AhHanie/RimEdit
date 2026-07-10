@@ -1,0 +1,35 @@
+{
+  "objectType": "StyleItemTagWeighted",
+  "label": "Style item tag weighted",
+  "description": "Associates a style item tag with a base weight and optional curve factor for hair and style selection during pawn generation.",
+  "fieldOrder": [
+    "tag",
+    "baseWeight",
+    "weightFactor"
+  ],
+  "fields": {
+    "tag": {
+      "label": "Tag",
+      "description": "Hair or style item tag to weight during selection.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "baseWeight": {
+      "label": "Base weight",
+      "description": "Base selection weight for this tag. Higher values increase the probability of this tag being chosen.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "weightFactor": {
+      "label": "Weight factor",
+      "description": "Additional multiplier applied to the base weight during selection.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

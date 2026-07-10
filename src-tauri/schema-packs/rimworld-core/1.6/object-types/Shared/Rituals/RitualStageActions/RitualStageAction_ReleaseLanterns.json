@@ -1,0 +1,24 @@
+{
+  "objectType": "RitualStageAction_ReleaseLanterns",
+  "label": "Ritual stage tick action maker (release lanterns)",
+  "description": "Tick action maker that releases floating lanterns during the ritual stage, consuming wood per launch.",
+  "fieldOrder": ["Class", "woodCost", "preliminaryTicks"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "woodCost": {
+      "label": "Wood cost",
+      "description": "Amount of wood consumed per lantern release. Defaults to 4.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 4,
+      "xml": "element"
+    },
+    "preliminaryTicks": {
+      "label": "Preliminary ticks",
+      "description": "Tick range for the preliminary lantern-gathering phase before release begins.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

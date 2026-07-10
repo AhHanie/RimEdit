@@ -1,0 +1,19 @@
+{
+  "objectType": "JobGiver_AITrashBuildingsDistant",
+  "label": "Job giver AI trash buildings distant",
+  "description": "Directs the pawn to destroy buildings far from the player base. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "attackAllInert"
+  ],
+  "fields": {
+    "attackAllInert": {
+      "label": "Attack all inert",
+      "description": "If true, the pawn attacks inert (non-powered) buildings as well as active ones.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

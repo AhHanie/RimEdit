@@ -1,0 +1,53 @@
+{
+  "defType": "TattooDef",
+  "label": "Tattoo",
+  "description": "Defines a face or body tattoo style for humanlike pawns. Inherits shared style item fields and adds tattoo placement and north-facing visibility.",
+  "inherits": ["StyleItemDef"],
+  "fieldOrder": ["tattooType", "visibleNorth"],
+  "fields": {
+    "tattooType": {
+      "label": "Tattoo type",
+      "description": "Whether this tattoo is drawn on the pawn head/face or body. Face tattoos use the pawn head graphic as a render mask; body tattoos use the pawn body graphic.",
+      "type": { "kind": "enum", "values": ["Face", "Body"] },
+      "required": false,
+      "xml": "element"
+    },
+    "visibleNorth": {
+      "label": "Visible north",
+      "description": "Whether this tattoo is visible when the pawn faces north. Defaults to true in source. Face tattoos commonly set this to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-face-tattoo": {
+      "label": "Basic face tattoo",
+      "description": "Face tattoo with a texture, category, and style tags.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "texPath", "category", "styleTags"],
+      "fieldValues": {
+        "tattooType": "Face"
+      }
+    },
+    "basic-body-tattoo": {
+      "label": "Basic body tattoo",
+      "description": "Body tattoo with a texture, category, and style tags.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "texPath", "category", "styleTags"],
+      "fieldValues": {
+        "tattooType": "Body"
+      }
+    },
+    "no-graphic-tattoo": {
+      "label": "No-graphic tattoo",
+      "description": "Tattoo placeholder with no texture, used for the no-tattoo slot.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "tattooType", "category", "styleTags"],
+      "fieldValues": {
+        "noGraphic": "true"
+      }
+    }
+  }
+}

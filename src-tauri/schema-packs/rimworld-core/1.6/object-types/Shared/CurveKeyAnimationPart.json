@@ -1,0 +1,46 @@
+{
+  "objectType": "CurveKeyAnimationPart",
+  "label": "Curve-key animation part",
+  "description": "A per-node animation part driven by AnimationCurve data. Offset, angle, and scale channels each use a ComplexCurve or Vector3Curve. Graphic state switches are defined by CurveKey keyframes. Default worker is AnimationWorker_Curves.",
+  "inherits": ["AnimationPart"],
+  "fieldOrder": ["keyframes", "normalized", "offset", "angle", "scale"],
+  "fields": {
+    "keyframes": {
+      "label": "Graphic state keyframes",
+      "description": "CurveKey entries that switch the node's graphic state at a given tick.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "CurveKey" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "normalized": {
+      "label": "Normalized",
+      "description": "If true, the curve is evaluated using a normalized time in the range 0..1 over the animation's durationTicks. If false, raw ticks are used. Default is true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset curve",
+      "description": "Position offset animation as three ComplexCurves (x, y, z).",
+      "type": { "kind": "object", "schemaRef": "Vector3Curve" },
+      "required": false,
+      "xml": "object"
+    },
+    "angle": {
+      "label": "Angle curve",
+      "description": "Rotation angle animation as a ComplexCurve.",
+      "type": { "kind": "object", "schemaRef": "ComplexCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "scale": {
+      "label": "Scale curve",
+      "description": "Scale animation as three ComplexCurves (x, y, z).",
+      "type": { "kind": "object", "schemaRef": "Vector3Curve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

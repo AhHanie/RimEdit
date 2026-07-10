@@ -1,0 +1,45 @@
+{
+  "objectType": "ConditionalStatAffecter",
+  "label": "Conditional stat affecter",
+  "description": "Applies stat offsets or factors when a specific condition is met. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class", "statFactors", "statOffsets"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "ConditionalStatAffecter",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "ConditionalStatAffecter_Child": "ConditionalStatAffecter_Child",
+      "ConditionalStatAffecter_Clothed": "ConditionalStatAffecter_Clothed",
+      "ConditionalStatAffecter_InSpace": "ConditionalStatAffecter_InSpace",
+      "ConditionalStatAffecter_InSunlight": "ConditionalStatAffecter_InSunlight",
+      "ConditionalStatAffecter_NotInSpace": "ConditionalStatAffecter_NotInSpace",
+      "ConditionalStatAffecter_Unclothed": "ConditionalStatAffecter_Unclothed"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# ConditionalStatAffecter subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers applied when the condition is met.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Stat additive offsets applied when the condition is met.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "StatModifier" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "objectType": "StageEndTrigger_RoleArrivedAndSpectatorsOnSubstructure",
+  "label": "Stage end trigger (role arrived and spectators on substructure)",
+  "description": "Ends the stage when the designated role has arrived and all spectators are standing on the ritual substructure.",
+  "fieldOrder": ["Class", "countsTowardsProgress", "roleIds", "clearTag", "tag"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "roleIds": {
+      "label": "Role IDs",
+      "description": "List of role IDs that must have arrived for this trigger to fire.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "clearTag": {
+      "label": "Clear tag",
+      "description": "If true, removes the arrival tag from role pawns when the trigger fires.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tag": {
+      "label": "Tag",
+      "description": "Pawn tag that must be set on role pawns for the arrival check to pass.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

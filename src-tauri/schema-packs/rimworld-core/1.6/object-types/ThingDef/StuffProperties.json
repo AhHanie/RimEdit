@@ -1,0 +1,115 @@
+{
+  "objectType": "StuffProperties",
+  "label": "Stuff properties",
+  "description": "Properties for stuff materials controlling stat offsets/factors, categories, color, appearance, and crafting effects.",
+  "fieldOrder": [
+    "stuffAdjective",
+    "commonality",
+    "categories",
+    "statOffsets",
+    "statFactors",
+    "color",
+    "appearance",
+    "constructEffect",
+    "soundMeleeHit",
+    "soundImpact",
+    "canSuggestUseDefaultStuff",
+    "possibleColors"
+  ],
+  "fields": {
+    "stuffAdjective": {
+      "label": "Stuff adjective",
+      "description": "Localized adjective appended to thing labels when built from this material (e.g. 'steel table').",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "commonality": {
+      "label": "Commonality",
+      "description": "Relative weight controlling how often this material is chosen for random item generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "categories": {
+      "label": "Categories",
+      "description": "StuffCategoryDef references for the stuff groups this material belongs to.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "StuffCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Named map of StatDef to additive offset applied to things built from this material.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Named map of StatDef to multiplicative factor applied to things built from this material.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "color": {
+      "label": "Color",
+      "description": "RGBA tint applied to things built from this material.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0.7, 0.7, 0.7, 1)", "(0.5, 0.35, 0.2, 1)"]
+    },
+    "appearance": {
+      "label": "Appearance",
+      "description": "StuffAppearanceDef that selects the texture variant used for this material.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StuffAppearanceDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "constructEffect": {
+      "label": "Construct effect",
+      "description": "EffecterDef played while constructing things from this material.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundMeleeHit": {
+      "label": "Sound melee hit",
+      "description": "SoundDef played when a weapon made of this material strikes a target.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundImpact": {
+      "label": "Sound impact",
+      "description": "SoundDef played when a projectile impacts something made of this material.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canSuggestUseDefaultStuff": {
+      "label": "Can suggest use default stuff",
+      "description": "Whether the game may suggest this as a default material when no preferred material is available.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "possibleColors": {
+      "label": "Possible colors",
+      "description": "List of RGBA color strings selectable by the player for pawns wearing or carrying this material.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

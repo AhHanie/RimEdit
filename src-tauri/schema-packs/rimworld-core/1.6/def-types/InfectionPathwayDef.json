@@ -1,0 +1,39 @@
+{
+  "defType": "InfectionPathwayDef",
+  "label": "Infection pathway",
+  "description": "Defines a named mechanism by which an infection can spread. Referenced by HediffDef.possiblePathways, HediffDef.givesInfectionPathways, and PawnKindDef attack infection pathway lists.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "expiryDays",
+    "pawnRequired"
+  ],
+  "fields": {
+    "expiryDays": {
+      "label": "Expiry days",
+      "description": "How many in-game days before this infection pathway entry expires. Converted to ticks at runtime; the ExpiryTicks property is not serialized.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 30,
+      "xml": "element"
+    },
+    "pawnRequired": {
+      "label": "Pawn required",
+      "description": "If true, this infection pathway requires a pawn to be the infection source. If false, the pathway can activate without a pawn (e.g. pre-arrival or environmental spread).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-infection-pathway": {
+      "label": "New infection pathway",
+      "description": "Minimal InfectionPathwayDef with a def name and label.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {}
+    }
+  }
+}

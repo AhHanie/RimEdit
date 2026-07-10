@@ -1,0 +1,46 @@
+{
+  "objectType": "StageEndTrigger",
+  "label": "Stage end trigger",
+  "description": "Base schema for ritual stage end triggers. Subclass is selected by the Class attribute.",
+  "fieldOrder": ["Class", "countsTowardsProgress"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "StageEndTrigger",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "StageEndTrigger_AnyPawnDead": "StageEndTrigger_AnyPawnDead",
+      "StageEndTrigger_DuelEnded": "StageEndTrigger_DuelEnded",
+      "StageEndTrigger_DurationPercentage": "StageEndTrigger_DurationPercentage",
+      "StageEndTrigger_Indefinite": "StageEndTrigger_Indefinite",
+      "StageEndTrigger_Instant": "StageEndTrigger_Instant",
+      "StageEndTrigger_MutilatedRole": "StageEndTrigger_MutilatedRole",
+      "StageEndTrigger_PawnDead": "StageEndTrigger_PawnDead",
+      "StageEndTrigger_PawnDeliveredOrNotValid": "StageEndTrigger_PawnDeliveredOrNotValid",
+      "StageEndTrigger_PawnDown": "StageEndTrigger_PawnDown",
+      "StageEndTrigger_PawnOnTargetCell": "StageEndTrigger_PawnOnTargetCell",
+      "StageEndTrigger_RoleArrivedAndSpectatorsOnSubstructure": "StageEndTrigger_RoleArrivedAndSpectatorsOnSubstructure",
+      "StageEndTrigger_RoleArrivedOrInTargetBed": "StageEndTrigger_RoleArrivedOrInTargetBed",
+      "StageEndTrigger_RolesArrived": "StageEndTrigger_RolesArrived",
+      "StageEndTrigger_RolesUnarmed": "StageEndTrigger_RolesUnarmed",
+      "StageEndTrigger_RoleTagSet": "StageEndTrigger_RoleTagSet"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StageEndTrigger subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "countsTowardsProgress": {
+      "label": "Counts towards progress",
+      "description": "If true, waiting for this trigger counts towards the ritual progress bar.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

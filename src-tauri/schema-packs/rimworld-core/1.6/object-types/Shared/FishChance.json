@@ -1,0 +1,23 @@
+{
+  "objectType": "FishChance",
+  "label": "Fish chance",
+  "description": "Associates a fish ThingDef with a relative catch chance. The XML element name is the ThingDef defName; scalar text is the chance.",
+  "fieldOrder": ["fishDef", "chance"],
+  "fields": {
+    "fishDef": {
+      "label": "Fish def",
+      "description": "ThingDef of the fish. Populated from the XML element name by the keyedObjectList loader.",
+      "type": { "kind": "defReference" },
+      "required": true,
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Relative catch chance weight for this fish. Populated from XML scalar text by the keyedObjectList loader.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "defaultValue": 1
+    }
+  }
+}

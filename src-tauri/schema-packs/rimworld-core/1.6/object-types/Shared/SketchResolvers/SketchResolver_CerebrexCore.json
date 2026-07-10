@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_CerebrexCore",
+  "label": "Sketch resolver: Cerebrex core",
+  "description": "Concrete RimWorld SketchResolver_CerebrexCore resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

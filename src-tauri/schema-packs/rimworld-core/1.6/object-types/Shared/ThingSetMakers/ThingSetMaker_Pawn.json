@@ -1,0 +1,37 @@
+{
+  "objectType": "ThingSetMaker_Pawn",
+  "label": "Pawn maker",
+  "description": "Generates pawn Things (alive or as corpses) from a specified PawnKindDef.",
+  "inherits": ["ThingSetMaker"],
+  "fieldOrder": [
+    "Class",
+    "fixedParams",
+    "pawnKind",
+    "alive",
+    "corpseAgeRangeDays"
+  ],
+  "fields": {
+    "pawnKind": {
+      "label": "Pawn kind",
+      "description": "PawnKindDef that determines the pawn race, gear, and stats.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PawnKindDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "alive": {
+      "label": "Alive",
+      "description": "Whether generated pawns are alive (true) or corpses (false). Null means game default.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    },
+    "corpseAgeRangeDays": {
+      "label": "Corpse age range days",
+      "description": "Age range in days for generated corpses. Only meaningful when alive is false.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

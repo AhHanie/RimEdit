@@ -1,0 +1,18 @@
+{
+  "objectType": "StageEndTrigger_RolesUnarmed",
+  "label": "Stage end trigger (roles unarmed)",
+  "description": "Ends the stage when all pawns in the specified roles have been disarmed.",
+  "fieldOrder": ["Class", "countsTowardsProgress", "roleIds"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "roleIds": {
+      "label": "Role IDs",
+      "description": "List of role IDs whose assigned pawns must all be unarmed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "string" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

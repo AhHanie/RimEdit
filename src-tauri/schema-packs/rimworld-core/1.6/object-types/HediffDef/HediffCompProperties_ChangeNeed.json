@@ -1,0 +1,38 @@
+{
+  "objectType": "HediffCompProperties_ChangeNeed",
+  "label": "Change need comp",
+  "description": "Modifies a pawn need per day while this hediff is active.",
+  "fieldOrder": ["Class", "compClass", "need", "needChange"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "need": {
+      "label": "Need",
+      "description": "Need to modify.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "NeedDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "needChange": {
+      "label": "Need change",
+      "description": "Amount to add per day.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

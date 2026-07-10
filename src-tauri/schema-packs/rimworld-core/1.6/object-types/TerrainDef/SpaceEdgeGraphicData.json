@@ -1,0 +1,89 @@
+{
+  "objectType": "SpaceEdgeGraphicData",
+  "label": "Space edge graphic data",
+  "description": "Texture paths for the various edge graphic shapes used by space-edge terrain (Odyssey DLC).",
+  "fieldOrder": [
+    "OShapeTexPath",
+    "UShapeTexPath",
+    "CornerInnerTexPath",
+    "CornerOuterTexPath",
+    "FlatTexPath",
+    "LoopLeftTexPath",
+    "LoopRightTexPath",
+    "LoopSingleTexPath",
+    "LoopTexPaths",
+    "overrideColor"
+  ],
+  "fields": {
+    "OShapeTexPath": {
+      "label": "O-shape texture path",
+      "description": "Texture path for the closed-loop O-shape edge variant.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "UShapeTexPath": {
+      "label": "U-shape texture path",
+      "description": "Texture path for the U-shape (three-sided open) edge variant.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "CornerInnerTexPath": {
+      "label": "Corner inner texture path",
+      "description": "Texture path for the inner corner edge variant.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "CornerOuterTexPath": {
+      "label": "Corner outer texture path",
+      "description": "Texture path for the outer corner edge variant.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "FlatTexPath": {
+      "label": "Flat texture path",
+      "description": "Texture path for the flat (straight edge) variant.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "LoopLeftTexPath": {
+      "label": "Loop left texture path",
+      "description": "Texture path for the left-side loop end edge variant.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "LoopRightTexPath": {
+      "label": "Loop right texture path",
+      "description": "Texture path for the right-side loop end edge variant.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "LoopSingleTexPath": {
+      "label": "Loop single texture path",
+      "description": "Texture path for the single-cell isolated loop edge variant.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "LoopTexPaths": {
+      "label": "Loop texture paths",
+      "description": "List of texture paths for loop segment variants.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "overrideColor": {
+      "label": "Override color",
+      "description": "Optional tint color applied to all space-edge graphics. When absent the default white tint is used.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

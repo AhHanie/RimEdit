@@ -1,0 +1,52 @@
+{
+  "objectType": "PawnCapacityFactor",
+  "label": "Pawn capacity factor",
+  "description": "Multiplies a stat based on how efficiently the pawn performs a body capacity.",
+  "fieldOrder": ["capacity", "weight", "max", "useReciprocal", "allowedDefect"],
+  "fields": {
+    "capacity": {
+      "label": "Capacity",
+      "description": "PawnCapacityDef whose efficiency value is used to compute the factor.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnCapacityDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "weight": {
+      "label": "Weight",
+      "description": "Relative weight of this factor when blending multiple capacity factors. Default is 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "max": {
+      "label": "Max",
+      "description": "Upper bound on the capacity efficiency before it is used as a factor. Default is 9999 (effectively uncapped).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 9999,
+      "xml": "element"
+    },
+    "useReciprocal": {
+      "label": "Use reciprocal",
+      "description": "If true, the factor is inverted (1 / efficiency) so higher capacity reduces the stat. Capped at 5.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedDefect": {
+      "label": "Allowed defect",
+      "description": "Capacity efficiency may fall this far below 1 without penalising the stat. Smooths out minor impairments.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

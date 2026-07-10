@@ -1,0 +1,25 @@
+{
+  "formatVersion": 1,
+  "className": "PatchOperationReplace",
+  "label": "Replace",
+  "description": "Replaces the node matched by xpath with value.",
+  "fieldOrder": ["xpath", "value"],
+  "fields": {
+    "xpath": {
+      "label": "XPath",
+      "description": "Target node to replace.",
+      "type": { "kind": "string" },
+      "xml": "element",
+      "role": "xpath",
+      "required": true
+    },
+    "value": {
+      "label": "Value",
+      "description": "XML content that replaces the matched node.",
+      "type": { "kind": "object" },
+      "xml": "object",
+      "role": "xmlValue",
+      "required": true
+    }
+  }
+}

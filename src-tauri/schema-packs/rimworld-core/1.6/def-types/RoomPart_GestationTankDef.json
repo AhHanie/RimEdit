@@ -1,0 +1,19 @@
+{
+  "defType": "RoomPart_GestationTankDef",
+  "label": "Room part gestation tank",
+  "description": "A room part that places gestation tanks in weighted states. Inherits from RoomPartDef.",
+  "inherits": ["RoomPartDef"],
+  "fieldOrder": ["options"],
+  "fields": {
+    "options": {
+      "label": "Options",
+      "description": "Weighted tank state options. Each element name is a State enum value (Dormant, Proximity, Empty); text is the weight.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "TankOption" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "state",
+      "valueField": "weight"
+    }
+  }
+}

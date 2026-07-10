@@ -1,0 +1,32 @@
+{
+  "objectType": "ThinkNode_ConditionalAbilityCastLastTick",
+  "label": "Think node conditional ability cast last tick",
+  "description": "Satisfied when the pawn last cast the specified ability within the configured tick window.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["ability", "minTicksAgo", "maxTicksAgo"],
+  "fields": {
+    "ability": {
+      "label": "Ability",
+      "description": "The ability whose last cast tick is checked.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "minTicksAgo": {
+      "label": "Min ticks ago",
+      "description": "The ability must have been cast at least this many ticks ago.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxTicksAgo": {
+      "label": "Max ticks ago",
+      "description": "The ability must have been cast at most this many ticks ago. Defaults to int.MaxValue (no upper bound).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

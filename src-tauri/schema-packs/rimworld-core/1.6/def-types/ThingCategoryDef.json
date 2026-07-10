@@ -1,0 +1,53 @@
+{
+  "defType": "ThingCategoryDef",
+  "label": "Thing category",
+  "description": "Defines a category node used to group ThingDefs in stockpile filters, resource readouts, trade/caravan transfer views, and other thing-selection UI.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "parent",
+    "iconPath",
+    "resourceReadoutRoot"
+  ],
+  "fields": {
+    "parent": {
+      "label": "Parent",
+      "description": "Parent ThingCategoryDef in the category tree. Omit for root-level categories such as Root and standalone category roots.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingCategoryDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "iconPath": {
+      "label": "Icon path",
+      "description": "Texture path loaded for the category icon after XML load. Used by visible category roots and some resource readout categories.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "UI/Icons/ThingCategories/Foods",
+        "UI/Icons/ThingCategories/Medicine"
+      ]
+    },
+    "resourceReadoutRoot": {
+      "label": "Resource readout root",
+      "description": "If true, this category can act as a root grouping in the resource readout UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-category": {
+      "label": "Basic category",
+      "description": "A category with a label and optional parent category.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "parent"],
+      "fieldValues": {}
+    }
+  }
+}

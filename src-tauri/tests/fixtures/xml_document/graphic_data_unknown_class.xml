@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <ThingDef>
+    <defName>FixtureGraphicUnknownClass</defName>
+    <graphicData>
+      <texPath>Things/Fixture/Single/FixtureSingle</texPath>
+      <graphicClass>MyMod_CustomGraphic</graphicClass>
+    </graphicData>
+  </ThingDef>
+</Defs>

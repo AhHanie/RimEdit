@@ -1,0 +1,8 @@
+{
+  "objectType": "PawnRenderNodeProperties_Parent",
+  "label": "Render node properties (parent)",
+  "description": "Render node properties for a parent/container node in the render tree. No additional fields beyond the base; constructor sets defaults.",
+  "inherits": ["PawnRenderNodeProperties"],
+  "fieldOrder": [],
+  "fields": {}
+}

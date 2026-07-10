@@ -1,0 +1,74 @@
+{
+  "objectType": "SurgeryOutcome",
+  "label": "Surgery outcome",
+  "description": "Base schema for SurgeryOutcomeEffectDef outcomes. The specific outcome schema is selected by the li Class attribute. Unknown Class values fall back to this base schema.",
+  "fieldOrder": ["Class", "chance", "totalDamage", "applyEffectsToPart", "failure", "letterLabel", "letterText"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "SurgeryOutcome",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "SurgeryOutcomeSuccess": "SurgeryOutcomeSuccess",
+      "SurgeryOutcome_Death": "SurgeryOutcome_Death",
+      "SurgeryOutcome_Failure": "SurgeryOutcome_Failure",
+      "SurgeryOutcome_FailureWithHediff": "SurgeryOutcome_FailureWithHediff",
+      "SurgeryOutcome_HediffWithDuration": "SurgeryOutcome_HediffWithDuration"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# SurgeryOutcome subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability that this outcome fires, evaluated via Rand.Chance after quality-based selection.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "totalDamage": {
+      "label": "Total damage",
+      "description": "Total body damage applied to the patient when this outcome fires.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "applyEffectsToPart": {
+      "label": "Apply effects to part",
+      "description": "If true, outcome effects target the surgically operated body part.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "failure": {
+      "label": "Failure",
+      "description": "If true, this outcome is counted as a surgery failure.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "letterLabel": {
+      "label": "Letter label",
+      "description": "Localized label for the outcome letter sent to the player.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterText": {
+      "label": "Letter text",
+      "description": "Localized body text for the outcome letter sent to the player.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

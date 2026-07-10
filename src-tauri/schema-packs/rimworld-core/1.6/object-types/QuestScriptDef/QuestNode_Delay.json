@@ -1,0 +1,139 @@
+{
+  "objectType": "QuestNode_Delay",
+  "label": "QuestNode Delay",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_Delay.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignalEnable",
+    "inSignalDisable",
+    "outSignalComplete",
+    "expiryInfoPart",
+    "expiryInfoPartTip",
+    "inspectString",
+    "inspectStringTargets",
+    "delayTicks",
+    "delayTicksRange",
+    "isQuestTimeout",
+    "reactivatable",
+    "waitUntilPlayerHasHomeMap",
+    "useAcceptanceExpiry",
+    "node"
+  ],
+  "fields": {
+    "inSignalEnable": {
+      "description": "Signal name that starts the delay.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "inSignalDisable": {
+      "description": "Signal name that cancels the delay.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "outSignalComplete": {
+      "description": "Signal emitted when the delay completes.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "expiryInfoPart": {
+      "description": "Countdown UI text or slate expression.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "expiryInfoPartTip": {
+      "description": "Countdown UI tooltip text or slate expression.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "inspectString": {
+      "description": "Inspect string shown while the delay is active.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "inspectStringTargets": {
+      "description": "SlateRef<IEnumerable<ISelectable>> inspect string target variables or expression.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "delayTicks": {
+      "description": "SlateRef<int> fixed delay in ticks.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "delayTicksRange": {
+      "description": "SlateRef<IntRange?> random delay range in ticks.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "isQuestTimeout": {
+      "description": "SlateRef<bool> literal, expression, or $varName; true marks this delay as quest timeout.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "reactivatable": {
+      "description": "SlateRef<bool> literal, expression, or $varName; true allows restart.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "waitUntilPlayerHasHomeMap": {
+      "description": "SlateRef<bool> literal, expression, or $varName; true waits for a home map.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "useAcceptanceExpiry": {
+      "description": "SlateRef<bool> literal, expression, or $varName; use quest acceptance expiry ticks.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "node": {
+      "description": "QuestNode run when the delay completes.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

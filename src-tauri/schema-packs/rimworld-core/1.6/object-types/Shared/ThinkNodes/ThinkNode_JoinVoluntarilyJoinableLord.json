@@ -1,0 +1,18 @@
+{
+  "objectType": "ThinkNode_JoinVoluntarilyJoinableLord",
+  "label": "Think node join voluntarily joinable lord",
+  "description": "Tries to join or leave a voluntarily joinable lord (such as a gathering or ritual) based on the configured duty hook slot.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": ["dutyHook"],
+  "fields": {
+    "dutyHook": {
+      "label": "Duty hook",
+      "description": "Think-tree hook slot that this node watches for a voluntarily joinable lord assignment.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "HighPriority", "MediumPriority"] }
+    }
+  }
+}

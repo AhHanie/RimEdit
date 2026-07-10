@@ -1,0 +1,326 @@
+{
+  "defType": "GameConditionDef",
+  "label": "Game condition",
+  "description": "Defines a global map condition - heat wave, toxic fallout, eclipse, psychic drone - that persists for a duration and applies gameplay effects.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "conditionClass",
+    "exclusiveConditions",
+    "startMessage",
+    "endMessage",
+    "letterText",
+    "letterHyperlinks",
+    "letterDef",
+    "canBePermanent",
+    "showPermanentInTooltip",
+    "allowUnderground",
+    "requireFish",
+    "descriptionFuture",
+    "jumpToSourceKey",
+    "silencedByConditions",
+    "natural",
+    "preventNeutralVisitors",
+    "preventShuttleLaunch",
+    "causesTraderCaravanExit",
+    "preventIncidents",
+    "displayOnUI",
+    "pennedAnimalsSeekShelter",
+    "spreadsFilth",
+    "canAffectAllPlanetLayers",
+    "layerWhitelist",
+    "layerBlacklist",
+    "defaultDroneLevel",
+    "preventRain",
+    "weatherDef",
+    "temperatureOffset",
+    "minNearbyPollution",
+    "mtbOverNearbyPollutionCurve",
+    "fishPopulationOffsetPerDay"
+  ],
+  "fields": {
+    "conditionClass": {
+      "label": "Condition class",
+      "description": "C# GameCondition subclass that implements this condition's tick-by-tick effects.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "GameCondition_NoSunlight",
+        "GameCondition_ToxicFallout",
+        "GameCondition_ForceWeather",
+        "GameCondition_PsychicEmanation",
+        "GameCondition_Flashstorm"
+      ]
+    },
+    "exclusiveConditions": {
+      "label": "Exclusive conditions",
+      "description": "Other GameConditionDefs that cannot coexist with this one. If one is already active, this condition cannot start (private in source but consumed by CanCoexistWith).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "GameConditionDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "startMessage": {
+      "label": "Start message",
+      "description": "Message shown to the player when this condition begins.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "endMessage": {
+      "label": "End message",
+      "description": "Message shown to the player when this condition ends.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterText": {
+      "label": "Letter text",
+      "description": "Body text of the notification letter sent when this condition starts.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "letterHyperlinks": {
+      "label": "Letter hyperlinks",
+      "description": "ThingDefs shown as clickable hyperlinks in the notification letter.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "letterDef": {
+      "label": "Letter def",
+      "description": "LetterDef that controls the notification icon, sound, and urgency.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "LetterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canBePermanent": {
+      "label": "Can be permanent",
+      "description": "If true, this condition can be set as permanent (no expiry) by a scenario part or incident.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "showPermanentInTooltip": {
+      "label": "Show permanent in tooltip",
+      "description": "If true, the condition tooltip notes that the condition is permanent when no end date is set.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowUnderground": {
+      "label": "Allow underground",
+      "description": "If true, this condition applies to underground maps as well as surface maps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "requireFish": {
+      "label": "Require fish",
+      "description": "If true, this condition is only eligible to start on maps that have fish population.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "descriptionFuture": {
+      "label": "Description (future)",
+      "description": "Description displayed in the condition tooltip when the condition has not yet begun.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "jumpToSourceKey": {
+      "label": "Jump to source key",
+      "description": "Translation key for the 'click to jump to source' tooltip action. Defaults to ClickToJumpToSource.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "ClickToJumpToSource",
+      "xml": "element"
+    },
+    "silencedByConditions": {
+      "label": "Silenced by conditions",
+      "description": "GameConditionDefs whose presence suppresses this condition's letter and message output.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "GameConditionDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "natural": {
+      "label": "Natural",
+      "description": "If true, this condition is treated as a natural weather event rather than a man-made or psychic effect.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "preventNeutralVisitors": {
+      "label": "Prevent neutral visitors",
+      "description": "If true, neutral visitor caravans will not arrive while this condition is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventShuttleLaunch": {
+      "label": "Prevent shuttle launch",
+      "description": "If true, shuttles cannot launch from the map while this condition is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "causesTraderCaravanExit": {
+      "label": "Causes trader caravan exit",
+      "description": "If true, any trader caravan on the map will attempt to leave while this condition is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventIncidents": {
+      "label": "Prevent incidents",
+      "description": "If true, the storyteller will not fire new incidents while this condition is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayOnUI": {
+      "label": "Display on UI",
+      "description": "If true, this condition is listed in the conditions panel at the top of the screen.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "pennedAnimalsSeekShelter": {
+      "label": "Penned animals seek shelter",
+      "description": "If true, animals in pens will attempt to move to roofed areas while this condition is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "spreadsFilth": {
+      "label": "Spreads filth",
+      "description": "ThingDef (typically a filth type) scattered onto the map while this condition is active.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canAffectAllPlanetLayers": {
+      "label": "Can affect all planet layers",
+      "description": "If true, this condition is eligible on every planet layer regardless of layerWhitelist and layerBlacklist.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "layerWhitelist": {
+      "label": "Layer whitelist",
+      "description": "If non-empty, this condition only applies on these PlanetLayerDefs (Odyssey expansion).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "layerBlacklist": {
+      "label": "Layer blacklist",
+      "description": "This condition cannot apply on any PlanetLayerDef in this list (Odyssey expansion).",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "PlanetLayerDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "defaultDroneLevel": {
+      "label": "Default drone level",
+      "description": "PsychicDroneLevel applied to all pawns on the map while this condition is active.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": { "allowedValues": ["None", "GoodMedium", "BadLow", "BadMedium", "BadHigh", "BadExtreme"] }
+    },
+    "preventRain": {
+      "label": "Prevent rain",
+      "description": "If true, rain is suppressed on the map while this condition is active.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "weatherDef": {
+      "label": "Weather def",
+      "description": "WeatherDef forced onto the map while this condition is active (used by force-weather conditions).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WeatherDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "temperatureOffset": {
+      "label": "Temperature offset",
+      "description": "Flat temperature change (in Celsius) applied to the map while this condition is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minNearbyPollution": {
+      "label": "Min nearby pollution",
+      "description": "Minimum nearby pollution level required for this condition to start. Used by pollution-triggered conditions.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "mtbOverNearbyPollutionCurve": {
+      "label": "MTB over nearby pollution curve",
+      "description": "Curve mapping nearby pollution level to mean time between firings (in days). X = pollution, Y = MTB days.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "fishPopulationOffsetPerDay": {
+      "label": "Fish population offset per day",
+      "description": "Amount added to or subtracted from the map's fish population each day while this condition is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-game-condition": {
+      "label": "Basic game condition",
+      "description": "A simple timed map condition with a start letter and UI display.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "conditionClass", "letterText", "letterDef"],
+      "fieldValues": {
+        "canBePermanent": "false",
+        "displayOnUI": "true",
+        "natural": "true"
+      }
+    },
+    "force-weather-condition": {
+      "label": "Force weather condition",
+      "description": "A condition that overrides map weather for its duration.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "weatherDef", "letterText", "letterDef"],
+      "fieldValues": {
+        "conditionClass": "GameCondition_ForceWeather",
+        "canBePermanent": "false",
+        "displayOnUI": "true",
+        "natural": "true",
+        "preventRain": "false"
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "objectType": "RitualOutcomeComp_RolePresentNotSubstituted",
+  "label": "Ritual outcome comp (role present not substituted)",
+  "description": "Applies qualityOffset when the specified role is filled by an unsubstituted pawn.",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "roleId", "disableInClassicMode"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Quality offset applied when the role is filled and not substituted.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve; not typically used by this variant.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "roleId": {
+      "label": "Role ID",
+      "description": "Ritual role ID string. The comp applies when this role is assigned and not substituted.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "disableInClassicMode": {
+      "label": "Disable in classic mode",
+      "description": "If true, this comp is skipped when the ideology manager is in classic (no ideo) mode.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "objectType": "HediffGiver_RandomAgeCurved",
+  "label": "Hediff giver (random, age-curved)",
+  "description": "Applies a hediff randomly with MTB scaled by a curve over the pawn's age as a fraction of life expectancy.",
+  "fieldOrder": ["Class", "hediff", "partsToAffect", "canAffectAnyLivePart", "allowOnLodgers", "allowOnQuestRewardPawns", "allowOnQuestReservedPawns", "allowOnBeggars", "countToAffect", "ageFractionMtbDaysCurve", "minPlayerPopulation"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# HediffGiver subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "hediff": {
+      "label": "Hediff",
+      "description": "HediffDef to apply.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "partsToAffect": {
+      "label": "Parts to affect",
+      "description": "Body parts this giver can affect. Empty means all parts.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "BodyPartDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canAffectAnyLivePart": {
+      "label": "Can affect any live part",
+      "description": "If true, this giver can affect any live body part.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowOnLodgers": {
+      "label": "Allow on lodgers",
+      "description": "If true, this giver can apply to lodger pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowOnQuestRewardPawns": {
+      "label": "Allow on quest reward pawns",
+      "description": "If true, this giver can apply to quest reward pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowOnQuestReservedPawns": {
+      "label": "Allow on quest reserved pawns",
+      "description": "If true, this giver can apply to quest reserved pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowOnBeggars": {
+      "label": "Allow on beggars",
+      "description": "If true, this giver can apply to beggar pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "countToAffect": {
+      "label": "Count to affect",
+      "description": "Number of body parts to affect.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "ageFractionMtbDaysCurve": {
+      "label": "Age fraction MTB days curve",
+      "description": "Maps age / lifeExpectancy to mean-time-between in days.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "minPlayerPopulation": {
+      "label": "Min player population",
+      "description": "Minimum number of free colonists required before this giver can trigger.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

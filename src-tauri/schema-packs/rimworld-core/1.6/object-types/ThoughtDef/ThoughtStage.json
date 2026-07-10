@@ -1,0 +1,68 @@
+{
+  "objectType": "ThoughtStage",
+  "label": "Thought stage",
+  "description": "One named state of a ThoughtDef, providing the mood effect, opinion offset, and display text for that state.",
+  "fieldOrder": [
+    "label",
+    "labelSocial",
+    "labelAbstract",
+    "description",
+    "baseMoodEffect",
+    "baseOpinionOffset",
+    "visible"
+  ],
+  "fields": {
+    "label": {
+      "label": "Label",
+      "description": "Display name for this thought stage shown in mood tooltips and thought logs. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelSocial": {
+      "label": "Label (social)",
+      "description": "Alternative display name used when this thought is a social memory. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Label used when displaying the thought abstractly (without a specific pawn context). Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Longer text shown in the mood tooltip for this stage. Required when baseMoodEffect is non-zero. Supports translation keys.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "baseMoodEffect": {
+      "label": "Base mood effect",
+      "description": "Amount added to a pawn's mood while this stage is active. Negative values lower mood; positive values raise it.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "baseOpinionOffset": {
+      "label": "Base opinion offset",
+      "description": "Amount added to the pawn's opinion of the target pawn while this social thought stage is active.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "visible": {
+      "label": "Visible",
+      "description": "Whether this stage shows up in the mood breakdown. Set to false to create hidden filler stages with no effect.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

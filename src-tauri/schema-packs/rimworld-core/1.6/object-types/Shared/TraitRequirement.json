@@ -1,0 +1,30 @@
+{
+  "objectType": "TraitRequirement",
+  "label": "Trait requirement",
+  "description": "A trait and optional degree pair used to match a pawn's traits. Loaded from keyed child elements via LoadDataFromXmlCustom.",
+  "fieldOrder": [
+    "def",
+    "degree"
+  ],
+  "fields": {
+    "def": {
+      "label": "Trait",
+      "description": "TraitDef that must be present (or absent) on the pawn for this requirement to match.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "TraitDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "degree": {
+      "label": "Degree",
+      "description": "Specific trait degree that must match. When absent, any degree of the trait satisfies the requirement.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "objectType": "RitualPosition_AnimaLinkingSpot",
+  "label": "Ritual position (anima linking spot)",
+  "description": "Places the pawn at the anima tree linking spot.",
+  "fieldOrder": ["Class", "highlight"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "highlight": { "label": "Highlight", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" }
+  }
+}

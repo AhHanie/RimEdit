@@ -1,0 +1,15 @@
+{
+  "objectType": "WorldGenStep_Roads",
+  "label": "Roads world gen step",
+  "description": "Generates road networks between faction settlements on the world map.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

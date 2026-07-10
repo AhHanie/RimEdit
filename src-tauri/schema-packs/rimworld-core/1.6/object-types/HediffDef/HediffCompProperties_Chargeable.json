@@ -1,0 +1,46 @@
+{
+  "objectType": "HediffCompProperties_Chargeable",
+  "label": "Chargeable comp",
+  "description": "Gives this hediff a charge system with capacity and drain.",
+  "fieldOrder": ["Class", "compClass", "maxCharge", "chargePerDay", "dischargeOnUse"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "maxCharge": {
+      "label": "Max charge",
+      "description": "Maximum charge capacity.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "chargePerDay": {
+      "label": "Charge per day",
+      "description": "Charge gained per day.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "dischargeOnUse": {
+      "label": "Discharge on use",
+      "description": "Charge consumed per use.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "objectType": "StageEndTrigger_PawnDown",
+  "label": "Stage end trigger (pawn down)",
+  "description": "Ends the stage when the pawn assigned to the specified role goes down.",
+  "fieldOrder": ["Class", "countsTowardsProgress", "roleId"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" },
+    "roleId": {
+      "label": "Role ID",
+      "description": "ID of the role whose assigned pawn going down fires this trigger.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

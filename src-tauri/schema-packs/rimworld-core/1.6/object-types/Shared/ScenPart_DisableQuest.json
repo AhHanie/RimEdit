@@ -1,0 +1,21 @@
+{
+  "objectType": "ScenPart_DisableQuest",
+  "label": "Disable quest",
+  "description": "Permanently disables a quest script so it never triggers during this game.",
+  "inherits": ["ScenPart"],
+  "fieldOrder": ["def", "visible", "questDef"],
+  "fields": {
+    "questDef": {
+      "label": "Quest def",
+      "description": "QuestScriptDef to permanently disable.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "QuestScriptDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

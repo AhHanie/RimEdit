@@ -1,0 +1,240 @@
+{
+  "objectType": "RitualRole",
+  "label": "Ritual role",
+  "description": "Base schema for ritual role objects. Subclass is selected by the Class attribute.",
+  "fieldOrder": [
+    "Class", "label", "categoryLabel", "missingDesc", "noCandidatesGizmoDesc",
+    "customChildDisallowMessage", "id", "precept", "maxCount", "mergeId",
+    "required", "substitutable", "ignoreBleeding", "countsAsParticipant",
+    "addToLord", "allowNonAggroMentalState", "defaultForSelectedColonist",
+    "allowOtherIdeos", "allowDowned", "allowKeepLayingDown", "allowChild",
+    "allowBaby", "removeFromAssignmentsOnDeath", "endJobOnRitualCleanup",
+    "mustBeAbleToReachTarget", "blocksSocialInteraction"
+  ],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "RitualRole",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "variants": {
+      "RitualRole": "RitualRole",
+      "RitualRoleAnimaLinker": "RitualRoleAnimaLinker",
+      "RitualRoleAnimal": "RitualRoleAnimal",
+      "RitualRoleColonist": "RitualRoleColonist",
+      "RitualRoleColonistConnectable": "RitualRoleColonistConnectable",
+      "RitualRoleConvertee": "RitualRoleConvertee",
+      "RitualRoleForced": "RitualRoleForced",
+      "RitualRoleIdeoRoleChanger": "RitualRoleIdeoRoleChanger",
+      "RitualRoleOrganizer": "RitualRoleOrganizer",
+      "RitualRolePrisoner": "RitualRolePrisoner",
+      "RitualRolePrisonerOrSlave": "RitualRolePrisonerOrSlave",
+      "RitualRoleScarificationTarget": "RitualRoleScarificationTarget",
+      "RitualRoleBlindingTarget": "RitualRoleBlindingTarget",
+      "RitualRoleTag": "RitualRoleTag",
+      "RitualRoleWarden": "RitualRoleWarden",
+      "RitualRole_Mother": "RitualRole_Mother"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualRole subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label for this role shown in the ritual assignment dialog.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "categoryLabel": {
+      "label": "Category label",
+      "description": "Category label shown when this role belongs to a grouped role category.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "missingDesc": {
+      "label": "Missing desc",
+      "description": "Description shown when no valid pawn is found for this role.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "noCandidatesGizmoDesc": {
+      "label": "No candidates gizmo desc",
+      "description": "Gizmo description shown when there are no valid candidates for this role.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "customChildDisallowMessage": {
+      "label": "Custom child disallow message",
+      "description": "Custom message shown when a child pawn is rejected for this role.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "id": {
+      "label": "ID",
+      "description": "String identifier for this role, referenced by stage behaviors and triggers.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "precept": {
+      "label": "Precept",
+      "description": "PreceptDef (role precept) that a pawn must hold to fill this role.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "PreceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "maxCount": {
+      "label": "Max count",
+      "description": "Maximum number of pawns that can fill this role simultaneously. 0 means unlimited.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "mergeId": {
+      "label": "Merge ID",
+      "description": "If set, roles with the same mergeId are treated as one role for assignment purposes.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "required": {
+      "label": "Required",
+      "description": "If true, a valid pawn must be assigned to this role for the ritual to start.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "substitutable": {
+      "label": "Substitutable",
+      "description": "If true, another pawn can substitute for the ideal candidate.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreBleeding": {
+      "label": "Ignore bleeding",
+      "description": "If true, bleeding does not prevent a pawn from fulfilling this role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "countsAsParticipant": {
+      "label": "Counts as participant",
+      "description": "If true, this role pawn is counted when computing ritual quality.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "addToLord": {
+      "label": "Add to lord",
+      "description": "If true, this role pawn joins the ritual Lord job.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowNonAggroMentalState": {
+      "label": "Allow non-aggro mental state",
+      "description": "If true, pawns in a non-aggressive mental state can fill this role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "defaultForSelectedColonist": {
+      "label": "Default for selected colonist",
+      "description": "If true, the colonist selected when triggering the ritual is pre-assigned to this role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowOtherIdeos": {
+      "label": "Allow other ideos",
+      "description": "If true, pawns from other ideologies can fill this role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowDowned": {
+      "label": "Allow downed",
+      "description": "If true, downed pawns can be assigned to this role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowKeepLayingDown": {
+      "label": "Allow keep laying down",
+      "description": "If true, a pawn assigned to this role may remain lying down during the ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowChild": {
+      "label": "Allow child",
+      "description": "If true, juvenile pawns can fill this role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowBaby": {
+      "label": "Allow baby",
+      "description": "If true, baby-stage pawns can fill this role.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "removeFromAssignmentsOnDeath": {
+      "label": "Remove from assignments on death",
+      "description": "If true, the pawn is removed from role assignments when it dies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "endJobOnRitualCleanup": {
+      "label": "End job on ritual cleanup",
+      "description": "If true, the pawn's current job is ended when the ritual cleans up.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "mustBeAbleToReachTarget": {
+      "label": "Must be able to reach target",
+      "description": "If true, the pawn must be able to path to the ritual target to be eligible.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "blocksSocialInteraction": {
+      "label": "Blocks social interaction",
+      "description": "If true, pawns in this role cannot initiate social interactions during the ritual.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

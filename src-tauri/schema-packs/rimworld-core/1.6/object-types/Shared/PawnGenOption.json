@@ -1,0 +1,31 @@
+{
+  "objectType": "PawnGenOption",
+  "label": "Pawn gen option",
+  "description": "Pairs a PawnKindDef with a selection weight used when generating a pawn group.",
+  "fieldOrder": [
+    "kind",
+    "selectionWeight"
+  ],
+  "fields": {
+    "kind": {
+      "label": "Kind",
+      "description": "PawnKindDef to generate.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "PawnKindDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "selectionWeight": {
+      "label": "Selection weight",
+      "description": "Relative weight for selecting this pawn kind during group generation.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

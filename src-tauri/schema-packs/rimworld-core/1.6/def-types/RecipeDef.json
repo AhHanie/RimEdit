@@ -1,0 +1,669 @@
+{
+  "defType": "RecipeDef",
+  "label": "Recipe",
+  "description": "Defines a crafting or surgical recipe that can be performed at a work table or on a pawn.",
+  "inherits": [
+    "Def"
+  ],
+  "fieldOrder": [
+    "workerClass",
+    "workerCounterClass",
+    "jobString",
+    "requiredGiverWorkType",
+    "workAmount",
+    "workSpeedStat",
+    "efficiencyStat",
+    "workTableEfficiencyStat",
+    "workTableSpeedStat",
+    "ingredients",
+    "fixedIngredientFilter",
+    "defaultIngredientFilter",
+    "allowMixingIngredients",
+    "ignoreIngredientCountTakeEntireStacks",
+    "ingredientValueGetterClass",
+    "forceHiddenSpecialFilters",
+    "autoStripCorpses",
+    "interruptIfIngredientIsRotting",
+    "products",
+    "specialProducts",
+    "productHasIngredientStuff",
+    "useIngredientsForColor",
+    "targetCountAdjustment",
+    "unfinishedThingDef",
+    "skillRequirements",
+    "workSkill",
+    "workSkillLearnFactor",
+    "effectWorking",
+    "soundWorking",
+    "uiIconThing",
+    "uiIconPath",
+    "recipeUsers",
+    "appliedOnFixedBodyParts",
+    "appliedOnFixedBodyPartGroups",
+    "addsHediff",
+    "removesHediff",
+    "addsHediffOnFailure",
+    "changesHediffLevel",
+    "incompatibleWithHediffTags",
+    "hediffLevelOffset",
+    "hideBodyPartNames",
+    "isViolation",
+    "successfullyRemovedHediffMessage",
+    "surgerySuccessChanceFactor",
+    "deathOnFailedSurgeryChance",
+    "targetsBodyPart",
+    "anesthetize",
+    "minPartCount",
+    "surgeryIgnoreEnvironment",
+    "surgeryOutcomeEffect",
+    "genderPrerequisite",
+    "mustBeFertile",
+    "allowedForQuestLodgers",
+    "minAllowedAge",
+    "developmentalStageFilter",
+    "humanlikeOnly",
+    "mutantPrerequisite",
+    "mutantBlacklist",
+    "smeltingWorkAmount",
+    "researchPrerequisite",
+    "memePrerequisitesAny",
+    "researchPrerequisites",
+    "factionPrerequisiteTags",
+    "fromIdeoBuildingPreceptOnly",
+    "conceptLearned",
+    "dontShowIfAnyIngredientMissing",
+    "displayPriority",
+    "formingTicks",
+    "mechanitorOnlyRecipe",
+    "gestationCycles",
+    "mechResurrection"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# class that implements the actual recipe work logic. Defaults to RecipeWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "RecipeWorker",
+      "xml": "element"
+    },
+    "workerCounterClass": {
+      "label": "Worker counter class",
+      "description": "C# class used to count how many times this recipe has been performed. Defaults to RecipeWorkerCounter.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "RecipeWorkerCounter",
+      "xml": "element"
+    },
+    "jobString": {
+      "label": "Job string",
+      "description": "Short text displayed in the job bar while a pawn is performing this recipe.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "requiredGiverWorkType": {
+      "label": "Required giver work type",
+      "description": "WorkTypeDef the pawn must have enabled to perform this recipe.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "WorkTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workAmount": {
+      "label": "Work amount",
+      "description": "Base work ticks required to complete this recipe before speed modifiers. Use -1 to derive the value from the product's WorkToMake stat.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "workSpeedStat": {
+      "label": "Work speed stat",
+      "description": "StatDef that scales how fast a pawn performs this recipe.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "efficiencyStat": {
+      "label": "Efficiency stat",
+      "description": "StatDef that scales the yield quantity of this recipe's products.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workTableEfficiencyStat": {
+      "label": "Work table efficiency stat",
+      "description": "StatDef read from the work table to scale product yield. Defaults to WorkTableEfficiencyFactor.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workTableSpeedStat": {
+      "label": "Work table speed stat",
+      "description": "StatDef read from the work table to scale recipe work speed. Defaults to WorkTableWorkSpeedFactor.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ingredients": {
+      "label": "Ingredients",
+      "description": "List of ingredient slots. Each slot specifies a ThingFilter and how many units are consumed.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "IngredientCount" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "fixedIngredientFilter": {
+      "label": "Fixed ingredient filter",
+      "description": "ThingFilter that locks which specific things can be used as ingredients, overriding category-based selection. Initialized to an empty ThingFilter if omitted.",
+      "type": { "kind": "object", "schemaRef": "ThingFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "defaultIngredientFilter": {
+      "label": "Default ingredient filter",
+      "description": "ThingFilter providing the initial ingredient selection the player can adjust. Auto-copied from fixedIngredientFilter if omitted.",
+      "type": { "kind": "object", "schemaRef": "ThingFilter" },
+      "required": false,
+      "xml": "object"
+    },
+    "allowMixingIngredients": {
+      "label": "Allow mixing ingredients",
+      "description": "Whether ingredients from different sources can be combined within a single batch.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ignoreIngredientCountTakeEntireStacks": {
+      "label": "Ignore ingredient count take entire stacks",
+      "description": "When true, entire stacks are consumed regardless of the ingredient count.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "ingredientValueGetterClass": {
+      "label": "Ingredient value getter class",
+      "description": "Private C# class name used to determine the value of each ingredient for counting and filtering. Defaults to IngredientValueGetter_Volume.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "IngredientValueGetter_Volume",
+      "xml": "element"
+    },
+    "forceHiddenSpecialFilters": {
+      "label": "Force hidden special filters",
+      "description": "SpecialThingFilterDefs that are hidden from the ingredient filter UI even if normally visible.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "SpecialThingFilterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "autoStripCorpses": {
+      "label": "Auto strip corpses",
+      "description": "Whether corpse ingredients are automatically stripped of equipment before being consumed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "interruptIfIngredientIsRotting": {
+      "label": "Interrupt if ingredient is rotting",
+      "description": "Whether the recipe bill is cancelled if a selected ingredient begins to rot.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "products": {
+      "label": "Products",
+      "description": "Map of ThingDef defNames to output counts produced when the recipe completes. Each child element name is a ThingDef defName and its text content is the integer count.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "keyReference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" },
+      "valueType": { "kind": "integer" }
+    },
+    "specialProducts": {
+      "label": "Special products",
+      "description": "List of special product types produced instead of normal products. Each entry is a SpecialProductType enum value.",
+      "type": { "kind": "list" },
+      "items": { "kind": "enum" },
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": ["Butchery", "Smelted"]
+      }
+    },
+    "productHasIngredientStuff": {
+      "label": "Product has ingredient stuff",
+      "description": "When true, the product inherits its stuff type from the primary ingredient.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useIngredientsForColor": {
+      "label": "Use ingredients for color",
+      "description": "When true, the product's color is derived from the ingredient's color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "targetCountAdjustment": {
+      "label": "Target count adjustment",
+      "description": "Multiplier applied to the bill target count when determining how many times the recipe needs to run.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "unfinishedThingDef": {
+      "label": "Unfinished thing def",
+      "description": "ThingDef used to represent the partially completed item on the work table while the recipe is in progress.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "skillRequirements": {
+      "label": "Skill requirements",
+      "description": "Minimum skill levels the worker pawn must have to perform this recipe.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SkillRequirement" },
+      "required": false,
+      "xml": "keyedValueList",
+      "keyField": "skill",
+      "valueField": "minLevel",
+      "keyReference": { "defType": "SkillDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workSkill": {
+      "label": "Work skill",
+      "description": "SkillDef used for pawn skill checks and XP gain while performing this recipe.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SkillDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "workSkillLearnFactor": {
+      "label": "Work skill learn factor",
+      "description": "Multiplier applied to skill XP earned while performing this recipe.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "effectWorking": {
+      "label": "Effect working",
+      "description": "EffecterDef played while a pawn is actively performing this recipe.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundWorking": {
+      "label": "Sound working",
+      "description": "SoundDef played as a sustainer while this recipe is in progress.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "uiIconThing": {
+      "label": "UI icon thing",
+      "description": "Private field. ThingDef whose icon is used to represent this recipe in the UI. Falls back to the produced ThingDef if omitted.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "uiIconPath": {
+      "label": "UI icon path",
+      "description": "Private field. Content path to a texture used as the recipe icon, overriding the ThingDef icon.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "recipeUsers": {
+      "label": "Recipe users",
+      "description": "ThingDef references listing which buildings this recipe appears on.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "appliedOnFixedBodyParts": {
+      "label": "Applied on fixed body parts",
+      "description": "List of BodyPartDef references. The surgery can only be performed on these specific body parts.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "BodyPartDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "appliedOnFixedBodyPartGroups": {
+      "label": "Applied on fixed body part groups",
+      "description": "List of BodyPartGroupDef references. The surgery can be performed on any body part belonging to these groups.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "BodyPartGroupDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "addsHediff": {
+      "label": "Adds hediff",
+      "description": "HediffDef applied to the target pawn on successful completion of this surgery.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "removesHediff": {
+      "label": "Removes hediff",
+      "description": "HediffDef removed from the target pawn on successful completion of this surgery.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "addsHediffOnFailure": {
+      "label": "Adds hediff on failure",
+      "description": "HediffDef applied to the target pawn when this surgery fails.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "changesHediffLevel": {
+      "label": "Changes hediff level",
+      "description": "HediffDef whose severity level is adjusted by this surgery instead of adding or removing it outright.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "incompatibleWithHediffTags": {
+      "label": "Incompatible with hediff tags",
+      "description": "Tag strings. This recipe cannot be applied to a pawn that already has a hediff carrying any of these tags.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "hediffLevelOffset": {
+      "label": "Hediff level offset",
+      "description": "Amount added to the hediff severity when changesHediffLevel is set.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "hideBodyPartNames": {
+      "label": "Hide body part names",
+      "description": "When true, specific body part names are not shown in the surgery bill UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isViolation": {
+      "label": "Is violation",
+      "description": "When true, performing this recipe on a non-consenting pawn is treated as a social violation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "successfullyRemovedHediffMessage": {
+      "label": "Successfully removed hediff message",
+      "description": "Localized message shown when this surgery successfully removes a hediff.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "surgerySuccessChanceFactor": {
+      "label": "Surgery success chance factor",
+      "description": "Multiplier on the base surgery success probability. Use 99999 for guaranteed success.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "deathOnFailedSurgeryChance": {
+      "label": "Death on failed surgery chance",
+      "description": "Probability (0-1) that the patient dies when this surgery fails. Use 99999 for certain death on failure.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "targetsBodyPart": {
+      "label": "Targets body part",
+      "description": "Whether the surgery targets a specific body part. Set to false for whole-pawn operations.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "anesthetize": {
+      "label": "Anesthetize",
+      "description": "Whether the patient must be anesthetized before this surgery can begin.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "minPartCount": {
+      "label": "Min part count",
+      "description": "Minimum number of the target body part the pawn must have remaining for this surgery to be available. Use -1 for no minimum.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "surgeryIgnoreEnvironment": {
+      "label": "Surgery ignore environment",
+      "description": "When true, environment cleanliness is not factored into surgery success chance.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "surgeryOutcomeEffect": {
+      "label": "Surgery outcome effect",
+      "description": "SurgeryOutcomeEffectDef that determines the outcome calculation for this surgery.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SurgeryOutcomeEffectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "genderPrerequisite": {
+      "label": "Gender prerequisite",
+      "description": "If set, this recipe can only be applied to pawns of the specified gender.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Male", "Female"]
+      }
+    },
+    "mustBeFertile": {
+      "label": "Must be fertile",
+      "description": "When true, this recipe can only be applied to fertile pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "allowedForQuestLodgers": {
+      "label": "Allowed for quest lodgers",
+      "description": "Whether quest lodgers (temporary visitors) can have this recipe performed on them.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "minAllowedAge": {
+      "label": "Min allowed age",
+      "description": "Minimum biological age in years the pawn must be for this recipe to be available. Use -1 for no minimum.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "developmentalStageFilter": {
+      "label": "Developmental stage filter",
+      "description": "DevelopmentalStage flags (comma-separated) restricting which life stages this recipe applies to. Omit for no restriction.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      },
+      "examples": ["Adult", "Child, Adult", "None, Newborn, Baby, Child, Adult"]
+    },
+    "humanlikeOnly": {
+      "label": "Humanlike only",
+      "description": "When true, this recipe can only be performed on humanlike pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "mutantPrerequisite": {
+      "label": "Mutant prerequisite",
+      "description": "List of MutantDef references. The pawn must be one of these mutant types for this recipe to be available.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MutantDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "mutantBlacklist": {
+      "label": "Mutant blacklist",
+      "description": "List of MutantDef references. The recipe is unavailable for pawns that are any of these mutant types.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MutantDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "smeltingWorkAmount": {
+      "label": "Smelting work amount",
+      "description": "Work ticks used when this recipe is the smelting recipe and the target is smeltable. Use -1 for no override.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "researchPrerequisite": {
+      "label": "Research prerequisite",
+      "description": "Single ResearchProjectDef that must be completed before this recipe is available.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ResearchProjectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "memePrerequisitesAny": {
+      "label": "Meme prerequisites any",
+      "description": "List of MemeDef references. The player faction must follow at least one of these memes for this recipe to be available.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "MemeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "researchPrerequisites": {
+      "label": "Research prerequisites",
+      "description": "Multiple ResearchProjectDef references all of which must be completed before this recipe is available.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "ResearchProjectDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "factionPrerequisiteTags": {
+      "label": "Faction prerequisite tags",
+      "description": "Tag strings. The player faction must have all listed tags on its def for this recipe to be available.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "fromIdeoBuildingPreceptOnly": {
+      "label": "From ideo building precept only",
+      "description": "When true, this recipe is only available if the player's ideology has a precept granting its product building.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "conceptLearned": {
+      "label": "Concept learned",
+      "description": "ConceptDef that the player learns when this recipe is first performed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ConceptDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "dontShowIfAnyIngredientMissing": {
+      "label": "Don't show if any ingredient missing",
+      "description": "When true, the recipe bill option is hidden if any required ingredient type is completely unavailable.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "displayPriority": {
+      "label": "Display priority",
+      "description": "Sort order for this recipe in the recipe list UI. Lower values appear first.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 99999,
+      "xml": "element"
+    },
+    "formingTicks": {
+      "label": "Forming ticks",
+      "description": "Ticks required to form a mech gestator product. Used for mech gestation recipes.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "mechanitorOnlyRecipe": {
+      "label": "Mechanitor only recipe",
+      "description": "When true, this recipe can only be performed by a mechanitor.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "gestationCycles": {
+      "label": "Gestation cycles",
+      "description": "Number of gestation cycles required to produce a mech via this recipe.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "mechResurrection": {
+      "label": "Mech resurrection",
+      "description": "When true, this recipe is a mech resurrection recipe rather than a standard crafting or gestation recipe.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-recipe": {
+      "label": "Basic recipe",
+      "description": "Crafting recipe with a job string and work amount.",
+      "includeRequiredFields": true,
+      "promptFields": [
+        "jobString"
+      ],
+      "fieldValues": {
+        "workAmount": 400
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "objectType": "StockGenerator_SingleDef",
+  "label": "Single def generator",
+  "description": "Generates a specific number of a single ThingDef. The most common generator variant; used for silver, specific components, and other fixed-item slots.",
+  "inherits": ["StockGenerator"],
+  "fieldOrder": ["thingDef"],
+  "fields": {
+    "thingDef": {
+      "label": "Thing def",
+      "description": "ThingDef to generate and sell.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

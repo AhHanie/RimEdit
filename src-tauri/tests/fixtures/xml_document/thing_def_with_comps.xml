@@ -1,0 +1,18 @@
+<Defs>
+  <ThingDef>
+    <defName>CompFixture</defName>
+    <comps>
+      <li Class="CompProperties_Forbiddable"/>
+      <li Class="CompProperties_Glower">
+        <glowRadius>10</glowRadius>
+        <glowColor>(252,187,113,0)</glowColor>
+      </li>
+      <li Class="SK_Matter_Network.CompProperties_DiskCapacity">
+        <maxBytes>4096</maxBytes>
+      </li>
+      <li>
+        <compClass>CompGatherSpot</compClass>
+      </li>
+    </comps>
+  </ThingDef>
+</Defs>

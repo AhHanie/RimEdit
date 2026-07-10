@@ -1,0 +1,17 @@
+{
+  "objectType": "AudioGrain_Folder",
+  "label": "Audio grain (folder)",
+  "description": "An audio grain that randomly picks a clip from a folder.",
+  "inherits": ["AudioGrain"],
+  "fieldOrder": ["Class", "clipFolderPath"],
+  "fields": {
+    "clipFolderPath": {
+      "label": "Clip folder path",
+      "description": "Asset path to the folder of audio clips, relative to the mod or core Sounds folder.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "xmlAliases": ["clipPath"]
+    }
+  }
+}

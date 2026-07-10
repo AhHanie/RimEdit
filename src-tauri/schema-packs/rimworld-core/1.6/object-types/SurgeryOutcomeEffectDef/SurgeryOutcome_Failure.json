@@ -1,0 +1,8 @@
+{
+  "objectType": "SurgeryOutcome_Failure",
+  "label": "Surgery outcome: failure",
+  "description": "Generic surgery failure outcome. Uses inherited chance, totalDamage, and other base fields.",
+  "inherits": ["SurgeryOutcome"],
+  "fieldOrder": [],
+  "fields": {}
+}

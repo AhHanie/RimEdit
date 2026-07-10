@@ -1,0 +1,17 @@
+{
+  "objectType": "ThinkNode_ConditionalWorkMode",
+  "label": "Think node conditional work mode",
+  "description": "Satisfied when the pawn is a player-controlled mechanoid whose overseer's control group is set to the specified work mode.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["workMode"],
+  "fields": {
+    "workMode": {
+      "label": "Work mode",
+      "description": "The mech work mode that the overseer's control group must be set to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "MechWorkModeDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

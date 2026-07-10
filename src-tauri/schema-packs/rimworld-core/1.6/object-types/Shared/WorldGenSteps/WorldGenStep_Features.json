@@ -1,0 +1,15 @@
+{
+  "objectType": "WorldGenStep_Features",
+  "label": "Features world gen step",
+  "description": "Generates named world map features such as oceans, mountain ranges, and archipelagos.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

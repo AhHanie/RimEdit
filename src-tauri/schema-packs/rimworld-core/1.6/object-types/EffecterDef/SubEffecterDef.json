@@ -1,0 +1,497 @@
+{
+  "objectType": "SubEffecterDef",
+  "label": "Sub-effecter",
+  "description": "A single visual or audio component within an EffecterDef. Defines a particle emitter, mote spawner, sound trigger, or nested group. Each sub-effecter uses a C# runtime class selected by subEffecterClass.",
+  "fieldOrder": [
+    "subEffecterClass",
+    "burstCount",
+    "ticksBetweenMotes",
+    "maxMoteCount",
+    "initialDelayTicks",
+    "lifespanMaxTicks",
+    "chancePerTick",
+    "chancePeriodTicks",
+    "spawnLocType",
+    "positionLerpFactor",
+    "positionOffset",
+    "positionRadius",
+    "positionRadiusMin",
+    "perRotationOffsets",
+    "positionDimensions",
+    "attachToSpawnThing",
+    "avoidLastPositionRadius",
+    "attachPoint",
+    "moteDef",
+    "fleckDef",
+    "color",
+    "angle",
+    "absoluteAngle",
+    "useTargetAInitialRotation",
+    "useTargetBInitialRotation",
+    "fleckUsesAngleForVelocity",
+    "rotateTowardsTargetCenter",
+    "useTargetABodyAngle",
+    "useTargetBBodyAngle",
+    "speed",
+    "rotation",
+    "rotationRate",
+    "scale",
+    "airTime",
+    "soundDef",
+    "intermittentSoundInterval",
+    "ticksBeforeSustainerStart",
+    "orbitOrigin",
+    "orbitSpeed",
+    "orbitSnapStrength",
+    "makeMoteOnSubtrigger",
+    "destroyMoteOnCleanup",
+    "cameraShake",
+    "distanceAttenuationScale",
+    "distanceAttenuationMax",
+    "randomWeight",
+    "subTriggerOnSpawn",
+    "children"
+  ],
+  "fields": {
+    "subEffecterClass": {
+      "label": "Sub-effecter class",
+      "description": "C# SubEffecter subclass instantiated at runtime via Activator.CreateInstance. Determines which fields are used and how the sub-effecter behaves.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": [
+        "SubEffecter_SprayerTriggered",
+        "SubEffecter_SprayerChance",
+        "SubEffecter_SprayerContinuous",
+        "SubEffecter_SoundTriggered",
+        "SubEffecter_Sustainer",
+        "SubEffecter_SoundIntermittent",
+        "SubEffecter_SprayerTriggeredDelayed",
+        "SubEffecter_SprayerTriggeredChance",
+        "SubEffecter_InteractSymbol",
+        "SubEffecter_ProgressBar",
+        "SubEffecter_GroupedChance",
+        "SubEffecter_Random",
+        "SubEffecter_CameraShakeSingle",
+        "SubEffecter_CameraShakeChance",
+        "SubEffecter_DrifterEmoteChance"
+      ]
+    },
+    "burstCount": {
+      "label": "Burst count",
+      "description": "Number of motes or flecks spawned per trigger event. Supports both scalar and min~max range formats. Source default is 1~1.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element",
+      "examples": ["1", "2~4", "3~6"]
+    },
+    "ticksBetweenMotes": {
+      "label": "Ticks between motes",
+      "description": "Minimum game ticks between successive mote spawns for continuous sub-effecters. Source default is 40.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 40,
+      "xml": "element"
+    },
+    "maxMoteCount": {
+      "label": "Max mote count",
+      "description": "Maximum number of active motes this sub-effecter will maintain at once. Source default is int.MaxValue (effectively unlimited).",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "initialDelayTicks": {
+      "label": "Initial delay ticks",
+      "description": "Game ticks to wait before this sub-effecter begins spawning on the first trigger.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "lifespanMaxTicks": {
+      "label": "Lifespan max ticks",
+      "description": "Maximum lifespan in game ticks for spawned motes or flecks. Source default is 999999.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 999999,
+      "xml": "element"
+    },
+    "chancePerTick": {
+      "label": "Chance per tick",
+      "description": "Probability per game tick that the sub-effecter will spawn. Used by chance-based classes. Source default is 0.1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.1,
+      "xml": "element",
+      "examples": ["0.1", "0.2", "0.035"]
+    },
+    "chancePeriodTicks": {
+      "label": "Chance period ticks",
+      "description": "Period in game ticks over which the spawn chance is evaluated. 0 means per-tick evaluation.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "spawnLocType": {
+      "label": "Spawn location type",
+      "description": "Determines where in relation to the effecter targets this sub-effecter spawns its motes.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "BetweenPositions",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "OnSource",
+          "BetweenPositions",
+          "BetweenTouchingCells",
+          "RandomCellOnTarget",
+          "RandomDrawPosOnTarget",
+          "OnTarget"
+        ]
+      }
+    },
+    "positionLerpFactor": {
+      "label": "Position lerp factor",
+      "description": "Blend factor between the source and target positions used when spawnLocType is BetweenPositions. 0 is the source, 1 is the target. Source default is 0.5.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element",
+      "examples": ["0", "0.5", "1"]
+    },
+    "positionOffset": {
+      "label": "Position offset",
+      "description": "World-space offset applied to the spawn location in addition to the computed position. Source default is Vector3.zero.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(0, 0, 0)", "(0.5, 0, 0)"]
+    },
+    "positionRadius": {
+      "label": "Position radius",
+      "description": "Maximum radius in world units around the computed spawn location within which each mote is randomly placed.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.5", "1", "2.5"]
+    },
+    "positionRadiusMin": {
+      "label": "Position radius min",
+      "description": "Minimum radius for mote placement. Combined with positionRadius to create an annular spawn zone.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "perRotationOffsets": {
+      "label": "Per-rotation offsets",
+      "description": "List of four world-space offsets applied based on the parent thing's rotation (North, East, South, West). Each item is a bare comma-triplet such as -0.72, 0, 0.1.",
+      "type": { "kind": "list" },
+      "items": { "kind": "vector3" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "positionDimensions": {
+      "label": "Position dimensions",
+      "description": "Box dimensions for rectangular spawn zones. When set, motes spawn uniformly within a box of this size centered on the spawn location.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1, 0, 1)", "(2, 0, 2)"]
+    },
+    "attachToSpawnThing": {
+      "label": "Attach to spawn thing",
+      "description": "If true, spawned motes follow the thing that triggered the effecter.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "avoidLastPositionRadius": {
+      "label": "Avoid last position radius",
+      "description": "Radius around the previous spawn location that the next spawn will attempt to avoid. 0 disables avoidance.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "attachPoint": {
+      "label": "Attach point",
+      "description": "Named attachment point on the source thing where motes are anchored.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "RootNone",
+          "CableConnection0",
+          "CableConnection1",
+          "CableConnection2",
+          "CableConnection3",
+          "PlatformRestraint0",
+          "PlatformRestraint1",
+          "PlatformRestraint2",
+          "PlatformRestraint3",
+          "Exhaust"
+        ]
+      }
+    },
+    "moteDef": {
+      "label": "Mote def",
+      "description": "ThingDef for the mote to spawn. Typically a Mote-category ThingDef.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "fleckDef": {
+      "label": "Fleck def",
+      "description": "FleckDef for the fleck particle to spawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "FleckDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "color": {
+      "label": "Color",
+      "description": "Tint color applied to the spawned mote or fleck. Written as an RGBA float tuple such as (1, 0, 0, 1) for red, or (1, 1, 1, 1) for white. Source default is Color.white.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["(1, 1, 1, 1)", "(0, 0.5, 1, 1)", "(1, 0.8, 0, 1)"]
+    },
+    "angle": {
+      "label": "Angle",
+      "description": "Rotation or direction angle in degrees. Supports scalar and min~max range formats. Source default is 0~360.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~360",
+      "xml": "element",
+      "examples": ["0~360", "135~225", "45"]
+    },
+    "absoluteAngle": {
+      "label": "Absolute angle",
+      "description": "If true, the angle is treated as an absolute world-space direction instead of relative to the spawn orientation.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useTargetAInitialRotation": {
+      "label": "Use target A initial rotation",
+      "description": "If true, the mote inherits the initial rotation of target A at spawn time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useTargetBInitialRotation": {
+      "label": "Use target B initial rotation",
+      "description": "If true, the mote inherits the initial rotation of target B at spawn time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "fleckUsesAngleForVelocity": {
+      "label": "Fleck uses angle for velocity",
+      "description": "If true, the fleck's initial velocity direction is derived from the angle field.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "rotateTowardsTargetCenter": {
+      "label": "Rotate towards target center",
+      "description": "If true, the mote rotates to face the center point between the two effecter targets.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useTargetABodyAngle": {
+      "label": "Use target A body angle",
+      "description": "If true, the mote adopts the body facing angle of the pawn at target A.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "useTargetBBodyAngle": {
+      "label": "Use target B body angle",
+      "description": "If true, the mote adopts the body facing angle of the pawn at target B.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "speed": {
+      "label": "Speed",
+      "description": "Movement speed in world units per second. Supports scalar and min~max range formats. Source default is 0~0.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element",
+      "examples": ["5", "7.2~24", "0~0"]
+    },
+    "rotation": {
+      "label": "Rotation",
+      "description": "Initial rotation of the mote in degrees. Supports scalar and min~max range formats. Source default is 0~360.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~360",
+      "xml": "element",
+      "examples": ["0~360", "0", "90~270"]
+    },
+    "rotationRate": {
+      "label": "Rotation rate",
+      "description": "Rotation speed in degrees per second. Supports scalar and min~max range formats. Source default is 0~0.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element",
+      "examples": ["-240~240", "0~0", "30"]
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Uniform scale applied to the mote or fleck. Supports scalar and min~max range formats. Source default is 1~1.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "1~1",
+      "xml": "element",
+      "examples": ["1", "0.5~0.7", "1~2"]
+    },
+    "airTime": {
+      "label": "Air time",
+      "description": "Duration in seconds the mote remains alive before despawning. Supports scalar and min~max range formats. Source default is 999999~999999.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "999999~999999",
+      "xml": "element",
+      "examples": ["0.08~0.16", "0.5", "999999~999999"]
+    },
+    "soundDef": {
+      "label": "Sound def",
+      "description": "SoundDef to play when this sub-effecter triggers.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "SoundDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "intermittentSoundInterval": {
+      "label": "Intermittent sound interval",
+      "description": "Interval in game ticks between repeated sound triggers for intermittent sub-effecters. Supports both compact min~max text and nested min/max XML. Source default is 300~600.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "defaultValue": "300~600",
+      "xml": "element",
+      "examples": ["300~600", "750~4300"]
+    },
+    "ticksBeforeSustainerStart": {
+      "label": "Ticks before sustainer start",
+      "description": "Game ticks to wait after triggering before starting the sustained sound.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "orbitOrigin": {
+      "label": "Orbit origin",
+      "description": "If true, the mote orbits around the effect origin point.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "orbitSpeed": {
+      "label": "Orbit speed",
+      "description": "Angular velocity in degrees per second for orbiting motes. Supports scalar and min~max range formats.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["45", "30~90", "-180~180"]
+    },
+    "orbitSnapStrength": {
+      "label": "Orbit snap strength",
+      "description": "Strength of the snap force pulling a mote back to its orbit radius when displaced.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "makeMoteOnSubtrigger": {
+      "label": "Make mote on sub-trigger",
+      "description": "If true, a new mote is spawned each time this sub-effecter's sub-trigger fires rather than only on the main trigger.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "destroyMoteOnCleanup": {
+      "label": "Destroy mote on cleanup",
+      "description": "If true, any mote spawned by this sub-effecter is destroyed when the effecter is cleaned up.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "cameraShake": {
+      "label": "Camera shake",
+      "description": "Amount of camera shake applied when this sub-effecter triggers. Supports scalar and min~max range formats.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element",
+      "examples": ["0.5", "0.1~0.3"]
+    },
+    "distanceAttenuationScale": {
+      "label": "Distance attenuation scale",
+      "description": "Scale of the distance-based attenuation effect on camera shake or sound volume.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "distanceAttenuationMax": {
+      "label": "Distance attenuation max",
+      "description": "Maximum distance in world units at which attenuation reaches zero. Source default is 100.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 100,
+      "xml": "element"
+    },
+    "randomWeight": {
+      "label": "Random weight",
+      "description": "Relative weight used when a parent GroupedChance or Random sub-effecter selects among its children. Source default is 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "subTriggerOnSpawn": {
+      "label": "Sub-trigger on spawn",
+      "description": "If true, this sub-effecter fires its sub-trigger immediately when the parent effecter is first triggered. Source default is true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "children": {
+      "label": "Children",
+      "description": "Nested sub-effecters owned by this sub-effecter. Used by GroupedChance and Random classes to select among child effects.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "SubEffecterDef" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "objectType": "ScatterValidator_AvoidUsedRects",
+  "label": "Avoid used rects validator",
+  "description": "Rejects scatter positions where a rectangle of the given size centered on the candidate overlaps any previously reserved map rect.",
+  "fieldOrder": ["Class", "size"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be ScatterValidator_AvoidUsedRects.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "size": {
+      "label": "Size",
+      "description": "Width and height (x, z) of the rectangle to check against used rects. Serialized as (x, z). Defaults to (1, 1).",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "(1, 1)",
+      "xml": "element"
+    }
+  }
+}

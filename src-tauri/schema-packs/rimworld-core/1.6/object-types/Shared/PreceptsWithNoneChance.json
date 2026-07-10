@@ -1,0 +1,24 @@
+{
+  "objectType": "PreceptsWithNoneChance",
+  "label": "Precepts with none chance",
+  "description": "A selection group of precept-thing pairs with a chance of selecting none.",
+  "fieldOrder": ["preceptThingPairs", "noneChance"],
+  "fields": {
+    "preceptThingPairs": {
+      "label": "Precept-thing pairs",
+      "description": "List of precept and thing pairs to randomly select from.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "PreceptThingPair" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "noneChance": {
+      "label": "None chance",
+      "description": "Chance (0–1) that no precept is selected from this group.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

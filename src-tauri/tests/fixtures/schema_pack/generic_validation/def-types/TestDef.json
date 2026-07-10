@@ -1,0 +1,39 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "abstractType": false,
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "knownScalar": {
+      "label": "Known scalar",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "knownNested": {
+      "label": "Known nested object",
+      "type": { "kind": "object", "schemaRef": "NestedObject" },
+      "required": false,
+      "xml": "object"
+    },
+    "knownList": {
+      "label": "Known list",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ListItemObject" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "knownDiscriminated": {
+      "label": "Known discriminated list",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DiscriminatedBase" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

@@ -1,0 +1,407 @@
+{
+  "defType": "LifeStageDef",
+  "label": "Life stage",
+  "description": "Defines one life stage for a pawn race, controlling biology, AI rules, stat scaling, audio, and visual properties at that stage.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "adjective",
+    "visible",
+    "reproductive",
+    "milkable",
+    "shearable",
+    "caravanRideable",
+    "alwaysDowned",
+    "claimable",
+    "developmentalStage",
+    "workerClass",
+    "involuntarySleepIsNegativeEvent",
+    "thinkTreeMainOverride",
+    "thinkTreeConstantOverride",
+    "canDoRandomMentalBreaks",
+    "customMoodTipString",
+    "canSleepWhileHeld",
+    "canVoluntarilySleep",
+    "canSleepWhenStarving",
+    "canInitiateSocialInteraction",
+    "equipmentDrawDistanceFactor",
+    "soundAttackChance",
+    "voxPitch",
+    "voxVolume",
+    "icon",
+    "silhouetteGraphicData",
+    "statOffsets",
+    "statFactors",
+    "bodySizeFactor",
+    "healthScaleFactor",
+    "hungerRateFactor",
+    "marketValueFactor",
+    "foodMaxFactor",
+    "attachPointScaleFactor",
+    "meleeDamageFactor",
+    "involuntarySleepMTBDaysFromRest",
+    "fallAsleepMaxThresholdOverride",
+    "naturalWakeThresholdOverride",
+    "bodyWidth",
+    "bodyDrawOffset",
+    "headSizeFactor",
+    "eyeSizeFactor",
+    "sittingOffset",
+    "hairStyleFilter"
+  ],
+  "fields": {
+    "adjective": {
+      "label": "Adjective",
+      "description": "Adjective used to describe a pawn at this life stage (e.g. 'juvenile', 'adult'). Private in source but XML-backed and used in shipped data. Falls back to label when absent.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "visible": {
+      "label": "Visible",
+      "description": "Whether this life stage is shown in the pawn inspect window. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "reproductive": {
+      "label": "Reproductive",
+      "description": "Whether pawns at this life stage can reproduce. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "milkable": {
+      "label": "Milkable",
+      "description": "Whether pawns at this life stage can be milked. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "shearable": {
+      "label": "Shearable",
+      "description": "Whether pawns at this life stage can be sheared. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "caravanRideable": {
+      "label": "Caravan rideable",
+      "description": "Whether pawns at this life stage can be ridden as pack animals on the world map. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "alwaysDowned": {
+      "label": "Always downed",
+      "description": "If true, pawns at this life stage are always treated as downed. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "claimable": {
+      "label": "Claimable",
+      "description": "Whether colonists can claim a pawn at this life stage. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "developmentalStage": {
+      "label": "Developmental stage",
+      "description": "DevelopmentalStage flags (comma-separated) identifying which development category this life stage belongs to. Source enum is [Flags]. Defaults to Adult.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "Adult",
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": ["None", "Newborn", "Baby", "Child", "Adult"]
+      },
+      "examples": ["Adult", "Child", "Baby, Child"]
+    },
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# LifeStageWorker subclass that implements custom behavior for this life stage. Defaults to LifeStageWorker.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "LifeStageWorker",
+      "xml": "element"
+    },
+    "involuntarySleepIsNegativeEvent": {
+      "label": "Involuntary sleep is negative event",
+      "description": "Whether falling asleep involuntarily from exhaustion is treated as a negative event for mood purposes. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "thinkTreeMainOverride": {
+      "label": "Think tree main override",
+      "description": "ThinkTreeDef that replaces the race's primary AI think tree for pawns at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThinkTreeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "thinkTreeConstantOverride": {
+      "label": "Think tree constant override",
+      "description": "ThinkTreeDef that replaces the race's constant AI think tree for pawns at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThinkTreeDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "canDoRandomMentalBreaks": {
+      "label": "Can do random mental breaks",
+      "description": "Whether pawns at this life stage are eligible for random mental breaks. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "customMoodTipString": {
+      "label": "Custom mood tip string",
+      "description": "Localized string displayed as a mood tooltip override for pawns at this life stage.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "canSleepWhileHeld": {
+      "label": "Can sleep while held",
+      "description": "Whether pawns at this life stage can sleep while being carried or held. Defaults to false.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canVoluntarilySleep": {
+      "label": "Can voluntarily sleep",
+      "description": "Whether pawns at this life stage can choose to sleep voluntarily. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canSleepWhenStarving": {
+      "label": "Can sleep when starving",
+      "description": "Whether pawns at this life stage can sleep when their food need is critically low. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canInitiateSocialInteraction": {
+      "label": "Can initiate social interaction",
+      "description": "Whether pawns at this life stage can start social interactions with other pawns. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "equipmentDrawDistanceFactor": {
+      "label": "Equipment draw distance factor",
+      "description": "Multiplier on the offset distance at which held equipment is drawn relative to the pawn. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "soundAttackChance": {
+      "label": "Sound attack chance",
+      "description": "Probability (0-1) that an attack sound is played when this pawn attacks. Defaults to 0.25.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.25,
+      "xml": "element"
+    },
+    "voxPitch": {
+      "label": "Vox pitch",
+      "description": "Pitch multiplier applied to all vocalization sounds for pawns at this life stage. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "voxVolume": {
+      "label": "Vox volume",
+      "description": "Volume multiplier applied to all vocalization sounds for pawns at this life stage. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "icon": {
+      "label": "Icon",
+      "description": "Texture path (relative to Textures/) for the icon shown in the life stage inspect panel. [NoTranslate] in source.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "silhouetteGraphicData": {
+      "label": "Silhouette graphic data",
+      "description": "Graphic used when rendering the pawn as a silhouette at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "statOffsets": {
+      "label": "Stat offsets",
+      "description": "Flat stat offsets applied to pawns at this life stage. Child element names are StatDef defNames; values are float offsets.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "statFactors": {
+      "label": "Stat factors",
+      "description": "Stat multipliers applied to pawns at this life stage. Child element names are StatDef defNames; values are float factors.",
+      "type": { "kind": "statMap" },
+      "required": false,
+      "xml": "namedChildrenMap",
+      "valueType": { "kind": "float" },
+      "keyReference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "bodySizeFactor": {
+      "label": "Body size factor",
+      "description": "Multiplier on the race's base body size for pawns at this life stage. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "healthScaleFactor": {
+      "label": "Health scale factor",
+      "description": "Multiplier on body part max hit points for pawns at this life stage. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "hungerRateFactor": {
+      "label": "Hunger rate factor",
+      "description": "Multiplier on the race's base hunger rate for pawns at this life stage. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "marketValueFactor": {
+      "label": "Market value factor",
+      "description": "Multiplier on the calculated market value of pawns at this life stage. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "foodMaxFactor": {
+      "label": "Food max factor",
+      "description": "Multiplier on the maximum food need level for pawns at this life stage. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "attachPointScaleFactor": {
+      "label": "Attach point scale factor",
+      "description": "Multiplier on attach point positions for equipment and accessories on pawns at this life stage. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "meleeDamageFactor": {
+      "label": "Melee damage factor",
+      "description": "Multiplier on melee damage dealt by pawns at this life stage. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "involuntarySleepMTBDaysFromRest": {
+      "label": "Involuntary sleep MTB days from rest",
+      "description": "Curve mapping the pawn's rest level (x) to mean-time-between involuntary sleep events in days (y) for this life stage.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "fallAsleepMaxThresholdOverride": {
+      "label": "Fall asleep max threshold override",
+      "description": "Nullable float. When set, overrides the maximum rest level at which this pawn can fall asleep involuntarily.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "naturalWakeThresholdOverride": {
+      "label": "Natural wake threshold override",
+      "description": "Nullable float. When set, overrides the rest level at which this pawn wakes up naturally.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "bodyWidth": {
+      "label": "Body width",
+      "description": "Nullable float. When set, overrides the rendered body width for pawns at this life stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "bodyDrawOffset": {
+      "label": "Body draw offset",
+      "description": "World-space (x, y, z) offset applied when rendering the pawn body at this life stage. Source default is Vector3.zero.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "headSizeFactor": {
+      "label": "Head size factor",
+      "description": "Nullable float. When set, scales the rendered head size for pawns at this life stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "eyeSizeFactor": {
+      "label": "Eye size factor",
+      "description": "Nullable float. When set, scales the rendered eye size for pawns at this life stage.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "sittingOffset": {
+      "label": "Sitting offset",
+      "description": "Nullable float. When set, overrides the vertical offset applied to this pawn's body when sitting.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "hairStyleFilter": {
+      "label": "Hair style filter",
+      "description": "TagFilter restricting which hair styles are available to pawns at this life stage.",
+      "type": { "kind": "object", "schemaRef": "TagFilter" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "objectType": "GenStep_Scatterer",
+  "label": "Gen step scatterer",
+  "description": "Abstract base for gen steps that scatter things across the map. Provides placement count, spacing, and validator fields shared by all scatterer subclasses.",
+  "fieldOrder": [
+    "Class",
+    "count",
+    "countPer10kCellsRange",
+    "nearPlayerStart",
+    "nearMapCenter",
+    "minSpacing",
+    "spotMustBeStandable",
+    "minDistToPlayerStart",
+    "minDistToPlayerStartPct",
+    "minEdgeDist",
+    "minEdgeDistPct",
+    "extraNoBuildEdgeDist",
+    "validators",
+    "fallbackValidators",
+    "allowInWaterBiome",
+    "allowFoggedPositions",
+    "allowRoofed",
+    "onlyOnStartingMap",
+    "minPollution",
+    "allowMechanoidDatacoreReadOrLost",
+    "isJunk",
+    "warnOnFail"
+  ],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# GenStep_Scatterer subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "count": {
+      "label": "Count",
+      "description": "Fixed number of things to scatter. Use -1 to derive count from countPer10kCellsRange instead.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "countPer10kCellsRange": {
+      "label": "Count per 10k cells range",
+      "description": "Random range of scatter instances per 10,000 map cells. Used when count is -1.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0",
+      "xml": "element"
+    },
+    "nearPlayerStart": {
+      "label": "Near player start",
+      "description": "When true, scatter positions are chosen near the player start spot.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "nearMapCenter": {
+      "label": "Near map center",
+      "description": "When true, scatter positions are chosen near the center of the map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minSpacing": {
+      "label": "Min spacing",
+      "description": "Minimum distance in cells between scatter instances.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 10,
+      "xml": "element"
+    },
+    "spotMustBeStandable": {
+      "label": "Spot must be standable",
+      "description": "When true, candidate scatter cells must be standable.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minDistToPlayerStart": {
+      "label": "Min dist to player start",
+      "description": "Minimum distance in cells from the player start spot.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minDistToPlayerStartPct": {
+      "label": "Min dist to player start pct",
+      "description": "Minimum distance to the player start as a fraction of the map's smaller dimension.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minEdgeDist": {
+      "label": "Min edge dist",
+      "description": "Minimum distance in cells from the map edge.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "minEdgeDistPct": {
+      "label": "Min edge dist pct",
+      "description": "Minimum distance from the map edge as a fraction of the map's smaller dimension.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "extraNoBuildEdgeDist": {
+      "label": "Extra no-build edge dist",
+      "description": "Additional distance from the map edge added on top of the normal no-build border when checking placement.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "validators": {
+      "label": "Validators",
+      "description": "Placement validators that must all pass for a candidate cell to be accepted.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ScattererValidator" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "fallbackValidators": {
+      "label": "Fallback validators",
+      "description": "Alternative validators used when the primary validators fail to find any valid cell.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "ScattererValidator" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "allowInWaterBiome": {
+      "label": "Allow in water biome",
+      "description": "Whether this step runs on water-covered tiles.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowFoggedPositions": {
+      "label": "Allow fogged positions",
+      "description": "Whether scatter positions that are still fogged are valid.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowRoofed": {
+      "label": "Allow roofed",
+      "description": "Whether scatter positions under a roof are valid.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "onlyOnStartingMap": {
+      "label": "Only on starting map",
+      "description": "When true, this step is skipped on any map that is not the player's starting map.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "minPollution": {
+      "label": "Min pollution",
+      "description": "Minimum tile pollution level required for this step to run.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "allowMechanoidDatacoreReadOrLost": {
+      "label": "Allow mechanoid datacore read or lost",
+      "description": "When false, this step is skipped once a mechanoid datacore has been read or lost.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "isJunk": {
+      "label": "Is junk",
+      "description": "When true, the scatter count is scaled by tile mutator junk density factors.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "warnOnFail": {
+      "label": "Warn on fail",
+      "description": "Whether to log a warning when no valid scatter cell can be found.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

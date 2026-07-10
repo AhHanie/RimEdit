@@ -1,0 +1,680 @@
+{
+  "defType": "TerrainDef",
+  "label": "Terrain Def",
+  "description": "Defines a terrain tile type placed on the map, such as soil, stone, water, road surfaces, or constructed floors.",
+  "inherits": ["BuildableDef"],
+  "fieldOrder": [
+    "texturePath",
+    "edgeType",
+    "customShader",
+    "customShaderParameters",
+    "waterDepthShader",
+    "waterDepthShaderParameters",
+    "renderPrecedence",
+    "affordances",
+    "layerable",
+    "scatterType",
+    "takeFootprints",
+    "natural",
+    "takeSplashes",
+    "avoidWander",
+    "changeable",
+    "smoothedTerrain",
+    "gravshipReplacementTerrain",
+    "holdSnowOrSand",
+    "isPaintable",
+    "extinguishesFire",
+    "color",
+    "colorDef",
+    "driesTo",
+    "tags",
+    "burnedDef",
+    "tools",
+    "extraDeteriorationFactor",
+    "destroyOnBombDamageThreshold",
+    "destroyBuildingsOnDestroyed",
+    "traversedThought",
+    "extraDraftedPerceivedPathCost",
+    "extraNonDraftedPerceivedPathCost",
+    "destroyEffect",
+    "destroyEffectWater",
+    "autoRebuildable",
+    "categoryType",
+    "meltSnowRadius",
+    "heatPerTick",
+    "igniteRadius",
+    "ignitePawnsIntervalTicks",
+    "burnDamage",
+    "burnIntervalTicks",
+    "supportsRock",
+    "toxicBuildupFactor",
+    "dontRender",
+    "exposesToVacuum",
+    "canFreeze",
+    "dangerous",
+    "preventCraters",
+    "canEverTerraform",
+    "waterBodyType",
+    "cropIcon",
+    "glowRadius",
+    "glowColor",
+    "throwFleckChance",
+    "fleckData",
+    "isFoundation",
+    "bridge",
+    "bridgePropsPath",
+    "spaceBridgePropsPath",
+    "temporary",
+    "tempTerrain",
+    "floodTerrain",
+    "canBePolluted",
+    "pollutedTexturePath",
+    "pollutionOverlayTexturePath",
+    "pollutionShaderType",
+    "pollutionColor",
+    "pollutionOverlayScrollSpeed",
+    "pollutionOverlayScale",
+    "pollutionCloudColor",
+    "pollutionTintColor",
+    "generatedFilth",
+    "filthAcceptanceMask",
+    "spaceEdgeGraphicData"
+  ],
+  "fields": {
+    "texturePath": {
+      "label": "Texture path",
+      "description": "Texture asset path used as the primary terrain tile graphic.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "edgeType": {
+      "label": "Edge type",
+      "description": "Controls how this terrain blends with adjacent terrain at its borders.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Hard",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Hard", "Fade", "FadeRough", "Water"]
+      }
+    },
+    "customShader": {
+      "label": "Custom shader",
+      "description": "ShaderTypeDef override for rendering this terrain instead of the default terrain shader.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ShaderTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "customShaderParameters": {
+      "label": "Custom shader parameters",
+      "description": "Named shader property overrides passed to the custom shader. Each child element name is a shader property identifier.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap"
+    },
+    "waterDepthShader": {
+      "label": "Water depth shader",
+      "description": "ShaderTypeDef used for the underwater depth rendering pass.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ShaderTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "waterDepthShaderParameters": {
+      "label": "Water depth shader parameters",
+      "description": "Named shader property overrides for the water depth shader. Each child element name is a shader property identifier.",
+      "type": { "kind": "object" },
+      "required": false,
+      "xml": "namedChildrenMap"
+    },
+    "renderPrecedence": {
+      "label": "Render precedence",
+      "description": "Integer sort order for this terrain when determining which tile draws on top at a shared edge. Higher values draw over lower values.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "affordances": {
+      "label": "Affordances",
+      "description": "TerrainAffordanceDef references describing what can be built or done on this terrain.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "TerrainAffordanceDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "layerable": {
+      "label": "Layerable",
+      "description": "If true, constructed floors can be placed on top of this terrain.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scatterType": {
+      "label": "Scatter type",
+      "description": "String identifier used to look up scatter thingDefs that can spawn naturally on this terrain.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "takeFootprints": {
+      "label": "Take footprints",
+      "description": "If true, pawns walking on this terrain leave footprint flecks.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "natural": {
+      "label": "Natural",
+      "description": "If true, this terrain is considered a natural surface rather than a constructed floor.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "takeSplashes": {
+      "label": "Take splashes",
+      "description": "If true, projectiles and rain produce splash effects when hitting this terrain.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "avoidWander": {
+      "label": "Avoid wander",
+      "description": "If true, wandering pawns prefer not to walk onto this terrain.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "changeable": {
+      "label": "Changeable",
+      "description": "If true, this terrain can be replaced by construction or terraforming.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "smoothedTerrain": {
+      "label": "Smoothed terrain",
+      "description": "TerrainDef this terrain becomes when a pawn smooths it.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "gravshipReplacementTerrain": {
+      "label": "Gravship replacement terrain",
+      "description": "TerrainDef placed under gravship hull sections when the ship lands on this terrain.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "holdSnowOrSand": {
+      "label": "Hold snow or sand",
+      "description": "If true, snow and sand accumulate on this terrain.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "isPaintable": {
+      "label": "Is paintable",
+      "description": "If true, players can recolor this floor with the paint tool.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "extinguishesFire": {
+      "label": "Extinguishes fire",
+      "description": "If true, fire cannot burn on this terrain and is extinguished when it touches it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "color": {
+      "label": "Color",
+      "description": "Tint color applied to this terrain's texture. Accepts integer (0–255) or float (0–1) RGBA components.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "colorDef": {
+      "label": "Color def",
+      "description": "ColorDef whose color is applied as the tint for this terrain.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ColorDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "driesTo": {
+      "label": "Dries to",
+      "description": "TerrainDef this terrain converts to when it dries out (e.g. mud drying to soil).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "tags": {
+      "label": "Tags",
+      "description": "String tags used to match this terrain in map generation or other systems.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "burnedDef": {
+      "label": "Burned def",
+      "description": "TerrainDef this terrain becomes after being burned.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "tools": {
+      "label": "Tools",
+      "description": "Melee attack capabilities for pawns fighting on or interacting with this terrain.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "Tool" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "extraDeteriorationFactor": {
+      "label": "Extra deterioration factor",
+      "description": "Multiplier on the deterioration rate of items left on this terrain. 1.0 means no change.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "destroyOnBombDamageThreshold": {
+      "label": "Destroy on bomb damage threshold",
+      "description": "Minimum single-hit bomb damage required to destroy this terrain tile. -1 disables destruction.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "destroyBuildingsOnDestroyed": {
+      "label": "Destroy buildings on destroyed",
+      "description": "If true, buildings on this terrain cell are also destroyed when the terrain is destroyed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "traversedThought": {
+      "label": "Traversed thought",
+      "description": "ThoughtDef mood effect applied to a pawn each time it walks over this terrain.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "extraDraftedPerceivedPathCost": {
+      "label": "Extra drafted perceived path cost",
+      "description": "Additional path cost used by drafted pawns when evaluating movement over this terrain.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "extraNonDraftedPerceivedPathCost": {
+      "label": "Extra non-drafted perceived path cost",
+      "description": "Additional path cost used by non-drafted pawns when evaluating movement over this terrain.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "destroyEffect": {
+      "label": "Destroy effect",
+      "description": "EffecterDef played when this terrain is destroyed on dry ground.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "destroyEffectWater": {
+      "label": "Destroy effect water",
+      "description": "EffecterDef played when this terrain is destroyed over water.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "autoRebuildable": {
+      "label": "Auto rebuildable",
+      "description": "If true, the game will automatically schedule reconstruction of this terrain after it is destroyed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "categoryType": {
+      "label": "Category type",
+      "description": "Broad terrain category used for pathfinding heuristics and map generation grouping.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "Misc",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Misc", "Soil", "Stone", "Sand"]
+      }
+    },
+    "meltSnowRadius": {
+      "label": "Melt snow radius",
+      "description": "Radius in cells around each tile of this terrain in which snow is prevented from accumulating.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "heatPerTick": {
+      "label": "Heat per tick",
+      "description": "Heat energy in joules added to the room atmosphere per game tick by each tile of this terrain.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "igniteRadius": {
+      "label": "Ignite radius",
+      "description": "Radius in cells in which this terrain can start fires on adjacent terrain and objects.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "ignitePawnsIntervalTicks": {
+      "label": "Ignite pawns interval ticks",
+      "description": "Tick interval at which pawns standing on this terrain are set on fire. 0 means never.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "burnDamage": {
+      "label": "Burn damage",
+      "description": "Damage per burn interval dealt to pawns walking over this terrain while it is on fire.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "burnIntervalTicks": {
+      "label": "Burn interval ticks",
+      "description": "Tick interval between burn damage applications to pawns on this terrain.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "supportsRock": {
+      "label": "Supports rock",
+      "description": "If true, natural rock formations can generate on top of this terrain.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "toxicBuildupFactor": {
+      "label": "Toxic buildup factor",
+      "description": "Multiplier on the rate at which pawns accumulate toxic buildup while standing on this terrain.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "dontRender": {
+      "label": "Don't render",
+      "description": "If true, this terrain tile is not drawn on the map (used for special-purpose invisible terrain).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "exposesToVacuum": {
+      "label": "Exposes to vacuum",
+      "description": "If true, rooms with this terrain on their boundary are treated as exposed to vacuum.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canFreeze": {
+      "label": "Can freeze",
+      "description": "If true, this terrain can freeze into ice terrain when the temperature drops sufficiently.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "dangerous": {
+      "label": "Dangerous",
+      "description": "If true, pawns will avoid this terrain when possible and log a warning when forced onto it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preventCraters": {
+      "label": "Prevent craters",
+      "description": "If true, explosion craters cannot form on this terrain.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "canEverTerraform": {
+      "label": "Can ever terraform",
+      "description": "If true, this terrain can be changed by terraforming operations such as fertilizer pumps.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "waterBodyType": {
+      "label": "Water body type",
+      "description": "Classifies the body of water for fishing, pathfinding, and world generation purposes.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["None", "Freshwater", "Saltwater", "Other"]
+      }
+    },
+    "cropIcon": {
+      "label": "Crop icon",
+      "description": "If true, an icon indicating suitable growing conditions is shown over this terrain in the growing zone UI.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "glowRadius": {
+      "label": "Glow radius",
+      "description": "Radius in cells of the light emitted by this terrain.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "glowColor": {
+      "label": "Glow color",
+      "description": "Color of the light emitted by this terrain. Accepts integer (0–255) or float (0–1) RGBA components.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "throwFleckChance": {
+      "label": "Throw fleck chance",
+      "description": "Per-tick probability (0–1) that a fleck particle is emitted from this terrain cell.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "fleckData": {
+      "label": "Fleck data",
+      "description": "Configuration for the fleck particle emitted by this terrain.",
+      "type": { "kind": "object", "schemaRef": "TerrainFleckData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "isFoundation": {
+      "label": "Is foundation",
+      "description": "If true, this terrain acts as a structural foundation that supports buildings above it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "bridge": {
+      "label": "Bridge",
+      "description": "If true, this terrain is treated as a bridge surface for movement and construction rules.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "bridgePropsPath": {
+      "label": "Bridge props path",
+      "description": "Texture asset path for the bridge structural props graphic drawn over standard terrain.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "spaceBridgePropsPath": {
+      "label": "Space bridge props path",
+      "description": "Texture asset path for the space bridge structural props graphic.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "temporary": {
+      "label": "Temporary",
+      "description": "If true, this terrain is temporary and will be removed after a set duration or trigger.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tempTerrain": {
+      "label": "Temp terrain",
+      "description": "Properties controlling removal behavior for temporary terrain.",
+      "type": { "kind": "object", "schemaRef": "TempTerrainProps" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "floodTerrain": {
+      "label": "Flood terrain",
+      "description": "TerrainDef this terrain converts to when flooded by water.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "TerrainDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canBePolluted": {
+      "label": "Can be polluted",
+      "description": "If true, this terrain can become polluted terrain (Biotech DLC).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "pollutedTexturePath": {
+      "label": "Polluted texture path",
+      "description": "Texture asset path used when this terrain is in its polluted state.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "pollutionOverlayTexturePath": {
+      "label": "Pollution overlay texture path",
+      "description": "Texture asset path for the scrolling pollution overlay drawn on top of polluted terrain.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "pollutionShaderType": {
+      "label": "Pollution shader type",
+      "description": "ShaderTypeDef used when rendering this terrain in its polluted state.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ShaderTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "pollutionColor": {
+      "label": "Pollution color",
+      "description": "Tint color applied to the polluted terrain texture. Accepts integer (0–255) or float (0–1) RGBA components.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "pollutionOverlayScrollSpeed": {
+      "label": "Pollution overlay scroll speed",
+      "description": "UV scroll speed of the pollution overlay texture as (x, y).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element"
+    },
+    "pollutionOverlayScale": {
+      "label": "Pollution overlay scale",
+      "description": "UV tiling scale of the pollution overlay texture as (x, y).",
+      "type": { "kind": "vector2" },
+      "required": false,
+      "xml": "element"
+    },
+    "pollutionCloudColor": {
+      "label": "Pollution cloud color",
+      "description": "Color of the pollution cloud effect rendered above polluted terrain. Accepts integer (0–255) or float (0–1) RGBA components.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "pollutionTintColor": {
+      "label": "Pollution tint color",
+      "description": "Secondary tint color applied to the pollution overlay. Accepts integer (0–255) or float (0–1) RGBA components.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "generatedFilth": {
+      "label": "Generated filth",
+      "description": "ThingDef for the filth type that spawns naturally on this terrain.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "filthAcceptanceMask": {
+      "label": "Filth acceptance mask",
+      "description": "FilthSourceFlags list controlling which sources of filth can accumulate on this terrain.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "validationHints": {
+        "allowedValues": ["None", "Terrain", "Natural", "Unnatural", "Pawn", "Any"]
+      }
+    },
+    "spaceEdgeGraphicData": {
+      "label": "Space edge graphic data",
+      "description": "Texture configuration for space-edge rendering variants (Odyssey DLC).",
+      "type": { "kind": "object", "schemaRef": "SpaceEdgeGraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    }
+  }
+}

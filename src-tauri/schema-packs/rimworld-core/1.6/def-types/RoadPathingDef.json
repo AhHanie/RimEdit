@@ -1,0 +1,8 @@
+{
+  "defType": "RoadPathingDef",
+  "label": "Road pathing",
+  "description": "Marker def that determines how pawns and caravans handle a road tile during world map pathing. Referenced by RoadDef.pathingMode.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {}
+}

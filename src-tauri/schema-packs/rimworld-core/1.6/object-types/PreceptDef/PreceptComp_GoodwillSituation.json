@@ -1,0 +1,30 @@
+{
+  "objectType": "PreceptComp_GoodwillSituation",
+  "label": "Precept comp (goodwill situation)",
+  "description": "Attaches a goodwill situation modifier to the precept.",
+  "fieldOrder": ["Class", "description", "goodwillSituation"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# PreceptComp subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "description": {
+      "label": "Description",
+      "description": "Description shown in the ideology editor.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "goodwillSituation": {
+      "label": "Goodwill situation",
+      "description": "The goodwill situation def associated with this precept.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "GoodwillSituationDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

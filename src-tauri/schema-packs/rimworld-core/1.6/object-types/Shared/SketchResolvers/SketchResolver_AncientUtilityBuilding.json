@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_AncientUtilityBuilding",
+  "label": "Sketch resolver: Ancient utility building",
+  "description": "Concrete RimWorld SketchResolver_AncientUtilityBuilding resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

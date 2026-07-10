@@ -1,0 +1,16 @@
+{
+  "objectType": "FacilityData",
+  "label": "Facility data",
+  "description": "Data specifying a facility required near a bed for a bed thought comp.",
+  "fieldOrder": ["def"],
+  "fields": {
+    "def": {
+      "label": "Def",
+      "description": "The facility thing def that must be linked to the bed.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

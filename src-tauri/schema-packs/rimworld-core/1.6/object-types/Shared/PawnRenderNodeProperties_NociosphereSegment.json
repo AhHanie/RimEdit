@@ -1,0 +1,23 @@
+{
+  "objectType": "PawnRenderNodeProperties_NociosphereSegment",
+  "label": "Render node properties (nociosphere segment)",
+  "description": "Render node properties for nociosphere segment rendering. Adds maskPath and offset fields.",
+  "inherits": ["PawnRenderNodeProperties"],
+  "fieldOrder": ["maskPath", "offset"],
+  "fields": {
+    "maskPath": {
+      "label": "Mask path",
+      "description": "Texture atlas path for the segment mask graphic.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "offset": {
+      "label": "Offset",
+      "description": "World-space position offset (x, y, z) applied to this segment.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

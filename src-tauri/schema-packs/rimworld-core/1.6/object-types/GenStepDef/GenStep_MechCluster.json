@@ -1,0 +1,31 @@
+{
+  "objectType": "GenStep_MechCluster",
+  "label": "Gen step mech cluster",
+  "description": "Generates a mechanoid cluster at or near the map's rect of interest.",
+  "fieldOrder": ["Class", "forceNoConditionCauser", "extraRangeToRectOfInterest"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "Must be GenStep_MechCluster.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "forceNoConditionCauser": {
+      "label": "Force no condition causer",
+      "description": "When true, the cluster is generated without a condition causer building.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "extraRangeToRectOfInterest": {
+      "label": "Extra range to rect of interest",
+      "description": "Extra cells added to the rect of interest when scoring candidate cluster positions.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 20,
+      "xml": "element"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "objectType": "StatPart_Hyperlinks",
+  "label": "Stat part (hyperlinks)",
+  "description": "Injects hyperlinks to specified ThingDefs into the stat explanation tooltip.",
+  "fieldOrder": ["Class", "priority", "thingDefs"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# StatPart type used by RimWorld DirectXmlLoader for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Sort order among stat parts. Higher values execute later.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "thingDefs": {
+      "label": "Thing defs",
+      "description": "ThingDefs linked in the stat explanation tooltip.",
+      "type": { "kind": "list" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  }
+}

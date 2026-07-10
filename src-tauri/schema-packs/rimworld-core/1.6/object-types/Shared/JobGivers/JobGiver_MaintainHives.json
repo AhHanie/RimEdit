@@ -1,0 +1,19 @@
+{
+  "objectType": "JobGiver_MaintainHives",
+  "label": "Job giver maintain hives",
+  "description": "Directs an insectoid pawn to repair or maintain hives. Inherits all base ThinkNode fields.",
+  "inherits": ["ThinkNode"],
+  "fieldOrder": [
+    "onlyIfDamagingState"
+  ],
+  "fields": {
+    "onlyIfDamagingState": {
+      "label": "Only if damaging state",
+      "description": "If true, the pawn only maintains hives that are currently in a damaging (low-health) state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

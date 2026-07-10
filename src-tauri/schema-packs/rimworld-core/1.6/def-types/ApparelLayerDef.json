@@ -1,0 +1,27 @@
+{
+  "defType": "ApparelLayerDef",
+  "label": "Apparel layer",
+  "description": "Defines a clothing layer slot for pawn rendering. Each apparel item declares which layers it occupies. Higher drawOrder values are drawn on top of lower ones.",
+  "inherits": ["Def"],
+  "fieldOrder": ["drawOrder"],
+  "fields": {
+    "drawOrder": {
+      "label": "Draw order",
+      "description": "Z-order for this layer relative to other apparel layers during pawn rendering. Higher values are drawn on top. Shipped Core layers use multiples of 100.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element",
+      "examples": ["0", "100", "200", "300", "400", "500"]
+    }
+  },
+  "templates": {
+    "new-apparel-layer": {
+      "label": "New apparel layer",
+      "description": "Minimal apparel layer with a draw order value.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label", "drawOrder"],
+      "fieldValues": {}
+    }
+  }
+}

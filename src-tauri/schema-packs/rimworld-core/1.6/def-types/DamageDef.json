@@ -1,0 +1,696 @@
+{
+  "defType": "DamageDef",
+  "label": "Damage",
+  "description": "Defines a damage type used by weapons, traps, hazards, and abilities. Controls how the damage interacts with armor, blood, hediffs, explosions, and combat log rules.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "workerClass",
+    "externalViolence",
+    "externalViolenceForMechanoids",
+    "hasForcefulImpact",
+    "harmsHealth",
+    "makesBlood",
+    "canInterruptJobs",
+    "isRanged",
+    "makesAnimalsFlee",
+    "execution",
+    "combatLogRules",
+    "buildingDamageFactor",
+    "buildingDamageFactorPassable",
+    "buildingDamageFactorImpassable",
+    "plantDamageFactor",
+    "corpseDamageFactor",
+    "causeStun",
+    "stunAdaptationTicks",
+    "constantStunDurationTicks",
+    "stunResistStat",
+    "displayAdaptedTextMote",
+    "adaptedText",
+    "canUseDeflectMetalEffect",
+    "impactSoundType",
+    "deathMessage",
+    "damageEffecter",
+    "defaultDamage",
+    "defaultArmorPenetration",
+    "defaultStoppingPower",
+    "additionalHediffs",
+    "additionalHediffsThisPart",
+    "applyAdditionalHediffsIfHuntingForFood",
+    "armorCategory",
+    "minDamageToFragment",
+    "overkillPctToDestroyPart",
+    "consideredHelpful",
+    "igniteChanceByTargetFlammability",
+    "igniteCellChance",
+    "ignoreShields",
+    "harmAllLayersUntilOutside",
+    "hediff",
+    "hediffSkin",
+    "hediffSolid",
+    "isExplosive",
+    "explosionSnowMeltAmount",
+    "explosionAffectOutsidePartsOnly",
+    "explosionCellMote",
+    "explosionCellFleck",
+    "explosionColorCenter",
+    "explosionColorEdge",
+    "explosionInteriorEffecter",
+    "explosionInteriorMote",
+    "explosionInteriorFleck",
+    "explosionCenterMote",
+    "explosionCenterFleck",
+    "explosionCenterEffecter",
+    "explosionCellEffecter",
+    "explosionCellEffecterChance",
+    "explosionCellEffecterMaxRadius",
+    "explosionHeatEnergyPerCell",
+    "expolosionPropagationSpeed",
+    "soundExplosion",
+    "explosionInteriorCellCountMultiplier",
+    "explosionInteriorCellDistanceMultiplier",
+    "stabChanceOfForcedInternal",
+    "cutExtraTargetsCurve",
+    "cutCleaveBonus",
+    "bluntInnerHitChance",
+    "bluntInnerHitDamageFractionToConvert",
+    "bluntInnerHitDamageFractionToAdd",
+    "bluntStunDuration",
+    "bluntStunChancePerDamagePctOfCorePartToHeadCurve",
+    "bluntStunChancePerDamagePctOfCorePartToBodyCurve",
+    "scratchSplitPercentage",
+    "scaleDamageToBuildingsBasedOnFlammability"
+  ],
+  "fields": {
+    "workerClass": {
+      "label": "Worker class",
+      "description": "C# DamageWorker type that implements the hit resolution logic for this damage type.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "defaultValue": "DamageWorker",
+      "xml": "element",
+      "examples": ["DamageWorker", "DamageWorker_AddInjury", "DamageWorker_Blunt", "DamageWorker_Flame", "DamageWorker_Stun"]
+    },
+    "externalViolence": {
+      "label": "External violence",
+      "description": "If true, this damage type is counted as external violence for all targets. Private in source but XML-backed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "externalViolenceForMechanoids": {
+      "label": "External violence for mechanoids",
+      "description": "If true, this damage type is counted as external violence when hitting mechanoids or turrets. Private in source but XML-backed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hasForcefulImpact": {
+      "label": "Has forceful impact",
+      "description": "If true, this damage type can knock back targets on hit.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "harmsHealth": {
+      "label": "Harms health",
+      "description": "If false, this damage type does not reduce pawn health or destroy body parts.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "makesBlood": {
+      "label": "Makes blood",
+      "description": "If true, this damage type causes blood splatter and filth when hitting pawns.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canInterruptJobs": {
+      "label": "Can interrupt jobs",
+      "description": "If true, being hit by this damage type can interrupt the target's current job.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "isRanged": {
+      "label": "Is ranged",
+      "description": "If true, this damage type is classified as ranged for combat log and behavior purposes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "makesAnimalsFlee": {
+      "label": "Makes animals flee",
+      "description": "If true, wild animals that receive this damage type may flee from the attacker.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "execution": {
+      "label": "Execution",
+      "description": "If true, this damage type is treated as an execution for social and faction relation purposes.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "combatLogRules": {
+      "label": "Combat log rules",
+      "description": "RulePackDef that generates the grammar string shown in the combat log for hits with this damage type.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "RulePackDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "buildingDamageFactor": {
+      "label": "Building damage factor",
+      "description": "Multiplier applied to damage dealt to any building.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "buildingDamageFactorPassable": {
+      "label": "Building damage factor (passable)",
+      "description": "Multiplier applied to damage dealt to passable buildings such as doors.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "buildingDamageFactorImpassable": {
+      "label": "Building damage factor (impassable)",
+      "description": "Multiplier applied to damage dealt to impassable buildings such as walls.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "plantDamageFactor": {
+      "label": "Plant damage factor",
+      "description": "Multiplier applied to damage dealt to plants.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "corpseDamageFactor": {
+      "label": "Corpse damage factor",
+      "description": "Multiplier applied to damage dealt to corpses.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "causeStun": {
+      "label": "Cause stun",
+      "description": "If true, hits with this damage type can cause the target to enter a stunned state.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "stunAdaptationTicks": {
+      "label": "Stun adaptation ticks",
+      "description": "Number of ticks after a stun before the same stun source can stun the target again.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "constantStunDurationTicks": {
+      "label": "Constant stun duration ticks",
+      "description": "When set, overrides the stun duration to exactly this many ticks regardless of damage amount. Absence means stun duration scales with damage.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "stunResistStat": {
+      "label": "Stun resist stat",
+      "description": "StatDef on the target that reduces the chance or duration of stuns from this damage type.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "StatDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "displayAdaptedTextMote": {
+      "label": "Display adapted text mote",
+      "description": "If true, a text mote is shown above the target when they have adapted to this stun damage type.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "adaptedText": {
+      "label": "Adapted text",
+      "description": "Translated text shown in the mote when a target has adapted to this stun type.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "canUseDeflectMetalEffect": {
+      "label": "Can use deflect metal effect",
+      "description": "If true, hitting metal armor with this damage type may trigger the deflect-metal visual effect.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "impactSoundType": {
+      "label": "Impact sound type",
+      "description": "ImpactSoundTypeDef that determines which sound plays when this damage type hits a target.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ImpactSoundTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "deathMessage": {
+      "label": "Death message",
+      "description": "Localized message shown in the game log when a pawn is killed by this damage type. Supports format argument {0} for the victim's name.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "defaultValue": "{0} has been killed.",
+      "xml": "element"
+    },
+    "damageEffecter": {
+      "label": "Damage effecter",
+      "description": "EffecterDef spawned at the point of impact when this damage type hits.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "defaultDamage": {
+      "label": "Default damage",
+      "description": "Default damage amount used when no explicit amount is provided. -1 means no default.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "defaultArmorPenetration": {
+      "label": "Default armor penetration",
+      "description": "Default armor penetration fraction (0–1+) used when no explicit value is provided. -1 means no default.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": -1,
+      "xml": "element"
+    },
+    "defaultStoppingPower": {
+      "label": "Default stopping power",
+      "description": "Default stopping power value applied when no explicit value is provided.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "additionalHediffs": {
+      "label": "Additional hediffs",
+      "description": "List of hediffs applied in addition to the primary injury when this damage type hits a pawn.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DamageDefAdditionalHediff" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "additionalHediffsThisPart": {
+      "label": "Additional hediffs this part",
+      "description": "HediffDefs applied only to the specific body part that received the hit.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference", "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" } },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "applyAdditionalHediffsIfHuntingForFood": {
+      "label": "Apply additional hediffs if hunting for food",
+      "description": "If false, additional hediffs are suppressed when the attacker is hunting for food.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "armorCategory": {
+      "label": "Armor category",
+      "description": "DamageArmorCategoryDef that determines which armor stat resists this damage type.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "DamageArmorCategoryDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "minDamageToFragment": {
+      "label": "Min damage to fragment",
+      "description": "Minimum damage in a single hit required to fragment (shatter) the target part. 99999 means fragmentation is effectively disabled.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 99999,
+      "xml": "element"
+    },
+    "overkillPctToDestroyPart": {
+      "label": "Overkill pct to destroy part",
+      "description": "Fraction of overkill damage (relative to part health) required to destroy the part outright. A random value in this range is drawn each hit.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "defaultValue": "0~0.7",
+      "xml": "element"
+    },
+    "consideredHelpful": {
+      "label": "Considered helpful",
+      "description": "If true, receiving this damage type does not count as an aggressive act against the target.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "igniteChanceByTargetFlammability": {
+      "label": "Ignite chance by target flammability",
+      "description": "Curve mapping target flammability (X) to ignition probability (Y) when this damage hits a cell or thing.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "igniteCellChance": {
+      "label": "Ignite cell chance",
+      "description": "Flat probability (0–1) that this damage type ignites the hit cell.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "ignoreShields": {
+      "label": "Ignore shields",
+      "description": "If true, this damage type passes through personal and building shields.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "harmAllLayersUntilOutside": {
+      "label": "Harm all layers until outside",
+      "description": "If true, the damage propagates through all apparel layers until it reaches outside.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "hediff": {
+      "label": "Hediff",
+      "description": "HediffDef applied to the hit body part when this damage type injures a pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "hediffSkin": {
+      "label": "Hediff (skin)",
+      "description": "HediffDef applied when the damage hits a skin-layer body part.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "hediffSolid": {
+      "label": "Hediff (solid)",
+      "description": "HediffDef applied when the damage hits a solid (bone or inner) body part.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "HediffDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "isExplosive": {
+      "label": "Is explosive",
+      "description": "If true, this damage type is treated as an explosion and uses the explosion visual and sound fields.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "explosionSnowMeltAmount": {
+      "label": "Explosion snow melt amount",
+      "description": "Amount of snow melted by each explosion cell.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "explosionAffectOutsidePartsOnly": {
+      "label": "Explosion affect outside parts only",
+      "description": "If true, the explosion damage only affects external body parts.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "explosionCellMote": {
+      "label": "Explosion cell mote",
+      "description": "ThingDef (mote) spawned at each cell hit by the explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionCellFleck": {
+      "label": "Explosion cell fleck",
+      "description": "FleckDef spawned at each cell hit by the explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FleckDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionColorCenter": {
+      "label": "Explosion color (center)",
+      "description": "Color of the explosion effect at its center. Defaults to white.",
+      "type": { "kind": "color" },
+      "required": false,
+      "defaultValue": "(1, 1, 1)",
+      "xml": "element"
+    },
+    "explosionColorEdge": {
+      "label": "Explosion color (edge)",
+      "description": "Color of the explosion effect at its outer edge. Defaults to white.",
+      "type": { "kind": "color" },
+      "required": false,
+      "defaultValue": "(1, 1, 1)",
+      "xml": "element"
+    },
+    "explosionInteriorEffecter": {
+      "label": "Explosion interior effecter",
+      "description": "EffecterDef spawned at each interior cell of the explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionInteriorMote": {
+      "label": "Explosion interior mote",
+      "description": "ThingDef (mote) spawned at interior cells of the explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionInteriorFleck": {
+      "label": "Explosion interior fleck",
+      "description": "FleckDef spawned at interior cells of the explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FleckDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionCenterMote": {
+      "label": "Explosion center mote",
+      "description": "ThingDef (mote) spawned at the center of the explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionCenterFleck": {
+      "label": "Explosion center fleck",
+      "description": "FleckDef spawned at the center of the explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "FleckDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionCenterEffecter": {
+      "label": "Explosion center effecter",
+      "description": "EffecterDef spawned at the center of the explosion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionCellEffecter": {
+      "label": "Explosion cell effecter",
+      "description": "EffecterDef spawned at individual cells hit by the explosion, subject to chance and radius limits.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionCellEffecterChance": {
+      "label": "Explosion cell effecter chance",
+      "description": "Probability (0–1) that the cell effecter spawns at each affected cell.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "explosionCellEffecterMaxRadius": {
+      "label": "Explosion cell effecter max radius",
+      "description": "Maximum radius from the explosion center within which cell effecters can spawn.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "explosionHeatEnergyPerCell": {
+      "label": "Explosion heat energy per cell",
+      "description": "Amount of heat energy added to each cell hit by the explosion.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "expolosionPropagationSpeed": {
+      "label": "Explosion propagation speed",
+      "description": "Speed at which the explosion propagates outward. Preserved with source typo ('expolosion'). Higher values make the explosion ring expand faster.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "soundExplosion": {
+      "label": "Sound explosion",
+      "description": "SoundDef played when this explosive damage type detonates.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "explosionInteriorCellCountMultiplier": {
+      "label": "Explosion interior cell count multiplier",
+      "description": "Multiplier on how many interior cells are sampled for interior effecter and fleck spawning.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "explosionInteriorCellDistanceMultiplier": {
+      "label": "Explosion interior cell distance multiplier",
+      "description": "Multiplier on the radius used when selecting interior cells for effecter and fleck spawning.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.7,
+      "xml": "element"
+    },
+    "stabChanceOfForcedInternal": {
+      "label": "Stab chance of forced internal",
+      "description": "Probability (0–1) that a stab hit is forced to target an internal body part.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "cutExtraTargetsCurve": {
+      "label": "Cut extra targets curve",
+      "description": "Curve mapping attack damage (X) to the number of additional targets cleaved on a cut attack (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "cutCleaveBonus": {
+      "label": "Cut cleave bonus",
+      "description": "Additional cleave width added to cut attacks with this damage type.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "bluntInnerHitChance": {
+      "label": "Blunt inner hit chance",
+      "description": "Probability (0–1) that a blunt hit also damages an internal part.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "bluntInnerHitDamageFractionToConvert": {
+      "label": "Blunt inner hit damage fraction to convert",
+      "description": "Range of fractions of the outer hit damage that is converted and applied to the inner part.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "bluntInnerHitDamageFractionToAdd": {
+      "label": "Blunt inner hit damage fraction to add",
+      "description": "Range of additional damage fractions added on top when an inner hit occurs.",
+      "type": { "kind": "floatRange" },
+      "required": false,
+      "xml": "element"
+    },
+    "bluntStunDuration": {
+      "label": "Blunt stun duration",
+      "description": "Duration multiplier for stuns caused by blunt hits with this damage type.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "bluntStunChancePerDamagePctOfCorePartToHeadCurve": {
+      "label": "Blunt stun chance per damage pct of core part (head)",
+      "description": "Curve mapping damage as a fraction of core-part health (X) to the probability of stunning when hitting the head (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "bluntStunChancePerDamagePctOfCorePartToBodyCurve": {
+      "label": "Blunt stun chance per damage pct of core part (body)",
+      "description": "Curve mapping damage as a fraction of core-part health (X) to the probability of stunning when hitting the body (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "scratchSplitPercentage": {
+      "label": "Scratch split percentage",
+      "description": "Fraction of scratch damage applied to the outer layer versus split to adjacent parts.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    },
+    "scaleDamageToBuildingsBasedOnFlammability": {
+      "label": "Scale damage to buildings based on flammability",
+      "description": "If true, damage dealt to buildings is scaled proportionally to the building's flammability stat.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "basic-damage": {
+      "label": "Basic damage type",
+      "description": "Minimal damage type with a worker class and health interaction settings.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "hediff"],
+      "fieldValues": {}
+    },
+    "explosive-damage": {
+      "label": "Explosive damage type",
+      "description": "Damage type intended for area explosions with color and sound fields.",
+      "includeRequiredFields": true,
+      "promptFields": ["workerClass", "hediff", "soundExplosion"],
+      "fieldValues": {
+        "isExplosive": "true"
+      }
+    }
+  }
+}

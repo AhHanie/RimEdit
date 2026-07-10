@@ -1,0 +1,230 @@
+{
+  "objectType": "IngestibleProperties",
+  "label": "Ingestible properties",
+  "description": "Properties for food, drugs, and other ingestible items. Covers nutrition, joy, drug effects, and ingestion behavior.",
+  "fieldOrder": [
+    "foodType",
+    "nutrition",
+    "joyKind",
+    "joy",
+    "maxNumToIngestAtOnce",
+    "minNumToIngestAtOnce",
+    "chairSearchRadius",
+    "baseIngestTicks",
+    "ingestHoldUsesTable",
+    "ingestHoldOffsetStanding",
+    "ingestHoldOffsetLying",
+    "soundEat",
+    "soundDrink",
+    "ingestEffect",
+    "ingestEffectEat",
+    "nurseable",
+    "preferability",
+    "drugCategory",
+    "isPleasureDrug",
+    "tasteThought",
+    "sourceDef",
+    "canAutoSelectAsMealIngredient",
+    "outcomeDoers"
+  ],
+  "fields": {
+    "foodType": {
+      "label": "Food type",
+      "description": "FoodTypeFlags value controlling which hunger categories this satisfies (comma-separated flags).",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["Meal", "VegetableOrFruit", "AnimalProduct", "Meat, Liquor", "Kibble"]
+    },
+    "nutrition": {
+      "label": "Nutrition",
+      "description": "Nutrition provided per ingestion. Reduces hunger by this amount.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "joyKind": {
+      "label": "Joy kind",
+      "description": "JoyKindDef describing the type of joy this provides.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "JoyKindDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "joy": {
+      "label": "Joy",
+      "description": "Joy amount provided per ingestion.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "maxNumToIngestAtOnce": {
+      "label": "Max num to ingest at once",
+      "description": "Maximum units consumed in a single ingestion action.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "minNumToIngestAtOnce": {
+      "label": "Min num to ingest at once",
+      "description": "Minimum units consumed in a single ingestion action.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "chairSearchRadius": {
+      "label": "Chair search radius",
+      "description": "Radius in cells within which the pawn searches for a chair to sit while eating.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 32,
+      "xml": "element"
+    },
+    "baseIngestTicks": {
+      "label": "Base ingest ticks",
+      "description": "Game ticks required to consume this item.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 500,
+      "xml": "element"
+    },
+    "ingestHoldUsesTable": {
+      "label": "Ingest hold uses table",
+      "description": "If true, the pawn searches for a table to eat at before eating on the ground.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "ingestHoldOffsetStanding": {
+      "label": "Ingest hold offset (standing)",
+      "description": "Position offset of the item in the pawn's hand while eating standing up.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "ingestHoldOffsetLying": {
+      "label": "Ingest hold offset (lying)",
+      "description": "Position offset of the item while eating in bed.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "xml": "element"
+    },
+    "soundEat": {
+      "label": "Sound eat",
+      "description": "SoundDef played while eating this item.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "soundDrink": {
+      "label": "Sound drink",
+      "description": "SoundDef played while drinking this item.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "SoundDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ingestEffect": {
+      "label": "Ingest effect",
+      "description": "EffecterDef triggered on ingestion.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "ingestEffectEat": {
+      "label": "Ingest effect (eat)",
+      "description": "EffecterDef triggered specifically on eating (not drinking).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "EffecterDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "nurseable": {
+      "label": "Nurseable",
+      "description": "If true, this food can be administered by a nurse to a patient in bed.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "preferability": {
+      "label": "Preferability",
+      "description": "Food preferability category used by AI to rank dining options.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": [
+          "Undefined",
+          "NeverForNutrition",
+          "DesperateOnly",
+          "DesperateOnlyForHumanlikes",
+          "RawBad",
+          "RawTasty",
+          "MealAwful",
+          "MealSimple",
+          "MealFine",
+          "MealLavish",
+          "MealLavishVariety"
+        ]
+      }
+    },
+    "drugCategory": {
+      "label": "Drug category",
+      "description": "Broad drug category controlling policy restrictions.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["Any", "NonDrug", "Social", "Medical", "Hard"]
+      }
+    },
+    "isPleasureDrug": {
+      "label": "Is pleasure drug",
+      "description": "If true, pawns may take this drug recreationally as a mood booster.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "tasteThought": {
+      "label": "Taste thought",
+      "description": "ThoughtDef added after ingesting this item.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThoughtDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "sourceDef": {
+      "label": "Source def",
+      "description": "ThingDef that is the raw source of this ingestible (e.g. the plant a meal is cooked from).",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "ThingDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "canAutoSelectAsMealIngredient": {
+      "label": "Can auto-select as meal ingredient",
+      "description": "Whether this item can be automatically chosen as an ingredient when cooking.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "outcomeDoers": {
+      "label": "Outcome doers",
+      "description": "List of IngestionOutcomeDoer entries that apply effects after ingestion (e.g. hediff adders, thought givers).",
+      "type": { "kind": "list" },
+      "items": { "kind": "object" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

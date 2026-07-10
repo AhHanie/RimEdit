@@ -1,0 +1,260 @@
+{
+  "objectType": "PawnKindLifeStage",
+  "label": "Pawn kind life stage",
+  "description": "Per-life-stage configuration for a pawn kind, including graphic overrides for each body state and optional butcher drop.",
+  "fieldOrder": [
+    "label",
+    "labelPlural",
+    "labelMale",
+    "labelMalePlural",
+    "labelFemale",
+    "labelFemalePlural",
+    "bodyGraphicData",
+    "femaleGraphicData",
+    "dessicatedBodyGraphicData",
+    "femaleDessicatedBodyGraphicData",
+    "corpseGraphicData",
+    "femaleCorpseGraphicData",
+    "silhouetteGraphicData",
+    "swimmingGraphicData",
+    "femaleSwimmingGraphicData",
+    "rottingGraphicData",
+    "femaleRottingGraphicData",
+    "stationaryGraphicData",
+    "femaleStationaryGraphicData",
+    "flyingAnimationEast",
+    "flyingAnimationNorth",
+    "flyingAnimationSouth",
+    "flyingAnimationEastFemale",
+    "flyingAnimationNorthFemale",
+    "flyingAnimationSouthFemale",
+    "butcherBodyPart"
+  ],
+  "fields": {
+    "label": {
+      "label": "Label",
+      "description": "Life stage label shown in UI, such as 'kitten' or 'calf'. Overrides the parent race life stage label for this pawn kind.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelPlural": {
+      "label": "Label (plural)",
+      "description": "Plural form of the life stage label.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelMale": {
+      "label": "Label (male)",
+      "description": "Male-specific life stage label override.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelMalePlural": {
+      "label": "Label (male plural)",
+      "description": "Male-specific plural life stage label override.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelFemale": {
+      "label": "Label (female)",
+      "description": "Female-specific life stage label override.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelFemalePlural": {
+      "label": "Label (female plural)",
+      "description": "Female-specific plural life stage label override.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "bodyGraphicData": {
+      "label": "Body graphic data",
+      "description": "Primary body graphic used for this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "femaleGraphicData": {
+      "label": "Female body graphic data",
+      "description": "Body graphic override for female pawns at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "dessicatedBodyGraphicData": {
+      "label": "Dessicated body graphic data",
+      "description": "Graphic used for the desiccated corpse state at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "femaleDessicatedBodyGraphicData": {
+      "label": "Female dessicated body graphic data",
+      "description": "Desiccated corpse graphic override for female pawns at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "corpseGraphicData": {
+      "label": "Corpse graphic data",
+      "description": "Graphic used for the fresh corpse state at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "femaleCorpseGraphicData": {
+      "label": "Female corpse graphic data",
+      "description": "Fresh corpse graphic override for female pawns at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "silhouetteGraphicData": {
+      "label": "Silhouette graphic data",
+      "description": "Graphic used when rendering the pawn as a silhouette.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "swimmingGraphicData": {
+      "label": "Swimming graphic data",
+      "description": "Graphic override used when the pawn is swimming at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "femaleSwimmingGraphicData": {
+      "label": "Female swimming graphic data",
+      "description": "Swimming graphic override for female pawns at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "rottingGraphicData": {
+      "label": "Rotting graphic data",
+      "description": "Graphic override used for the rotting corpse state at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "femaleRottingGraphicData": {
+      "label": "Female rotting graphic data",
+      "description": "Rotting corpse graphic override for female pawns at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "stationaryGraphicData": {
+      "label": "Stationary graphic data",
+      "description": "Graphic override used when the pawn is stationary at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "femaleStationaryGraphicData": {
+      "label": "Female stationary graphic data",
+      "description": "Stationary graphic override for female pawns at this life stage.",
+      "type": { "kind": "object", "schemaRef": "GraphicData" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "flyingAnimationEast": {
+      "label": "Flying animation (east)",
+      "description": "AnimationDef used when the pawn is flying and facing east at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "AnimationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "flyingAnimationNorth": {
+      "label": "Flying animation (north)",
+      "description": "AnimationDef used when the pawn is flying and facing north at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "AnimationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "flyingAnimationSouth": {
+      "label": "Flying animation (south)",
+      "description": "AnimationDef used when the pawn is flying and facing south at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "AnimationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "flyingAnimationEastFemale": {
+      "label": "Flying animation (east, female)",
+      "description": "AnimationDef used for female pawns flying east at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "AnimationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "flyingAnimationNorthFemale": {
+      "label": "Flying animation (north, female)",
+      "description": "AnimationDef used for female pawns flying north at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "AnimationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "flyingAnimationSouthFemale": {
+      "label": "Flying animation (south, female)",
+      "description": "AnimationDef used for female pawns flying south at this life stage.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "AnimationDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "butcherBodyPart": {
+      "label": "Butcher body part",
+      "description": "Body part dropped when this pawn kind is butchered at this life stage.",
+      "type": { "kind": "object", "schemaRef": "BodyPartToDrop" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

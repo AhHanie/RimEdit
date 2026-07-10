@@ -1,0 +1,8 @@
+{
+  "objectType": "StockGenerator_Tomes",
+  "label": "Tomes generator",
+  "description": "Generates ThingDefOf.Tome when the Anomaly DLC is active and anomaly content is enabled. Inherits thingDef from StockGenerator_SingleDef but the runtime hardcodes ThingDefOf.Tome regardless of any thingDef value.",
+  "inherits": ["StockGenerator_SingleDef"],
+  "fieldOrder": [],
+  "fields": {}
+}

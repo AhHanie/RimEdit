@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationAttributeAdd">
+    <xpath>Defs/ThingDef[defName="Wall"]</xpath>
+    <attribute>Abstract</attribute>
+    <value>True</value>
+  </Operation>
+</Patch>

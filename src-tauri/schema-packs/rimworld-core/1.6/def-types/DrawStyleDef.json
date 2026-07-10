@@ -1,0 +1,64 @@
+{
+  "defType": "DrawStyleDef",
+  "label": "Draw style",
+  "description": "Defines a drawing style controlling how tools like the architect pencil or zone-painter render geometric shapes on the map.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "uiIconPath",
+    "drawStyleType",
+    "drawOutline",
+    "drawArea",
+    "drawShortSideMeasurement",
+    "canSnap"
+  ],
+  "fields": {
+    "uiIconPath": {
+      "label": "UI icon path",
+      "description": "Texture path for the architect toolbar button icon. Private in source but present in all shipped DrawStyleDef entries.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element",
+      "examples": ["UI/Icons/DrawStyles/Rectangle", "UI/Icons/DrawStyles/Line"]
+    },
+    "drawStyleType": {
+      "label": "Draw style type",
+      "description": "C# DrawStyle subclass implementing this style's shape-drawing logic.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element",
+      "examples": ["DrawStyle_Rectangle", "DrawStyle_Line", "DrawStyle_Freeform"]
+    },
+    "drawOutline": {
+      "label": "Draw outline",
+      "description": "Whether the shape is rendered with an outline.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "drawArea": {
+      "label": "Draw area",
+      "description": "Whether the enclosed area of the shape is rendered.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "drawShortSideMeasurement": {
+      "label": "Draw short side measurement",
+      "description": "Whether the shorter side's measurement label is shown while drawing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "canSnap": {
+      "label": "Can snap",
+      "description": "Whether the shape snaps to grid edges while drawing.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  }
+}

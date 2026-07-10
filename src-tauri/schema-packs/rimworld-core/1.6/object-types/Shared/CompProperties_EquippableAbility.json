@@ -1,0 +1,17 @@
+{
+  "objectType": "CompProperties_EquippableAbility",
+  "label": "Equippable ability comp",
+  "description": "Comp properties that grant the wielder an ability when this weapon is equipped.",
+  "inherits": ["CompProperties"],
+  "fieldOrder": ["abilityDef"],
+  "fields": {
+    "abilityDef": {
+      "label": "Ability def",
+      "description": "AbilityDef granted to the wielder while this weapon is equipped.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "AbilityDef", "allowAbstract": false, "scope": "allSources" }
+    }
+  }
+}

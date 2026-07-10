@@ -1,0 +1,8 @@
+{
+  "formatVersion": 1,
+  "packId": "conditional_rules_absent_op",
+  "name": "Conditional Rules Absent Operator",
+  "version": "1.0.0",
+  "defTypeDirectories": ["def-types"],
+  "objectTypeDirectories": []
+}

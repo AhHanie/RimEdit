@@ -1,0 +1,28 @@
+{
+  "objectType": "DiscriminatedBase",
+  "label": "Discriminated base",
+  "discriminator": {
+    "attribute": "Class",
+    "allowMissing": true,
+    "allowUnknown": true,
+    "fallbackSchemaRef": "DiscriminatedBase",
+    "variants": {
+      "VariantA": "VariantA",
+      "VariantB": "VariantB"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "baseField": {
+      "label": "Base field",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

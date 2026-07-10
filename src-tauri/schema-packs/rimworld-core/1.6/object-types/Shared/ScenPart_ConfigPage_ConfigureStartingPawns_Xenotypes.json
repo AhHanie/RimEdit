@@ -1,0 +1,32 @@
+{
+  "objectType": "ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes",
+  "label": "Configure starting pawns (xenotypes)",
+  "description": "Configuration page for selecting starting pawns by xenotype. Requires the Biotech DLC.",
+  "inherits": ["ScenPart_ConfigPage_ConfigureStartingPawnsBase"],
+  "fieldOrder": ["def", "visible", "pawnChoiceCount", "customSummary", "xenotypeCounts", "overrideKinds"],
+  "fields": {
+    "customSummary": {
+      "label": "Custom summary",
+      "description": "Optional override text shown in the scenario summary for this starting pawn configuration. Translated.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "xenotypeCounts": {
+      "label": "Xenotype counts",
+      "description": "List of xenotype and count pairs defining the mix of starting pawns by xenotype.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "XenotypeCount" },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "overrideKinds": {
+      "label": "Override kinds",
+      "description": "List of xenotype-to-pawnKind mappings that override which PawnKindDef is generated for each xenotype slot.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "XenotypePawnKind" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

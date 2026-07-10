@@ -1,0 +1,50 @@
+{
+  "objectType": "ThingSetMaker_Sum_Option",
+  "label": "Sum option entry",
+  "description": "A single entry in a ThingSetMaker_Sum options list. May be gated by a chance roll and market value bounds.",
+  "fieldOrder": [
+    "thingSetMaker",
+    "chance",
+    "maxMarketValue",
+    "minMarketValue",
+    "minTotalMarketValue"
+  ],
+  "fields": {
+    "thingSetMaker": {
+      "label": "Thing set maker",
+      "description": "The maker that runs for this sum entry. The Class attribute selects the concrete subclass.",
+      "type": { "kind": "object", "schemaRef": "ThingSetMaker" },
+      "required": false,
+      "xml": "object"
+    },
+    "chance": {
+      "label": "Chance",
+      "description": "Probability (0-1) that this entry runs during a sum generation pass. 1.0 means always.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1.0,
+      "xml": "element"
+    },
+    "maxMarketValue": {
+      "label": "Max market value",
+      "description": "This entry is skipped if the accumulated total market value already exceeds this threshold.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "minMarketValue": {
+      "label": "Min market value",
+      "description": "This entry is skipped if the accumulated total market value is below this threshold.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    },
+    "minTotalMarketValue": {
+      "label": "Min total market value",
+      "description": "This entry is skipped unless the total market value target is at least this large.",
+      "type": { "kind": "float" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

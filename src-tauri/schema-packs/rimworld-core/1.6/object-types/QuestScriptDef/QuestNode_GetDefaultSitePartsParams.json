@@ -1,0 +1,48 @@
+{
+  "objectType": "QuestNode_GetDefaultSitePartsParams",
+  "label": "QuestNode GetDefaultSitePartsParams",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_GetDefaultSitePartsParams.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "tile",
+    "faction",
+    "sitePartDefs",
+    "storeSitePartsParamsAs"
+  ],
+  "fields": {
+    "tile": {
+      "description": "Slate variable for the tile.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "faction": {
+      "description": "Slate variable for the faction.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "sitePartDefs": {
+      "description": "Slate variable for the site part defs list.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "storeSitePartsParamsAs": {
+      "description": "Slate variable name to store generated site part parameters.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

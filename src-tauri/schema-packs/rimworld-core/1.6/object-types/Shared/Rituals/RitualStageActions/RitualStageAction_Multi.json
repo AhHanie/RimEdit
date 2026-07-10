@@ -1,0 +1,17 @@
+{
+  "objectType": "RitualStageAction_Multi",
+  "label": "Ritual stage action (multi)",
+  "description": "Fires multiple sub-actions in sequence when the stage action fires.",
+  "fieldOrder": ["Class", "subActions"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "subActions": {
+      "label": "Sub-actions",
+      "description": "List of stage actions to fire in sequence.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "RitualStageAction" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  }
+}

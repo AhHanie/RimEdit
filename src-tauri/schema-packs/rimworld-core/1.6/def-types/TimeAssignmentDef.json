@@ -1,0 +1,41 @@
+{
+  "defType": "TimeAssignmentDef",
+  "label": "Time assignment",
+  "description": "Defines a named pawn schedule slot shown in the timetable, controlling whether the pawn may rest or seek joy during that hour.",
+  "inherits": ["Def"],
+  "fieldOrder": ["color", "allowRest", "allowJoy"],
+  "fields": {
+    "color": {
+      "label": "Color",
+      "description": "Solid fill color used for this assignment in the timetable grid and the assignment selector button. Accepts integer channel values in the range 0-255.",
+      "type": { "kind": "color" },
+      "required": false,
+      "xml": "element"
+    },
+    "allowRest": {
+      "label": "Allow rest",
+      "description": "When false, the pawn is blocked from going to bed for normal rest while this assignment is active unless their rest need falls below the critical threshold (~20%). Set to false for Work.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "allowJoy": {
+      "label": "Allow joy",
+      "description": "When false, the pawn's joy-seeking ThinkNode returns zero priority, preventing recreation during this assignment. Set to false for Work.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    }
+  },
+  "templates": {
+    "new-time-assignment": {
+      "label": "New time assignment",
+      "description": "Minimal time assignment with a label and display color.",
+      "includeRequiredFields": true,
+      "promptFields": ["label", "color"],
+      "fieldValues": {}
+    }
+  }
+}

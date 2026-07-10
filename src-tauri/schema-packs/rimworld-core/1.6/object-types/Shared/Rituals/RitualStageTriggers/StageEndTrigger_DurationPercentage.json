@@ -1,0 +1,18 @@
+{
+  "objectType": "StageEndTrigger_DurationPercentage",
+  "label": "Stage end trigger (duration percentage)",
+  "description": "Ends the stage when the specified percentage of the total ritual duration has elapsed.",
+  "fieldOrder": ["Class", "countsTowardsProgress", "percentage"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": true, "xml": "element" },
+    "percentage": {
+      "label": "Percentage",
+      "description": "Fraction (0.0-1.0) of the total ritual duration that must elapse before this trigger fires.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    }
+  }
+}

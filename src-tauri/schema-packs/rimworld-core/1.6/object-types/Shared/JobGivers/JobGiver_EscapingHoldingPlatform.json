@@ -1,0 +1,6 @@
+{
+  "objectType": "JobGiver_EscapingHoldingPlatform",
+  "label": "Job giver escaping holding platform",
+  "description": "Combat job giver for entities escaping a holding platform - always chases targets and bashes doors. Inherits all AIFightBase targeting fields.",
+  "inherits": ["JobGiver_AIFightBase"]
+}

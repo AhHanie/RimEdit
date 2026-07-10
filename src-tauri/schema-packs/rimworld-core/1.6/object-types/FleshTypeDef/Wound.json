@@ -1,0 +1,188 @@
+{
+  "objectType": "Wound",
+  "label": "Wound",
+  "description": "A single wound overlay graphic and the conditions under which it renders. Nested class inside FleshTypeDef.",
+  "fieldOrder": [
+    "texture",
+    "textureSouth",
+    "textureEast",
+    "textureNorth",
+    "textureWest",
+    "flipSouth",
+    "flipEast",
+    "flipNorth",
+    "flipWest",
+    "scale",
+    "drawOffsetSouth",
+    "drawOffsetEastWest",
+    "color",
+    "tintWithSkinColor",
+    "flipOnWoundAnchorTag",
+    "flipOnRotation",
+    "onlyOnPart",
+    "displayOverApparel",
+    "displayPermanent",
+    "missingBodyPartFresh"
+  ],
+  "fields": {
+    "texture": {
+      "label": "Texture",
+      "description": "Texture path used for all cardinal rotations when per-direction textures are not set.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "textureSouth": {
+      "label": "Texture south",
+      "description": "Texture path for the south-facing view. Used with per-direction texture sets.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "textureEast": {
+      "label": "Texture east",
+      "description": "Texture path for the east-facing view.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "textureNorth": {
+      "label": "Texture north",
+      "description": "Texture path for the north-facing view.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "textureWest": {
+      "label": "Texture west",
+      "description": "Texture path for the west-facing view.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "flipSouth": {
+      "label": "Flip south",
+      "description": "Flip the south-facing texture horizontally at render time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "flipEast": {
+      "label": "Flip east",
+      "description": "Flip the east-facing texture horizontally at render time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "flipNorth": {
+      "label": "Flip north",
+      "description": "Flip the north-facing texture horizontally at render time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "flipWest": {
+      "label": "Flip west",
+      "description": "Flip the west-facing texture horizontally at render time.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Uniform scale multiplier applied to the wound graphic. Defaults to 1.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    },
+    "drawOffsetSouth": {
+      "label": "Draw offset south",
+      "description": "World-space draw offset applied when the pawn faces south.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0, 0, 0)",
+      "xml": "element"
+    },
+    "drawOffsetEastWest": {
+      "label": "Draw offset east/west",
+      "description": "World-space draw offset applied when the pawn faces east or west.",
+      "type": { "kind": "vector3" },
+      "required": false,
+      "defaultValue": "(0, 0, 0)",
+      "xml": "element"
+    },
+    "color": {
+      "label": "Color",
+      "description": "Tint color applied to the wound graphic. Defaults to white (1, 1, 1, 1).",
+      "type": { "kind": "color" },
+      "required": false,
+      "defaultValue": "(1, 1, 1, 1)",
+      "xml": "element"
+    },
+    "tintWithSkinColor": {
+      "label": "Tint with skin color",
+      "description": "Whether to additionally tint the wound graphic with the pawn's skin color.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "flipOnWoundAnchorTag": {
+      "label": "Flip on wound anchor tag",
+      "description": "Wound anchor tag name (e.g. LeftEye) that triggers horizontal mirroring of this overlay.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "flipOnRotation": {
+      "label": "Flip on rotation",
+      "description": "Cardinal rotation direction that triggers horizontal mirroring. Corresponds to Verse.Rot4 values.",
+      "type": { "kind": "enum" },
+      "required": false,
+      "xml": "element",
+      "validationHints": {
+        "allowedValues": ["North", "East", "South", "West"]
+      }
+    },
+    "onlyOnPart": {
+      "label": "Only on part",
+      "description": "Restrict this wound overlay to a specific body part. Absent means the overlay may appear on any body part.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "BodyPartDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "displayOverApparel": {
+      "label": "Display over apparel",
+      "description": "Whether the wound graphic renders above apparel layers. Defaults to true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "displayPermanent": {
+      "label": "Display permanent",
+      "description": "Whether the wound overlay remains visible after the injury heals.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "missingBodyPartFresh": {
+      "label": "Missing body part fresh",
+      "description": "Filter this overlay to fresh (true) or old (false) missing-part hediffs. Absent means no filter applies.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

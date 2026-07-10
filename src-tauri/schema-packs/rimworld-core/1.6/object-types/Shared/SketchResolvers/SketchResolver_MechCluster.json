@@ -1,0 +1,8 @@
+{
+  "objectType": "SketchResolver_MechCluster",
+  "label": "Sketch resolver: Mech cluster",
+  "description": "Concrete RimWorld SketchResolver_MechCluster resolver. RimWorld 1.6 source exposes no loadable XML fields for this resolver.",
+  "inherits": ["SketchResolver"],
+  "fieldOrder": [],
+  "fields": {}
+}

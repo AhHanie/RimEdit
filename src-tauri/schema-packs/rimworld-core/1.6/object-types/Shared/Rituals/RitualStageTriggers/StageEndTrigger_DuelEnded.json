@@ -1,0 +1,10 @@
+{
+  "objectType": "StageEndTrigger_DuelEnded",
+  "label": "Stage end trigger (duel ended)",
+  "description": "Ends the stage when the duel between participants concludes.",
+  "fieldOrder": ["Class", "countsTowardsProgress"],
+  "fields": {
+    "Class": { "label": "Class", "type": { "kind": "typeName" }, "required": false, "xml": "attribute" },
+    "countsTowardsProgress": { "label": "Counts towards progress", "type": { "kind": "boolean" }, "required": false, "defaultValue": false, "xml": "element" }
+  }
+}

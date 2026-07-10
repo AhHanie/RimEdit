@@ -1,0 +1,16 @@
+{
+  "objectType": "AudioGrain_Clip",
+  "label": "Audio grain (clip)",
+  "description": "An audio grain that references a single audio clip by asset path.",
+  "inherits": ["AudioGrain"],
+  "fieldOrder": ["Class", "clipPath"],
+  "fields": {
+    "clipPath": {
+      "label": "Clip path",
+      "description": "Asset path to the audio clip, relative to the mod or core Sounds folder.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

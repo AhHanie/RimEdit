@@ -1,0 +1,71 @@
+{
+  "objectType": "RitualOutcomeComp_PawnStatScaled",
+  "label": "Ritual outcome comp (pawn stat scaled)",
+  "description": "Applies a quality offset equal to the role pawn's stat value multiplied by scaledBy (optionally passed through a curve first).",
+  "fieldOrder": ["Class", "label", "labelAbstract", "qualityOffset", "curve", "roleId", "statDef", "scaledBy"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# RitualOutcomeComp subclass name.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "label": {
+      "label": "Label",
+      "description": "Display label shown in the ritual quality breakdown UI.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "labelAbstract": {
+      "label": "Label (abstract)",
+      "description": "Alternative label used when no live ritual is available.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "qualityOffset": {
+      "label": "Quality offset",
+      "description": "Not used directly; quality is the stat value * scaledBy (optionally curve-transformed).",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "curve": {
+      "label": "Curve",
+      "description": "Optional SimpleCurve applied to the stat value before multiplying by scaledBy.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    },
+    "roleId": {
+      "label": "Role ID",
+      "description": "Ritual role ID string identifying which pawn's stat to evaluate.",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "statDef": {
+      "label": "Stat def",
+      "description": "StatDef read from the role pawn.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "StatDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "scaledBy": {
+      "label": "Scaled by",
+      "description": "Multiplier applied to the stat value (or curve output) to produce the quality offset.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}

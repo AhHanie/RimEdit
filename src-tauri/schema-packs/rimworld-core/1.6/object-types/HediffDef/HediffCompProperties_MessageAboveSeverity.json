@@ -1,0 +1,45 @@
+{
+  "objectType": "HediffCompProperties_MessageAboveSeverity",
+  "label": "Message above severity comp",
+  "description": "Shows a message when hediff severity rises above a threshold.",
+  "fieldOrder": ["Class", "compClass", "message", "messageType", "minSeverity"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "message": {
+      "label": "Message",
+      "description": "Message text.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "messageType": {
+      "label": "Message type",
+      "description": "Visual style of the message.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": { "defType": "MessageTypeDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "minSeverity": {
+      "label": "Min severity",
+      "description": "Severity threshold above which message is shown.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0.5,
+      "xml": "element"
+    }
+  }
+}

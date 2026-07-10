@@ -1,0 +1,8 @@
+{
+  "defType": "IncidentTargetTagDef",
+  "label": "Incident target tag",
+  "description": "A tag that marks world objects or maps as valid targets for incidents. Referenced by IncidentDef and WorldObjectDef.IncidentTargetTags.",
+  "inherits": ["Def"],
+  "fieldOrder": [],
+  "fields": {}
+}

@@ -1,0 +1,117 @@
+{
+  "defType": "SkillDef",
+  "label": "Skill",
+  "description": "Defines a pawn skill tracked by the game, including its display label, grammar rules, work tag interactions, and lesson interaction.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "skillLabel",
+    "generalRules",
+    "usuallyDefinedInBackstories",
+    "pawnCreatorSummaryVisible",
+    "disablingWorkTags",
+    "listOrder",
+    "neverDisabledBasedOnWorkTypes",
+    "lessonInteraction"
+  ],
+  "fields": {
+    "skillLabel": {
+      "label": "Skill label",
+      "description": "Displayed name of the skill. Copied to the inherited label field when label is absent.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "generalRules": {
+      "label": "General rules",
+      "description": "Grammar rule pack used to generate skill-related text such as backstory entries and thought descriptions.",
+      "type": { "kind": "object", "schemaRef": "RulePack" },
+      "required": false,
+      "xml": "object",
+      "defaultCollapsed": true
+    },
+    "usuallyDefinedInBackstories": {
+      "label": "Usually defined in backstories",
+      "description": "If true, random backstories are expected to define this skill rather than leaving it at its default value.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "pawnCreatorSummaryVisible": {
+      "label": "Pawn creator summary visible",
+      "description": "If true, this skill is shown in the pawn creator summary panel during colony setup.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "disablingWorkTags": {
+      "label": "Disabling work tags",
+      "description": "WorkTags flags that, when present on a pawn, disable this skill regardless of work type assignments. Comma-separated list of flag names.",
+      "type": { "kind": "string" },
+      "required": false,
+      "defaultValue": "None",
+      "xml": "flagsText",
+      "validationHints": {
+        "allowedValues": [
+          "None", "ManualDumb", "ManualSkilled", "Violent", "Caring",
+          "Social", "Commoner", "Intellectual", "Animals", "Artistic",
+          "Crafting", "Cooking", "Firefighting", "Cleaning", "Hauling",
+          "PlantWork", "Mining", "Hunting", "Constructing", "Shooting",
+          "AllWork"
+        ]
+      }
+    },
+    "listOrder": {
+      "label": "List order",
+      "description": "Relative ordering of this skill in UI lists. Lower values appear earlier.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 0,
+      "xml": "element"
+    },
+    "neverDisabledBasedOnWorkTypes": {
+      "label": "Never disabled based on work types",
+      "description": "If true, this skill is never considered disabled due to disabled work types; only disablingWorkTags can disable it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "lessonInteraction": {
+      "label": "Lesson interaction",
+      "description": "InteractionDef used for teaching lessons in this skill. Defaults to LessonGeneric when omitted.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "defaultValue": "LessonGeneric",
+      "xml": "element",
+      "reference": {
+        "defType": "InteractionDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    }
+  },
+  "templates": {
+    "basic-skill": {
+      "label": "Basic skill",
+      "description": "General-purpose pawn skill visible in the pawn creator.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "skillLabel", "description", "listOrder"],
+      "fieldValues": {
+        "usuallyDefinedInBackstories": "true",
+        "pawnCreatorSummaryVisible": "true"
+      }
+    },
+    "combat-skill": {
+      "label": "Combat skill",
+      "description": "Skill associated with violent work that is never disabled by work type restrictions.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "skillLabel", "description", "listOrder"],
+      "fieldValues": {
+        "disablingWorkTags": "Violent",
+        "neverDisabledBasedOnWorkTypes": "true"
+      }
+    }
+  }
+}

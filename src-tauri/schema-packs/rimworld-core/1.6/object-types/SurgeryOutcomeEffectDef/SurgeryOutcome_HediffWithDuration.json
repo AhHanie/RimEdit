@@ -1,0 +1,28 @@
+{
+  "objectType": "SurgeryOutcome_HediffWithDuration",
+  "label": "Surgery outcome: hediff with duration",
+  "description": "Surgery outcome that applies a HediffDef whose duration in days is determined by a quality-to-days curve. Used by Biotech xenogerm implantation.",
+  "inherits": ["SurgeryOutcome"],
+  "fieldOrder": ["Class", "chance", "totalDamage", "applyEffectsToPart", "failure", "letterLabel", "letterText", "hediff", "qualityToDurationDaysCurve"],
+  "fields": {
+    "hediff": {
+      "label": "Hediff",
+      "description": "HediffDef applied to the patient when this outcome fires.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "HediffDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "qualityToDurationDaysCurve": {
+      "label": "Quality to duration days curve",
+      "description": "SimpleCurve mapping surgery quality (X) to the hediff duration in days (Y).",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

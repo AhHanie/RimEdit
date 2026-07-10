@@ -1,0 +1,27 @@
+{
+  "objectType": "ThingDefCountRangeClass",
+  "label": "Thing def count range",
+  "description": "Associates a ThingDef with an IntRange count. Used in object-shaped contexts where each entry has explicit thingDef and countRange fields rather than the named-map shorthand.",
+  "fieldOrder": ["thingDef", "countRange"],
+  "fields": {
+    "thingDef": {
+      "label": "Thing def",
+      "description": "ThingDef this count range applies to.",
+      "type": { "kind": "defReference" },
+      "required": false,
+      "xml": "element",
+      "reference": {
+        "defType": "ThingDef",
+        "allowAbstract": false,
+        "scope": "allSources"
+      }
+    },
+    "countRange": {
+      "label": "Count range",
+      "description": "IntRange specifying the minimum and maximum count for this ThingDef.",
+      "type": { "kind": "intRange" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

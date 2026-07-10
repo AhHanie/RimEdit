@@ -1,0 +1,105 @@
+{
+  "defType": "WorkTypeDef",
+  "label": "Work type",
+  "description": "Defines one work type assignable to colonists, such as Mining, Cooking, or Hauling. Referenced by PawnColumnDef.workType for generated work-priority columns.",
+  "inherits": ["Def"],
+  "fieldOrder": [
+    "labelShort",
+    "pawnLabel",
+    "gerundLabel",
+    "verb",
+    "visible",
+    "visibleOnlyWithChildrenInColony",
+    "naturalPriority",
+    "alwaysStartActive",
+    "requireCapableColonist",
+    "relevantSkills",
+    "disabledForSlaves"
+  ],
+  "fields": {
+    "labelShort": {
+      "label": "Label short",
+      "description": "Short translated name shown in the work tab column header.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "pawnLabel": {
+      "label": "Pawn label",
+      "description": "Translated noun describing a pawn who performs this work, e.g. 'miner', 'cook'.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "gerundLabel": {
+      "label": "Gerund label",
+      "description": "Translated gerund describing this work activity, e.g. 'Mining', 'Cooking'.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "verb": {
+      "label": "Verb",
+      "description": "Translated verb used in activity strings, e.g. 'mine', 'cook'.",
+      "type": { "kind": "localizedString" },
+      "required": false,
+      "xml": "element"
+    },
+    "visible": {
+      "label": "Visible",
+      "description": "If false, this work type is hidden from the work tab and cannot be assigned. Default true.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": true,
+      "xml": "element"
+    },
+    "visibleOnlyWithChildrenInColony": {
+      "label": "Visible only with children in colony",
+      "description": "If true, this work type only appears when at least one juvenile pawn is in the colony.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "naturalPriority": {
+      "label": "Natural priority",
+      "description": "Determines the default relative priority of this work type among all work types. Must be between 0 and 10000.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "xml": "element"
+    },
+    "alwaysStartActive": {
+      "label": "Always start active",
+      "description": "If true, all colonists always have this work type enabled regardless of their individual settings.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "requireCapableColonist": {
+      "label": "Require capable colonist",
+      "description": "If true, this work type is only shown when there is at least one capable colonist who can perform it.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    },
+    "relevantSkills": {
+      "label": "Relevant skills",
+      "description": "SkillDefs that are levelled by and affect the quality of this work type.",
+      "type": { "kind": "list" },
+      "items": { "kind": "defReference" },
+      "required": false,
+      "xml": "listOfLi",
+      "reference": { "defType": "SkillDef", "allowAbstract": false, "scope": "allSources" }
+    },
+    "disabledForSlaves": {
+      "label": "Disabled for slaves",
+      "description": "If true, enslaved colonists cannot be assigned to this work type.",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
+      "xml": "element"
+    }
+  }
+}

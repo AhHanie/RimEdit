@@ -1,0 +1,36 @@
+{
+  "defType": "TestDef",
+  "label": "Test Def",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "controlField": {
+      "label": "Control field",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    },
+    "target": {
+      "label": "Target",
+      "type": { "kind": "list" },
+      "items": { "kind": "integer" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "validationRules": {
+    "target-required-when-control-absent": {
+      "kind": "requiredWhen",
+      "field": "target",
+      "when": {
+        "field": "controlField",
+        "operator": "absent"
+      },
+      "message": "Target is required when controlField is absent."
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "objectType": "ThinkNode_ConditionalUnderCombatPressure",
+  "label": "Think node conditional under combat pressure",
+  "description": "Satisfied when a minimum number of enemies are within a close threat distance of the pawn.",
+  "inherits": ["ThinkNode_Conditional"],
+  "fieldOrder": ["maxThreatDistance", "minCloseTargets"],
+  "fields": {
+    "maxThreatDistance": {
+      "label": "Max threat distance",
+      "description": "Enemies within this distance count toward the close-threat total.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 2,
+      "xml": "element"
+    },
+    "minCloseTargets": {
+      "label": "Min close targets",
+      "description": "Minimum number of enemies within max threat distance required for the conditional to be satisfied.",
+      "type": { "kind": "integer" },
+      "required": false,
+      "defaultValue": 2,
+      "xml": "element"
+    }
+  }
+}

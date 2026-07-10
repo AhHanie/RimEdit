@@ -1,0 +1,27 @@
+{
+  "objectType": "GameSetupStep",
+  "label": "Game setup step",
+  "description": "Abstract base for all game setup step implementations. The Class attribute on the setupStep XML element selects the concrete subclass.",
+  "fieldOrder": ["Class"],
+  "discriminator": {
+    "attribute": "Class",
+    "fallbackSchemaRef": "GameSetupStep",
+    "allowMissing": false,
+    "allowUnknown": true,
+    "variants": {
+      "GameSetupStep_Grids": "GameSetupStep_Grids",
+      "GameSetupStep_Components": "GameSetupStep_Components",
+      "GameSetupStep_TileElementsCore": "GameSetupStep_TileElementsCore",
+      "GameSetupStep_TileElementsOdyssey": "GameSetupStep_TileElementsOdyssey"
+    }
+  },
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# GameSetupStep subclass selected by DirectXmlLoader.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

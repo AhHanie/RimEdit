@@ -1,0 +1,28 @@
+{
+  "defType": "OrbitalDebrisDef",
+  "label": "Orbital debris",
+  "description": "Defines a set of layered world-map graphics used to render orbital debris belts around a planet. Each def names a debris type (asteroid field, manmade wreckage, mechanoid debris) and supplies a weighted list of graphic variants rendered with parallax depth effects.",
+  "inherits": ["Def"],
+  "fieldOrder": ["graphics"],
+  "fields": {
+    "graphics": {
+      "label": "Graphics",
+      "description": "List of debris graphic variants. The renderer selects and layers these based on weighting and order. Each <li> is a DebrisGraphic.",
+      "type": { "kind": "list" },
+      "items": { "kind": "object", "schemaRef": "DebrisGraphic" },
+      "required": false,
+      "xml": "listOfLi"
+    }
+  },
+  "templates": {
+    "new-orbital-debris": {
+      "label": "New orbital debris",
+      "description": "Minimal orbital debris def with a single graphic variant.",
+      "includeRequiredFields": true,
+      "promptFields": ["defName", "label"],
+      "fieldValues": {
+        "graphics": "<li>\n  <weighting>1</weighting>\n  <order>1</order>\n  <parallaxPer10Cells>1</parallaxPer10Cells>\n  <graphicData>\n    <texPath>World/Debris/Asteroid/Medium</texPath>\n    <graphicClass>Graphic_Random</graphicClass>\n    <shaderType>OrbitalDebris</shaderType>\n    <drawSize>6</drawSize>\n  </graphicData>\n</li>"
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "defType": "PsychicRitualDef_SummonFleshbeasts",
+  "label": "Psychic ritual -- summon fleshbeasts",
+  "description": "Ritual (enemy-cast) that summons fleshbeasts. The number of fleshbeasts is determined by threat-point scaling.",
+  "inherits": ["PsychicRitualDef_InvocationCircle"],
+  "fieldOrder": [
+    "fleshbeastPointsFromThreatPointsCurve"
+  ],
+  "fields": {
+    "fleshbeastPointsFromThreatPointsCurve": {
+      "label": "Fleshbeast points from threat points curve",
+      "description": "Curve mapping the raid's threat-point budget to the combat points spent summoning fleshbeasts.",
+      "type": { "kind": "object", "schemaRef": "SimpleCurve" },
+      "required": false,
+      "xml": "object"
+    }
+  }
+}

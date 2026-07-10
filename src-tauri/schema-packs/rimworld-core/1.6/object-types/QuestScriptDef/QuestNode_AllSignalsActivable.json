@@ -1,0 +1,73 @@
+{
+  "objectType": "QuestNode_AllSignalsActivable",
+  "label": "QuestNode AllSignalsActivable",
+  "description": "Schema for RimWorld.QuestGen.QuestNode_AllSignalsActivable.",
+  "inherits": [
+    "QuestNode"
+  ],
+  "fieldOrder": [
+    "inSignals",
+    "inSignalEnable",
+    "inSignalDisable",
+    "outSignals",
+    "node",
+    "signalListenMode"
+  ],
+  "fields": {
+    "inSignals": {
+      "description": "All input signal names must fire after activation.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "inSignalEnable": {
+      "description": "Signal name that enables this listener.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "inSignalDisable": {
+      "description": "Signal name that disables this listener.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    },
+    "outSignals": {
+      "description": "Signals emitted after this listener fires.",
+      "type": {
+        "kind": "list"
+      },
+      "items": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "listOfLi"
+    },
+    "node": {
+      "description": "QuestNode run when the signal condition fires.",
+      "type": {
+        "kind": "object",
+        "schemaRef": "QuestNode"
+      },
+      "required": false,
+      "xml": "object"
+    },
+    "signalListenMode": {
+      "description": "SlateRef<SignalListenMode?>. Allowed SignalListenMode literals: OngoingOnly, NotYetAcceptedOnly, OngoingOrNotYetAccepted, HistoricalOnly, Always; also accepts $varName.",
+      "type": {
+        "kind": "string"
+      },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

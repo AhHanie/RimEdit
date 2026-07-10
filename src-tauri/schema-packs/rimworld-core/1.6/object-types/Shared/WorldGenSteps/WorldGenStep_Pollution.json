@@ -1,0 +1,15 @@
+{
+  "objectType": "WorldGenStep_Pollution",
+  "label": "Pollution world gen step",
+  "description": "Distributes pollution across world tiles.",
+  "fieldOrder": ["Class"],
+  "fields": {
+    "Class": {
+      "label": "Class",
+      "description": "C# WorldGenStep subclass.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    }
+  }
+}

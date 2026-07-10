@@ -1,0 +1,30 @@
+{
+  "objectType": "HediffCompProperties_GiveLovinMTBFactor",
+  "label": "Give lovin MTB factor comp",
+  "description": "Multiplies the pawn's lovin' mean-time-between while this hediff is active.",
+  "fieldOrder": ["Class", "compClass", "factor"],
+  "fields": {
+    "Class": {
+      "label": "Properties class",
+      "description": "C# HediffCompProperties type for this list item.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "attribute"
+    },
+    "compClass": {
+      "label": "Component class",
+      "description": "Runtime HediffComp class.",
+      "type": { "kind": "typeName" },
+      "required": false,
+      "xml": "element"
+    },
+    "factor": {
+      "label": "Factor",
+      "description": "Multiplier applied to the pawn's lovin' MTB.",
+      "type": { "kind": "float" },
+      "required": false,
+      "defaultValue": 1,
+      "xml": "element"
+    }
+  }
+}
