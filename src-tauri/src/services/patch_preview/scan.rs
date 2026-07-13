@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use std::path::PathBuf;
+use std::path::{Component, Path, PathBuf};
 
 use sxd_document::dom::{ChildOfElement, Document, Element};
 use walkdir::WalkDir;
@@ -22,6 +22,27 @@ pub(super) fn included_locations<'a>(
         .collect()
 }
 
+fn relative_path_to_forward_slash(rel: &Path) -> String {
+    rel.components()
+        .filter_map(|c| match c {
+            Component::Normal(s) => s.to_str().map(|s| s.to_string()),
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .join("/")
+}
+
+/// One Def XML file discovered for a location, in RimWorld load order (see
+/// `scan_def_files_in_load_order`). `relative_path` is normalized to forward slashes and relative
+/// to the location root -- the same convention as `XmlEditorFileRef.relativePath` on the frontend
+/// and `patches::scan::scan_indexable_patch_xml_files`'s `relative_path` -- so a
+/// [`super::model::PatchPreviewTarget`] built from an open editor tab can be matched against it
+/// directly, without any path-format translation.
+pub(super) struct ScannedDefFile {
+    pub absolute_path: PathBuf,
+    pub relative_path: String,
+}
+
 /// Def XML files for one location, in folder-major/file-minor RimWorld load order (mirrors
 /// `patches::scan::scan_indexable_patch_xml_files`'s ordering guarantee, applied to `Defs/`
 /// instead of `Patches/` -- Def scanning elsewhere in this crate re-sorts globally by relative
@@ -31,17 +52,18 @@ pub(super) fn included_locations<'a>(
 pub(super) fn scan_def_files_in_load_order(
     settings: &ProjectSettings,
     location: &RegisteredLocation,
-) -> Vec<PathBuf> {
+) -> Vec<ScannedDefFile> {
     let resolution = resolve_load_folders(location, settings);
+    let location_root = &resolution.root_path;
     let mut seen: HashSet<String> = HashSet::new();
-    let mut files: Vec<PathBuf> = Vec::new();
+    let mut files: Vec<ScannedDefFile> = Vec::new();
 
     for folder in &resolution.selected_folders {
         let defs_dir = folder.absolute_path.join("Defs");
         if !defs_dir.exists() || !defs_dir.is_dir() {
             continue;
         }
-        let mut folder_files: Vec<PathBuf> = Vec::new();
+        let mut folder_files: Vec<ScannedDefFile> = Vec::new();
         for entry in WalkDir::new(&defs_dir).follow_links(false) {
             let Ok(entry) = entry else { continue };
             if !entry.file_type().is_file() {
@@ -66,9 +88,17 @@ pub(super) fn scan_def_files_in_load_order(
                     continue;
                 }
             }
-            folder_files.push(entry.path().to_path_buf());
+            let relative_path = entry
+                .path()
+                .strip_prefix(location_root)
+                .map(relative_path_to_forward_slash)
+                .unwrap_or_else(|_| entry.path().to_string_lossy().to_string());
+            folder_files.push(ScannedDefFile {
+                absolute_path: entry.path().to_path_buf(),
+                relative_path,
+            });
         }
-        folder_files.sort();
+        folder_files.sort_by(|a, b| a.absolute_path.cmp(&b.absolute_path));
         files.extend(folder_files);
     }
 
@@ -77,12 +107,16 @@ pub(super) fn scan_def_files_in_load_order(
 
 /// Parses one Def XML file's content and appends its top-level Defs into `defs_root` (unwrapping
 /// its own `<Defs>` root, if present -- a malformed file with a different or missing root just
-/// has its top-level content appended directly, best-effort).
+/// has its top-level content appended directly, best-effort). Returns the top-level Def elements
+/// this call appended, in document order -- the caller uses each element's position in this
+/// returned list as its provenance ordinal within this file, matching
+/// `xml_document::def_summary::extract_def_summaries`'s per-file ordinal for the same file.
 pub(super) fn append_def_file_contents<'d>(
     document: Document<'d>,
     defs_root: Element<'d>,
     raw: &str,
-) {
+) -> Vec<Element<'d>> {
+    let before = defs_root.children().len();
     let result = parse_fragment(document, raw);
     for node in result.nodes {
         if let ChildOfElement::Element(el) = node {
@@ -95,4 +129,13 @@ pub(super) fn append_def_file_contents<'d>(
         }
         defs_root.append_child(node);
     }
+    defs_root
+        .children()
+        .into_iter()
+        .skip(before)
+        .filter_map(|c| match c {
+            ChildOfElement::Element(el) => Some(el),
+            _ => None,
+        })
+        .collect()
 }

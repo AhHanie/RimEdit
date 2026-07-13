@@ -10,6 +10,7 @@ import type {
   PatchPreviewConflictDiagnostic,
   PatchPreviewOperationSummary,
   PatchPreviewResult,
+  PatchPreviewTarget,
 } from "../../types/patchPreview";
 import { patchOperationKeyToString, samePatchOperationKey } from "../../types/patchPreview";
 import { applyLocalReorder } from "../../lib/previewOperationOrder";
@@ -17,12 +18,11 @@ import styles from "./PatchPreviewDialog.module.css";
 
 interface Props {
   projectId: string;
-  defType: string;
-  defName: string;
+  target: PatchPreviewTarget;
   onClose: () => void;
 }
 
-export function PatchPreviewDialog({ projectId, defType, defName, onClose }: Props) {
+export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
   const [disabledKeys, setDisabledKeys] = useState<PatchOperationKey[]>([]);
   const [orderKeys, setOrderKeys] = useState<PatchOperationKey[] | null>(null);
   const [result, setResult] = useState<PatchPreviewResult | null>(null);
@@ -35,7 +35,7 @@ export function PatchPreviewDialog({ projectId, defType, defName, onClose }: Pro
     let cancelled = false;
     setLoading(true);
     setError(null);
-    previewDefPatches(projectId, defType, defName, {
+    previewDefPatches(projectId, target, {
       disabled: disabledKeys,
       order: orderKeys ?? [],
     })
@@ -52,7 +52,7 @@ export function PatchPreviewDialog({ projectId, defType, defName, onClose }: Pro
     return () => {
       cancelled = true;
     };
-  }, [projectId, defType, defName, disabledKeys, orderKeys]);
+  }, [projectId, target, disabledKeys, orderKeys]);
 
   function toggleDisabled(key: PatchOperationKey) {
     setDisabledKeys((prev) =>
@@ -97,7 +97,7 @@ export function PatchPreviewDialog({ projectId, defType, defName, onClose }: Pro
       <div className={styles.panel}>
         <div className={styles.header}>
           <span className={styles.title}>
-            Patch preview - {defType}:{defName}
+            Patch preview - {target.defType}:{target.identity}
           </span>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
             <X size={14} />
@@ -121,7 +121,11 @@ export function PatchPreviewDialog({ projectId, defType, defName, onClose }: Pro
               }`}
             >
               {!result.defFound
-                ? "Def not found in the combined document."
+                ? (result.applyDiagnostics.find(
+                    (d) =>
+                      d.code === "patch_preview_target_not_found" ||
+                      d.code === "patch_preview_target_removed",
+                  )?.message ?? "Def not found in the combined document.")
                 : result.isPartial
                   ? "Partial preview - some operations could not be fully previewed."
                   : "Complete preview."}

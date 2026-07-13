@@ -5,6 +5,7 @@ import { ChevronRight, FileCode2, Loader2 } from "lucide-react";
 import type { ActiveEditorCommands } from "../../../editor-workspace/types";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import { PatchEditorPane, PatchPreviewDialog } from "../../../patches-editor";
+import type { PatchPreviewTarget } from "../../../patches-editor";
 import { AboutEditorPane } from "../../../about-editor";
 import type { XmlEditorMode } from "../../types/editorSession";
 import type { TemplateFieldValue } from "../../types/createDef";
@@ -340,15 +341,35 @@ export function XmlEditorPane({
     : "New template";
 
   // Abstract/template Defs (e.g. `<ThingDef Name="BaseThing" Abstract="True">`) have no
-  // `defName` -- the preview engine's combined document has no correlation to this editor's
-  // `nodeId`s, so `Name` is the only other stable identity it can look such a Def up by (see
-  // `services::patch_preview::matches_selected_def` on the backend).
+  // `defName` -- the preview engine verifies this identity against the resolved element as
+  // validation data (see `PatchPreviewTarget`'s doc comment on the backend), so `Name` is the
+  // other stable identity to fall back to.
   const selectedDefIdentityForPreview =
     selectedDefForTemplate?.defName ??
     selectedDefForTemplate?.attributes.find((a) => a.name === "Name")?.value ??
     null;
-  const canPreviewPatches =
-    selectedDefForTemplate != null && selectedDefIdentityForPreview != null;
+  // The Def's zero-based position among this file's own top-level Defs -- matches the ordinal
+  // `xml_document::def_summary::extract_def_summaries` assigns on the backend for the same file,
+  // so the preview engine can resolve this exact opened Def by file origin + ordinal instead of a
+  // same-named lookup across every registered location (see `PatchPreviewTarget`).
+  const selectedDefOrdinalForPreview = selectedDefForTemplate
+    ? (activeEditorSnapshot.parsed?.defs.findIndex(
+        (d) => d.nodeId === selectedDefForTemplate.nodeId,
+      ) ?? -1)
+    : -1;
+  const previewTarget: PatchPreviewTarget | null =
+    selectedDefForTemplate != null &&
+    selectedDefIdentityForPreview != null &&
+    selectedDefOrdinalForPreview >= 0
+      ? {
+          locationId: file.locationId,
+          relativePath: file.relativePath,
+          defType: selectedDefForTemplate.defType,
+          identity: selectedDefIdentityForPreview,
+          ordinal: selectedDefOrdinalForPreview,
+        }
+      : null;
+  const canPreviewPatches = previewTarget != null;
 
   return (
     <div className={styles.root} style={{ position: "relative" }}>
@@ -489,11 +510,10 @@ export function XmlEditorPane({
       )}
 
       {/* Patch preview dialog */}
-      {previewOpen && selectedDefForTemplate && selectedDefIdentityForPreview != null && (
+      {previewOpen && previewTarget && (
         <PatchPreviewDialog
           projectId={projectId}
-          defType={selectedDefForTemplate.defType}
-          defName={selectedDefIdentityForPreview}
+          target={previewTarget}
           onClose={() => setPreviewOpen(false)}
         />
       )}

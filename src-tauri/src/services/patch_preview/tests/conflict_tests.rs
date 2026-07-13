@@ -40,7 +40,11 @@ fn multiple_operations_targeting_same_def_report_distinctly_named_diagnostics() 
         custom_operations: &custom_ops,
     };
 
-    let result = compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let result = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     let matches: Vec<_> = result
         .conflict_diagnostics
         .iter()
@@ -100,7 +104,11 @@ fn two_replace_operations_on_the_same_node_report_duplicate_conflict() {
         custom_operations: &custom_ops,
     };
 
-    let result = compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let result = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     let matches: Vec<_> = result
         .conflict_diagnostics
         .iter()
@@ -146,7 +154,11 @@ fn two_add_operations_adding_the_same_child_tag_report_duplicate_conflict() {
         custom_operations: &custom_ops,
     };
 
-    let result = compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let result = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     let matches: Vec<_> = result
         .conflict_diagnostics
         .iter()
@@ -192,7 +204,11 @@ fn add_operations_at_different_xpaths_do_not_report_duplicate_conflict() {
         custom_operations: &custom_ops,
     };
 
-    let result = compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let result = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     assert!(!result
         .conflict_diagnostics
         .iter()
@@ -236,7 +252,11 @@ fn later_operation_targeting_a_node_removed_earlier_reports_conflict() {
         custom_operations: &custom_ops,
     };
 
-    let result = compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let result = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     assert!(
         result
             .conflict_diagnostics
@@ -279,7 +299,11 @@ fn custom_operation_affecting_selected_def_reports_unpreviewable_conflict() {
         custom_operations: &custom_ops,
     };
 
-    let result = compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let result = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     assert!(
         result
             .conflict_diagnostics
@@ -331,8 +355,11 @@ fn disabling_one_of_two_duplicate_replace_operations_clears_the_conflict() {
         custom_operations: &custom_ops,
     };
 
-    let baseline =
-        compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let baseline = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     assert!(baseline
         .conflict_diagnostics
         .iter()
@@ -343,7 +370,7 @@ fn disabling_one_of_two_duplicate_replace_operations_clears_the_conflict() {
         disabled: vec![disable_one],
         order: vec![],
     };
-    let result = compute_def_preview(&inputs, "ThingDef", "Wall", &request);
+    let result = compute_def_preview(&inputs, &target("ThingDef", "Wall", 0), &request);
     assert!(
         !result
             .conflict_diagnostics
@@ -395,7 +422,11 @@ fn two_add_operations_adding_different_li_items_to_the_same_list_are_not_a_confl
         custom_operations: &custom_ops,
     };
 
-    let result = compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let result = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     assert!(
         !result
             .conflict_diagnostics
@@ -446,7 +477,11 @@ fn duplicate_add_detection_checks_every_value_child_not_only_the_first() {
         custom_operations: &custom_ops,
     };
 
-    let result = compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let result = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     let matches: Vec<_> = result
         .conflict_diagnostics
         .iter()
@@ -497,8 +532,11 @@ fn reordering_a_remove_after_a_dependent_operation_removes_the_targets_removed_n
         custom_operations: &custom_ops,
     };
 
-    let baseline =
-        compute_def_preview(&inputs, "ThingDef", "Wall", &PatchPreviewRequest::default());
+    let baseline = compute_def_preview(
+        &inputs,
+        &target("ThingDef", "Wall", 0),
+        &PatchPreviewRequest::default(),
+    );
     assert!(baseline
         .conflict_diagnostics
         .iter()
@@ -517,7 +555,7 @@ fn reordering_a_remove_after_a_dependent_operation_removes_the_targets_removed_n
         disabled: vec![],
         order: keys,
     };
-    let reordered = compute_def_preview(&inputs, "ThingDef", "Wall", &request);
+    let reordered = compute_def_preview(&inputs, &target("ThingDef", "Wall", 0), &request);
     assert!(
         !reordered
             .conflict_diagnostics

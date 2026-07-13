@@ -1,11 +1,35 @@
 use serde::{Deserialize, Serialize};
 
 use crate::patches::{
-    ApplyDiagnostic, CustomOperationMetadataMap, InheritanceDiagnostic, OperationTraceEntry,
-    OperationTraceStatus, PatchFile, PatchIndex, PatchOperationClassification, PatchOperationKey,
-    PatchPreviewSupport, XPathTarget,
+    ApplyDiagnostic, ApplyDiagnosticSeverity, CustomOperationMetadataMap, InheritanceDiagnostic,
+    OperationTraceEntry, OperationTraceStatus, PatchFile, PatchIndex, PatchOperationClassification,
+    PatchOperationKey, PatchPreviewSupport, XPathTarget,
 };
 use crate::project_model::ProjectSettings;
+
+/// Identifies the exact Def an open editor tab is showing, independent of the active editable
+/// project used as preview context. `location_id` + `relative_path` name the file the Def was
+/// opened from (which may be a read-only source, not the editable project), and `ordinal` is the
+/// Def's zero-based position among that single file's own top-level Def elements -- the same
+/// position `xml_document::def_summary::extract_def_summaries` assigns when building the editor's
+/// `defs` list, so the frontend can compute it directly from the already-parsed document without
+/// any extra backend round-trip.
+///
+/// `def_type`/`identity` (the real `defName`, or the `Name` attribute for an `Abstract="True"`
+/// template with no `defName` of its own) are carried along as validation data, not as the primary
+/// lookup key: the backend re-verifies them against whatever element `location_id` +
+/// `relative_path` + `ordinal` resolves to in the combined document, and refuses to substitute a
+/// same-named Def elsewhere if they don't match (see `services::patch_preview::preview`'s
+/// provenance resolution).
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PatchPreviewTarget {
+    pub location_id: String,
+    pub relative_path: String,
+    pub def_type: String,
+    pub identity: String,
+    pub ordinal: usize,
+}
 
 /// Preview-only per-request overrides. Never persisted to any patch XML file.
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -83,7 +107,8 @@ pub struct PatchPreviewImpactSummary {
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PatchPreviewResult {
-    /// `None` if no Def matching `def_type`/`def_name` was found in the combined document.
+    /// `None` if the requested [`PatchPreviewTarget`] could not be resolved in the combined
+    /// document (stale/mismatched origin) or a patch removed the resolved element.
     pub xml: Option<String>,
     pub def_found: bool,
     pub is_partial: bool,
@@ -97,6 +122,44 @@ pub struct PatchPreviewResult {
     pub inheritance_diagnostics: Vec<InheritanceDiagnostic>,
     pub conflict_diagnostics: Vec<PatchPreviewConflictDiagnostic>,
     pub impact_summary: PatchPreviewImpactSummary,
+}
+
+/// Built when a [`PatchPreviewTarget`] cannot be resolved against the combined document's
+/// provenance table before patch application -- the opened file no longer contains a Def at that
+/// origin/ordinal, or the element found there no longer has the stated Def type/identity. Distinct
+/// from a normal "Def not found" (which the old loose `def_type`/`def_name` lookup used for both a
+/// missing Def *and* transport failures): this always carries an explicit diagnostic so the dialog
+/// can tell the user their tab is stale rather than silently showing another Def's preview.
+pub fn target_not_found_result(target: &PatchPreviewTarget) -> PatchPreviewResult {
+    PatchPreviewResult {
+        xml: None,
+        def_found: false,
+        is_partial: false,
+        visible_operations: Vec::new(),
+        operation_trace: Vec::new(),
+        apply_diagnostics: vec![ApplyDiagnostic {
+            severity: ApplyDiagnosticSeverity::Error,
+            code: "patch_preview_target_not_found".to_string(),
+            message: format!(
+                "Could not find {} \"{}\" at {} #{} in location \"{}\" -- the file may have \
+                 changed, or this tab is no longer showing an active Def.",
+                target.def_type,
+                target.identity,
+                target.relative_path,
+                target.ordinal,
+                target.location_id
+            ),
+            key: None,
+        }],
+        inheritance_diagnostics: Vec::new(),
+        conflict_diagnostics: Vec::new(),
+        impact_summary: PatchPreviewImpactSummary {
+            visible_operation_count: 0,
+            reorderable_operation_count: 0,
+            unsupported_operation_count: 0,
+            conflict_count: 0,
+        },
+    }
 }
 
 /// Everything [`crate::services::patch_preview::compute_def_preview`] needs that isn't

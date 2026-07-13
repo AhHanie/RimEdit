@@ -2,10 +2,26 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { invoke } from "@tauri-apps/api/core";
 import { PatchPreviewDialog } from "./PatchPreviewDialog";
-import type { PatchOperationKey, PatchPreviewOperationSummary, PatchPreviewResult } from "../../types/patchPreview";
+import type {
+  PatchOperationKey,
+  PatchPreviewOperationSummary,
+  PatchPreviewResult,
+  PatchPreviewTarget,
+} from "../../types/patchPreview";
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
 const invokeMock = vi.mocked(invoke);
+
+function target(overrides: Partial<PatchPreviewTarget> = {}): PatchPreviewTarget {
+  return {
+    locationId: "proj1",
+    relativePath: "Defs/Things.xml",
+    defType: "ThingDef",
+    identity: "Wall",
+    ordinal: 0,
+    ...overrides,
+  };
+}
 
 function key(operationId: number, overrides: Partial<PatchOperationKey> = {}): PatchOperationKey {
   return { locationId: "proj1", relativePath: "Patches/Patch.xml", operationId, ...overrides };
@@ -61,14 +77,13 @@ describe("PatchPreviewDialog", () => {
   it("previews the selected Def by identity on mount", async () => {
     invokeMock.mockResolvedValue(previewResult());
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
 
     await waitFor(() => {
       expect(invokeMock).toHaveBeenCalledWith("preview_def_patches", {
         projectId: "proj1",
-        defType: "ThingDef",
-        defName: "Wall",
+        target: target(),
         request: { disabled: [], order: [] },
       });
     });
@@ -77,7 +92,7 @@ describe("PatchPreviewDialog", () => {
   it("shows a complete-preview banner when the result is not partial", async () => {
     invokeMock.mockResolvedValue(previewResult({ isPartial: false }));
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
     expect(await screen.findByText("Complete preview.")).toBeTruthy();
   });
@@ -85,7 +100,7 @@ describe("PatchPreviewDialog", () => {
   it("shows a partial-preview banner distinct from a complete one", async () => {
     invokeMock.mockResolvedValue(previewResult({ isPartial: true }));
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
     expect(
       await screen.findByText("Partial preview - some operations could not be fully previewed."),
@@ -107,7 +122,7 @@ describe("PatchPreviewDialog", () => {
       }),
     );
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
 
     expect(await screen.findByText("Patch operations (1)")).toBeTruthy();
@@ -121,7 +136,7 @@ describe("PatchPreviewDialog", () => {
       previewResult({ visibleOperations: [operation({ key: key(0) })] }),
     );
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
     await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
 
@@ -130,8 +145,7 @@ describe("PatchPreviewDialog", () => {
     await waitFor(() => {
       expect(invokeMock).toHaveBeenLastCalledWith("preview_def_patches", {
         projectId: "proj1",
-        defType: "ThingDef",
-        defName: "Wall",
+        target: target(),
         request: { disabled: [key(0)], order: [] },
       });
     });
@@ -147,7 +161,7 @@ describe("PatchPreviewDialog", () => {
       }),
     );
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
     await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
 
@@ -156,8 +170,7 @@ describe("PatchPreviewDialog", () => {
     await waitFor(() => {
       expect(invokeMock).toHaveBeenLastCalledWith("preview_def_patches", {
         projectId: "proj1",
-        defType: "ThingDef",
-        defName: "Wall",
+        target: target(),
         request: { disabled: [], order: [key(1), key(0)] },
       });
     });
@@ -173,7 +186,7 @@ describe("PatchPreviewDialog", () => {
       }),
     );
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
     await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
 
@@ -185,8 +198,7 @@ describe("PatchPreviewDialog", () => {
     await waitFor(() => {
       expect(invokeMock).toHaveBeenLastCalledWith("preview_def_patches", {
         projectId: "proj1",
-        defType: "ThingDef",
-        defName: "Wall",
+        target: target(),
         request: { disabled: [], order: [] },
       });
     });
@@ -205,7 +217,7 @@ describe("PatchPreviewDialog", () => {
       }),
     );
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
 
     expect(await screen.findByText("patch_conflict_duplicate_add_child")).toBeTruthy();
@@ -224,7 +236,7 @@ describe("PatchPreviewDialog", () => {
       }),
     );
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
 
     expect(
@@ -244,7 +256,7 @@ describe("PatchPreviewDialog", () => {
       }),
     );
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={vi.fn()} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
     );
 
     expect(
@@ -256,7 +268,7 @@ describe("PatchPreviewDialog", () => {
     invokeMock.mockResolvedValue(previewResult());
     const onClose = vi.fn();
     render(
-      <PatchPreviewDialog projectId="proj1" defType="ThingDef" defName="Wall" onClose={onClose} />,
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={onClose} />,
     );
     await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
     await userEvent.click(screen.getByText("Close"));

@@ -42,16 +42,20 @@ pub(super) fn top_level_def_elements<'d>(defs_root: Element<'d>) -> Vec<Element<
 /// parent by `[@Name="..."]`, which `patches::impact_graph::infer_xpath_target` classifies as
 /// `XPathTarget::Unsupported` rather than a specific Def or DefType.
 ///
+/// Takes the already-resolved target element directly (see
+/// `services::patch_preview::preview`'s provenance resolution) rather than re-locating it by
+/// `def_type`/`def_name` -- a duplicate-identity Def elsewhere in the combined document must never
+/// be substituted here.
+///
 /// This is a pre-patch approximation: a patch that itself adds/changes/removes `ParentName`
 /// partway through the stream can change the *real* ancestor chain after it runs (`docs/patches-editor/07-preview-engine.md`'s
 /// required "patch changes or removes ParentName" fixture is exactly this), and such a
 /// mid-stream change is not reflected here. Good enough to catch the common case (a stable
 /// abstract parent modified before inheritance) without needing per-operation intermediate
 /// document snapshots.
-pub(super) fn pre_patch_ancestor_names(
-    top_level_defs: &[Element<'_>],
-    def_type: &str,
-    def_name: &str,
+pub(super) fn pre_patch_ancestor_names<'d>(
+    top_level_defs: &[Element<'d>],
+    target: Element<'d>,
 ) -> HashSet<String> {
     let by_name: HashMap<&str, Element<'_>> = top_level_defs
         .iter()
@@ -59,13 +63,6 @@ pub(super) fn pre_patch_ancestor_names(
         .collect();
 
     let mut names = HashSet::new();
-    let Some(&target) = top_level_defs
-        .iter()
-        .find(|&&el| matches_selected_def(el, def_type, def_name))
-    else {
-        return names;
-    };
-
     let mut current = target;
     let mut visited: HashSet<String> = HashSet::new();
     loop {
@@ -89,11 +86,15 @@ pub(super) fn pre_patch_ancestor_names(
 /// Runtime correlation for statically-unresolvable XPaths (see `pre_patch_ancestor_names`):
 /// evaluates `xpath` against the pre-patch document and reports whether any matched element is
 /// the selected Def itself, or a named ancestor in its pre-patch `ParentName` chain.
+///
+/// Compares against `target` by element identity (pointer equality -- `sxd_document::dom::Element`
+/// implements `PartialEq` this way), not by re-matching `def_type`/`def_name`: two Defs of the
+/// same type sharing an identical `defName`/`Name` must not be conflated here, since that is
+/// exactly the ambiguity this preview target-resolution feature exists to prevent.
 pub(super) fn xpath_touches_target(
     document: Document<'_>,
     xpath: &str,
-    def_type: &str,
-    def_name: &str,
+    target: Element<'_>,
     ancestor_names: &HashSet<String>,
 ) -> bool {
     let Ok(nodes) = select_nodes(document, xpath) else {
@@ -108,7 +109,7 @@ pub(super) fn xpath_touches_target(
         // walk up through ancestors -- not just the matched node -- looking for the selected Def
         // or a named ancestor in its pre-patch inheritance chain.
         loop {
-            if matches_selected_def(el, def_type, def_name) {
+            if el == target {
                 return true;
             }
             if let Some(name) = el.attribute_value("Name") {

@@ -24,7 +24,7 @@ mod tests;
 #[allow(unused_imports)]
 pub use model::{
     PatchPreviewConflictDiagnostic, PatchPreviewImpactSummary, PatchPreviewOperationSummary,
-    PatchPreviewRequest, PatchPreviewResult, PreviewInputs,
+    PatchPreviewRequest, PatchPreviewResult, PatchPreviewTarget, PreviewInputs,
 };
 #[allow(unused_imports)]
 pub use preview::{compute_def_preview, preview_def_for_project};
