@@ -9,6 +9,7 @@
     "range",
     "minRange",
     "noiseRadius",
+    "hasStandardCommand",
     "projectileDef",
     "defaultProjectile",
     "warmupTime",
@@ -95,6 +96,14 @@
       "type": { "kind": "float" },
       "required": false,
       "defaultValue": 0,
+      "xml": "element"
+    },
+    "hasStandardCommand": {
+      "label": "Has standard command",
+      "description": "Whether this verb receives the normal player targeting command/gizmo (see VerbTracker and CompApparelVerbOwner).",
+      "type": { "kind": "boolean" },
+      "required": false,
+      "defaultValue": false,
       "xml": "element"
     },
     "projectileDef": {

@@ -7,7 +7,7 @@
     "damageDef",
     "damageAmountBase",
     "armorPenetrationBase",
-    "stopPower",
+    "stoppingPower",
     "flyOverhead",
     "arcHeightFactor",
     "shadowSize",
@@ -66,12 +66,12 @@
       "defaultValue": 0,
       "xml": "element"
     },
-    "stopPower": {
-      "label": "Stop power",
+    "stoppingPower": {
+      "label": "Stopping power",
       "description": "How strongly this projectile staggers or stops moving targets on hit.",
       "type": { "kind": "float" },
       "required": false,
-      "defaultValue": 0,
+      "defaultValue": 0.5,
       "xml": "element"
     },
     "flyOverhead": {
