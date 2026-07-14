@@ -1,0 +1,17 @@
+{
+  "defType": "ThingDef",
+  "label": "Thing",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true
+    }
+  },
+  "formViews": {
+    "weapon": {
+      "label": "Weapon",
+      "hiddenFields": ["apparel"]
+    }
+  }
+}

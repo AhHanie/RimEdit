@@ -100,3 +100,48 @@
   color: var(--text-error);
   font-size: 12px;
 }
+
+/* Form Views customize mode (issue 07): inline hide affordances on top-level scalar fields and
+ * object-section headers. Only rendered while customize mode is active (the manager dialog is
+ * open) -- ordinary form rendering never mounts these wrappers, so there is no layout/behavior
+ * change outside customize mode. */
+.customizeFieldRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.customizeFieldControl {
+  flex: 1;
+  min-width: 0;
+}
+
+.sectionHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sectionHeaderRow .nestedSectionHeader {
+  flex: 1;
+}
+
+.hideFieldBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.hideFieldBtn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}

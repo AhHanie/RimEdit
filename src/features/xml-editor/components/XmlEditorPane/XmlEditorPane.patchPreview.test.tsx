@@ -18,9 +18,14 @@ vi.mock("../XmlFormEditor/XmlFormEditor", () => ({
 }));
 vi.mock("../../../patches-editor", () => ({
   PatchEditorPane: () => <div data-testid="patch-editor-pane-stub" />,
-  PatchPreviewDialog: (props: { projectId: string; defType: string; defName: string; onClose: () => void }) => (
+  PatchPreviewDialog: (props: {
+    projectId: string;
+    target: { locationId: string; relativePath: string; defType: string; identity: string; ordinal: number };
+    onClose: () => void;
+  }) => (
     <div data-testid="patch-preview-dialog-stub">
-      {props.projectId}:{props.defType}:{props.defName}
+      {props.projectId}:{props.target.locationId}:{props.target.relativePath}:{props.target.defType}:
+      {props.target.identity}:{props.target.ordinal}
     </div>
   ),
 }));
@@ -192,7 +197,9 @@ describe("XmlEditorPane - patch preview wiring", () => {
     expect(screen.queryByTestId("patch-preview-dialog-stub")).toBeNull();
     await userEvent.click(screen.getByLabelText("Preview Patches"));
 
-    expect(screen.getByTestId("patch-preview-dialog-stub").textContent).toBe("proj1:ThingDef:Wall");
+    expect(screen.getByTestId("patch-preview-dialog-stub").textContent).toBe(
+      "proj1:proj1:Defs/Things.xml:ThingDef:Wall:0",
+    );
   });
 
   it("falls back to the Name attribute for an abstract Def with no defName", async () => {
@@ -236,7 +243,7 @@ describe("XmlEditorPane - patch preview wiring", () => {
 
     await userEvent.click(button);
     expect(screen.getByTestId("patch-preview-dialog-stub").textContent).toBe(
-      "proj1:ThingDef:BaseThing",
+      "proj1:proj1:Defs/Things.xml:ThingDef:BaseThing:0",
     );
   });
 
@@ -278,5 +285,75 @@ describe("XmlEditorPane - patch preview wiring", () => {
 
     const button = screen.getByLabelText("Preview Patches") as HTMLButtonElement;
     expect(button.disabled).toBe(true);
+  });
+
+  it("opens the preview for a read-only source file, keeping the target's origin separate from the active project", async () => {
+    useXmlFormControllerMock.mockReturnValue(makeFormApi());
+    useXmlEditorSessionMock.mockReturnValue(
+      makeSession({
+        readOnly: true,
+        relativePath: "Defs/Other.xml",
+        lastValidSnapshot: {
+          rawXml: "<Defs></Defs>",
+          parsed: {
+            nodeCount: 2,
+            rootElement: "Defs",
+            profile: "defs",
+            about: null,
+            defs: [
+              {
+                nodeId: 1,
+                defType: "ThingDef",
+                defName: "Floor",
+                label: "floor",
+                parentName: null,
+                line: null,
+                column: null,
+                attributes: [],
+                children: [],
+              },
+              {
+                nodeId: 2,
+                defType: "ThingDef",
+                defName: "Wall",
+                label: "wall",
+                parentName: null,
+                line: null,
+                column: null,
+                attributes: [],
+                children: [],
+              },
+            ],
+          },
+          parseDiagnostics: [],
+          validationDiagnostics: [],
+          selectedDefNodeId: 2,
+        },
+      }),
+    );
+
+    render(
+      <XmlEditorPane
+        projectId="proj1"
+        file={makeFileRef({
+          locationId: "src1",
+          sourceKind: "source",
+          readOnly: true,
+          relativePath: "Defs/Other.xml",
+        })}
+        catalog={makeCatalog()}
+        hasOpenTabs={true}
+      />,
+    );
+
+    // Preview must stay enabled for a read-only file, and the dialog must receive the source
+    // location/file/ordinal separately from the active editable project ID.
+    const button = screen.getByLabelText("Preview Patches") as HTMLButtonElement;
+    expect(button.disabled).toBe(false);
+
+    await userEvent.click(button);
+    expect(screen.getByTestId("patch-preview-dialog-stub").textContent).toBe(
+      "proj1:src1:Defs/Other.xml:ThingDef:Wall:1",
+    );
   });
 });

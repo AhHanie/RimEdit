@@ -75,7 +75,20 @@ export function AppShell() {
   );
 
   const workspace = useEditorWorkspace(activeProjectId);
-  const { catalog } = useSchemaCatalog(undefined, settings?.gameVersion);
+  // Catalog context must match the same "every registered location root" policy the backend
+  // uses for document validation and patch preview (see `services::validation::schema_pack_roots`
+  // and `services::patch_preview::preview_def_for_project`) -- there is no separate "configured
+  // external schema roots" setting anywhere in `ProjectSettings`/`RegisteredLocation` today, so
+  // this reuses the same project-location data rather than inventing a second registry (Plan.md
+  // section 2/15, issue 09's "avoid inventing a second registry"). `schema_pack::loader` searches
+  // each root, its `About/`, and its `SchemaPacks/<name>/` for an embedded schema pack.
+  // Memoized on `settings?.locations`'s own reference (not recomputed on every unrelated AppShell
+  // re-render) so it doesn't churn `useSchemaCatalog`'s reload effect.
+  const extraSchemaRoots = useMemo(
+    () => settings?.locations.map((l) => l.rootPath) ?? [],
+    [settings?.locations],
+  );
+  const { catalog } = useSchemaCatalog(extraSchemaRoots, settings?.gameVersion);
   const { mode: themeMode, setMode, cycleMode: cycleTheme } = useTheme();
 
   const [activeView, setActiveView] = useState<ActivityView | null>("explorer");
@@ -606,6 +619,7 @@ export function AppShell() {
             activeTabKey={workspace.activeTabKey}
             projectId={activeProjectId}
             catalog={catalog}
+            gameVersion={settings?.gameVersion}
             createDefSignal={createDefSignal}
             onActivateTab={workspace.activateTab}
             onCloseTab={workspace.closeTab}

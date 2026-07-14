@@ -1,6 +1,8 @@
 import {
   buildFormDescriptors,
   buildFormFieldModels,
+  collectEffectiveTopLevelDefFields,
+  collectTopLevelFieldSummaries,
   findFieldSchema,
 } from "./formDescriptors";
 import type {
@@ -2866,5 +2868,493 @@ describe("buildFormDescriptors – keyedObjectMap", () => {
     expect(json).not.toContain("AnimationDef");
     expect(json).not.toContain("keyframeParts");
     expect(json).not.toContain("PawnRenderNodeTagDef");
+  });
+});
+
+// --- Issue 05: Form View top-level visibility filtering ---
+//
+// `visibleTopLevelFieldIds` is an optional filter applied before expensive nested
+// expansion. `undefined`/`null` (or the argument omitted entirely) must reproduce today's
+// full-form behavior exactly; a Set filters by the CANONICAL top-level Def schema field key
+// (the same key `getAllSchemaFields`/`allFields` already uses, and exactly what becomes
+// `descriptor.fieldPath[0]`), never by an XML alias.
+
+describe("buildFormDescriptors – Form View visibility filtering (issue 05)", () => {
+  it("omitting the argument, passing undefined, and passing null are all identical to today's unfiltered form", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField(),
+      description: makeField(),
+    });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([
+      makeChild("defName", "Steel"),
+      makeChild("description", "Old"),
+    ]);
+
+    const omitted = buildFormDescriptors(def, schema, catalog);
+    const withUndefined = buildFormDescriptors(def, schema, catalog, undefined);
+    const withNull = buildFormDescriptors(def, schema, catalog, null);
+
+    expect(withUndefined).toEqual(omitted);
+    expect(withNull).toEqual(omitted);
+    expect(omitted.map((d) => d.key)).toEqual(["defName", "description"]);
+  });
+
+  it("skips a hidden scalar top-level root entirely", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField(),
+      description: makeField(),
+    });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([
+      makeChild("defName", "Steel"),
+      makeChild("description", "Old"),
+    ]);
+
+    const descs = buildFormDescriptors(def, schema, catalog, new Set(["defName"]));
+
+    expect(descs.map((d) => d.key)).toEqual(["defName"]);
+  });
+
+  it("does not resurrect a hidden known field's XML as an unknown field", () => {
+    const catalog = makeCatalog("ThingDef", { description: makeField() });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([makeChild("description", "Old")]);
+
+    // Hide every known field. If `description` were treated as "not handled" once hidden,
+    // its XML child would incorrectly reappear as a readonlyUnknown field below.
+    const descs = buildFormDescriptors(def, schema, catalog, new Set());
+
+    expect(descs).toHaveLength(0);
+  });
+
+  it("hides a field matched only via an XML alias, keyed by its canonical schema name", () => {
+    const catalog = makeCatalog("ThingDef", {
+      label: makeField({ xmlAliases: ["labelOld"] }),
+    });
+    const schema = catalog.defTypes["ThingDef"];
+    // The document uses the alias element name, not the canonical field name.
+    const def = makeDef([makeChild("labelOld", "Hello")]);
+
+    const descs = buildFormDescriptors(def, schema, catalog, new Set());
+
+    expect(descs).toHaveLength(0);
+  });
+
+  it("keeps an unknown XML child visible regardless of the visibility filter", () => {
+    const catalog = makeCatalog("ThingDef", { defName: makeField() });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([
+      makeChild("defName", "Steel"),
+      makeChild("modAddedThing", "mystery"),
+    ]);
+
+    // Hide every known top-level field.
+    const descs = buildFormDescriptors(def, schema, catalog, new Set());
+
+    const unknown = descs.find((d) => d.key === "modAddedThing");
+    expect(unknown).toBeDefined();
+    expect(unknown!.control).toBe("readonlyUnknown");
+  });
+
+  it("treats two XML elements sharing the same name as a single top-level root for visibility (Plan.md section 5/12)", () => {
+    // Plan.md section 12: "Duplicate XML elements: ... Form Views neither fix nor worsen
+    // duplicate XML behavior. Treat all occurrences as a single top-level root for visibility."
+    // `def.children` already collapses same-named entries to one map key before the
+    // visibility check runs (the existing `childByName` Map construction), so hiding/showing
+    // `description` can never leave one occurrence visible and the other hidden - there is
+    // only ever one descriptor for it either way, matching today's (pre-Form-Views) duplicate
+    // handling exactly.
+    const catalog = makeCatalog("ThingDef", { defName: makeField(), description: makeField() });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([
+      makeChild("defName", "Steel"),
+      makeChild("description", "First"),
+      makeChild("description", "Second"),
+    ]);
+
+    const visible = buildFormDescriptors(def, schema, catalog);
+    expect(visible.filter((d) => d.key === "description")).toHaveLength(1);
+
+    const hidden = buildFormDescriptors(def, schema, catalog, new Set(["defName"]));
+    expect(hidden.some((d) => d.key === "description")).toBe(false);
+    expect(hidden).toHaveLength(1);
+  });
+});
+
+describe("buildFormDescriptors – hidden roots skip expensive expansion, not just post-hoc filtering (issue 05)", () => {
+  /**
+   * A catalog whose `objectTypes[ref]` throws the moment it is *read*. Any code path that
+   * resolves the object schema for `ref` - discriminator lookup, `buildNestedObjectDescriptors`,
+   * or object-list item construction - throws immediately. This proves the visibility filter
+   * short-circuits *before* schema resolution, not merely that hidden descriptors are absent
+   * from the final array (which a slower construct-then-filter implementation would also satisfy).
+   */
+  function definePoisonedObjectType(catalog: SchemaCatalog, ref: string, reason: string) {
+    Object.defineProperty(catalog.objectTypes, ref, {
+      enumerable: true,
+      configurable: true,
+      get(): never {
+        throw new Error(reason);
+      },
+    });
+  }
+
+  it("control: expanding an unfiltered object root does reach the object schema (proves the trap is live)", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField(),
+      graphicData: makeField({
+        type: { kind: "object", schemaRef: "GraphicData" },
+        xml: "object",
+      }),
+    });
+    definePoisonedObjectType(
+      catalog,
+      "GraphicData",
+      "buildNestedObjectDescriptors reached the hidden object root",
+    );
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([
+      makeChild("defName", "Steel"),
+      { ...makeChild("graphicData", null, "object"), children: [] },
+    ]);
+
+    expect(() => buildFormDescriptors(def, schema, catalog)).toThrow(
+      /reached the hidden object root/,
+    );
+  });
+
+  it("hiding an object root never resolves its schema or expands nested descriptors", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField(),
+      graphicData: makeField({
+        type: { kind: "object", schemaRef: "GraphicData" },
+        xml: "object",
+      }),
+    });
+    definePoisonedObjectType(
+      catalog,
+      "GraphicData",
+      "buildNestedObjectDescriptors reached the hidden object root",
+    );
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([
+      makeChild("defName", "Steel"),
+      { ...makeChild("graphicData", null, "object"), children: [] },
+    ]);
+
+    let descs: ReturnType<typeof buildFormDescriptors> = [];
+    expect(() => {
+      descs = buildFormDescriptors(def, schema, catalog, new Set(["defName"]));
+    }).not.toThrow();
+    expect(descs.map((d) => d.key)).toEqual(["defName"]);
+    expect(descs.some((d) => d.fieldPath[0] === "graphicData")).toBe(false);
+  });
+
+  it("control: expanding an unfiltered editable object-list root does reach the item schema (proves the trap is live)", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField(),
+      comps: makeField({
+        type: { kind: "list" },
+        xml: "listOfLi",
+        items: { kind: "object", schemaRef: "CompProperties" },
+      }),
+    });
+    definePoisonedObjectType(
+      catalog,
+      "CompProperties",
+      "buildObjectListItemValue reached the hidden object-list root",
+    );
+    const schema = catalog.defTypes["ThingDef"];
+    const compsChild = {
+      ...makeChild("comps", null, "listOfLi"),
+      liItems: [makeListItemView([])],
+    };
+    const def = makeDef([makeChild("defName", "Steel"), compsChild]);
+
+    expect(() => buildFormDescriptors(def, schema, catalog)).toThrow(
+      /reached the hidden object-list root/,
+    );
+  });
+
+  it("hiding an editable object-list root never constructs its item values", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField(),
+      comps: makeField({
+        type: { kind: "list" },
+        xml: "listOfLi",
+        items: { kind: "object", schemaRef: "CompProperties" },
+      }),
+    });
+    definePoisonedObjectType(
+      catalog,
+      "CompProperties",
+      "buildObjectListItemValue reached the hidden object-list root",
+    );
+    const schema = catalog.defTypes["ThingDef"];
+    const compsChild = {
+      ...makeChild("comps", null, "listOfLi"),
+      liItems: [makeListItemView([])],
+    };
+    const def = makeDef([makeChild("defName", "Steel"), compsChild]);
+
+    let descs: ReturnType<typeof buildFormDescriptors> = [];
+    expect(() => {
+      descs = buildFormDescriptors(def, schema, catalog, new Set(["defName"]));
+    }).not.toThrow();
+    expect(descs.some((d) => d.key === "comps")).toBe(false);
+  });
+});
+
+describe("buildFormFieldModels – Form View visibility filtering (issue 05)", () => {
+  it("forwards the visible set through to descriptors and excludes hidden roots from models", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField(),
+      description: makeField(),
+    });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([
+      makeChild("defName", "Steel"),
+      makeChild("description", "Old"),
+    ]);
+
+    const models = buildFormFieldModels(def, schema, catalog, new Set(["defName"]));
+
+    expect(models.map((m) => m.key)).toEqual(["defName"]);
+  });
+
+  it("omitting the argument matches today's unfiltered model output", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField(),
+      description: makeField(),
+    });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([
+      makeChild("defName", "Steel"),
+      makeChild("description", "Old"),
+    ]);
+
+    expect(buildFormFieldModels(def, schema, catalog, undefined)).toEqual(
+      buildFormFieldModels(def, schema, catalog),
+    );
+  });
+});
+
+describe("collectEffectiveTopLevelDefFields (issue 06, Plan.md section 5)", () => {
+  it("collects direct fields for a Def type with no inheritance", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField(),
+      description: makeField(),
+    });
+    const known = collectEffectiveTopLevelDefFields(catalog.defTypes["ThingDef"], catalog);
+    expect([...known].sort()).toEqual(["defName", "description"]);
+  });
+
+  it("includes inherited ancestor fields alongside the concrete type's own fields", () => {
+    const catalog: SchemaCatalog = {
+      formatVersion: 1,
+      packs: [],
+      objectTypes: {},
+      defTypes: {
+        BaseDef: {
+          inherits: [],
+          abstractType: true,
+          fieldOrder: [],
+          fields: { defName: makeField(), category: makeField() },
+        },
+        DerivedDef: {
+          inherits: ["BaseDef"],
+          abstractType: false,
+          fieldOrder: [],
+          fields: { damage: makeField() },
+        },
+      },
+    };
+    const known = collectEffectiveTopLevelDefFields(catalog.defTypes["DerivedDef"], catalog);
+    expect([...known].sort()).toEqual(["category", "damage", "defName"]);
+  });
+
+  it("counts a field declared on both an ancestor and the concrete type only once (duplicate inherited name)", () => {
+    const catalog: SchemaCatalog = {
+      formatVersion: 1,
+      packs: [],
+      objectTypes: {},
+      defTypes: {
+        BaseDef: {
+          inherits: [],
+          abstractType: true,
+          fieldOrder: [],
+          fields: { label: makeField({ label: "Base label" }) },
+        },
+        DerivedDef: {
+          inherits: ["BaseDef"],
+          abstractType: false,
+          fieldOrder: [],
+          // Same field name re-declared on the concrete type -- must appear exactly once in
+          // the resulting set, matching `buildFormDescriptors`'s own single-descriptor-per-
+          // canonical-field-name behavior (never two "label" entries).
+          fields: { label: makeField({ label: "Derived label" }) },
+        },
+      },
+    };
+    const known = collectEffectiveTopLevelDefFields(catalog.defTypes["DerivedDef"], catalog);
+    expect([...known]).toEqual(["label"]);
+  });
+
+  it("matches the exact set buildFormDescriptors renders for the same Def/catalog", () => {
+    const catalog: SchemaCatalog = {
+      formatVersion: 1,
+      packs: [],
+      objectTypes: {},
+      defTypes: {
+        BaseDef: {
+          inherits: [],
+          abstractType: true,
+          fieldOrder: [],
+          fields: { defName: makeField(), category: makeField() },
+        },
+        DerivedDef: {
+          inherits: ["BaseDef"],
+          abstractType: false,
+          fieldOrder: [],
+          fields: { damage: makeField() },
+        },
+      },
+    };
+    const def = makeDef([]);
+    const rendered = buildFormDescriptors(def, catalog.defTypes["DerivedDef"], catalog).map(
+      (d) => d.key,
+    );
+    const known = collectEffectiveTopLevelDefFields(catalog.defTypes["DerivedDef"], catalog);
+    expect([...known].sort()).toEqual([...rendered].sort());
+  });
+
+  it("does not throw and returns only reachable fields for a cyclic inherits chain", () => {
+    const catalog: SchemaCatalog = {
+      formatVersion: 1,
+      packs: [],
+      objectTypes: {},
+      defTypes: {
+        A: { inherits: ["B"], abstractType: true, fieldOrder: [], fields: { fieldA: makeField() } },
+        B: { inherits: ["A"], abstractType: true, fieldOrder: [], fields: { fieldB: makeField() } },
+      },
+    };
+    const known = collectEffectiveTopLevelDefFields(catalog.defTypes["A"], catalog);
+    expect([...known].sort()).toEqual(["fieldA", "fieldB"]);
+  });
+});
+
+describe("collectTopLevelFieldSummaries (issue 07, Plan.md section 8)", () => {
+  it("summarizes a scalar field with no XML data as not having a value", () => {
+    const catalog = makeCatalog("ThingDef", { defName: makeField() });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([]);
+    const [summary] = collectTopLevelFieldSummaries(def, schema, catalog);
+    expect(summary).toEqual({
+      id: "defName",
+      label: "defName",
+      isSection: false,
+      controlKind: "text",
+      hasValue: false,
+    });
+  });
+
+  it("reports hasValue true once the XML child carries non-empty text", () => {
+    const catalog = makeCatalog("ThingDef", { defName: makeField() });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([makeChild("defName", "Steel")]);
+    const [summary] = collectTopLevelFieldSummaries(def, schema, catalog);
+    expect(summary.hasValue).toBe(true);
+  });
+
+  it("reports hasValue from the element attribute for an attribute-shaped field", () => {
+    const catalog = makeCatalog("ThingDef", {
+      Abstract: makeField({ xml: "attribute", type: { kind: "boolean" } }),
+    });
+    const schema = catalog.defTypes["ThingDef"];
+    const def: DefEditorView = {
+      ...makeDef([]),
+      attributes: [{ name: "Abstract", value: "true", known: true }],
+    };
+    const [summary] = collectTopLevelFieldSummaries(def, schema, catalog);
+    expect(summary.hasValue).toBe(true);
+    expect(summary.controlKind).toBe("checkbox");
+  });
+
+  it("marks an expandable object-root field as a section, regardless of XML data", () => {
+    const catalog: SchemaCatalog = {
+      formatVersion: 1,
+      packs: [],
+      objectTypes: {
+        GraphicData: {
+          fieldOrder: [],
+          fields: { texPath: makeField() },
+        },
+      },
+      defTypes: {
+        ThingDef: {
+          inherits: [],
+          abstractType: false,
+          fieldOrder: [],
+          fields: {
+            graphicData: makeField({
+              xml: "object",
+              type: { kind: "object", schemaRef: "GraphicData" },
+            }),
+          },
+        },
+      },
+    };
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([]);
+    const [summary] = collectTopLevelFieldSummaries(def, schema, catalog);
+    expect(summary.isSection).toBe(true);
+    expect(summary.hasValue).toBe(false);
+  });
+
+  it("resolves an XML-aliased child under its canonical schema field id (issue 07 step 6/13)", () => {
+    const catalog = makeCatalog("ThingDef", {
+      defName: makeField({ xmlAliases: ["Name"] }),
+    });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([makeChild("Name", "Steel")]);
+    const [summary] = collectTopLevelFieldSummaries(def, schema, catalog);
+    expect(summary.id).toBe("defName");
+    expect(summary.hasValue).toBe(true);
+  });
+
+  it("preserves the exact same schema order as collectEffectiveTopLevelDefFields", () => {
+    const catalog: SchemaCatalog = {
+      formatVersion: 1,
+      packs: [],
+      objectTypes: {},
+      defTypes: {
+        BaseDef: {
+          inherits: [],
+          abstractType: true,
+          fieldOrder: [],
+          fields: { defName: makeField(), category: makeField() },
+        },
+        DerivedDef: {
+          inherits: ["BaseDef"],
+          abstractType: false,
+          fieldOrder: [],
+          fields: { damage: makeField() },
+        },
+      },
+    };
+    const schema = catalog.defTypes["DerivedDef"];
+    const def = makeDef([]);
+    const summaries = collectTopLevelFieldSummaries(def, schema, catalog);
+    const known = [...collectEffectiveTopLevelDefFields(schema, catalog)];
+    expect(summaries.map((s) => s.id)).toEqual(known);
+  });
+
+  it("never lists an orphaned field id that is no longer part of the current schema", () => {
+    const catalog = makeCatalog("ThingDef", { defName: makeField() });
+    const schema = catalog.defTypes["ThingDef"];
+    const def = makeDef([]);
+    const summaries = collectTopLevelFieldSummaries(def, schema, catalog);
+    expect(summaries.map((s) => s.id)).not.toContain("noLongerAField");
   });
 });

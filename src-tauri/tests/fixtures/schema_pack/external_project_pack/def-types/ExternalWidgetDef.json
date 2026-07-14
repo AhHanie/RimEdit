@@ -1,0 +1,16 @@
+{
+  "defType": "ExternalWidgetDef",
+  "fields": {
+    "defName": {
+      "type": { "kind": "string" },
+      "required": true,
+      "xml": "element"
+    },
+    "externalOnlyField": {
+      "label": "A field that only exists in this external/third-party fixture pack",
+      "type": { "kind": "string" },
+      "required": false,
+      "xml": "element"
+    }
+  }
+}

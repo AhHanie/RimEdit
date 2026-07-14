@@ -54,6 +54,7 @@ fn def_type_schema(inherits: &[&str], fields: &[(&str, FieldSchema)]) -> DefType
             .collect(),
         templates: BTreeMap::new(),
         validation_rules: BTreeMap::new(),
+        form_views: BTreeMap::new(),
     }
 }
 

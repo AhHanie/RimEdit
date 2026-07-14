@@ -5,7 +5,9 @@ use crate::patches::{
 };
 use crate::project_model::AppError;
 use crate::schema_pack::SchemaCatalogCacheState;
-use crate::services::patch_preview::{self, PatchPreviewRequest, PatchPreviewResult};
+use crate::services::patch_preview::{
+    self, PatchPreviewRequest, PatchPreviewResult, PatchPreviewTarget,
+};
 use crate::services::{def_index_cache, patch_index_cache};
 use crate::settings_store::load_settings;
 use crate::xml_document::model::XmlChildView;
@@ -150,21 +152,19 @@ pub fn serialize_patch_value_fragment(elements: Vec<InitialElement>) -> String {
 /// operations that affect this Def -- see `services::patch_preview`'s module doc for why
 /// application itself always runs the full patch stream), resolves XML inheritance, and returns
 /// the Def's final XML alongside diagnostics and the visible-operation list for preview controls.
+///
+/// `project_id` is only the active editable project used as preview context (registered
+/// locations, load folders, patch files) -- it does not have to be where `target` was opened
+/// from. `target` identifies the exact Def the caller opened (file origin + in-file ordinal,
+/// required for exact source/project selection when another location has a same-named Def); see
+/// `PatchPreviewTarget`'s doc comment.
 #[tauri::command]
 pub fn preview_def_patches(
     app: AppHandle,
     project_id: String,
-    def_type: String,
-    def_name: String,
+    target: PatchPreviewTarget,
     request: PatchPreviewRequest,
 ) -> Result<PatchPreviewResult, AppError> {
     let settings = load_settings(&app)?;
-    patch_preview::preview_def_for_project(
-        &app,
-        &settings,
-        &project_id,
-        &def_type,
-        &def_name,
-        &request,
-    )
+    patch_preview::preview_def_for_project(&app, &settings, &project_id, &target, &request)
 }

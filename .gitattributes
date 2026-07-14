@@ -1,0 +1,5 @@
+# These XML fixtures are embedded via `include_str!` and compared byte-for-byte against
+# serializer output in round-trip tests; a CRLF checkout on Windows (e.g. via global
+# `core.autocrlf=true`) breaks that comparison even though the repository stores them as LF.
+src-tauri/tests/fixtures/patches/*.xml text eol=lf
+src-tauri/tests/fixtures/xml_document/*.xml text eol=lf

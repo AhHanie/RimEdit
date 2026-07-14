@@ -9,8 +9,11 @@ use super::model::{
     DefTypeSchemaFile, FieldTypeKind, ObjectTypeSchemaFile, PatchOperationMetadataFile,
     SchemaLoadSeverity,
 };
+use crate::def_index::DefIndex;
+use crate::xml_document::{parse_to_document, validate_document, ValidationContext};
 use std::path::Path;
 
+mod form_views;
 mod patch_operations;
 mod schema_mechanics;
 
@@ -80,7 +83,8 @@ fn inline_pack(manifest_json: &str, def_json: &str) -> LoadedPack {
     );
     let manifest_file = manifest_opt.unwrap();
     let pack_id = manifest_file.pack_id.clone();
-    let (def_opt, ddiags) = parse_def_type_schema("test:def", &pack_id, def_json);
+    let (def_opt, ddiags) =
+        parse_def_type_schema("test:def", &pack_id, def_json, manifest_file.format_version);
     assert!(def_opt.is_some(), "inline def failed: {:?}", ddiags);
     let def_file = def_opt.unwrap();
     let def_refs = vec![("test:def", &def_file)];
@@ -106,7 +110,8 @@ fn inline_pack_with_objects(manifest_json: &str, def_json: &str, obj_jsons: &[&s
     );
     let manifest_file = manifest_opt.unwrap();
     let pack_id = manifest_file.pack_id.clone();
-    let (def_opt, ddiags) = parse_def_type_schema("test:def", &pack_id, def_json);
+    let (def_opt, ddiags) =
+        parse_def_type_schema("test:def", &pack_id, def_json, manifest_file.format_version);
     assert!(def_opt.is_some(), "inline def failed: {:?}", ddiags);
     let def_file = def_opt.unwrap();
     let mut obj_files: Vec<(&str, ObjectTypeSchemaFile)> = Vec::new();
@@ -312,7 +317,7 @@ fn absolute_def_type_directory_is_rejected() {
 
 #[test]
 fn malformed_def_file_returns_diagnostic() {
-    let (def_opt, diags) = parse_def_type_schema("test:bad.json", "test.pack", "{ not json }");
+    let (def_opt, diags) = parse_def_type_schema("test:bad.json", "test.pack", "{ not json }", 1);
     assert!(def_opt.is_none());
     assert!(
         diags
@@ -325,7 +330,7 @@ fn malformed_def_file_returns_diagnostic() {
 #[test]
 fn missing_def_type_field_returns_diagnostic() {
     let json = r#"{ "fields": {} }"#;
-    let (def_opt, diags) = parse_def_type_schema("test:nodeftype.json", "test.pack", json);
+    let (def_opt, diags) = parse_def_type_schema("test:nodeftype.json", "test.pack", json, 1);
     assert!(def_opt.is_none());
     assert!(
         diags
@@ -346,7 +351,7 @@ fn unknown_field_type_kind_in_def_file_returns_warning() {
             }
         }
     }"#;
-    let (def_opt, diags) = parse_def_type_schema("test:badtype.json", "test.pack", json);
+    let (def_opt, diags) = parse_def_type_schema("test:badtype.json", "test.pack", json, 1);
     assert!(
         def_opt.is_some(),
         "def file should load despite unknown type"
@@ -378,8 +383,8 @@ fn duplicate_def_type_in_pack_produces_diagnostic() {
     let manifest_file = manifest_opt.unwrap();
 
     let def_json = r#"{ "defType": "ThingDef", "fields": {} }"#;
-    let (def1_opt, _) = parse_def_type_schema("test:a.json", "test.dup", def_json);
-    let (def2_opt, _) = parse_def_type_schema("test:b.json", "test.dup", def_json);
+    let (def1_opt, _) = parse_def_type_schema("test:a.json", "test.dup", def_json, 1);
+    let (def2_opt, _) = parse_def_type_schema("test:b.json", "test.dup", def_json, 1);
     let def1 = def1_opt.unwrap();
     let def2 = def2_opt.unwrap();
 
@@ -422,8 +427,8 @@ fn lookup_field_walks_inherits_to_parent() {
 
     let def_json = r#"{ "defType": "Def", "abstractType": true, "fields": { "defName": { "type": { "kind": "string" }, "required": true } } }"#;
     let thing_json = r#"{ "defType": "ThingDef", "inherits": ["Def"], "fields": {} }"#;
-    let (def_opt, _) = parse_def_type_schema("test:Def.json", "test.inherit", def_json);
-    let (thing_opt, _) = parse_def_type_schema("test:ThingDef.json", "test.inherit", thing_json);
+    let (def_opt, _) = parse_def_type_schema("test:Def.json", "test.inherit", def_json, 1);
+    let (thing_opt, _) = parse_def_type_schema("test:ThingDef.json", "test.inherit", thing_json, 1);
     let def_file = def_opt.unwrap();
     let thing_file = thing_opt.unwrap();
 
@@ -785,7 +790,12 @@ fn duplicate_object_type_in_pack_produces_diagnostic() {
     let obj2 = obj2_opt.unwrap();
 
     let def_json = r#"{ "defType": "ThingDef", "fields": {} }"#;
-    let (def_opt, _) = parse_def_type_schema("test:def.json", "test.dup", def_json);
+    let (def_opt, _) = parse_def_type_schema(
+        "test:def.json",
+        "test.dup",
+        def_json,
+        manifest_file.format_version,
+    );
     let def_file = def_opt.unwrap();
 
     let def_refs = vec![("test:def.json", &def_file)];
@@ -1109,4 +1119,152 @@ fn built_in_pack_nested_objects_are_present() {
             expected
         );
     }
+}
+
+// --- 23. Unresolvable game version falls back to the full catalog (issue 09 review round 2) ---
+//
+// Reviewer finding: the version filter always keeps "universal" (no-`gameVersion`) packs
+// regardless of the selected version. Before this fix, an unresolvable selected version (one no
+// installed pack actually declares) would silently narrow the catalog down to ONLY those
+// universal packs instead of behaving like "no filter" -- if a universal pack happens to define
+// a field differently than a (now-dropped) versioned pack, that silent narrowing can produce a
+// genuinely NEW diagnostic, including a blocking one, that never existed in the true unfiltered
+// catalog. These tests reproduce that exact conflicting-pack scenario directly against
+// `filter_packs_by_game_version` (the extracted helper `build_schema_catalog` now delegates to).
+
+fn conflict_pack(
+    pack_id: &str,
+    game_version: Option<&str>,
+    priority: u32,
+    numfield_kind: &str,
+) -> LoadedPack {
+    let gv_field = game_version
+        .map(|v| format!(r#""gameVersion": "{v}","#))
+        .unwrap_or_default();
+    let manifest_json = format!(
+        r#"{{ "formatVersion": 1, "packId": "{pack_id}", "name": "{pack_id}", "version": "1.0.0", {gv_field} "priority": {priority}, "defTypeDirectories": ["x"] }}"#
+    );
+    let def_json = format!(
+        r#"{{ "defType": "ConflictDef", "fields": {{
+            "defName": {{ "type": {{ "kind": "string" }}, "required": true }},
+            "numField": {{ "type": {{ "kind": "{numfield_kind}" }}, "required": false }}
+        }} }}"#
+    );
+    inline_pack(&manifest_json, &def_json)
+}
+
+#[test]
+fn unresolvable_game_version_falls_back_to_full_catalog_not_universal_only() {
+    // A versioned pack (declares "1.6", the ONLY declared version among these two packs, and has
+    // higher priority) and a "universal" pack (no declared gameVersion, so it always passed the
+    // old unconditional filter) define the SAME field with CONFLICTING types. In a true
+    // unfiltered merge, the higher-priority versioned pack wins: `numField` resolves to integer.
+    let versioned = conflict_pack("test.gv.versioned", Some("1.6"), 10, "integer");
+    let universal = conflict_pack("test.gv.universal", None, 0, "string");
+
+    let mut diags = Vec::new();
+    // Select a version that matches NEITHER pack's declaration -- unresolvable.
+    let filtered = crate::schema_pack::filter_packs_by_game_version(
+        vec![universal, versioned],
+        Some("9.9"),
+        &mut diags,
+    );
+
+    assert!(
+        diags
+            .iter()
+            .any(|d| d.code == "schema_pack_game_version_unresolvable"),
+        "expected schema_pack_game_version_unresolvable diagnostic, got: {:?}",
+        diags.iter().map(|d| &d.code).collect::<Vec<_>>()
+    );
+    assert_eq!(
+        filtered.len(),
+        2,
+        "an unresolvable version must fall back to keeping every pack, not just the universal one"
+    );
+
+    let mut merge_diags = Vec::new();
+    let catalog = merge_packs(filtered, &mut merge_diags);
+    let num_field = catalog.def_types["ConflictDef"]
+        .fields
+        .get("numField")
+        .expect("numField");
+    assert_eq!(
+        num_field.field_type.kind,
+        FieldTypeKind::Integer,
+        "fallback must match the true unfiltered merge (versioned pack's higher priority wins), \
+         not silently narrow down to the universal-only pack's definition"
+    );
+
+    // Prove the practical consequence directly: a value that is invalid under the CORRECT
+    // (fallback) resolution must actually be flagged -- if the old bug were still present
+    // (silently narrowing to the universal pack's `string` type), this same value would be
+    // accepted as valid and no diagnostic would appear at all.
+    let xml =
+        r#"<Defs><ConflictDef><defName>X</defName><numField>abc</numField></ConflictDef></Defs>"#;
+    let doc = parse_to_document("test.xml", xml);
+    let def_index = DefIndex::default();
+    let diagnostics = validate_document(
+        &doc,
+        &ValidationContext {
+            catalog: &catalog,
+            def_index: &def_index,
+        },
+    );
+    assert!(
+        diagnostics
+            .iter()
+            .any(|d| d.code == "validation_field_type_mismatch" && d.blocking),
+        "expected a blocking type-mismatch diagnostic matching the true unfiltered/priority-correct \
+         resolution, got: {:?}",
+        diagnostics.iter().map(|d| &d.code).collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn resolvable_game_version_still_filters_out_mismatched_versioned_packs() {
+    let versioned = conflict_pack("test.gv.versioned2", Some("1.6"), 10, "integer");
+    let universal = conflict_pack("test.gv.universal2", None, 0, "string");
+
+    let mut diags = Vec::new();
+    // "1.6" IS declared by the versioned pack, so filtering proceeds normally (not the fallback).
+    let filtered = crate::schema_pack::filter_packs_by_game_version(
+        vec![universal, versioned],
+        Some("1.6"),
+        &mut diags,
+    );
+
+    assert!(
+        !diags
+            .iter()
+            .any(|d| d.code == "schema_pack_game_version_unresolvable"),
+        "a resolvable version must not trigger the unresolvable fallback"
+    );
+    assert_eq!(
+        filtered.len(),
+        2,
+        "both a matching versioned pack and a universal pack should remain when the version resolves"
+    );
+
+    // A pack declaring "1.6" must be present for "1.6" to count as resolvable at all -- otherwise
+    // this second call would itself hit the unresolvable-fallback path (returning `mismatched`
+    // unfiltered) rather than exercising genuine mismatch filtering.
+    let matching = conflict_pack("test.gv.matching", Some("1.6"), 0, "string");
+    let mismatched = conflict_pack("test.gv.mismatched", Some("1.5"), 20, "boolean");
+    let mut diags2 = Vec::new();
+    let filtered2 = crate::schema_pack::filter_packs_by_game_version(
+        vec![matching, mismatched],
+        Some("1.6"),
+        &mut diags2,
+    );
+    assert_eq!(
+        filtered2.len(),
+        1,
+        "a pack declaring a DIFFERENT, but otherwise installed/resolvable, game version must still \
+         be filtered out"
+    );
+    assert_eq!(filtered2[0].manifest.pack_id, "test.gv.matching");
+    assert!(diags2
+        .iter()
+        .any(|d| d.code == "schema_pack_game_version_mismatch"));
 }

@@ -140,6 +140,64 @@ export interface DefTemplate {
   sourcePackId?: string;
 }
 
+/**
+ * Schema-defined Form View declaration as authored in a Def-type pack JSON file's `formViews`
+ * object, keyed by view id. This is the parse-time/source shape (mirrors Rust `FormViewDef`);
+ * RimEdit's frontend never parses schema-pack JSON directly, so this type is not consumed by any
+ * runtime code path yet -- it exists for symmetry with the Rust model and for future tooling.
+ * The resolved shape that actually crosses the Tauri boundary is `SchemaFormView`.
+ *
+ * The id `"default"` is reserved for the synthetic Default View and must never be used here;
+ * validation of that constraint is issue 02's job.
+ */
+export interface FormViewDef {
+  /**
+   * Optional (not required) because a child-schema *delta* amendment to an inherited view is
+   * valid with no label at all -- e.g. `{ hiddenFields: [...] }` or `{ disabled: true }` (see
+   * `Plan.md` section 4's `unhideFields`/`disabled` examples). A brand-new/base view declaration
+   * is expected to always provide one in practice, but that is enforced by issue 02/03's
+   * validation layer, not this type. The resolved `SchemaFormView.label` stays required.
+   */
+  label?: string;
+  description?: string;
+  /** Named icon token; no arbitrary SVG/URL. Token validation is deferred (issue 02+). */
+  icon?: string;
+  order?: number;
+  recommended?: boolean;
+  /** Canonical top-level Def schema field keys to hide (never XML aliases/nested paths). */
+  hiddenFields?: string[];
+  /** Subtractive delta against an inherited view's hidden set. */
+  unhideFields?: string[];
+  replace?: boolean;
+  disabled?: boolean;
+}
+
+/** Source-pack provenance for a resolved schema-defined Form View. */
+export interface FormViewSource {
+  packId: string;
+  packVersion: string;
+}
+
+/**
+ * A resolved schema-defined Form View in the merged catalog, keyed by view id on
+ * `DefTypeSchema.formViews`. Empty/absent until issue 03 implements inheritance/pack-precedence
+ * resolution -- issue 01 only establishes the shape. The id `"default"` is reserved for the
+ * synthetic Default View and never appears as a key here.
+ */
+export interface SchemaFormView {
+  id: string;
+  label: string;
+  description?: string;
+  icon?: string;
+  order: number;
+  recommended: boolean;
+  /** Canonical top-level Def schema field keys hidden by this view. */
+  hiddenFieldIds: string[];
+  /** The concrete Def type whose declaration is the winning source for this resolved view. */
+  declaredOnDefType: string;
+  source?: FormViewSource;
+}
+
 export interface DefTypeSchema {
   label?: string;
   description?: string;
@@ -149,6 +207,7 @@ export interface DefTypeSchema {
   fields: Record<string, FieldSchema>;
   templates?: Record<string, DefTemplate>;
   validationRules?: Record<string, ValidationRule>;
+  formViews?: Record<string, SchemaFormView>;
 }
 
 export type SchemaPackSourceKind = "builtIn" | "external";

@@ -1,12 +1,13 @@
 use std::collections::HashSet;
 use std::path::PathBuf;
 
+use sxd_document::dom::Element;
 use sxd_document::Package;
 
 use crate::patches::dom::serialize_element_pretty;
 use crate::patches::{
-    apply_patch_operations, resolve_inheritance, OperationTraceStatus, PatchApplyOptions,
-    PatchImpactGraph, PatchOperationKey, XPathTarget,
+    apply_patch_operations, resolve_inheritance, ApplyDiagnostic, ApplyDiagnosticSeverity,
+    OperationTraceStatus, PatchApplyOptions, PatchImpactGraph, PatchOperationKey, XPathTarget,
 };
 use crate::project_model::{AppError, ProjectSettings};
 use crate::schema_pack::build_schema_catalog;
@@ -14,8 +15,9 @@ use crate::services::patch_index_cache;
 
 use super::conflicts::detect_visible_conflicts;
 use super::model::{
-    PatchPreviewConflictDiagnostic, PatchPreviewImpactSummary, PatchPreviewOperationSummary,
-    PatchPreviewRequest, PatchPreviewResult, PreviewInputs,
+    target_not_found_result, PatchPreviewConflictDiagnostic, PatchPreviewImpactSummary,
+    PatchPreviewOperationSummary, PatchPreviewRequest, PatchPreviewResult, PatchPreviewTarget,
+    PreviewInputs,
 };
 use super::operation_lookup::operation_class_name;
 use super::reorder::{apply_reorder, flatten_top_level_operations};
@@ -33,12 +35,42 @@ fn active_mod_names(settings: &ProjectSettings) -> Vec<String> {
         .collect()
 }
 
+/// One top-level Def element appended to the combined document, tagged with the exact file
+/// origin and in-file ordinal it came from -- lets [`compute_def_preview`] resolve a
+/// [`PatchPreviewTarget`] to the real element it names, instead of a global identity search that
+/// would silently substitute any other same-named Def.
+struct ProvenanceEntry<'d> {
+    location_id: String,
+    relative_path: String,
+    ordinal: usize,
+    element: Element<'d>,
+}
+
+/// Resolves `target` against `provenance`: matches location id, normalized relative path, and
+/// ordinal first, then verifies the element found there still has the requested Def type and
+/// identity (`defName`, or `Name` for an abstract template). Returns `None` if the origin no
+/// longer identifies the stated Def -- the caller must not fall back to a same-named Def
+/// elsewhere.
+fn resolve_target<'d>(
+    provenance: &[ProvenanceEntry<'d>],
+    target: &PatchPreviewTarget,
+) -> Option<Element<'d>> {
+    provenance
+        .iter()
+        .find(|p| {
+            p.location_id == target.location_id
+                && p.relative_path == target.relative_path
+                && p.ordinal == target.ordinal
+        })
+        .map(|p| p.element)
+        .filter(|&el| matches_selected_def(el, &target.def_type, &target.identity))
+}
+
 /// Computes the preview for one Def. Reads Def XML files from disk (via `inputs.settings`'
 /// registered locations) but touches nothing else outside `inputs` -- no `AppHandle`, no caches.
 pub fn compute_def_preview(
     inputs: &PreviewInputs<'_>,
-    def_type: &str,
-    def_name: &str,
+    target: &PatchPreviewTarget,
     request: &PatchPreviewRequest,
 ) -> PatchPreviewResult {
     let package = Package::new();
@@ -46,31 +78,48 @@ pub fn compute_def_preview(
     let defs_root = document.create_element("Defs");
     document.root().append_child(defs_root);
 
+    let mut provenance: Vec<ProvenanceEntry<'_>> = Vec::new();
     for location in included_locations(inputs.settings, inputs.project_id) {
-        for path in scan_def_files_in_load_order(inputs.settings, location) {
-            if let Ok(raw) = std::fs::read_to_string(&path) {
-                append_def_file_contents(document, defs_root, &raw);
+        for scanned in scan_def_files_in_load_order(inputs.settings, location) {
+            if let Ok(raw) = std::fs::read_to_string(&scanned.absolute_path) {
+                let appended = append_def_file_contents(document, defs_root, &raw);
+                for (ordinal, element) in appended.into_iter().enumerate() {
+                    provenance.push(ProvenanceEntry {
+                        location_id: location.id.clone(),
+                        relative_path: scanned.relative_path.clone(),
+                        ordinal,
+                        element,
+                    });
+                }
             }
         }
     }
 
-    // Resolved once, up front, against the pre-patch document: whether `def_name` identifies the
-    // selected Def via a real `<defName>` or only via `matches_selected_def`'s `Name`-attribute
-    // fallback (an `Abstract="True"` parent template with no `defName` of its own -- see that
-    // function's doc comment). This distinction matters for the impact-graph lookup immediately
-    // below: `PatchImpactGraph`'s `by_def` map is keyed by the literal `defName="..."` predicate
-    // string found in patch XPaths, which has no relationship to a `Name` attribute value. Passing
-    // a `Name` fallback straight into `operations_affecting_def` as if it were a `defName` would
+    // Resolved against provenance (file origin + in-file ordinal), not a global defType/defName
+    // search -- this is the fix for the read-only-source preview bug: a same-named Def in the
+    // editable project or another source must never be substituted for the Def the caller
+    // actually opened. A stale/mismatched target (the file changed since the tab derived its
+    // ordinal, or names a Def type/identity the resolved element no longer has) yields an
+    // explicit not-found result rather than a silent fallback.
+    let Some(target_element) = resolve_target(&provenance, target) else {
+        return target_not_found_result(target);
+    };
+
+    let def_type = target.def_type.as_str();
+    let def_name = target.identity.as_str();
+
+    // Resolved once, up front, against the pre-patch document: whether the selected Def carries a
+    // real `<defName>` or only identifies via `matches_selected_def`'s `Name`-attribute fallback
+    // (an `Abstract="True"` parent template with no `defName` of its own -- see that function's
+    // doc comment). This distinction matters for the impact-graph lookup immediately below:
+    // `PatchImpactGraph`'s `by_def` map is keyed by the literal `defName="..."` predicate string
+    // found in patch XPaths, which has no relationship to a `Name` attribute value. Passing a
+    // `Name` fallback straight into `operations_affecting_def` as if it were a `defName` would
     // spuriously match any unrelated patch whose XPath happens to say
     // `defName="<the abstract Def's Name>"`, and would never match the `@Name="..."` predicates
     // that could actually affect an abstract Def (those are `XPathTarget::Unsupported`, handled by
     // the separate runtime-correlation loop below regardless of this branch).
-    let pre_patch_top_level_defs = top_level_def_elements(defs_root);
-    let selected_has_real_def_name = pre_patch_top_level_defs
-        .iter()
-        .find(|&&el| matches_selected_def(el, def_type, def_name))
-        .map(|&el| def_name_of(el).is_some())
-        .unwrap_or(true);
+    let selected_has_real_def_name = def_name_of(target_element).is_some();
 
     let graph = PatchImpactGraph::build(inputs.patch_index);
     let affecting = if selected_has_real_def_name {
@@ -81,7 +130,8 @@ pub fn compute_def_preview(
 
     // Needed here (moved up from just before the runtime-correlation loop below) so the
     // `DefType`-target verification immediately below can use it too.
-    let ancestor_names = pre_patch_ancestor_names(&pre_patch_top_level_defs, def_type, def_name);
+    let pre_patch_top_level_defs = top_level_def_elements(defs_root);
+    let ancestor_names = pre_patch_ancestor_names(&pre_patch_top_level_defs, target_element);
 
     let mut visible_keys: HashSet<PatchOperationKey> = HashSet::new();
     let mut eligible_for_reorder: HashSet<PatchOperationKey> = HashSet::new();
@@ -117,7 +167,7 @@ pub fn compute_def_preview(
         let touches = op
             .xpath
             .as_deref()
-            .map(|xpath| xpath_touches_target(document, xpath, def_type, def_name, &ancestor_names))
+            .map(|xpath| xpath_touches_target(document, xpath, target_element, &ancestor_names))
             .unwrap_or(true);
         if !touches {
             continue;
@@ -160,7 +210,7 @@ pub fn compute_def_preview(
     // to an approximated match.
     // NOTE: this must run unconditionally, even when the selected Def has no `Name`/`ParentName`
     // of its own (so `ancestor_names` is empty) -- `xpath_touches_target` also checks whether a
-    // match (or one of its ancestors) is the selected Def *itself* by `defType`/`defName`, e.g. a
+    // match (or one of its ancestors) is the selected Def *itself* (by element identity), e.g. a
     // complex predicate like `Defs/ThingDef[defName="Wall" and label="wall"]/statBases` that
     // `infer_xpath_target` can't statically resolve but still genuinely targets `Wall`. Gating
     // this loop on a non-empty ancestor set (an earlier version of this code did) would silently
@@ -181,7 +231,7 @@ pub fn compute_def_preview(
             let Some(xpath) = op.xpath.as_deref() else {
                 continue;
             };
-            if xpath_touches_target(document, xpath, def_type, def_name, &ancestor_names) {
+            if xpath_touches_target(document, xpath, target_element, &ancestor_names) {
                 visible_keys.insert(key.clone());
                 summaries.push(PatchPreviewOperationSummary {
                     key,
@@ -236,13 +286,31 @@ pub fn compute_def_preview(
     let top_level_defs = top_level_def_elements(defs_root);
     let inheritance = resolve_inheritance(document, &top_level_defs);
 
-    let target = top_level_defs
-        .iter()
-        .copied()
-        .find(|&el| matches_selected_def(el, def_type, def_name));
+    // Whether the exact resolved element is still attached to the document, compared by element
+    // identity (pointer equality) -- not re-located by defType/defName. If a patch removed it,
+    // this reports the selected Def as absent rather than substituting a duplicate element that
+    // happens to share its identity.
+    let def_found = top_level_defs.contains(&target_element);
+    let xml = def_found.then(|| serialize_element_pretty(inheritance.resolve(target_element)));
 
-    let xml = target.map(|el| serialize_element_pretty(inheritance.resolve(el)));
-    let def_found = target.is_some();
+    // Distinct from `target_not_found_result`'s pre-application diagnostic: the target resolved
+    // successfully against provenance, but one of the patches actually applied in this preview
+    // removed it. Without this, the dialog can only show the generic "Def not found" message,
+    // which reads as if the origin/ordinal never resolved at all rather than the Def having been
+    // live and then removed.
+    let mut apply_diagnostics = apply_result.diagnostics;
+    if !def_found {
+        apply_diagnostics.push(ApplyDiagnostic {
+            severity: ApplyDiagnosticSeverity::Error,
+            code: "patch_preview_target_removed".to_string(),
+            message: format!(
+                "{} \"{}\" was removed by a patch operation during this preview -- there is no \
+                 final XML to show.",
+                def_type, def_name
+            ),
+            key: None,
+        });
+    }
 
     let conflicting_refs = graph.conflicts_involving_def(def_type, def_name);
     let conflict_count = conflicting_refs.len();
@@ -297,7 +365,7 @@ pub fn compute_def_preview(
         is_partial: apply_result.is_partial,
         visible_operations: summaries,
         operation_trace: apply_result.trace,
-        apply_diagnostics: apply_result.diagnostics,
+        apply_diagnostics,
         inheritance_diagnostics: inheritance.diagnostics,
         conflict_diagnostics,
         impact_summary,
@@ -311,8 +379,7 @@ pub fn preview_def_for_project(
     app: &tauri::AppHandle,
     settings: &ProjectSettings,
     project_id: &str,
-    def_type: &str,
-    def_name: &str,
+    target: &PatchPreviewTarget,
     request: &PatchPreviewRequest,
 ) -> Result<PatchPreviewResult, AppError> {
     let roots: Vec<PathBuf> = settings
@@ -342,5 +409,5 @@ pub fn preview_def_for_project(
         patch_files: patch_files.as_slice(),
         custom_operations: &catalog.patch_operations,
     };
-    Ok(compute_def_preview(&inputs, def_type, def_name, request))
+    Ok(compute_def_preview(&inputs, target, request))
 }

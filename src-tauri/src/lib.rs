@@ -1,6 +1,7 @@
 mod commands;
 mod def_index;
 mod def_templates;
+mod form_views;
 mod instrumentation;
 mod patches;
 mod project_files;
@@ -15,20 +16,23 @@ mod xml_document;
 
 use commands::{
     apply_xml_editor_edit, apply_xml_editor_edits, complete_patch_operation_xpath,
-    create_def_from_indexed_def, create_def_from_template, create_def_from_user_template,
-    create_project_file_cmd, create_project_folder_cmd, delete_project_path_cmd,
-    delete_user_def_template, get_def_index_facets, get_indexing_status,
-    get_instrumentation_config, get_project_settings, list_installed_schema_game_versions_cmd,
-    list_user_def_templates, load_schema_catalog, parse_patch_operations, parse_patch_value_xml,
-    parse_xml_editor_buffer, preview_def_patches, preview_project_xml_save, query_def_duplicates,
-    query_patch_operations_for_def, read_indexed_def_xml, read_location_xml_editor_document,
-    read_project_xml_document, read_project_xml_editor_document, read_project_xml_file,
-    rebuild_def_index, rebuild_patch_index, remove_location, rename_project_path_cmd,
+    create_custom_form_view, create_def_from_indexed_def, create_def_from_template,
+    create_def_from_user_template, create_project_file_cmd, create_project_folder_cmd,
+    delete_custom_form_view, delete_project_path_cmd, delete_user_def_template,
+    get_def_index_facets, get_indexing_status, get_instrumentation_config,
+    get_last_selected_form_view, get_project_settings, list_custom_form_views,
+    list_installed_schema_game_versions_cmd, list_user_def_templates, load_schema_catalog,
+    parse_patch_operations, parse_patch_value_xml, parse_xml_editor_buffer, preview_def_patches,
+    preview_project_xml_save, query_def_duplicates, query_patch_operations_for_def,
+    read_indexed_def_xml, read_location_xml_editor_document, read_project_xml_document,
+    read_project_xml_editor_document, read_project_xml_file, rebuild_def_index,
+    rebuild_patch_index, remove_location, rename_project_path_cmd, reset_custom_form_view_store,
     resolve_def_reference_cmd, resolve_graphic_preview_assets, save_project_xml_file,
     save_user_def_template, scan_project_files, search_defs, serialize_patch_operations,
     serialize_patch_value_fragment, set_active_project, set_instrumentation_enabled,
-    start_background_indexing, suggest_def_references_cmd, update_location,
-    update_project_game_version, upsert_location, validate_project,
+    set_last_selected_form_view, start_background_indexing, suggest_def_references_cmd,
+    update_custom_form_view, update_location, update_project_game_version, upsert_location,
+    validate_project,
 };
 use def_index::DefIndexState;
 use instrumentation::InstrumentationState;
@@ -168,6 +172,13 @@ pub fn run() {
             parse_patch_value_xml,
             serialize_patch_value_fragment,
             preview_def_patches,
+            list_custom_form_views,
+            create_custom_form_view,
+            update_custom_form_view,
+            delete_custom_form_view,
+            reset_custom_form_view_store,
+            set_last_selected_form_view,
+            get_last_selected_form_view,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

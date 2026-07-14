@@ -57,6 +57,30 @@ interface UseXmlFormControllerArgs {
     editContext?: XmlEditContext,
   ) => Promise<string>;
   clearPreview: () => void;
+  /**
+   * Form Views (issue 05, Plan.md section 7/9/10): canonical top-level Def schema field keys
+   * (`descriptor.fieldPath[0]`, i.e. `DefTypeSchema.fields` keys) that should be rendered.
+   * `undefined`/`null` means "no filter" - the existing unfiltered full form - and MUST
+   * produce byte-identical behavior to omitting this argument entirely; no real caller
+   * passes a value yet (issue 06's `useFormViews`/`XmlEditorPane` will own selection state
+   * and supply this Set). Passed straight through to `buildFormDescriptors`/
+   * `buildFormFieldModels`, which skip hidden top-level roots before any expensive nested
+   * expansion. Changing this value is an explicit dependency of the descriptor/model
+   * rebuild below (`resetKey`), so a visibility change rebuilds the store/models exactly
+   * once from the *same* underlying XML snapshot - it never reparses XML, calls
+   * `commitEdits`, or touches session/undo history.
+   */
+  visibleTopLevelFieldIds?: ReadonlySet<string> | null;
+  /**
+   * Form Views (issue 05, Plan.md section 7) focus-fallback hook. Called once per field id
+   * that was focused immediately before a descriptor/model rebuild (e.g. a visibility
+   * change hiding the focused field's top-level root) and is no longer present afterward.
+   * This issue does not implement a fallback focus target itself - there is no selector/
+   * customize control to focus yet - so it is exposed purely as a signal for the future
+   * owner (issue 06/07's Form View selector/`FormViewManagerDialog`) to move DOM focus to
+   * their own control when they wire this hook up.
+   */
+  onFocusedFieldHidden?: (fieldId: FormFieldId) => void;
 }
 
 export interface XmlFormActions {
@@ -127,12 +151,110 @@ function getCatalogId(catalog: SchemaCatalog): number {
   return id;
 }
 
+// Same content-stable-id pattern as `getCatalogId`, applied to the Form Views visibility
+// set (issue 05). `0` is reserved for "no filter" (the argument omitted/null), so the
+// resetKey suffix is a fixed constant for every caller that doesn't pass this yet - it can
+// never change across renders and therefore never changes today's rebuild behavior.
+const visibilityIdByRef = new WeakMap<ReadonlySet<string>, number>();
+const visibilityIdBySignature = new Map<string, number>();
+let nextVisibilityId = 1;
+function getVisibilityId(
+  visible: ReadonlySet<string> | null | undefined,
+): number {
+  if (!visible) return 0;
+  const cached = visibilityIdByRef.get(visible);
+  if (cached !== undefined) return cached;
+  // `JSON.stringify` quotes/escapes each element, so e.g. a single field literally named
+  // `"a,b"` and the two fields `"a"`/`"b"` serialize differently (`["a,b"]` vs `["a","b"]`).
+  // A plain `.join(",")` would collide those two distinct Sets onto the same signature and
+  // silently fail to rebuild on a real visibility change.
+  const signature = JSON.stringify([...visible].sort());
+  let id = visibilityIdBySignature.get(signature);
+  if (id === undefined) {
+    id = nextVisibilityId++;
+    visibilityIdBySignature.set(signature, id);
+  }
+  visibilityIdByRef.set(visible, id);
+  return id;
+}
+
+/**
+ * Form ids that are currently focused in `store` but absent from `nextModels` - i.e. the
+ * field's descriptor was dropped by the upcoming rebuild (most commonly: its top-level
+ * root just became hidden by a Form View visibility change). Must be read *before*
+ * `store.reset(...)` replaces the store's field set.
+ */
+function focusedFieldIdsGoneAfterReset(
+  store: FormFieldStore,
+  nextModels: FormFieldModel[],
+): FormFieldId[] {
+  const nextIds = new Set(nextModels.map((m) => m.id));
+  return store
+    .getAllStored()
+    .filter((f) => f.focused && !nextIds.has(f.model.id))
+    .map((f) => f.model.id);
+}
+
+/**
+ * Form Views (issue 05, Plan.md section 7/9 - "no value is discarded"): every field in
+ * `store` with an uncommitted draft (a dirty edit or an explicit clear request), keyed by
+ * its canonical `FormFieldId`. Must be read *before* `store.reset(...)` replaces the field
+ * map, since a plain rebuild otherwise silently drops in-memory drafts in favor of the
+ * freshly-XML-derived (clean) value - which is correct when the underlying document/def/
+ * catalog actually changed, but wrong for a rebuild caused purely by a visibility change.
+ */
+function captureDirtyDrafts(
+  store: FormFieldStore,
+): Map<FormFieldId, StoredFieldState> {
+  const drafts = new Map<FormFieldId, StoredFieldState>();
+  for (const stored of store.getAllStored()) {
+    if (stored.dirty || stored.clearRequested) {
+      drafts.set(stored.model.id, stored);
+    }
+  }
+  return drafts;
+}
+
+/**
+ * Re-applies captured dirty drafts onto a freshly-XML-derived field-state map (mutated in
+ * place), for every id that still exists in it - i.e. the field is visible again after the
+ * rebuild. A draft whose id is absent from `freshFields` (the field is still hidden) is left
+ * untouched in `pendingDrafts` so a *later* rebuild, whenever that field becomes visible
+ * again, can restore it - nothing is discarded merely because a field was hidden in between.
+ * A draft is removed from `pendingDrafts` once it has been re-applied, since the live store
+ * (not this map) becomes the authoritative source of truth for that field from then on.
+ */
+function applyDirtyDrafts(
+  freshFields: Map<FormFieldId, StoredFieldState>,
+  pendingDrafts: Map<FormFieldId, StoredFieldState>,
+): void {
+  for (const [id, draft] of pendingDrafts) {
+    const fresh = freshFields.get(id);
+    if (!fresh) continue; // Still hidden - keep stashed for a future rebuild.
+    freshFields.set(id, {
+      ...fresh,
+      value: draft.value,
+      dirty: draft.dirty,
+      touched: draft.touched,
+      pending: draft.pending,
+      error: draft.error,
+      cachedValidationErrors: draft.cachedValidationErrors,
+      clearRequested: draft.clearRequested,
+    });
+  }
+  for (const id of [...pendingDrafts.keys()]) {
+    if (freshFields.has(id)) pendingDrafts.delete(id);
+  }
+}
+
 export function useXmlFormController({
   snapshot,
   catalog,
   selectedDefNodeId,
   commitEdits,
   clearPreview,
+  visibleTopLevelFieldIds,
+  onFocusedFieldHidden,
 }: UseXmlFormControllerArgs): XmlFormApi {
   const selectedDef = useMemo(() => {
     const parsed = snapshot?.parsed;
@@ -142,28 +264,54 @@ export function useXmlFormController({
     );
   }, [snapshot, selectedDefNodeId]);
 
+  // Step 2: cheap, content-stable ids. Computed before `models`/`descriptors` below so those
+  // memos can depend on stable primitives instead of the raw `catalog`/`visibleTopLevelFieldIds`
+  // references (issue 05 review finding 3): a caller re-creating a content-equal catalog or
+  // Set on every render (e.g. `new Set(someComputedArray)` inline) must not force the
+  // expensive descriptor rebuild/nested expansion this issue's filtering exists to avoid.
+  const catalogId = catalog ? getCatalogId(catalog) : 0;
+  // Form Views (issue 05): `0` when no visibility filter is supplied, so this is a fixed
+  // constant (never changes across renders) until a real caller passes a Set.
+  const visibilityId = getVisibilityId(visibleTopLevelFieldIds);
+
   const models = useMemo(() => {
     if (!selectedDef) return [];
     const activeCatalog = catalog ?? emptyCatalog;
     const defSchema = activeCatalog.defTypes[selectedDef.defType] ?? null;
-    return buildFormFieldModels(selectedDef, defSchema, activeCatalog);
-  }, [catalog, selectedDef]);
+    return buildFormFieldModels(
+      selectedDef,
+      defSchema,
+      activeCatalog,
+      visibleTopLevelFieldIds,
+    );
+    // `catalog`/`visibleTopLevelFieldIds` are intentionally read via closure rather than
+    // listed here - `catalogId`/`visibilityId` are their content-stable proxies, so a
+    // content-equal-but-new-reference catalog/Set correctly does NOT retrigger this.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalogId, selectedDef, visibilityId]);
 
   const descriptors = useMemo(() => {
     if (!selectedDef) return [];
     const activeCatalog = catalog ?? emptyCatalog;
     const defSchema = activeCatalog.defTypes[selectedDef.defType] ?? null;
-    return buildFormDescriptors(selectedDef, defSchema, activeCatalog);
-  }, [catalog, selectedDef]);
+    return buildFormDescriptors(
+      selectedDef,
+      defSchema,
+      activeCatalog,
+      visibleTopLevelFieldIds,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalogId, selectedDef, visibilityId]);
 
-  // Step 2: cheap, content-stable reset key. The schema/objectTypes only change when the
-  // catalog is reloaded, which replaces the catalog object and bumps its WeakMap id - so we
-  // avoid the per-commit `JSON.stringify(catalog.objectTypes/fields)` cost entirely.
-  const catalogId = catalog ? getCatalogId(catalog) : 0;
-  const resetKey = useMemo(() => {
-    if (!snapshot || !selectedDef) return "empty";
+  // `docKey` identifies the underlying document/def/catalog identity, deliberately excluding
+  // visibility. Comparing it across renders (see `lastDocKeyRef` below) is how the rebuild
+  // effect tells "the document didn't change, only the visibility filter did" apart from
+  // every other rebuild cause - the two cases have different draft-preservation semantics.
+  const docKey = useMemo(() => {
+    if (!snapshot || !selectedDef) return null;
     return `${snapshot.rawXml}:${selectedDef.nodeId}:${selectedDef.defType}:${catalogId}`;
   }, [snapshot, selectedDef, catalogId]);
+  const resetKey = docKey === null ? "empty" : `${docKey}:${visibilityId}`;
 
   // Stable callbacks/values read inside effects and async commit handlers.
   const clearPreviewRef = useRef(clearPreview);
@@ -176,6 +324,8 @@ export function useXmlFormController({
   catalogRef.current = catalog;
   const snapshotRef = useRef(snapshot);
   snapshotRef.current = snapshot;
+  const onFocusedFieldHiddenRef = useRef(onFocusedFieldHidden);
+  onFocusedFieldHiddenRef.current = onFocusedFieldHidden;
 
   const draftVersionRef = useRef(0);
   const pendingCommitRef = useRef<Promise<string | null>>(
@@ -189,6 +339,24 @@ export function useXmlFormController({
   const lastCommitPrevNodeCountRef = useRef<number | null>(null);
   const appliedResetKeyRef = useRef<string | null>(null);
 
+  // Form Views (issue 05): the `docKey`/`visibilityId` last applied, so the rebuild effect
+  // can tell a pure visibility-only rebuild apart from every other rebuild cause (raw edit,
+  // undo/redo, def switch, catalog reload, form commit). Only a pure visibility change
+  // preserves uncommitted drafts (see `draftOverridesRef` below); every other cause discards
+  // stale drafts exactly as it already did before this feature existed.
+  const lastDocKeyRef = useRef<string | null>(null);
+  const lastVisibilityIdRef = useRef<number>(0);
+  // Field state stashed for a currently-hidden field across a pure visibility rebuild, keyed
+  // by canonical FormFieldId. Usually an uncommitted (dirty/clearRequested) draft; if that
+  // field's own commit later lands while it's still hidden, `flushFields` updates the entry
+  // in place to the just-committed clean value instead of deleting it (review finding 2a),
+  // so the field reflects the real committed value - not the stale pre-commit draft - the
+  // moment it becomes visible again, without waiting for a fresh document snapshot to arrive.
+  // An entry is applied and removed the moment its field becomes visible again. Cleared
+  // entirely on any real (non-visibility) rebuild and on an explicit `discardDrafts()` -
+  // never resurrected across an actual document change or an explicit user discard.
+  const draftOverridesRef = useRef<Map<FormFieldId, StoredFieldState>>(new Map());
+
   // Lazy store init - populated synchronously on first render so the very first paint has
   // fields (no flash) and no subscribers exist yet, so `initialize` notifies no one.
   const storeRef = useRef<FormFieldStore | null>(null);
@@ -197,6 +365,8 @@ export function useXmlFormController({
     s.initialize(models, buildInitialFieldState(models, descriptors));
     storeRef.current = s;
     appliedResetKeyRef.current = resetKey;
+    lastDocKeyRef.current = docKey;
+    lastVisibilityIdRef.current = visibilityId;
   }
   const store = storeRef.current;
 
@@ -243,13 +413,45 @@ export function useXmlFormController({
       lastCommitPrevNodeCountRef.current !== null &&
       newNodeCount === lastCommitPrevNodeCountRef.current;
 
-    appliedResetKeyRef.current = resetKey;
-    // Consume the one-shot commit markers regardless of outcome.
-    lastCommittedRawXmlRef.current = null;
-    lastCommitStructuralRef.current = false;
-    lastCommitPrevNodeCountRef.current = null;
+    // Form Views (issue 05, Plan.md section 7/9 - "no value is discarded"): this rebuild is
+    // caused *purely* by a visibility change when the underlying document/def/catalog
+    // identity (`docKey`) is exactly what was last applied, but the visibility filter
+    // changed. Mutually exclusive with `isFormOriginated`/`structurallySkippable`: a form
+    // commit always changes `snapshot.rawXml`, which is part of `docKey`.
+    const isPureVisibilityChange =
+      lastDocKeyRef.current !== null &&
+      lastDocKeyRef.current === docKey &&
+      lastVisibilityIdRef.current !== visibilityId;
 
-    draftVersionRef.current = 0;
+    appliedResetKeyRef.current = resetKey;
+    lastDocKeyRef.current = docKey;
+    lastVisibilityIdRef.current = visibilityId;
+
+    // Review finding 1 (round 2) + round 3 fix: `draftVersionRef` is the guard `flushFields`
+    // uses, after awaiting `commitEdits`, to detect "the draft/document generation changed
+    // while this commit was in flight" and treat a resolved commit as stale (throwing "Form
+    // changed while edits were being applied"). Bumping it here is only correct when the
+    // rebuild reflects a REAL document/def/catalog change - a pure visibility toggle alters
+    // no field's value (see the draft-preservation branch below), so an in-flight flush from
+    // before the toggle is still valid and must not be invalidated purely because the user
+    // switched views mid-flight. The same reasoning applies to the Step 4 one-shot commit
+    // markers: consuming them here for a rebuild that hasn't actually observed the commit's
+    // rawXml yet would make the *next*, real rebuild wrongly pay for a full rebuild instead
+    // of the Step 4 fast path.
+    //
+    // Round 3 review: this used to RESET `draftVersionRef` to the fixed constant 0, which is
+    // a genuine (pre-existing, not introduced by Form Views) race: an in-flight flush that
+    // had captured version 1 before this reset, followed by exactly one fresh edit after the
+    // rebuild (bumping the counter from 0 back to 1), would collide with the stale flush's
+    // captured value and be wrongly accepted as still-current. Incrementing instead of
+    // resetting makes this a genuinely monotonic generation counter - it can never loop back
+    // to a value an in-flight flush already captured, however many edits/rebuilds occur.
+    if (!isPureVisibilityChange) {
+      lastCommittedRawXmlRef.current = null;
+      lastCommitStructuralRef.current = false;
+      lastCommitPrevNodeCountRef.current = null;
+      draftVersionRef.current += 1;
+    }
 
     if (structurallySkippable) {
       // Correctness guard for the optimistic skip: trust the form's in-memory state only if
@@ -260,11 +462,37 @@ export function useXmlFormController({
       // we fall back to a full rebuild rather than silently showing stale values.
       const fresh = buildInitialFieldState(models, descriptors);
       if (storeValuesMatchFreshBuild(store, fresh)) return;
+      const goneFocusedIds = focusedFieldIdsGoneAfterReset(store, models);
+      // A real document change (a form commit) - stale hidden-field drafts no longer apply.
+      draftOverridesRef.current.clear();
       store.reset(models, fresh);
+      for (const id of goneFocusedIds) onFocusedFieldHiddenRef.current?.(id);
       return;
     }
 
-    store.reset(models, buildInitialFieldState(models, descriptors));
+    // Form Views (issue 05): capture focused-but-about-to-disappear field ids *before*
+    // `store.reset` replaces the field set, so the fallback hook can still be told which
+    // field lost focus (e.g. its top-level root was just hidden by a visibility change).
+    const goneFocusedIds = focusedFieldIdsGoneAfterReset(store, models);
+    const fresh = buildInitialFieldState(models, descriptors);
+
+    if (isPureVisibilityChange) {
+      // Stash every currently-dirty field's draft (not just ones whose own visibility just
+      // changed - a full rebuild would otherwise also wipe an unrelated visible field's
+      // in-progress edit), then re-apply whichever of those - old or newly stashed - now
+      // have a home in `fresh`. Anything still hidden stays stashed for a later rebuild.
+      for (const [id, draft] of captureDirtyDrafts(store)) {
+        draftOverridesRef.current.set(id, draft);
+      }
+      applyDirtyDrafts(fresh, draftOverridesRef.current);
+    } else {
+      // A real document/def/catalog change: any stashed hidden-field draft no longer
+      // corresponds to the current document and must not resurface later.
+      draftOverridesRef.current.clear();
+    }
+
+    store.reset(models, fresh);
+    for (const id of goneFocusedIds) onFocusedFieldHiddenRef.current?.(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
 
@@ -319,6 +547,12 @@ export function useXmlFormController({
   const discardDrafts = useCallback(() => {
     clearPreviewRef.current();
     draftVersionRef.current += 1;
+    // Review finding 2(b): `store.discardAll` only resets fields currently LIVE in the
+    // store. A field hidden by a Form View visibility change while dirty has its draft
+    // stashed in `draftOverridesRef`, not in the live store, so an explicit "discard all
+    // drafts" action must also drop it here - otherwise the stale draft would silently
+    // resurrect once that field becomes visible again, contradicting the user's discard.
+    draftOverridesRef.current.clear();
     store.discardAll((field) => {
       const value = cloneFormValue(field.initialValue);
       return { value, errors: validateFieldValue(field.model, value) };
@@ -404,17 +638,55 @@ export function useXmlFormController({
         .then(async () => {
           try {
             const rawXml = await commitEditsRef.current(edits, editContext);
-            // Record what the form itself committed so the reset path can skip the rebuild.
-            lastCommittedRawXmlRef.current = rawXml;
-            lastCommitStructuralRef.current = structural;
-            lastCommitPrevNodeCountRef.current = prevNodeCount;
-            store.applyCommit(dirtyIds, committedValuesByFieldId);
+
+            // Round 3 review: check staleness BEFORE any of the following side effects
+            // (Step 4 markers, `store.applyCommit`, the hidden-draft stash update) rather
+            // than applying them first and only afterward deciding whether to also flag an
+            // error. `draftVersionRef` is a monotonic generation counter (bumped on every
+            // per-edit action and every real, non-visibility rebuild - see the rebuild
+            // effect above - never reset to a fixed value), so this comparison can never
+            // be fooled by a value collision: if it doesn't match, the document/store has
+            // moved on since this flush started and this commit's result must not be
+            // written into it, even if some individual field's value coincidentally still
+            // matches what was committed.
             if (draftVersionRef.current !== flushVersion) {
               const message =
                 "Form changed while edits were being applied. Preview again.";
               clearPreviewRef.current();
               store.markCommitError(dirtyIds, message);
               throw new Error(message);
+            }
+
+            // Record what the form itself committed so the reset path can skip the rebuild.
+            lastCommittedRawXmlRef.current = rawXml;
+            lastCommitStructuralRef.current = structural;
+            lastCommitPrevNodeCountRef.current = prevNodeCount;
+            store.applyCommit(dirtyIds, committedValuesByFieldId);
+            // Review finding 2(a): `store.applyCommit` only updates a field that is
+            // currently LIVE in the store - it silently skips one hidden by a Form View
+            // visibility change at commit time (that field isn't in the store's field map
+            // at all). Update this commit's fields' stashed override (if any) to the
+            // just-committed, now-clean value too, so a hidden field shown again later
+            // reflects what was actually committed - not the stale pre-commit draft that
+            // was stashed at the moment it was hidden.
+            for (const id of dirtyIds) {
+              const stashed = draftOverridesRef.current.get(id);
+              if (!stashed) continue;
+              const committedValue = committedValuesByFieldId.get(id);
+              if (committedValue === undefined) continue;
+              draftOverridesRef.current.set(id, {
+                ...stashed,
+                value: committedValue,
+                initialValue: committedValue,
+                dirty: false,
+                pending: false,
+                clearRequested: false,
+                error: null,
+                cachedValidationErrors: validateFieldValue(
+                  stashed.model,
+                  committedValue,
+                ),
+              });
             }
             return rawXml;
           } catch (e) {

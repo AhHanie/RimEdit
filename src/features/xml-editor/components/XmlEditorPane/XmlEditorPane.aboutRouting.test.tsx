@@ -6,6 +6,7 @@ import { useXmlFormController } from "../../hooks/useXmlFormController";
 import type { XmlFormApi } from "../../hooks/useXmlFormController";
 import { FormFieldStore } from "../../lib/formFieldStore";
 import type { AboutMetadataView } from "../../types/xmlDocument";
+import { FORM_VIEW_SELECTOR_SELECT_ID } from "../../../form-views/components/FormViewSelector/FormViewSelector";
 import type { SchemaCatalog } from "../../../schema-catalog/types";
 
 // Covers the About.xml UI editor plan's "profile routing" and "read-only source"
@@ -243,5 +244,19 @@ describe("XmlEditorPane - About.xml routing", () => {
 
     expect(screen.getByTestId("xml-form-editor-stub")).toBeTruthy();
     expect(screen.queryByTestId("about-editor-pane-stub")).toBeNull();
+  });
+
+  // Issue 09 (Plan.md section 11): Def `formViews` never apply to About.xml -- `XmlFormEditor`
+  // (and the Form View selector it owns) must never mount for a `<ModMetaData>`-rooted file.
+  // `XmlFormEditor` is stubbed above, so this also guards against a future change accidentally
+  // rendering the real `FormViewSelector` outside of `XmlFormEditor`.
+  it("never shows the Form View selector for an About profile", () => {
+    useXmlFormControllerMock.mockReturnValue(makeFormApi());
+    useXmlEditorSessionMock.mockReturnValue(makeSession());
+
+    render(<XmlEditorPane projectId="proj1" file={makeFileRef()} catalog={makeCatalog()} hasOpenTabs={true} />);
+
+    expect(screen.queryByLabelText("View")).toBeNull();
+    expect(document.getElementById(FORM_VIEW_SELECTOR_SELECT_ID)).toBeNull();
   });
 });

@@ -1,0 +1,8 @@
+{
+  "formatVersion": 1,
+  "packId": "test.formviews.v1rejected",
+  "name": "Form Views V1 Rejected",
+  "version": "1.0.0",
+  "priority": 0,
+  "defTypeDirectories": ["def-types"]
+}

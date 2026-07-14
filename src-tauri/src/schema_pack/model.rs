@@ -1,5 +1,7 @@
-use serde::{Deserialize, Serialize};
+use serde::de::{self, MapAccess, Visitor};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::BTreeMap;
+use std::fmt;
 
 #[derive(Clone, Debug, Serialize)]
 pub enum SchemaLoadSeverity {
@@ -385,6 +387,113 @@ pub struct ObjectTypeSchemaFile {
     pub schema: ObjectTypeSchemaDef,
 }
 
+/// Custom `formViews` deserializer that rejects a duplicate view id within one Def-type file's
+/// raw JSON object, instead of silently keeping only the last declaration the way a plain
+/// `BTreeMap<String, FormViewDef>` derive would. JSON technically permits a repeated object key;
+/// `serde_json::Value`/a derived `BTreeMap` deserialization both silently overwrite the earlier
+/// entry with no error, so two `"weapon": {...}` declarations in one file would otherwise produce
+/// one surviving view with zero diagnostic. Plan.md section 5 lists a duplicate effective view id
+/// as fatal, so this surfaces as an ordinary deserialize error -- the same
+/// `schema_pack_def_type_json_invalid` whole-file-rejection path already used for any other
+/// malformed Def-type JSON (see `loader::parse_def_type_schema`).
+///
+/// This only sees genuine duplicates when the caller deserializes `DefTypeSchemaFile` directly
+/// from the original JSON text (e.g. `serde_json::from_str`), not from an already-built
+/// `serde_json::Value` -- a `Value` has already silently collapsed duplicate object keys (in its
+/// own `Map` construction) by the time this function would ever see it.
+fn deserialize_form_views<'de, D>(
+    deserializer: D,
+) -> Result<BTreeMap<String, FormViewDef>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    struct FormViewsVisitor;
+
+    impl<'de> Visitor<'de> for FormViewsVisitor {
+        type Value = BTreeMap<String, FormViewDef>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+            formatter.write_str("a formViews object with no duplicate view ids")
+        }
+
+        fn visit_map<M>(self, mut map: M) -> Result<Self::Value, M::Error>
+        where
+            M: MapAccess<'de>,
+        {
+            let mut result = BTreeMap::new();
+            while let Some((id, view)) = map.next_entry::<String, FormViewDef>()? {
+                if result.insert(id.clone(), view).is_some() {
+                    return Err(de::Error::custom(format!(
+                        "duplicate formViews id '{}': each view id must be declared at most once per Def-type file",
+                        id
+                    )));
+                }
+            }
+            Ok(result)
+        }
+    }
+
+    deserializer.deserialize_map(FormViewsVisitor)
+}
+
+/// A schema-defined Form View declaration as it appears in a Def-type pack JSON file, keyed by
+/// view ID on `DefTypeSchemaDef.form_views`.
+///
+/// Scalar override fields mirror `FieldSchemaDef`'s convention: `Option` so the (issue 03)
+/// inheritance/pack-precedence merge layer can distinguish "this declaration didn't mention the
+/// field" from "this declaration explicitly cleared/overrode it". `hidden_fields` and
+/// `unhide_fields` are themselves `Option<Vec<String>>` (not `#[serde(default)]` empty `Vec`) for
+/// the same reason: an absent `hiddenFields` must not be conflated with an explicit `[]`.
+///
+/// The id `"default"` is reserved for the synthetic Default View built at runtime and must never
+/// be used as a schema-declared view id; `loader::validate_form_view_declarations` (issue 02)
+/// rejects it -- and rejects the *whole Def-type file* when it is used, per Plan.md section 5's
+/// "fatal for a v3 Def schema file" policy (this is a structural/shape violation, not a
+/// recoverable per-view warning).
+///
+/// Values here are canonical direct Def schema field keys (`DefTypeSchema.fields` keys), never
+/// XML aliases, nested object-member paths, list/map indices, node IDs, or display labels.
+///
+/// See `Plan.md` section 4 for the full JSON shape (`hiddenFields`/`unhideFields`/`replace`/
+/// `disabled`) and section 5 for how a merge layer is expected to apply them. Issue 02
+/// (`loader::parse_def_type_schema`) first gates on the owning pack's manifest `formatVersion: 3`
+/// -- for an older pack, a non-empty `formViews` key is stripped with a
+/// `schema_pack_form_views_requires_v3` diagnostic *before* any v3-only structural validation
+/// runs, so an invalid/malformed declaration on an unsupported pack version cannot sink the rest
+/// of the Def-type file. Only once a pack is confirmed v3+ does
+/// `loader::validate_form_view_declarations` validate shape/internal-consistency of one Def
+/// type's own declarations (blank/reserved id, blank/missing label, impossible `disabled`
+/// combinations, contradictory or duplicate-within-array `hiddenFields`/`unhideFields`, duplicate
+/// view id) and reject the whole file on any violation, the same way any other malformed
+/// Def-type JSON is rejected. Issue 03 owns resolving these declarations across the inheritance
+/// chain and pack precedence, and validating field ids against the real known field universe.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FormViewDef {
+    /// `Option` (not required) because a child-schema *delta* amendment to an inherited view is
+    /// valid with no label at all -- e.g. `{ "hiddenFields": [...] }` or `{ "disabled": true }`
+    /// (see `Plan.md` section 4's `unhideFields`/`disabled` examples). A brand-new/base view
+    /// declaration is expected to always provide one in practice, but Serde is not the layer that
+    /// enforces that; issue 02/03's validation is responsible for rejecting a new (non-delta) view
+    /// with a blank/absent label. The resolved `SchemaFormView.label` stays required/materialized.
+    pub label: Option<String>,
+    pub description: Option<String>,
+    /// Named icon token; no arbitrary SVG/URL. Token validation is deferred (issue 02+).
+    pub icon: Option<String>,
+    pub order: Option<i32>,
+    pub recommended: Option<bool>,
+    /// Canonical top-level Def schema field keys to hide. `None` when this declaration didn't
+    /// mention `hiddenFields` at all, distinct from an explicit empty list.
+    pub hidden_fields: Option<Vec<String>>,
+    /// Subtractive delta against an inherited view's hidden set; never additive/include-mode.
+    pub unhide_fields: Option<Vec<String>>,
+    /// When true, resets the inherited hidden set before this declaration's `hiddenFields` are
+    /// applied.
+    pub replace: Option<bool>,
+    /// When true, removes an inherited view of the same id for this child Def type.
+    pub disabled: Option<bool>,
+}
+
 /// Def type definition as it appears in a pack JSON file.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -403,6 +512,14 @@ pub struct DefTypeSchemaDef {
     pub templates: BTreeMap<String, DefTemplateDef>,
     #[serde(default)]
     pub validation_rules: BTreeMap<String, ValidationRule>,
+    /// Schema-defined Form Views, keyed by view id. See `FormViewDef` for the constraint that
+    /// `"default"` is a reserved id. `deserialize_form_views` rejects a duplicate JSON key as a
+    /// deserialize error (whole-file rejection, like any other malformed shape);
+    /// `loader::parse_def_type_schema` additionally runs `validate_form_view_declarations` and
+    /// rejects the whole file on any per-declaration violation (issue 02). Merging these
+    /// declarations across the inheritance chain into `DefTypeSchema.form_views` is issue 03.
+    #[serde(default, deserialize_with = "deserialize_form_views")]
+    pub form_views: BTreeMap<String, FormViewDef>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -426,6 +543,14 @@ pub struct SchemaPackManifest {
     /// Keyed by `className`. Empty for packs that only declare Def/object schemas.
     #[serde(default)]
     pub patch_operations: BTreeMap<String, PatchOperationMetadataDef>,
+    /// The source file path (loader `path_label`) of the Def-type JSON that declared each def
+    /// type in `def_types`, keyed by def type name. Populated by `assemble_schema_pack` from the
+    /// same `def_files` list used to build `def_types` (first-wins for an intra-pack duplicate,
+    /// matching `def_types` itself). Not part of any schema-pack JSON shape -- used only so
+    /// post-merge diagnostics (e.g. Form View resolution's recoverable warnings) can expose a
+    /// file path, matching the loader's own per-file diagnostics.
+    #[serde(default)]
+    pub def_type_source_paths: BTreeMap<String, String>,
 }
 
 /// Manifest file on disk. Does not embed def types; instead lists directories
@@ -597,6 +722,48 @@ pub struct ObjectTypeSchema {
     pub discriminator: Option<ObjectTypeDiscriminator>,
 }
 
+/// Source-pack provenance for a resolved schema-defined Form View.
+///
+/// Distinct from `FieldSchema.source_pack_id` (which records only a pack id): Form View
+/// provenance also needs the winning pack's version, since a schema-view's meaning can go stale
+/// relative to the pack it was authored against (see `Plan.md` sections 3-4). `DefTypeSchema`
+/// itself records no pack provenance at all, which is why this lives on `SchemaFormView` instead.
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FormViewSource {
+    pub pack_id: String,
+    pub pack_version: String,
+}
+
+/// A resolved schema-defined Form View in the merged catalog, keyed by view id on
+/// `DefTypeSchema.form_views`.
+///
+/// Issue 01 only defines this shape. `DefTypeSchema.form_views` is initialized empty at every
+/// construction site; actually merging `FormViewDef` declarations across the inheritance chain
+/// and pack precedence (applying `disabled`/`replace`/`hiddenFields`/`unhideFields`) into
+/// populated `SchemaFormView` entries is issue 03's job.
+///
+/// The id `"default"` is reserved for the synthetic Default View (always available, built at
+/// runtime, never a schema declaration) and must never appear as a key in this map.
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SchemaFormView {
+    pub id: String,
+    pub label: String,
+    pub description: Option<String>,
+    pub icon: Option<String>,
+    pub order: i32,
+    pub recommended: bool,
+    /// Canonical top-level Def schema field keys hidden by this view. Never XML aliases, nested
+    /// object-member paths, list/map indices, node IDs, or display labels.
+    pub hidden_field_ids: Vec<String>,
+    /// The concrete Def type whose declaration is the winning source for this resolved view
+    /// (e.g. a child Def type that only supplied an `unhideFields` delta on an inherited view).
+    pub declared_on_def_type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source: Option<FormViewSource>,
+}
+
 /// Resolved def type schema in the merged catalog.
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -610,6 +777,12 @@ pub struct DefTypeSchema {
     pub templates: BTreeMap<String, DefTemplate>,
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     pub validation_rules: BTreeMap<String, ValidationRule>,
+    /// Resolved schema-defined Form Views, keyed by view id, fully resolved across pack precedence
+    /// and Def-type inheritance (see `merge::resolve_all_form_views`). Deliberately always
+    /// serialized -- even when empty -- so the frontend catalog consumer can rely on `formViews`
+    /// always being present and synthesize the Default View from it without special-casing an
+    /// absent key (issue 03's "empty/no-view Def types serialize an empty map" requirement).
+    pub form_views: BTreeMap<String, SchemaFormView>,
 }
 
 /// Resolved patch operation metadata in the merged catalog, keyed by `className` on

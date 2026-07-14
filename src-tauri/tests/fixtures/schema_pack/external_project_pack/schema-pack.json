@@ -1,0 +1,9 @@
+{
+  "formatVersion": 1,
+  "packId": "test.external_project_pack",
+  "name": "External Project Pack Test Fixture",
+  "version": "0.1.0",
+  "priority": 0,
+  "gameVersion": "1.6",
+  "defTypeDirectories": ["def-types"]
+}

@@ -28,6 +28,21 @@ export function samePatchOperationKey(a: PatchOperationKey, b: PatchOperationKey
   );
 }
 
+/** Mirrors `services::patch_preview::PatchPreviewTarget`. Identifies the exact Def an open editor
+ * tab is showing -- its file origin (`locationId` + `relativePath`) and zero-based position among
+ * that file's own top-level Defs (`ordinal`) -- independent of `projectId`, which is only the
+ * active editable project used as preview context (registered locations, load folders, patch
+ * files). `defType`/`identity` (`defName`, or the `Name` attribute for an abstract template) are
+ * validation data: the backend re-verifies them against whatever the origin/ordinal resolves to,
+ * and refuses to substitute a same-named Def elsewhere if they don't match. */
+export interface PatchPreviewTarget {
+  locationId: string;
+  relativePath: string;
+  defType: string;
+  identity: string;
+  ordinal: number;
+}
+
 /** Preview-only per-request overrides. Never persisted to any patch XML file. */
 export interface PatchPreviewRequest {
   disabled: PatchOperationKey[];

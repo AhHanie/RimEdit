@@ -88,6 +88,97 @@ function getAllSchemaFields(
   return fields;
 }
 
+/**
+ * Form Views (issue 06, Plan.md section 5/7): the shared, explicit `knownTopLevel` resolver --
+ * every canonical top-level Def schema field id (`DefTypeSchema.fields` key, ancestor-first,
+ * first-encountered-wins) that `buildFormDescriptors` would render for this Def type. This is
+ * intentionally the exact same traversal `buildFormDescriptors` itself uses (`getAllSchemaFields`
+ * above), not a reimplementation, so the Form View resolver's `knownTopLevel` set can never
+ * disagree with what the form actually renders (Plan.md section 5: "avoiding a backend/frontend
+ * disagreement"). Used to intersect a selected/overridden hidden-field set so a stale or
+ * removed field reference can never hide (or fail to hide) anything the form doesn't actually
+ * have a field for.
+ */
+export function collectEffectiveTopLevelDefFields(
+  defSchema: DefTypeSchema,
+  catalog: SchemaCatalog,
+): ReadonlySet<string> {
+  return new Set(getAllSchemaFields(defSchema, catalog).keys());
+}
+
+/** One row's worth of presentation metadata for the Form View customization checklist
+ * (issue 07). */
+export interface TopLevelFieldSummary {
+  /** Canonical `DefTypeSchema.fields` key -- the same `TopLevelFieldId` a Form View hides. */
+  id: string;
+  label: string;
+  /** True for an object-root field (Plan.md section 8: "gives each object-root a 'section'
+   * badge") -- the same expandable-object-shape test `buildFormDescriptors` uses to decide
+   * whether to recurse into `buildNestedObjectDescriptors`. */
+  isSection: boolean;
+  /** The control this field would render as if visible -- used by the checklist UI to pick a
+   * friendlier type badge than the raw schema type kind. */
+  controlKind: FormControlKind;
+  /** Whether the CURRENT XML instance already has data under this field (mirrors
+   * `xmlChildHasData`'s "has data" definition, the same one `buildNestedObjectDescriptors` uses
+   * to seed a section's default-collapsed state). A cheap presence check, not full validation. */
+  hasValue: boolean;
+}
+
+/**
+ * Form Views (issue 07, Plan.md section 8 step 1): the customization checklist's field list --
+ * every canonical top-level Def schema field, in the exact same universe/order as
+ * `collectEffectiveTopLevelDefFields` above, each summarized with just enough presentation
+ * metadata for a checkbox row. Built directly from the schema + raw XML child/attribute maps,
+ * NOT from rendered `FormFieldModel`s -- a hidden field's models never reach the form (issue 05
+ * skips their entire descriptor subtree), so a checklist sourced from rendered models could never
+ * list (or un-hide) a currently-hidden field. Also deliberately does not expand into nested
+ * descriptors or object-list items ("not rendered model descendants" -- issue 07's step 1); only
+ * a cheap top-level presence check is needed here.
+ */
+export function collectTopLevelFieldSummaries(
+  def: DefEditorView,
+  defSchema: DefTypeSchema,
+  catalog: SchemaCatalog,
+): TopLevelFieldSummary[] {
+  const childByName = new Map(def.children.map((c) => [c.name, c]));
+  const attributeByName = new Map(def.attributes.map((a) => [a.name, a]));
+  const allFields = getAllSchemaFields(defSchema, catalog);
+
+  const summaries: TopLevelFieldSummary[] = [];
+  for (const [fieldName, fieldSchema] of allFields) {
+    const isAttribute = fieldSchema.xml === "attribute";
+    let child = isAttribute ? undefined : childByName.get(fieldName);
+    if (!child && !isAttribute) {
+      for (const alias of fieldSchema.xmlAliases ?? []) {
+        const aliasedChild = childByName.get(alias);
+        if (aliasedChild) {
+          child = aliasedChild;
+          break;
+        }
+      }
+    }
+
+    const objSchema = getObjectSchemaForField(fieldSchema, catalog);
+    const isExpandableShape =
+      fieldSchema.xml === "object" || fieldSchema.xml === "element";
+    const isSection = !!(objSchema && isExpandableShape);
+
+    const hasValue = isAttribute
+      ? !!attributeByName.get(fieldName)?.value
+      : xmlChildHasData(child);
+
+    summaries.push({
+      id: fieldName,
+      label: fieldSchema.label ?? fieldName,
+      isSection,
+      controlKind: fieldSchemaToControl(fieldName, fieldSchema),
+      hasValue,
+    });
+  }
+  return summaries;
+}
+
 type AnyXmlChild = XmlChildView | XmlNestedChildView;
 
 function xmlChildHasData(child: AnyXmlChild | undefined): boolean {
@@ -363,6 +454,7 @@ export function buildFormDescriptors(
   def: DefEditorView,
   defSchema: DefTypeSchema | null,
   catalog: SchemaCatalog,
+  visibleTopLevelFieldIds?: ReadonlySet<string> | null,
 ): FormFieldDescriptor[] {
   const descriptors: FormFieldDescriptor[] = [];
   const handledKeys = new Set<string>();
@@ -374,6 +466,12 @@ export function buildFormDescriptors(
     const allFields = getAllSchemaFields(defSchema, catalog);
 
     for (const [fieldName, fieldSchema] of allFields) {
+      // `fieldName` here is already the canonical top-level Def schema field key (the same
+      // key used by `DefTypeSchema.fields`/`fieldOrder`/`lookup_field`, and equal to what
+      // becomes `descriptor.fieldPath[0]` below) - the exact TopLevelFieldId identity Form
+      // Views (Plan.md section 7) filter on. Mark it (and any matched alias) handled before
+      // the visibility check so a hidden field's XML still counts as "known" and never falls
+      // through to `UnknownXmlFields` below.
       handledKeys.add(fieldName);
       const isAttribute = fieldSchema.xml === "attribute";
       let child = isAttribute ? undefined : childByName.get(fieldName);
@@ -392,6 +490,16 @@ export function buildFormDescriptors(
       const attribute = isAttribute
         ? attributeByName.get(fieldName)
         : undefined;
+
+      // Form View visibility filter (issue 05, Plan.md section 7/10): skip this top-level
+      // field entirely - before any nested-object-schema resolution, discriminator
+      // resolution, `buildNestedObjectDescriptors` recursion, or object-list item value
+      // construction (`buildObjectListItemValue` et al.) - so a hidden root never pays for
+      // the expensive expansion it would otherwise trigger below. `undefined`/`null` means
+      // "no filter", preserving today's full-form behavior exactly.
+      if (visibleTopLevelFieldIds && !visibleTopLevelFieldIds.has(fieldName)) {
+        continue;
+      }
 
       // Schema-backed object field with an expandable xml shape - expand to nested descriptors.
       // listOfLi, namedChildrenMap, and keyedValueList containers are not expanded.
@@ -631,8 +739,14 @@ export function buildFormFieldModels(
   def: DefEditorView,
   defSchema: DefTypeSchema | null,
   catalog: SchemaCatalog,
+  visibleTopLevelFieldIds?: ReadonlySet<string> | null,
 ): FormFieldModel[] {
-  return buildFormDescriptors(def, defSchema, catalog).map(
+  return buildFormDescriptors(
+    def,
+    defSchema,
+    catalog,
+    visibleTopLevelFieldIds,
+  ).map(
     (descriptor, index) => {
       const isUnknown = descriptor.control === "readonlyUnknown";
       const isAttribute = descriptor.xmlShape === "attribute";

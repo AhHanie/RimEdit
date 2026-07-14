@@ -1,0 +1,8 @@
+{
+  "formatVersion": 3,
+  "packId": "test.formviews.v3valid",
+  "name": "Form Views V3 Valid",
+  "version": "1.0.0",
+  "priority": 0,
+  "defTypeDirectories": ["def-types"]
+}

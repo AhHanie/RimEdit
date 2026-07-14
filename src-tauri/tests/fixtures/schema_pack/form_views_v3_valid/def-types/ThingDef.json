@@ -1,0 +1,25 @@
+{
+  "defType": "ThingDef",
+  "label": "Thing",
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "type": { "kind": "string" },
+      "required": true
+    }
+  },
+  "formViews": {
+    "weapon": {
+      "label": "Weapon",
+      "description": "Fields commonly needed for equippable weapons.",
+      "icon": "sword",
+      "order": 20,
+      "recommended": true,
+      "hiddenFields": ["apparel", "plant"]
+    },
+    "minimal": {
+      "label": "Minimal item",
+      "hiddenFields": ["graphicData", "comps"]
+    }
+  }
+}
