@@ -147,6 +147,7 @@ mod edit_maps;
 mod edit_nested;
 mod edit_typed_references;
 mod editor_view;
+mod form_views_visibility_regression;
 mod nested_edits;
 mod parsing;
 mod profile;

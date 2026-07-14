@@ -5,6 +5,7 @@ import type { UseXmlEditorSessionReturn, XmlEditorFileRef } from "../../hooks/us
 import { useXmlFormController } from "../../hooks/useXmlFormController";
 import type { XmlFormApi } from "../../hooks/useXmlFormController";
 import { FormFieldStore } from "../../lib/formFieldStore";
+import { FORM_VIEW_SELECTOR_SELECT_ID } from "../../../form-views/components/FormViewSelector/FormViewSelector";
 import type { SchemaCatalog } from "../../../schema-catalog/types";
 
 // Covers issue 04's "patch file route detection" and "switch raw/form mode" acceptance
@@ -188,5 +189,22 @@ describe("XmlEditorPane - patch file routing", () => {
 
     const button = screen.getByLabelText("New Def") as HTMLButtonElement;
     expect(button.disabled).toBe(true);
+  });
+
+  // Issue 09 (Plan.md section 11): Def `formViews` never apply to Patch mode -- it's an
+  // operation-tree editor, not `XmlFormEditor`, so `XmlFormEditor` (and the Form View selector
+  // it owns) must never mount for a `<Patch>`-rooted file. `XmlFormEditor` is stubbed above, so
+  // this also guards against a future change accidentally rendering the real
+  // `FormViewSelector` outside of `XmlFormEditor`.
+  it("never shows the Form View selector for a Patch profile", () => {
+    useXmlFormControllerMock.mockReturnValue(makeFormApi());
+    useXmlEditorSessionMock.mockReturnValue(makeSession());
+
+    render(
+      <XmlEditorPane projectId="proj1" file={makeFileRef()} catalog={makeCatalog()} hasOpenTabs={true} />,
+    );
+
+    expect(screen.queryByLabelText("View")).toBeNull();
+    expect(document.getElementById(FORM_VIEW_SELECTOR_SELECT_ID)).toBeNull();
   });
 });

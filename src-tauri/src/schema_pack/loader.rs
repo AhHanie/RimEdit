@@ -1,6 +1,6 @@
 use super::model::{
-    DefTypeSchemaFile, FieldTypeKind, ObjectTypeSchemaFile, PatchOperationMetadataFile,
-    SchemaLoadDiagnostic, SchemaPackManifest, SchemaPackManifestFile,
+    DefTypeSchemaFile, FieldTypeKind, FormViewDef, ObjectTypeSchemaFile,
+    PatchOperationMetadataFile, SchemaLoadDiagnostic, SchemaPackManifest, SchemaPackManifestFile,
 };
 use std::collections::BTreeMap;
 use std::path::{Component, Path, PathBuf};
@@ -29,7 +29,8 @@ pub fn load_built_in_packs() -> (Vec<LoadedPack>, Vec<SchemaLoadDiagnostic>) {
             let pack_id = manifest_file.pack_id.clone();
             let mut def_file_pairs: Vec<(&str, DefTypeSchemaFile)> = Vec::new();
             for (label, raw) in *def_files {
-                let (def_opt, ddiags) = parse_def_type_schema(label, &pack_id, raw);
+                let (def_opt, ddiags) =
+                    parse_def_type_schema(label, &pack_id, raw, manifest_file.format_version);
                 diags.extend(ddiags);
                 if let Some(def_file) = def_opt {
                     def_file_pairs.push((label, def_file));
@@ -228,7 +229,12 @@ pub fn load_pack_from_directory(
 
             match std::fs::read_to_string(&json_path) {
                 Ok(raw) => {
-                    let (def_opt, ddiags) = parse_def_type_schema(&file_label, &pack_id, &raw);
+                    let (def_opt, ddiags) = parse_def_type_schema(
+                        &file_label,
+                        &pack_id,
+                        &raw,
+                        manifest_file.format_version,
+                    );
                     diags.extend(ddiags);
                     if let Some(def_file) = def_opt {
                         def_file_pairs.push((file_label, def_file));
@@ -507,13 +513,15 @@ pub fn parse_schema_pack_manifest(
         .and_then(|v| v.as_u64())
         .unwrap_or(0);
     // Version 2 is additive: it only adds the optional `patchOperationDirectories` field, so
-    // packs written for version 1 keep working unchanged and don't need a bump.
-    if format_version != 1 && format_version != 2 {
+    // packs written for version 1 keep working unchanged and don't need a bump. Version 3 is
+    // also additive: it only permits Def-type files to declare `formViews` (see
+    // `parse_def_type_schema`); packs that don't use `formViews` need no bump to 3 either.
+    if format_version != 1 && format_version != 2 && format_version != 3 {
         diags.push(
             SchemaLoadDiagnostic::error(
                 "schema_pack_manifest_format_unsupported",
                 format!(
-                    "Unsupported formatVersion: {}. Supported versions: 1, 2.",
+                    "Unsupported formatVersion: {}. Supported versions: 1, 2, 3.",
                     format_version
                 ),
             )
@@ -570,14 +578,18 @@ pub fn parse_schema_pack_manifest(
 }
 
 /// Parse a single def type file. `pack_id` is used only for diagnostic context.
+/// `manifest_format_version` is the owning pack's manifest `formatVersion`: it gates whether
+/// `formViews` is even attempted on this Def type (see below) and must therefore be resolved by
+/// the caller (from the pack's already-parsed manifest) before this function runs.
 pub fn parse_def_type_schema(
     path_label: &str,
     pack_id: &str,
     raw_json: &str,
+    manifest_format_version: u16,
 ) -> (Option<DefTypeSchemaFile>, Vec<SchemaLoadDiagnostic>) {
     let mut diags = Vec::new();
 
-    let value: serde_json::Value = match serde_json::from_str(raw_json) {
+    let mut value: serde_json::Value = match serde_json::from_str(raw_json) {
         Ok(v) => v,
         Err(e) => {
             diags.push(
@@ -610,18 +622,85 @@ pub fn parse_def_type_schema(
         return (None, diags);
     }
 
-    let mut def_file: DefTypeSchemaFile = match serde_json::from_value(value) {
-        Ok(d) => d,
-        Err(e) => {
-            diags.push(
-                SchemaLoadDiagnostic::error(
-                    "schema_pack_def_type_json_invalid",
-                    format!("Failed to deserialize def file: {}", e),
-                )
-                .with_pack_id(pack_id)
-                .with_path(path_label),
-            );
-            return (None, diags);
+    // formViews requires manifest formatVersion 3 (Plan.md section 4). This gate MUST run before
+    // any v3-only structural validation: a v1/v2 pack's formViews (whether well-formed, malformed
+    // shape, or semantically invalid -- e.g. the reserved "default" id) is simply not a supported
+    // feature on that pack version. It is a contract violation worth a diagnostic, but must not
+    // sink the rest of the Def-type file (fields/templates/etc. still load), and the below
+    // whole-file-fatal structural checks must never even run against content this pack version
+    // doesn't support. Detect + report + strip the key here, before full struct deserialization,
+    // so garbage formViews content on an old pack can't cause a spurious whole-file "malformed
+    // JSON" failure either.
+    if manifest_format_version < 3 && value_has_nonempty_form_views(&value) {
+        diags.push(
+            SchemaLoadDiagnostic::error(
+                "schema_pack_form_views_requires_v3",
+                format!(
+                    "Def type '{}' declares formViews, but the pack manifest formatVersion is {}. formViews requires formatVersion 3; all formViews declarations for this Def type are ignored.",
+                    def_type, manifest_format_version
+                ),
+            )
+            .with_pack_id(pack_id)
+            .with_path(path_label)
+            .with_field_path(format!("{}.formViews", def_type)),
+        );
+        if let Some(obj) = value.as_object_mut() {
+            obj.remove("formViews");
+        }
+    }
+
+    let mut def_file: DefTypeSchemaFile = if manifest_format_version < 3 {
+        // `formViews` has already been stripped above if it was present -- a v1/v2 pack never
+        // reaches the v3-only duplicate-id detection below, so deserializing from the
+        // already-built `value` (rather than raw text) loses nothing relevant here.
+        match serde_json::from_value(value) {
+            Ok(d) => d,
+            Err(e) => {
+                diags.push(
+                    SchemaLoadDiagnostic::error(
+                        "schema_pack_def_type_json_invalid",
+                        format!("Failed to deserialize def file: {}", e),
+                    )
+                    .with_pack_id(pack_id)
+                    .with_path(path_label),
+                );
+                return (None, diags);
+            }
+        }
+    } else {
+        // Deserialize directly from the original JSON text, not from the already-built `value`
+        // above: `serde_json::Value`'s `Map` construction silently collapses a duplicate object
+        // key (e.g. two `"formViews": { "weapon": {...}, "weapon": {...} }` entries) before we
+        // would ever see it. Deserializing straight from `raw_json` lets
+        // `DefTypeSchemaDef.form_views`'s custom `deserialize_form_views` (see model.rs) observe
+        // genuine duplicate keys via the flatten buffering's `MapAccess` and reject them as an
+        // ordinary deserialize error here.
+        //
+        // A structured field path (e.g. via `serde_path_to_error`) was investigated for a
+        // deserialize-level failure under `formViews` (e.g. `"label": 1` instead of a string),
+        // but `serde_path_to_error` cannot see through `DefTypeSchemaFile`'s `#[serde(flatten)]`
+        // field: flatten's derive-generated code buffers the whole object into an internal
+        // `Content` tree via a plain (untracked) deserialize, then redistributes each field from
+        // that buffer with a fresh, untracked deserializer -- so path tracking is lost the moment
+        // it crosses the flatten boundary, for any field, not just `formViews` (confirmed
+        // empirically: wrapping still produced `path() == "."`). Reworking `DefTypeSchemaFile`
+        // away from `flatten` to fix this would touch every field on `DefTypeSchemaDef`, which is
+        // disproportionate for this one diagnostic's precision. `serde_json::Error`'s `Display`
+        // already includes a line/column ("at line N column M"), which is included in the message
+        // below -- an acceptable fallback location hint without a structured field path.
+        match serde_json::from_str(raw_json) {
+            Ok(d) => d,
+            Err(e) => {
+                diags.push(
+                    SchemaLoadDiagnostic::error(
+                        "schema_pack_def_type_json_invalid",
+                        format!("Failed to deserialize def file: {}", e),
+                    )
+                    .with_pack_id(pack_id)
+                    .with_path(path_label),
+                );
+                return (None, diags);
+            }
         }
     };
 
@@ -644,7 +723,44 @@ pub fn parse_def_type_schema(
         }
     }
 
+    // Per Plan.md section 5, a malformed formViews shape, blank/reserved id, blank/missing
+    // label, impossible `disabled` combination, or contradictory/duplicate field list is fatal
+    // for the whole v3 Def schema file -- not a recoverable per-declaration skip. Mirror the same
+    // whole-file-rejection mechanism used above for a genuinely malformed def file. Only reached
+    // for a confirmed v3+ pack: a v1/v2 pack's formViews was already stripped to empty above, so
+    // this loop body never runs for it.
+    if manifest_format_version >= 3 && !def_file.schema.form_views.is_empty() {
+        let form_view_diags = validate_form_view_declarations(
+            &def_file.def_type,
+            pack_id,
+            path_label,
+            &def_file.schema.form_views,
+        );
+        if !form_view_diags.is_empty() {
+            diags.extend(form_view_diags);
+            return (None, diags);
+        }
+    }
+
     (Some(def_file), diags)
+}
+
+/// Whether `value`'s top-level `formViews` key is present with meaningful content: only a wholly
+/// absent key or an explicit empty object count as "no formViews" (nothing to gate or report,
+/// since both declare zero views). Any other shape counts as present -- including an explicit
+/// `null`: `null` is NOT equivalent to "key absent" here. `#[serde(default)]` on
+/// `DefTypeSchemaDef.form_views` only substitutes a default when the key is missing entirely, not
+/// when it is present-but-null, so an unstripped `formViews: null` would otherwise reach
+/// `serde_json::from_value` and fail to deserialize into `BTreeMap<String, FormViewDef>`, taking
+/// the whole v1/v2 Def-type file down with it (the same whole-file-loss bug a non-object shape
+/// like an array would cause if left unstripped). A non-empty object also counts as present, same
+/// as before.
+fn value_has_nonempty_form_views(value: &serde_json::Value) -> bool {
+    match value.get("formViews") {
+        None => false,
+        Some(serde_json::Value::Object(map)) => !map.is_empty(),
+        Some(_) => true,
+    }
 }
 
 /// Parse a single object type file. `pack_id` is used only for diagnostic context.
@@ -839,6 +955,7 @@ pub fn assemble_schema_pack(
     let pack_id = &manifest_file.pack_id;
 
     let mut def_types = BTreeMap::new();
+    let mut def_type_source_paths: BTreeMap<String, String> = BTreeMap::new();
     for (file_path, def_file) in def_files {
         let def_type = def_file.def_type.clone();
         if def_types.contains_key(&def_type) {
@@ -855,6 +972,14 @@ pub fn assemble_schema_pack(
             );
             continue;
         }
+
+        // formViews manifest-version gating and v3 structural validation both already happened
+        // in `parse_def_type_schema` (which needs the manifest's format version to decide whether
+        // to even attempt the v3-only checks -- see that function's doc comment). By the time a
+        // `DefTypeSchemaFile` reaches assembly, its `form_views` is already fully valid: empty for
+        // a v1/v2 pack (stripped at parse time with a `schema_pack_form_views_requires_v3`
+        // diagnostic already emitted), or fully validated for a v3+ pack.
+        def_type_source_paths.insert(def_type.clone(), file_path.to_string());
         def_types.insert(def_type, def_file.schema.clone());
     }
 
@@ -911,10 +1036,237 @@ pub fn assemble_schema_pack(
         def_types,
         object_types,
         patch_operations,
+        def_type_source_paths,
     };
 
     let _ = path_label;
     (Some(manifest), diags)
+}
+
+/// Return the first value in `items` that also appears earlier in `items` (a within-array
+/// duplicate), or `None` if every entry is unique. Used to reject e.g. `["apparel", "apparel"]`
+/// inside a single declaration's `hiddenFields`/`unhideFields`.
+fn first_duplicate_in_list(items: &[String]) -> Option<&str> {
+    let mut seen: std::collections::BTreeSet<&str> = std::collections::BTreeSet::new();
+    for item in items {
+        if !seen.insert(item.as_str()) {
+            return Some(item.as_str());
+        }
+    }
+    None
+}
+
+/// Validate one Def-type file's own `formViews` declarations for internal shape/consistency:
+/// blank/reserved id, blank/missing label, impossible `disabled` combinations, and contradictory
+/// or duplicate-within-array `hiddenFields`/`unhideFields`. Every one of these is listed in
+/// Plan.md section 5 as fatal for the whole v3 Def schema file, so this returns diagnostics only
+/// (not a sanitized map): `parse_def_type_schema` rejects the entire file -- the same mechanism
+/// already used for a genuinely malformed def file -- the moment this returns anything non-empty,
+/// rather than dropping just the offending declaration and keeping the rest.
+///
+/// A duplicate view id (two declarations sharing one JSON key) is caught earlier, during
+/// deserialization itself, by `model::deserialize_form_views` -- by the time a `formViews` map
+/// reaches this function, its keys are already known-unique.
+///
+/// Deliberately out of scope here (issue 03's job): resolving `hiddenFields`/`unhideFields`
+/// deltas against an inherited base, validating field ids against the real known field universe,
+/// and cross-pack/cross-type view precedence. This function only looks at one Def type's own
+/// declarations in isolation.
+fn validate_form_view_declarations(
+    def_type: &str,
+    pack_id: &str,
+    file_path: &str,
+    form_views: &BTreeMap<String, FormViewDef>,
+) -> Vec<SchemaLoadDiagnostic> {
+    let mut diags = Vec::new();
+
+    for (id, view) in form_views {
+        let field_path = format!("{}.formViews.{}", def_type, id);
+
+        if id.trim().is_empty() {
+            diags.push(
+                SchemaLoadDiagnostic::error(
+                    "schema_pack_form_view_blank_id",
+                    format!(
+                        "Def type '{}' has a formViews entry with a blank/whitespace-only id.",
+                        def_type
+                    ),
+                )
+                .with_pack_id(pack_id)
+                .with_path(file_path)
+                .with_field_path(field_path),
+            );
+            continue;
+        }
+
+        if id == "default" {
+            diags.push(
+                SchemaLoadDiagnostic::error(
+                    "schema_pack_form_view_reserved_id",
+                    format!(
+                        "Def type '{}' formViews id 'default' is reserved for the synthetic Default View and cannot be used as a schema-declared view id.",
+                        def_type
+                    ),
+                )
+                .with_pack_id(pack_id)
+                .with_path(file_path)
+                .with_field_path(field_path),
+            );
+            continue;
+        }
+
+        // "View-defining" metadata beyond the delta-only controls (hiddenFields/unhideFields/
+        // replace/disabled). A declaration carrying only delta controls (or `disabled: true`
+        // alone) is a legitimate amendment to an inherited view and needs no label of its own --
+        // issue 03 resolves it against the inherited base. A declaration carrying any of these is
+        // treated as defining a view outright and must have a nonblank label.
+        let has_view_metadata = view.description.is_some()
+            || view.icon.is_some()
+            || view.order.is_some()
+            || view.recommended.is_some();
+        let has_delta_content = view.hidden_fields.is_some()
+            || view.unhide_fields.is_some()
+            || view.replace.is_some()
+            || view.disabled.is_some();
+
+        // `disabled: true` combined with any other meaningful content is an impossible
+        // declaration (Plan.md section 5). This check must run before the label checks below:
+        // e.g. `{ "disabled": true, "description": "..." }` must be diagnosed as
+        // disabled-with-content, not misdiagnosed as a missing label.
+        if view.disabled == Some(true) {
+            let other_content = view.label.is_some()
+                || has_view_metadata
+                || view.hidden_fields.is_some()
+                || view.unhide_fields.is_some()
+                || view.replace.is_some();
+            if other_content {
+                diags.push(
+                    SchemaLoadDiagnostic::error(
+                        "schema_pack_form_view_disabled_with_content",
+                        format!(
+                            "Def type '{}' formViews entry '{}' sets disabled: true but also declares other content; disabled must be the only meaningful field on the declaration.",
+                            def_type, id
+                        ),
+                    )
+                    .with_pack_id(pack_id)
+                    .with_path(file_path)
+                    .with_field_path(field_path),
+                );
+                continue;
+            }
+        }
+
+        if view.label.is_none() && !has_view_metadata && !has_delta_content {
+            diags.push(
+                SchemaLoadDiagnostic::error(
+                    "schema_pack_form_view_empty_declaration",
+                    format!(
+                        "Def type '{}' formViews entry '{}' has no label and no other content (hiddenFields/unhideFields/replace/disabled/description/icon/order/recommended); the declaration is meaningless.",
+                        def_type, id
+                    ),
+                )
+                .with_pack_id(pack_id)
+                .with_path(file_path)
+                .with_field_path(field_path),
+            );
+            continue;
+        }
+
+        if let Some(label) = &view.label {
+            if label.trim().is_empty() {
+                diags.push(
+                    SchemaLoadDiagnostic::error(
+                        "schema_pack_form_view_blank_label",
+                        format!(
+                            "Def type '{}' formViews entry '{}' has a blank/whitespace-only label.",
+                            def_type, id
+                        ),
+                    )
+                    .with_pack_id(pack_id)
+                    .with_path(file_path)
+                    .with_field_path(field_path),
+                );
+                continue;
+            }
+        } else if has_view_metadata {
+            diags.push(
+                SchemaLoadDiagnostic::error(
+                    "schema_pack_form_view_missing_label",
+                    format!(
+                        "Def type '{}' formViews entry '{}' declares description/icon/order/recommended (a new view) but has no label. A pure delta amendment (hiddenFields/unhideFields/replace/disabled only) may omit the label.",
+                        def_type, id
+                    ),
+                )
+                .with_pack_id(pack_id)
+                .with_path(file_path)
+                .with_field_path(field_path),
+            );
+            continue;
+        }
+
+        if let Some(hidden) = &view.hidden_fields {
+            if let Some(dup) = first_duplicate_in_list(hidden) {
+                diags.push(
+                    SchemaLoadDiagnostic::error(
+                        "schema_pack_form_view_duplicate_hidden_field",
+                        format!(
+                            "Def type '{}' formViews entry '{}' lists field '{}' more than once in hiddenFields.",
+                            def_type, id, dup
+                        ),
+                    )
+                    .with_pack_id(pack_id)
+                    .with_path(file_path)
+                    .with_field_path(field_path),
+                );
+                continue;
+            }
+        }
+
+        if let Some(unhide) = &view.unhide_fields {
+            if let Some(dup) = first_duplicate_in_list(unhide) {
+                diags.push(
+                    SchemaLoadDiagnostic::error(
+                        "schema_pack_form_view_duplicate_unhide_field",
+                        format!(
+                            "Def type '{}' formViews entry '{}' lists field '{}' more than once in unhideFields.",
+                            def_type, id, dup
+                        ),
+                    )
+                    .with_pack_id(pack_id)
+                    .with_path(file_path)
+                    .with_field_path(field_path),
+                );
+                continue;
+            }
+        }
+
+        if let (Some(hidden), Some(unhide)) = (&view.hidden_fields, &view.unhide_fields) {
+            let unhide_set: std::collections::BTreeSet<&str> =
+                unhide.iter().map(String::as_str).collect();
+            let conflicting: Vec<&str> = hidden
+                .iter()
+                .map(String::as_str)
+                .filter(|f| unhide_set.contains(f))
+                .collect();
+            if !conflicting.is_empty() {
+                diags.push(
+                    SchemaLoadDiagnostic::error(
+                        "schema_pack_form_view_conflicting_hidden_unhide",
+                        format!(
+                            "Def type '{}' formViews entry '{}' lists field(s) {:?} in both hiddenFields and unhideFields.",
+                            def_type, id, conflicting
+                        ),
+                    )
+                    .with_pack_id(pack_id)
+                    .with_path(file_path)
+                    .with_field_path(field_path),
+                );
+                continue;
+            }
+        }
+    }
+
+    diags
 }
 
 fn discover_manifest_paths_in_root(root: &Path) -> Vec<PathBuf> {

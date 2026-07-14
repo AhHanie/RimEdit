@@ -1,0 +1,117 @@
+.root {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.select {
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  outline: none;
+  max-width: 220px;
+}
+
+.select:focus {
+  border-color: var(--border-focus);
+}
+
+.select option,
+.select optgroup {
+  background: var(--surface-editor);
+  color: var(--text-primary);
+}
+
+.sourceText {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.actionBtn {
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.actionBtn:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rightGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.overrideIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-primary);
+}
+
+.overrideText {
+  font-weight: 600;
+}
+
+/* Issue 08: accessible via wording ("N hidden field issue(s)", "(N blocking)"), not color alone.
+ * `--text-error` mirrors `.persistWarning`'s tone -- a hidden validation issue is a real, if
+ * non-blocking-to-view, problem the user should notice. */
+.hiddenIssuesIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-error);
+}
+
+.hiddenIssuesText {
+  font-weight: 600;
+}
+
+.linkBtn {
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 4px;
+  text-decoration: underline;
+}
+
+.linkBtn:hover {
+  opacity: 0.8;
+}
+
+/* Matches `FormViewManagerDialog`'s `.storeErrorText` warning/error tone -- a failed
+ * selection-persist attempt is a real (if non-blocking) problem, not routine status text. */
+.persistWarning {
+  font-size: 11px;
+  color: var(--text-error);
+}

@@ -1,6 +1,7 @@
 mod create_def;
 mod def_index;
 mod def_templates;
+mod form_views;
 mod graphic_preview;
 mod instrumentation;
 mod patches;
@@ -20,6 +21,11 @@ pub use def_index::{
 pub use def_templates::{
     create_def_from_indexed_def, create_def_from_user_template, delete_user_def_template,
     list_user_def_templates, save_user_def_template,
+};
+pub use form_views::{
+    create_custom_form_view, delete_custom_form_view, get_last_selected_form_view,
+    list_custom_form_views, reset_custom_form_view_store, set_last_selected_form_view,
+    update_custom_form_view,
 };
 pub use graphic_preview::resolve_graphic_preview_assets;
 pub use instrumentation::{get_instrumentation_config, set_instrumentation_enabled};

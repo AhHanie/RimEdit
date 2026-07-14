@@ -348,5 +348,65 @@
         "canHaveMap": "true"
       }
     }
+  },
+  "formViews": {
+    "world-object": {
+      "label": "World object",
+      "description": "General object lifecycle, selection, components, texture/shader, and naming fields.",
+      "order": 10,
+      "hiddenFields": [
+        "canHaveFaction",
+        "canBePlayerHome",
+        "treatAsPlayerHome",
+        "canResizeToGravship",
+        "requiresSignalJammerToReach",
+        "overrideMapSize",
+        "canHaveMap",
+        "validLaunchTarget",
+        "allowCaravanIncidentsWhichGenerateMap",
+        "isTempIncidentMapOwner",
+        "mapGenerator",
+        "rotateGraphicWhenTraveling",
+        "blockExitGridUntilBattleIsWon"
+      ]
+    },
+    "map-parent": {
+      "label": "Map parent",
+      "description": "Fields used to configure a world object that can generate a map.",
+      "order": 20,
+      "hiddenFields": [
+        "canHaveFaction",
+        "treatAsPlayerHome",
+        "validLaunchTarget",
+        "rotateGraphicWhenTraveling"
+      ]
+    },
+    "faction-location": {
+      "label": "Faction location",
+      "description": "Fields used to configure a faction-owned settlement or stationary location.",
+      "order": 30,
+      "hiddenFields": [
+        "validLaunchTarget",
+        "rotateGraphicWhenTraveling"
+      ]
+    },
+    "travelling-object": {
+      "label": "Travelling object",
+      "description": "Fields used to configure a caravan or other object that travels across the world map.",
+      "order": 40,
+      "hiddenFields": [
+        "canHaveFaction",
+        "canBePlayerHome",
+        "treatAsPlayerHome",
+        "canResizeToGravship",
+        "requiresSignalJammerToReach",
+        "overrideMapSize",
+        "canHaveMap",
+        "allowCaravanIncidentsWhichGenerateMap",
+        "isTempIncidentMapOwner",
+        "mapGenerator",
+        "blockExitGridUntilBattleIsWon"
+      ]
+    }
   }
 }

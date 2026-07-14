@@ -1,6 +1,7 @@
 use super::model::{
     DefTypeSchema, FieldSchema, ObjectTypeSchema, PatchOperationMetadata, SchemaCatalog,
 };
+use std::collections::BTreeMap;
 use std::collections::HashSet;
 
 /// Look up patch operation metadata by `className`. Covers both built-in operations (shipped as
@@ -157,6 +158,96 @@ fn collect_object_fields_recursive(
             }
         }
     }
+}
+
+/// Ancestor-first, keep-first-occurrence collection of a Def type's effective top-level field
+/// names, mirroring the frontend form renderer's `getAllSchemaFields`
+/// (`src/features/xml-editor/lib/formDescriptors.ts`) rather than this module's own
+/// `lookup_field`, which searches own fields first. Plan.md section 5 explicitly flags this
+/// discrepancy and requires Form View field-reference validation (issue 03) to match whichever
+/// field definition the form actually renders when a Def type and one of its ancestors both
+/// declare a field with the same name -- that is the ancestor's definition, kept from the first
+/// (parent-first) occurrence, with the child's own same-named redeclaration ignored for identity
+/// purposes (though its presence still keeps the name itself known).
+///
+/// Returns `(name, field)` pairs in the same order `getAllSchemaFields` would build them, so a
+/// caller that needs the resolved `FieldSchema` (not just the name) for a duplicate-named field
+/// gets the ancestor's version, not `lookup_field`'s own-first version. Most callers only need the
+/// name for a known/unknown-field-id membership check; use `.iter().map(|(n, _)| n)` for that.
+///
+/// A cycle in `inherits` is guarded the same way `lookup_field_recursive` guards field lookup.
+// Only exercised from `schema_pack::tests` today; a public entry point for future consumers
+// (e.g. issue 05+ frontend-facing commands), matching `lookup_object_type`/`lookup_object_field`'s
+// existing `#[allow(dead_code)]` convention below for the same reason.
+#[allow(dead_code)]
+pub fn collect_effective_top_level_def_fields(
+    catalog: &SchemaCatalog,
+    def_type: &str,
+) -> Vec<(String, FieldSchema)> {
+    collect_effective_top_level_def_fields_from_map(def_type, &catalog.def_types)
+}
+
+/// Same as `collect_effective_top_level_def_fields`, but operating directly on a
+/// `BTreeMap<String, DefTypeSchema>` under construction -- used by `merge::resolve_all_form_views`
+/// before a full `SchemaCatalog` exists (mirrors why `merge::collect_all_inherited_fields` takes
+/// the same shape of parameter for its own post-merge diagnostics).
+pub(crate) fn collect_effective_top_level_def_fields_from_map(
+    def_type: &str,
+    def_types: &BTreeMap<String, DefTypeSchema>,
+) -> Vec<(String, FieldSchema)> {
+    let mut ordered: Vec<(String, FieldSchema)> = Vec::new();
+    let mut seen: HashSet<String> = HashSet::new();
+    let mut visited: HashSet<String> = HashSet::new();
+    collect_effective_fields_recursive(def_type, def_types, &mut ordered, &mut seen, &mut visited);
+    ordered
+}
+
+fn collect_effective_fields_recursive(
+    def_type: &str,
+    def_types: &BTreeMap<String, DefTypeSchema>,
+    ordered: &mut Vec<(String, FieldSchema)>,
+    seen: &mut HashSet<String>,
+    visited: &mut HashSet<String>,
+) {
+    if !visited.insert(def_type.to_string()) {
+        return;
+    }
+    let Some(schema) = def_types.get(def_type) else {
+        return;
+    };
+    // Ancestors first so an inherited base field's definition precedes (and, on a duplicate
+    // name, wins over) the concrete type's own redeclaration -- matching
+    // `formDescriptors.ts`'s `getAllSchemaFields`.
+    for parent in &schema.inherits {
+        collect_effective_fields_recursive(parent, def_types, ordered, seen, visited);
+    }
+    for name in ordered_own_field_names(schema) {
+        if seen.insert(name.clone()) {
+            if let Some(field) = schema.fields.get(&name) {
+                ordered.push((name, field.clone()));
+            }
+        }
+    }
+}
+
+/// Order a Def type's own field names the same way `getOrderedSchemaFields` does on the frontend:
+/// `fieldOrder` entries that resolve to a known field, in that order, followed by any remaining
+/// known fields not mentioned in `fieldOrder`. `DefTypeSchema.field_order` may itself contain
+/// stray entries that don't resolve to a known field (see `schema_pack_field_order_unknown`), so
+/// this filters those out rather than assuming `field_order` is already a clean field-name list.
+fn ordered_own_field_names(schema: &DefTypeSchema) -> Vec<String> {
+    let mut ordered: Vec<String> = schema
+        .field_order
+        .iter()
+        .filter(|n| schema.fields.contains_key(*n))
+        .cloned()
+        .collect();
+    for name in schema.fields.keys() {
+        if !schema.field_order.contains(name) {
+            ordered.push(name.clone());
+        }
+    }
+    ordered
 }
 
 fn lookup_field_recursive<'a>(

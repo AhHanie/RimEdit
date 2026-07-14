@@ -82,8 +82,13 @@ export function TypedReferenceListEditor({
     ]);
   }
 
+  // Same empty-list DOM-anchor fallback as `ReferenceListEditor` (issue 08, Plan.md section 8):
+  // `inputId` normally lands on the first row; with zero items there is no row to carry it, so
+  // fall back to the container itself. Never set together with the row-level id.
+  const containerId = items.length === 0 ? inputId : undefined;
+
   return (
-    <div className={listStyles.listEditor} role="list">
+    <div className={listStyles.listEditor} role="list" id={containerId} tabIndex={containerId ? -1 : undefined}>
       {items.map((item, index) => (
         <div key={index} className={listStyles.listRow} role="listitem">
           <select

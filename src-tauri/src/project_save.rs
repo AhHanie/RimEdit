@@ -6,7 +6,7 @@ use crate::def_index::{load_or_rebuild_def_index, DefIndexBuildOptions};
 use crate::project_files::{validate_and_resolve, ProjectFileError};
 use crate::project_model::{AppError, ProjectSettings};
 use crate::rimworld_load_folders::read_load_folders_version_keys;
-use crate::schema_pack::build_schema_catalog;
+use crate::schema_pack::{build_schema_catalog, schema_pack_roots};
 use crate::xml_document::{
     parse_to_document, parse_xml_document, validate_about_metadata_document, validate_document,
     ValidationContext, XmlDocumentProfile,
@@ -246,7 +246,14 @@ pub fn validate_proposed_xml_with_index(
         doc.validation_diagnostics =
             validate_about_metadata_document(&doc, load_folders_versions.as_deref());
     } else {
-        let catalog_result = build_schema_catalog(&[], None);
+        // Same catalog-context policy as live document validation
+        // (`services::validation::validate_doc_for_project`/`validate_doc_for_source`): every
+        // registered location's root as a candidate external-schema-pack root, filtered by the
+        // project's selected game version. Save preview/final save must not diverge from what
+        // the live form/editor already validated against -- see Plan.md section 15's
+        // "catalog-context mismatch" and issue 09.
+        let roots = schema_pack_roots(settings);
+        let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
         let def_index = apply_replacement_overlay(
             base_index.clone(),
             settings,
@@ -994,6 +1001,49 @@ mod tests {
             preview_xml_save(&settings, &app_data_dir, "proj1", "file.xml", proposed).unwrap();
 
         assert!(preview.changed);
+
+        fs::remove_dir_all(&project_dir).ok();
+        fs::remove_dir_all(&app_data_dir).ok();
+    }
+
+    // Issue 09 finding 1 follow-up: save validation now filters by `settings.game_version`
+    // instead of the old version-blind `build_schema_catalog(&[], None)`. Reviewer concern
+    // (round 2): could an existing project whose configured game version doesn't resolve to ANY
+    // installed schema pack (e.g. a stale/orphaned version left over from a removed external
+    // pack) start seeing NEW save failures purely because of this filtering -- possibly even a
+    // genuinely NEW *blocking* diagnostic, not just a non-blocking "unknown def type" warning, if
+    // a conflicting version-agnostic pack were present? It cannot, because
+    // `schema_pack::filter_packs_by_game_version` treats an unresolvable selected version as
+    // equivalent to "no filter" (falls back to the full, unfiltered pack set) rather than
+    // silently narrowing to just the version-agnostic packs -- see the
+    // `schema_pack::tests::unresolvable_game_version_*` tests for the general mechanism,
+    // including the conflicting-pack scenario. This test proves the concrete save-path
+    // consequence: with only the built-in "1.6" pack installed and no external roots, the
+    // fallback here means "9.9" still resolves the FULL built-in catalog (not an empty one), so
+    // `ThingDef` is recognized normally and save succeeds cleanly -- consistent with what the
+    // live editor/`validate_doc_for_project` already show for the same project (both fixed
+    // together in issue 09) rather than a new, save-specific regression.
+    #[test]
+    fn save_validation_is_not_blocked_by_an_unresolvable_configured_game_version() {
+        let project_dir = temp_dir();
+        let app_data_dir = temp_dir();
+        let file_path = project_dir.join("file.xml");
+        fs::write(&file_path, VALID_XML).unwrap();
+
+        let mut settings = make_settings(&project_dir);
+        // No installed schema pack targets "9.9" -- the built-in pack only targets "1.6", and no
+        // external pack root is registered, so this game version is unresolvable and the
+        // fallback (full, unfiltered catalog) applies.
+        settings.game_version = "9.9".to_string();
+
+        let result =
+            validate_proposed_xml(&settings, &app_data_dir, "proj1", "file.xml", VALID_XML_2);
+
+        assert!(
+            result.is_ok(),
+            "an unresolvable configured game version must not newly block save: {:?}",
+            result
+        );
 
         fs::remove_dir_all(&project_dir).ok();
         fs::remove_dir_all(&app_data_dir).ok();

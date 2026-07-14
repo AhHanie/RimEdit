@@ -26,6 +26,14 @@ interface Props {
   nestedDepth?: number;
 }
 
+/** Stable DOM id for a field's primary input, derived from its canonical `FormFieldId`. Exported
+ * so other components can look up/focus a control's DOM node without duplicating this
+ * sanitization -- e.g. `XmlFormEditor`'s Form View "reveal and focus" flow (issue 08, Plan.md
+ * section 8: "focuses/scrolls to the first rendered field" after `Reveal fields with issues`). */
+export function fieldInputDomId(fieldId: string): string {
+  return `field-${fieldId.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
+}
+
 export const FormFieldControl = React.memo(
   function FormFieldControl({
     fieldId,
@@ -53,7 +61,7 @@ export const FormFieldControl = React.memo(
       return null;
     }
 
-    const inputId = `field-${model.id.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
+    const inputId = fieldInputDomId(model.id);
     const visibleErrors =
       field.touched || field.error ? field.validationErrors : [];
 
@@ -144,7 +152,7 @@ function FieldInput({ inputId, field, formApi }: FieldInputProps) {
     model.control === "objectList" &&
     value.kind === "objectList"
   ) {
-    return <ObjectListEditor field={field} formApi={formApi} readOnly />;
+    return <ObjectListEditor field={field} formApi={formApi} readOnly id={inputId} />;
   }
 
   if (isReadOnlyView) {
@@ -333,7 +341,7 @@ function FieldInput({ inputId, field, formApi }: FieldInputProps) {
 
     case "objectList":
       if (field.value.kind === "objectList") {
-        return <ObjectListEditor field={field} formApi={formApi} />;
+        return <ObjectListEditor field={field} formApi={formApi} id={inputId} />;
       }
       return (
         <span
@@ -436,8 +444,19 @@ function ListEditor({ inputId, field, formApi }: ListEditorProps) {
     formApi.setFieldValue(field.model.id, listFormValue(next));
   }
 
+  // `inputId` normally lands on the first row's input (below). With zero items there is no row
+  // to carry it - fall back to the container itself as a DOM anchor Form Views' "reveal and
+  // focus" flow (issue 08, Plan.md section 8) can always find, even for a required-but-absent
+  // list field right after it is revealed. Never set together with the row-level id.
+  const containerId = items.length === 0 ? inputId : undefined;
+
   return (
-    <div className={styles.listEditor} role="list">
+    <div
+      className={styles.listEditor}
+      role="list"
+      id={containerId}
+      tabIndex={containerId ? -1 : undefined}
+    >
       {items.map((item, index) => (
         <div key={index} className={styles.listRow} role="listitem">
           <input
@@ -595,8 +614,18 @@ function NamedMapEditor({ inputId, field, formApi }: NamedMapEditorProps) {
 
   const useKeyPicker = !!(model.keyReference && projectId);
 
+  // `inputId` normally lands on the first row's key input (below). With zero entries there is
+  // no row to carry it - fall back to the container itself as a DOM anchor Form Views' "reveal
+  // and focus" flow (issue 08, Plan.md section 8) can always find. Never set together with the
+  // row-level id.
+  const containerId = entries.length === 0 ? inputId : undefined;
+
   return (
-    <div className={styles.namedMapEditor}>
+    <div
+      className={styles.namedMapEditor}
+      id={containerId}
+      tabIndex={containerId ? -1 : undefined}
+    >
       {entries.map((entry, index) => (
         <div key={index} className={styles.mapRow}>
           {useKeyPicker ? (

@@ -34,9 +34,17 @@ interface Props {
   field: FormFieldState;
   formApi: XmlFormApi;
   readOnly?: boolean;
+  /** DOM id for this control's root container (`fieldInputDomId(field.model.id)`, passed by
+   * `FormFieldControl`). Unlike every other control kind, `ObjectListEditor` has no single
+   * natural `<input>` to carry this id -- it may render zero, one, or many nested item rows.
+   * Placed on the root container (with `tabIndex={-1}` so it is programmatically focusable
+   * without joining normal Tab order) instead of a specific child so Form Views' "reveal and
+   * focus" flow (issue 08, Plan.md section 8) has a stable, always-present target to scroll to
+   * and focus regardless of how many items this field currently has. */
+  id?: string;
 }
 
-export function ObjectListEditor({ field, formApi, readOnly = false }: Props) {
+export function ObjectListEditor({ field, formApi, readOnly = false, id }: Props) {
   const { catalog } = useXmlEditorContext();
   const items = field.value.kind === "objectList" ? field.value.items : [];
   const baseSchemaRef = field.model.itemSchemaRef ?? "";
@@ -107,7 +115,7 @@ export function ObjectListEditor({ field, formApi, readOnly = false }: Props) {
   }
 
   return (
-    <div className={styles.editor}>
+    <div className={styles.editor} id={id} tabIndex={-1}>
       {items.map((item, index) => (
         <ObjectListItem
           key={

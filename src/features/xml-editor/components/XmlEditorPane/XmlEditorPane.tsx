@@ -12,6 +12,8 @@ import type { TemplateFieldValue } from "../../types/createDef";
 import type { IndexedDef } from "../../../def-index";
 import { useXmlEditorSession, type XmlEditorFileRef } from "../../hooks/useXmlEditorSession";
 import { useXmlFormController } from "../../hooks/useXmlFormController";
+import { useFormViews } from "../../../form-views/hooks/useFormViews";
+import { FORM_VIEW_SELECTOR_SELECT_ID } from "../../../form-views/components/FormViewSelector/FormViewSelector";
 import { XmlEditorContextProvider } from "../../context/XmlEditorContext";
 import { XmlEditorToolbar } from "../XmlEditorToolbar/XmlEditorToolbar";
 import { XmlFormEditor } from "../XmlFormEditor/XmlFormEditor";
@@ -26,6 +28,10 @@ interface Props {
   projectId: string | undefined;
   file: XmlEditorFileRef | undefined;
   catalog: SchemaCatalog | null;
+  /** Form Views (issue 06) are scoped by `{project, gameVersion, defType}` -- threaded down from
+   * `ProjectSettings.gameVersion` (`AppShell` -> `EditorWorkspace` -> here) so `useFormViews` can
+   * resolve/persist selections against the right custom-view scope. */
+  gameVersion?: string;
   hasOpenTabs: boolean;
   active?: boolean;
   selectedDefNodeId?: number;
@@ -41,6 +47,7 @@ export function XmlEditorPane({
   projectId,
   file,
   catalog,
+  gameVersion,
   hasOpenTabs,
   active,
   selectedDefNodeId,
@@ -66,12 +73,52 @@ export function XmlEditorPane({
         selectedDefNodeId: null,
       }
     : null;
+  // Hoisted early (before any conditional return) because `useFormViews` must be called
+  // unconditionally like every other hook here. Reused below (unchanged) for the
+  // save-as-template/patch-preview-target computations that used to duplicate this lookup.
+  const selectedDefNodeIdEarly = session?.lastValidSnapshot?.selectedDefNodeId ?? null;
+  const selectedDefEarly =
+    editorSnapshot?.parsed?.defs.find((d) => d.nodeId === selectedDefNodeIdEarly) ?? null;
+  const selectedDefOrdinalEarly = selectedDefEarly
+    ? (editorSnapshot?.parsed?.defs.findIndex((d) => d.nodeId === selectedDefEarly.nodeId) ?? -1)
+    : -1;
+  const documentProfileEarly = editorSnapshot?.parsed?.profile;
+
+  const formViews = useFormViews({
+    projectId: projectId ?? null,
+    gameVersion,
+    catalog,
+    pane: file
+      ? { locationId: file.locationId, relativePath: file.relativePath, sourceKind: file.sourceKind }
+      : null,
+    selectedDef:
+      documentProfileEarly === "defs" && selectedDefEarly && selectedDefOrdinalEarly >= 0
+        ? { defType: selectedDefEarly.defType, ordinal: selectedDefOrdinalEarly }
+        : null,
+  });
+
+  // Form Views (issue 05's `onFocusedFieldHidden` signal, wired up by issue 06): when a view
+  // switch hides the top-level root of the field the user was actually focused in (real DOM
+  // focus, not a click-triggered blur -- see the doc comment on `useXmlFormController`), that
+  // control unmounts and focus would otherwise fall back to `document.body`/nowhere. Redirect it
+  // to the Form View selector's `<select>` -- always present whenever Form View controls are
+  // applicable at all -- so the user lands somewhere meaningful instead of losing focus outright
+  // (Plan.md section 7: "restore focus to the selector/customize control if the focused field is
+  // removed"). A plain DOM id lookup (rather than threading a ref through `XmlFormEditor` into
+  // `FormViewSelector`) keeps this a one-line, low-coupling fix; `FormViewSelector` already
+  // exports this id for exactly this purpose.
+  const onFocusedFieldHidden = useCallback(() => {
+    document.getElementById(FORM_VIEW_SELECTOR_SELECT_ID)?.focus();
+  }, []);
+
   const formApi = useXmlFormController({
     snapshot: editorSnapshot,
     catalog,
     selectedDefNodeId: session?.lastValidSnapshot?.selectedDefNodeId ?? null,
     commitEdits: session?.applyFormEdits ?? (() => Promise.resolve("")),
     clearPreview: session?.clearSavePreview ?? (() => undefined),
+    visibleTopLevelFieldIds: formViews.visibleTopLevelFieldIds,
+    onFocusedFieldHidden,
   });
   const effectiveDirty =
     !!session && !session.readOnly && (session.dirty || formApi.hasDraftChanges || formApi.hasPendingCommits);
@@ -324,12 +371,10 @@ export function XmlEditorPane({
     ...activeSession.currentValidationDiagnostics,
   ];
 
-  const selectedDefNodeIdForTemplate =
-    activeSession.lastValidSnapshot?.selectedDefNodeId ?? null;
-  const selectedDefForTemplate =
-    activeEditorSnapshot.parsed?.defs.find(
-      (d) => d.nodeId === selectedDefNodeIdForTemplate,
-    ) ?? null;
+  // Reuses the hoisted-early lookup (computed before the loading/error early returns above,
+  // where every hook call including `useFormViews` must happen) instead of recomputing the same
+  // find/findIndex over `activeEditorSnapshot.parsed.defs` a second time.
+  const selectedDefForTemplate = selectedDefEarly;
   const canSaveAsTemplate =
     !file.readOnly &&
     editorSession.isBufferValid &&
@@ -351,12 +396,9 @@ export function XmlEditorPane({
   // The Def's zero-based position among this file's own top-level Defs -- matches the ordinal
   // `xml_document::def_summary::extract_def_summaries` assigns on the backend for the same file,
   // so the preview engine can resolve this exact opened Def by file origin + ordinal instead of a
-  // same-named lookup across every registered location (see `PatchPreviewTarget`).
-  const selectedDefOrdinalForPreview = selectedDefForTemplate
-    ? (activeEditorSnapshot.parsed?.defs.findIndex(
-        (d) => d.nodeId === selectedDefForTemplate.nodeId,
-      ) ?? -1)
-    : -1;
+  // same-named lookup across every registered location (see `PatchPreviewTarget`). Reuses the
+  // hoisted-early computation (also fed to `useFormViews`) rather than recomputing it.
+  const selectedDefOrdinalForPreview = selectedDefOrdinalEarly;
   const previewTarget: PatchPreviewTarget | null =
     selectedDefForTemplate != null &&
     selectedDefIdentityForPreview != null &&
@@ -441,6 +483,7 @@ export function XmlEditorPane({
               selectedDefNodeId={activeSession.lastValidSnapshot?.selectedDefNodeId ?? null}
               onSelectDef={handleSelectDef}
               formApi={formApi}
+              formViews={formViews}
             />
           </XmlEditorContextProvider>
         ) : (

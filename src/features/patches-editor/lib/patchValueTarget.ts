@@ -1,6 +1,15 @@
 import type { FieldSchema, SchemaCatalog } from "../../schema-catalog";
 import type { XPathTarget } from "../types/xpathCompletion";
 
+// Issue 09 (Plan.md section 11): none of the helpers in this file consult
+// `DefTypeSchema.formViews`, and they never should. Form Views filter a Def's *canonical
+// top-level schema fields*, but the fields resolved here describe an Add/Insert/AddModExtension
+// operation's `<value>` XPath target -- a fragment that only sometimes maps 1:1 to one top-level
+// field (hence `listDirectDefTypeFields`'s "direct-only" restriction and the narrow
+// `modExtensions` special case below). A complete Def's `formViews` cannot safely filter these
+// operation-value fields or arbitrary XPath payloads; a patch-specific Form View design would
+// need its own schema metadata (see `PatchEditorPane`'s doc comment for the fuller rationale).
+
 /** Which patch operation kinds can carry a structured `<value>` payload. `"custom"` covers
  * metadata-defined operation fields with `role: "xmlValue"` -- these never resolve to a Def
  * schema field (they aren't xpath-targeted at all), so they always fall back to raw XML; the

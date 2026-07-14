@@ -37,7 +37,19 @@ function toParseDiagnostics(diagnostics: PatchDiagnostic[], relativePath: string
  * `XmlFormEditor` when the open file's root element is `<Patch>` (see `XmlEditorPane`'s routing).
  * Reuses the session's raw XML buffer/undo/save-preview flow unchanged -- every tree edit
  * reserializes to XML text and calls `onChangeRawXml`, exactly like the raw XML editor's
- * `onChange`. */
+ * `onChange`.
+ *
+ * Form Views (`features/form-views`, Plan.md section 11) intentionally do not apply here and
+ * have no wiring into this component or `patchValueTarget.ts`. A complete Def's `formViews`
+ * hide/show *canonical top-level `DefTypeSchema` fields*, but this tree edits an operation AST
+ * (`xpath`, raw `valueXml`, nested operations) whose "value" fields are XPath-derived fragments
+ * that only *sometimes* correspond 1:1 with a target Def's direct schema fields -- see
+ * `patchValueTarget.ts`'s `listDirectDefTypeFields`, which already special-cases "direct schema
+ * fields only" and `modExtensions` for exactly this reason. Reusing a Def's `formViews` to filter
+ * operation fields or `<value>` payloads would silently hide/misrepresent XPath targets that
+ * don't correspond to a single top-level field. A patch-specific Form View design (its own
+ * schema-pack metadata, e.g. a hypothetical `patchOperationFormViews`) is deferred; do not wire
+ * `useFormViews`/`FormViewSelector` into this pane until that design exists. */
 export function PatchEditorPane({ relativePath, rawXml, readOnly, catalog, projectId, onChangeRawXml, registerFlush }: Props) {
   const { patchFile, loading, error, setOperations, generateId, flush } = usePatchOperationTree({
     relativePath,

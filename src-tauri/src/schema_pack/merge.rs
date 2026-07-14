@@ -1,12 +1,24 @@
 use super::loader::LoadedPack;
+use super::lookup::collect_effective_top_level_def_fields_from_map;
 use super::model::{
-    DefTemplate, DefTypeSchema, FieldSchema, FieldSchemaDef, FieldTypeKind,
-    LoadedSchemaPackSummary, ObjectTypeSchema, PatchOperationMetadata, PatchOperationMetadataDef,
-    PatchOperationPreview, PatchOperationPreviewDef, PatchOperationPreviewKind, SchemaCatalog,
-    SchemaLoadDiagnostic, SchemaPackSourceKind, ValidationRule, XmlFieldShape,
+    DefTemplate, DefTypeSchema, FieldSchema, FieldSchemaDef, FieldTypeKind, FormViewDef,
+    FormViewSource, LoadedSchemaPackSummary, ObjectTypeSchema, PatchOperationMetadata,
+    PatchOperationMetadataDef, PatchOperationPreview, PatchOperationPreviewDef,
+    PatchOperationPreviewKind, SchemaCatalog, SchemaFormView, SchemaLoadDiagnostic,
+    SchemaPackSourceKind, ValidationRule, XmlFieldShape,
 };
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
+use std::collections::HashMap;
 use std::collections::HashSet;
+
+/// One pack's `FormViewDef` declarations for a single def type -- either the raw, as-authored form
+/// (`raw_form_view_layers`) or the sanitized form after unknown-field-reference filtering
+/// (`sanitize_form_view_layers`'s output) -- tagged with that pack's id, version, and the source
+/// file path of the Def-type JSON that declared it (`(pack_id, pack_version, path, decls)`).
+/// Plan.md section 5 requires recoverable diagnostics to expose pack, path, and field path so an
+/// author of an external pack can locate the offending file.
+type PackFormViewDecls = (String, String, String, BTreeMap<String, FormViewDef>);
 
 /// Merge a set of loaded packs into a single catalog.
 ///
@@ -59,6 +71,14 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
     let mut merged_object_types: BTreeMap<String, ObjectTypeSchema> = BTreeMap::new();
     let mut merged_patch_operations: BTreeMap<String, PatchOperationMetadata> = BTreeMap::new();
     let mut summaries: Vec<LoadedSchemaPackSummary> = Vec::new();
+    // Raw `FormViewDef` declarations per def type, one entry per contributing pack, in the same
+    // pack-precedence order as `deduped` (lowest precedence first). Form View resolution
+    // (`resolve_all_form_views`) folds these together with each def type's ancestor chain after
+    // every pack has been merged -- see the call site below for why this can't happen inline in
+    // this loop (a def type's ancestors, and their own form_views declarations, may not have been
+    // visited yet, and `SchemaCatalog.defTypes[defType].formViews` must be the fully resolved
+    // result, not a partial pack-precedence-only layer).
+    let mut raw_form_view_layers: BTreeMap<String, Vec<PackFormViewDecls>> = BTreeMap::new();
 
     for pack in &deduped {
         let source_kind = if pack.is_builtin {
@@ -92,6 +112,9 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
                     fields: BTreeMap::new(),
                     templates: BTreeMap::new(),
                     validation_rules: BTreeMap::new(),
+                    // Issue 01 scope only: resolution of FormViewDef declarations into
+                    // SchemaFormView entries is issue 03's job.
+                    form_views: BTreeMap::new(),
                 });
 
             // Scalar fields: later pack wins when explicitly provided.
@@ -158,6 +181,27 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
             for (rule_id, rule) in &incoming_def.validation_rules {
                 entry.validation_rules.insert(rule_id.clone(), rule.clone());
             }
+
+            // Form Views: record this pack's raw declarations for this def type; resolution
+            // (pack precedence + Def-type inheritance) happens once, after every pack and every
+            // def type's `inherits` chain is known (see `resolve_all_form_views` below).
+            if !incoming_def.form_views.is_empty() {
+                let source_path = pack
+                    .manifest
+                    .def_type_source_paths
+                    .get(def_name)
+                    .cloned()
+                    .unwrap_or_default();
+                raw_form_view_layers
+                    .entry(def_name.clone())
+                    .or_default()
+                    .push((
+                        pack.manifest.pack_id.clone(),
+                        pack.manifest.version.clone(),
+                        source_path,
+                        incoming_def.form_views.clone(),
+                    ));
+            }
         }
 
         for (obj_name, incoming_obj) in &pack.manifest.object_types {
@@ -191,6 +235,17 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
                 &pack.manifest.pack_id,
                 diags,
             );
+        }
+    }
+
+    // Resolve schema-defined Form Views (issue 03): fold pack-precedence overlays and Def-type
+    // inheritance for every def type now that `merged_def_types` (fields + `inherits`) is
+    // complete. See `resolve_all_form_views` for the algorithm.
+    let resolved_form_views =
+        resolve_all_form_views(&merged_def_types, &raw_form_view_layers, diags);
+    for (def_name, views) in resolved_form_views {
+        if let Some(entry) = merged_def_types.get_mut(&def_name) {
+            entry.form_views = views;
         }
     }
 
@@ -735,4 +790,451 @@ fn merge_field_order(current: &mut Vec<String>, incoming: &[String], new_fields:
             current.push(name.clone());
         }
     }
+}
+
+// ---------------------------------------------------------------------------
+// Form View resolution (issue 03)
+//
+// Plan.md section 5's resolution rules are implemented in three passes:
+//
+//   1. `sanitize_form_view_layers` validates every def type's own `hiddenFields`/`unhideFields`
+//      references against ITS OWN known top-level field universe (not any consuming descendant's
+//      expanded universe -- see its doc comment for why) and strips unknown references, producing
+//      a sanitized copy of `raw_form_view_layers`.
+//   2. `compute_effective_layers` flattens a def type's full declaration history -- every
+//      ancestor's own sanitized declarations (parent-first, `inherits` order), then this def
+//      type's own -- into one ordered, deduplicated list. A def type reachable through more than
+//      one `inherits` path (diamond inheritance) still contributes its own declarations exactly
+//      once, at the position dictated by the first path that reaches it.
+//   3. `fold_effective_layers` walks that flattened list and applies each declaration via
+//      `apply_form_view_declaration`, in order. For a multi-parent def type this means parent B's
+//      full contribution (its own ancestors' declarations plus B's own) is folded in before parent
+//      C's, before the child's own declarations -- so a same-view-id delta from two *different*
+//      parents (e.g. B hides an extra field, C unhides a field their shared grandparent hid) both
+//      survive in the child, rather than one sibling's contribution wholesale-replacing the
+//      other's. See `diamond_inheritance_merges_both_parents_deltas_into_the_child` for the exact
+//      scenario this guards against.
+//
+// Because a shared ancestor's declarations can be folded more than once -- once for its own
+// top-level resolution, and again inside every descendant's resolution -- `apply_form_view_declaration`'s
+// "amendment with no inherited base" diagnostic is deduplicated via a `diagnosed_amendments_without_base`
+// set (keyed by declaring def type/pack/view id, shared across the whole `resolve_all_form_views`
+// call) so the same underlying declaration never produces more than one diagnostic no matter how
+// many descendants pull it in. `sanitize_form_view_layers`'s unknown-field-reference diagnostics
+// don't need this treatment: that pass runs exactly once per (def type, pack) pair, with no
+// folding/repetition involved.
+// ---------------------------------------------------------------------------
+
+/// One flattened entry in a def type's full declaration history (`compute_effective_layers`):
+/// like `PackFormViewDecls`, but additionally tagged with the concrete def type that owns/declared
+/// it, since a flattened list mixes declarations from every def type in the ancestor chain.
+type EffectiveFormViewLayer = (
+    String,
+    String,
+    String,
+    String,
+    BTreeMap<String, FormViewDef>,
+);
+
+/// Resolve `DefTypeSchema.form_views` for every def type in the merged catalog. See the module
+/// section comment above for the pipeline (sanitize -> flatten -> fold).
+fn resolve_all_form_views(
+    def_types: &BTreeMap<String, DefTypeSchema>,
+    raw_form_view_layers: &BTreeMap<String, Vec<PackFormViewDecls>>,
+    diags: &mut Vec<SchemaLoadDiagnostic>,
+) -> BTreeMap<String, BTreeMap<String, SchemaFormView>> {
+    let sanitized_layers = sanitize_form_view_layers(def_types, raw_form_view_layers, diags);
+
+    let mut layer_cache: HashMap<String, EffectiveLayerState> = HashMap::new();
+    let mut diagnosed_amendments_without_base: HashSet<(String, String, String)> = HashSet::new();
+    let mut resolved: BTreeMap<String, BTreeMap<String, SchemaFormView>> = BTreeMap::new();
+
+    for def_type in def_types.keys() {
+        let layers =
+            compute_effective_layers(def_type, def_types, &sanitized_layers, &mut layer_cache);
+        let views = fold_effective_layers(&layers, &mut diagnosed_amendments_without_base, diags);
+        resolved.insert(def_type.clone(), views);
+    }
+    resolved
+}
+
+/// Validate every def type's own `hiddenFields`/`unhideFields` references against ITS OWN known
+/// top-level field universe (`collect_effective_top_level_def_fields_from_map`), stripping unknown
+/// entries and emitting `schema_pack_form_view_unknown_field_reference` warnings.
+///
+/// Deliberately validates against the OWNER def type's own field universe, not any consuming
+/// descendant's expanded universe reached via `compute_effective_layers`: a pack author writes a
+/// `hiddenFields` reference in the context of the concrete def type the declaration is attached
+/// to, so that is the correct scope to validate against. It also keeps the check a pure function
+/// of the declaration alone -- the same verdict every time, regardless of how many descendants
+/// later fold it in -- which is why this pass produces no duplicate diagnostics without needing
+/// the fold-time dedup guard that "amendment with no inherited base" requires below.
+fn sanitize_form_view_layers(
+    def_types: &BTreeMap<String, DefTypeSchema>,
+    raw_form_view_layers: &BTreeMap<String, Vec<PackFormViewDecls>>,
+    diags: &mut Vec<SchemaLoadDiagnostic>,
+) -> BTreeMap<String, Vec<PackFormViewDecls>> {
+    let mut sanitized: BTreeMap<String, Vec<PackFormViewDecls>> = BTreeMap::new();
+    for (def_type, layers) in raw_form_view_layers {
+        let known_fields: HashSet<String> =
+            collect_effective_top_level_def_fields_from_map(def_type, def_types)
+                .into_iter()
+                .map(|(name, _)| name)
+                .collect();
+
+        let mut sanitized_layers: Vec<PackFormViewDecls> = Vec::with_capacity(layers.len());
+        for (pack_id, pack_version, path, decls) in layers {
+            let mut sanitized_decls: BTreeMap<String, FormViewDef> = BTreeMap::new();
+            for (view_id, view_def) in decls {
+                // Defensive only: issue 02 already fatally rejects a "default" declared id at
+                // parse time, so this should never occur here -- but never let it silently
+                // participate in resolution if it somehow does (e.g. a future loader regression).
+                if view_id == "default" {
+                    continue;
+                }
+                let field_path = format!("{def_type}.formViews.{view_id}");
+                let mut sanitized_def = view_def.clone();
+                if let Some(hidden) = &view_def.hidden_fields {
+                    sanitized_def.hidden_fields = Some(filter_known_field_refs(
+                        hidden,
+                        "hiddenFields",
+                        &known_fields,
+                        view_id,
+                        def_type,
+                        pack_id,
+                        path,
+                        &field_path,
+                        diags,
+                    ));
+                }
+                if let Some(unhide) = &view_def.unhide_fields {
+                    sanitized_def.unhide_fields = Some(filter_known_field_refs(
+                        unhide,
+                        "unhideFields",
+                        &known_fields,
+                        view_id,
+                        def_type,
+                        pack_id,
+                        path,
+                        &field_path,
+                        diags,
+                    ));
+                }
+                sanitized_decls.insert(view_id.clone(), sanitized_def);
+            }
+            sanitized_layers.push((
+                pack_id.clone(),
+                pack_version.clone(),
+                path.clone(),
+                sanitized_decls,
+            ));
+        }
+        sanitized.insert(def_type.clone(), sanitized_layers);
+    }
+    sanitized
+}
+
+enum EffectiveLayerState {
+    InProgress,
+    Done(Vec<EffectiveFormViewLayer>),
+}
+
+/// Flatten a def type's full Form View declaration history -- every ancestor's own sanitized
+/// declarations (parent-first, `inherits` order), then this def type's own -- into one ordered
+/// list, deduplicated by `(owner_def_type, pack_id)` so a def type reachable through more than one
+/// `inherits` path (diamond inheritance) contributes its own declarations exactly once, at the
+/// position dictated by the first path that reaches it.
+///
+/// A cycle in `inherits` is guarded the same way `collect_fields_recursive` guards field
+/// traversal: a def type revisited while still in progress contributes no further layers for that
+/// occurrence, silently -- matching the existing field-traversal cycle behavior (no new
+/// diagnostic is added here for a cycle that field resolution doesn't already diagnose either).
+fn compute_effective_layers(
+    def_type: &str,
+    def_types: &BTreeMap<String, DefTypeSchema>,
+    sanitized_layers: &BTreeMap<String, Vec<PackFormViewDecls>>,
+    cache: &mut HashMap<String, EffectiveLayerState>,
+) -> Vec<EffectiveFormViewLayer> {
+    match cache.get(def_type) {
+        Some(EffectiveLayerState::Done(layers)) => return layers.clone(),
+        Some(EffectiveLayerState::InProgress) => return Vec::new(),
+        None => {}
+    }
+    cache.insert(def_type.to_string(), EffectiveLayerState::InProgress);
+
+    let mut result: Vec<EffectiveFormViewLayer> = Vec::new();
+    let mut seen: HashSet<(String, String)> = HashSet::new();
+
+    if let Some(schema) = def_types.get(def_type) {
+        for parent in &schema.inherits {
+            let parent_layers =
+                compute_effective_layers(parent, def_types, sanitized_layers, cache);
+            for layer in parent_layers {
+                let key = (layer.0.clone(), layer.1.clone());
+                if seen.insert(key) {
+                    result.push(layer);
+                }
+            }
+        }
+    }
+
+    if let Some(own) = sanitized_layers.get(def_type) {
+        for (pack_id, pack_version, path, decls) in own {
+            let key = (def_type.to_string(), pack_id.clone());
+            if seen.insert(key) {
+                result.push((
+                    def_type.to_string(),
+                    pack_id.clone(),
+                    pack_version.clone(),
+                    path.clone(),
+                    decls.clone(),
+                ));
+            }
+        }
+    }
+
+    cache.insert(
+        def_type.to_string(),
+        EffectiveLayerState::Done(result.clone()),
+    );
+    result
+}
+
+/// Apply a flattened, ordered list of Form View declarations (see `compute_effective_layers`) via
+/// `apply_form_view_declaration`, building the final resolved `SchemaFormView` map for one
+/// concrete def type. `diagnosed_amendments_without_base` deduplicates the "amendment with no
+/// inherited base" diagnostic across repeated folds of the same shared-ancestor declaration (see
+/// the module section comment above).
+fn fold_effective_layers(
+    layers: &[EffectiveFormViewLayer],
+    diagnosed_amendments_without_base: &mut HashSet<(String, String, String)>,
+    diags: &mut Vec<SchemaLoadDiagnostic>,
+) -> BTreeMap<String, SchemaFormView> {
+    let mut current: BTreeMap<String, SchemaFormView> = BTreeMap::new();
+    for (owner_def_type, pack_id, pack_version, path, decls) in layers {
+        for (view_id, view_def) in decls {
+            let field_path = format!("{owner_def_type}.formViews.{view_id}");
+            let base = current.get(view_id).cloned();
+            let result = apply_form_view_declaration(
+                owner_def_type,
+                view_id,
+                base.as_ref(),
+                view_def,
+                pack_id,
+                pack_version,
+                path,
+                &field_path,
+                diagnosed_amendments_without_base,
+                diags,
+            );
+            match result {
+                Some(view) => {
+                    current.insert(view_id.clone(), view);
+                }
+                None => {
+                    current.remove(view_id);
+                }
+            }
+        }
+    }
+    current
+}
+
+/// Apply one `FormViewDef` amendment/new-declaration onto an optional existing resolved base view
+/// for the same `{defType, viewId}`, implementing Plan.md section 5's resolution rules 3-4:
+/// `disabled` first, then `replace` (clears the inherited hidden set), then `hiddenFields`
+/// additions / `unhideFields` removals on top; any explicitly provided
+/// label/description/icon/order/recommended overrides the inherited value, an omitted one
+/// inherits. The final declaration's pack id/version and def type become the view's provenance,
+/// even when the declaration is a pure delta amendment.
+///
+/// Field references have already been validated/filtered by `sanitize_form_view_layers` before
+/// this function ever runs, so `incoming.hidden_fields`/`incoming.unhide_fields` are assumed to
+/// already be a subset of the declaring def type's known fields -- and, by the monotonic growth of
+/// fields down an inheritance chain, also known to every descendant that later folds this
+/// declaration in.
+///
+/// `base` may come from either an ancestor def type's already-resolved view (Def-type
+/// inheritance) or a lower-precedence pack's already-applied declaration for the SAME def type
+/// (pack overlay) -- both are folded through this same function in the same declaration-order
+/// sequence by the caller (see `fold_effective_layers`), so the two amendment mechanisms are
+/// unified rather than treated as separate merge stages.
+///
+/// Returns `None` when the view is disabled/removed, or when a delta-only declaration (no label)
+/// has no base to amend -- Plan.md's recoverable "inherited view amendment with no inherited
+/// base" warning; the caller removes the id from the working set in that case.
+#[allow(clippy::too_many_arguments)]
+fn apply_form_view_declaration(
+    def_type: &str,
+    view_id: &str,
+    base: Option<&SchemaFormView>,
+    incoming: &FormViewDef,
+    pack_id: &str,
+    pack_version: &str,
+    path: &str,
+    field_path: &str,
+    diagnosed_amendments_without_base: &mut HashSet<(String, String, String)>,
+    diags: &mut Vec<SchemaLoadDiagnostic>,
+) -> Option<SchemaFormView> {
+    if incoming.disabled == Some(true) {
+        if base.is_none() {
+            diagnose_amendment_without_base(
+                def_type,
+                view_id,
+                pack_id,
+                path,
+                field_path,
+                "declares disabled: true",
+                diagnosed_amendments_without_base,
+                diags,
+            );
+        }
+        return None;
+    }
+
+    match base {
+        None => {
+            let Some(label) = incoming.label.clone() else {
+                diagnose_amendment_without_base(
+                    def_type,
+                    view_id,
+                    pack_id,
+                    path,
+                    field_path,
+                    "is a delta amendment (hiddenFields/unhideFields/replace)",
+                    diagnosed_amendments_without_base,
+                    diags,
+                );
+                return None;
+            };
+            let hidden_set: BTreeSet<String> = incoming
+                .hidden_fields
+                .clone()
+                .unwrap_or_default()
+                .into_iter()
+                .collect();
+            Some(SchemaFormView {
+                id: view_id.to_string(),
+                label,
+                description: incoming.description.clone(),
+                icon: incoming.icon.clone(),
+                order: incoming.order.unwrap_or(0),
+                recommended: incoming.recommended.unwrap_or(false),
+                hidden_field_ids: hidden_set.into_iter().collect(),
+                declared_on_def_type: def_type.to_string(),
+                source: Some(FormViewSource {
+                    pack_id: pack_id.to_string(),
+                    pack_version: pack_version.to_string(),
+                }),
+            })
+        }
+        Some(base_view) => {
+            let mut hidden_set: BTreeSet<String> = if incoming.replace == Some(true) {
+                BTreeSet::new()
+            } else {
+                base_view.hidden_field_ids.iter().cloned().collect()
+            };
+            if let Some(add) = &incoming.hidden_fields {
+                for name in add {
+                    hidden_set.insert(name.clone());
+                }
+            }
+            if let Some(remove) = &incoming.unhide_fields {
+                for name in remove {
+                    hidden_set.remove(name);
+                }
+            }
+            Some(SchemaFormView {
+                id: view_id.to_string(),
+                label: incoming
+                    .label
+                    .clone()
+                    .unwrap_or_else(|| base_view.label.clone()),
+                description: incoming
+                    .description
+                    .clone()
+                    .or_else(|| base_view.description.clone()),
+                icon: incoming.icon.clone().or_else(|| base_view.icon.clone()),
+                order: incoming.order.unwrap_or(base_view.order),
+                recommended: incoming.recommended.unwrap_or(base_view.recommended),
+                hidden_field_ids: hidden_set.into_iter().collect(),
+                declared_on_def_type: def_type.to_string(),
+                source: Some(FormViewSource {
+                    pack_id: pack_id.to_string(),
+                    pack_version: pack_version.to_string(),
+                }),
+            })
+        }
+    }
+}
+
+/// Push a `schema_pack_form_view_amendment_without_base` warning at most once per
+/// `(def_type, pack_id, view_id)`, since the same declaration can be folded more than once across
+/// a multi-parent `inherits` DAG (see `compute_effective_layers`/`fold_effective_layers`).
+#[allow(clippy::too_many_arguments)]
+fn diagnose_amendment_without_base(
+    def_type: &str,
+    view_id: &str,
+    pack_id: &str,
+    path: &str,
+    field_path: &str,
+    detail: &str,
+    diagnosed_amendments_without_base: &mut HashSet<(String, String, String)>,
+    diags: &mut Vec<SchemaLoadDiagnostic>,
+) {
+    let key = (
+        def_type.to_string(),
+        pack_id.to_string(),
+        view_id.to_string(),
+    );
+    if diagnosed_amendments_without_base.insert(key) {
+        diags.push(
+            SchemaLoadDiagnostic::warning(
+                "schema_pack_form_view_amendment_without_base",
+                format!(
+                    "Form View '{view_id}' on '{def_type}' {detail} but no inherited or prior view exists for that id; the declaration is ignored."
+                ),
+            )
+            .with_pack_id(pack_id)
+            .with_path(path)
+            .with_field_path(field_path),
+        );
+    }
+}
+
+/// Filter `names` down to those present in `known_fields`, warning (not erroring) for each one
+/// that isn't. Never lets an unknown field id silently stay in an effective hidden/unhide set --
+/// Plan.md: "Unknown field references must never hide arbitrary current XML... warn once per
+/// catalog load."
+#[allow(clippy::too_many_arguments)]
+fn filter_known_field_refs(
+    names: &[String],
+    list_label: &str,
+    known_fields: &HashSet<String>,
+    view_id: &str,
+    def_type: &str,
+    pack_id: &str,
+    path: &str,
+    field_path: &str,
+    diags: &mut Vec<SchemaLoadDiagnostic>,
+) -> Vec<String> {
+    let mut kept = Vec::new();
+    for name in names {
+        if known_fields.contains(name) {
+            kept.push(name.clone());
+        } else {
+            diags.push(
+                SchemaLoadDiagnostic::warning(
+                    "schema_pack_form_view_unknown_field_reference",
+                    format!(
+                        "Form View '{view_id}' on '{def_type}' references unknown field '{name}' in {list_label}; the reference is ignored."
+                    ),
+                )
+                .with_pack_id(pack_id)
+                .with_path(path)
+                .with_field_path(field_path),
+            );
+        }
+    }
+    kept
 }

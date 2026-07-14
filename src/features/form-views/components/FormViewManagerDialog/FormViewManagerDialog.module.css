@@ -1,0 +1,339 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-overlay);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 32px;
+  z-index: 100;
+}
+
+.panel {
+  width: min(560px, 92vw);
+  max-height: min(640px, 86vh);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-editor);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.title {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 3px;
+  color: var(--text-muted);
+}
+
+.closeBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.body {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.warningBanner {
+  margin: 0;
+  padding: 6px 8px;
+  font-size: 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-muted);
+}
+
+/* Distinct from `.warningBanner`/`.errorBanner`: a persistent, actionable custom-view store
+ * load failure (not a transient per-action error), with visible Retry/Reset recovery. */
+.storeErrorBanner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--text-error);
+  border-radius: 4px;
+  background: var(--surface-hover);
+}
+
+.storeErrorText {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-error);
+  line-height: 1.4;
+}
+
+.storeErrorActions {
+  display: flex;
+  gap: 6px;
+}
+
+.errorBanner {
+  margin: 0;
+  padding: 6px 8px;
+  font-size: 11px;
+  border: 1px solid var(--text-error);
+  border-radius: 4px;
+  color: var(--text-error);
+}
+
+.createRow {
+  display: flex;
+  gap: 6px;
+}
+
+.createInput {
+  flex: 1;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-input);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.createInput:focus {
+  border-color: var(--accent);
+}
+
+.createBtn {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.createBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  min-height: 128px;
+  max-height: min(240px, 40vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  flex-shrink: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row[data-selected="true"] {
+  background: var(--accent-muted);
+}
+
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rowLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--surface-hover);
+  color: var(--text-muted);
+}
+
+.rowDescription {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.rowSource {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Nonblocking, informational only (Plan.md section 6/12): a custom view whose recorded schema
+ * base no longer resolves. The view remains fully selectable/usable regardless -- this is never
+ * an error/blocking state, so it deliberately does not reuse `.errorBanner`'s error color. */
+.rowBaseWarning {
+  font-size: 10px;
+  color: var(--text-warning, #c9820a);
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.rowActionBtn {
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.rowActionBtn:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+.rowActionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rowActionBtnDanger {
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid var(--text-error);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-error);
+  cursor: pointer;
+}
+
+.rowActionBtnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: var(--surface-editor);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.iconBtn:hover:not(:disabled) {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.renameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.renameInput {
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-input);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.renameInput:focus {
+  border-color: var(--accent);
+}
+
+.customizePlaceholder {
+  padding: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  border: 1px dashed var(--border-subtle);
+  border-radius: 4px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.closeAction {
+  padding: 4px 12px;
+  font-size: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-editor);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.closeAction:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
