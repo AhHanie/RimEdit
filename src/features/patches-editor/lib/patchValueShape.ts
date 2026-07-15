@@ -10,6 +10,15 @@ import type {
   XmlNestedChildView,
 } from "../../xml-editor";
 import type { FieldSchema, SchemaCatalog } from "../../schema-catalog";
+import { initI18n } from "../../../i18n";
+
+/** Plain module functions, not React components, so there is no `useTranslation()` hook to call --
+ * resolves translated text from the app-wide i18next singleton instead, same as
+ * `src/lib/confirmDiscardChanges.ts` and `xml-editor/lib/objectDescriptors.ts`. Calls
+ * `initI18n().t(...)` directly at each site (rather than through a same-signature local wrapper)
+ * so every call keeps i18next's own generated per-key literal/interpolation-argument typing --
+ * see `src/i18n/generated/translation-keys.ts`'s `CustomTypeOptions` augmentation. A wrapper typed
+ * as plain `(key: string, ...)` would silently accept a typo'd key or a wrong `options` shape. */
 
 /** Control kinds `PatchValueEditor` knows how to render a structured editor for. Everything else
  * (`reference`, `typedReferenceList`, `color`, `flags`, `readonlyUnknown`) falls back to raw XML --
@@ -82,7 +91,10 @@ export function parsedViewsToFieldValue(
   if (views.length > 1) {
     return {
       kind: "unsupportedShape",
-      reason: "The value contains more than one top-level element.",
+      reason: initI18n().t(
+        "patches:valueEditor.unsupportedMultipleTopLevelElements",
+        "The value contains more than one top-level element.",
+      ),
     };
   }
 
@@ -95,13 +107,19 @@ export function parsedViewsToFieldValue(
   if (control === "list" && hasNonScalarListItems(view)) {
     return {
       kind: "unsupportedShape",
-      reason: "The value's list items have their own attributes or child elements.",
+      reason: initI18n().t(
+        "patches:valueEditor.unsupportedListItemsHaveStructure",
+        "The value's list items have their own attributes or child elements.",
+      ),
     };
   }
   if (control === "namedMap" && hasNonScalarMapEntries(view)) {
     return {
       kind: "unsupportedShape",
-      reason: "The value's entries have their own attributes or child elements.",
+      reason: initI18n().t(
+        "patches:valueEditor.unsupportedMapEntriesHaveStructure",
+        "The value's entries have their own attributes or child elements.",
+      ),
     };
   }
 

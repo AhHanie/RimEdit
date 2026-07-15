@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Plus, X } from "lucide-react";
 import {
   fieldSchemaToControl,
@@ -24,6 +25,7 @@ interface RendererProps {
  * `isStructurallySupportedField` allows reach here -- callers fall back to raw XML for the rest
  * (reference/typedReferenceList/color/flags/readonlyUnknown). */
 export function ValueFieldRenderer({ fieldName, field, value, catalog, readOnly, onChange }: RendererProps) {
+  const { t } = useTranslation("patches");
   const control = fieldSchemaToControl(fieldName, field);
 
   switch (control) {
@@ -48,7 +50,7 @@ export function ValueFieldRenderer({ fieldName, field, value, catalog, readOnly,
         <label className={styles.subField}>
           <span className={styles.subLabel}>{field.label || fieldName}</span>
           <select value={current} disabled={readOnly} onChange={(e) => onChange({ kind: "enum", value: e.target.value })}>
-            <option value="">(none)</option>
+            <option value="">{t("valueFieldRenderer.noneOption")}</option>
             {allowed.map((v) => (
               <option key={v} value={v}>
                 {v}
@@ -149,8 +151,11 @@ function ObjectFieldsEditor({
   readOnly: boolean;
   onChange: (next: ObjectFieldValue) => void;
 }) {
+  const { t } = useTranslation("patches");
   if (!value.schemaRef) {
-    return <div className={styles.unsupportedNote}>Unknown object type -- edit as raw XML.</div>;
+    return (
+      <div className={styles.unsupportedNote}>{t("valueFieldRenderer.unknownObjectType")}</div>
+    );
   }
   const fields = getAllObjectFields(value.schemaRef, catalog);
   return (
@@ -186,6 +191,7 @@ function ObjectListFieldEditor({
   readOnly: boolean;
   onChange: (items: ObjectListItemValue[]) => void;
 }) {
+  const { t } = useTranslation("patches");
   const baseSchema = catalog.objectTypes[itemSchemaRef];
   const variantNames = baseSchema?.discriminator ? Object.keys(baseSchema.discriminator.variants) : [];
   const discriminatorAttrName = baseSchema?.discriminator?.attribute ?? "Class";
@@ -244,7 +250,7 @@ function ObjectListFieldEditor({
                   disabled={readOnly}
                   onChange={(e) => updateItemClass(index, e.target.value)}
                 >
-                  <option value="">(choose class)</option>
+                  <option value="">{t("valueFieldRenderer.chooseClass")}</option>
                   {variantNames.map((name) => (
                     <option key={name} value={name}>
                       {name}
@@ -265,14 +271,14 @@ function ObjectListFieldEditor({
                   type="button"
                   className={styles.iconBtn}
                   onClick={() => onChange(removeAt(items, index))}
-                  aria-label="Remove item"
+                  aria-label={t("valueFieldRenderer.removeItem")}
                 >
                   <X size={12} />
                 </button>
               )}
             </div>
             {!item.schemaRef ? (
-              <div className={styles.unsupportedNote}>Unknown class -- edit as raw XML to set its fields.</div>
+              <div className={styles.unsupportedNote}>{t("valueFieldRenderer.unknownClass")}</div>
             ) : (
               [...itemFields.entries()].map(([name, schema]) => {
                 const fieldValue = item.fields[name] ?? emptyFieldValue(name, schema, catalog);
@@ -301,7 +307,7 @@ function ObjectListFieldEditor({
       })}
       {!readOnly && (
         <button type="button" className={styles.addBtn} onClick={addItem}>
-          <Plus size={12} /> Add item
+          <Plus size={12} /> {t("valueFieldRenderer.addItem")}
         </button>
       )}
     </div>
@@ -317,6 +323,7 @@ function ScalarListEditor({
   readOnly: boolean;
   onChange: (items: string[]) => void;
 }) {
+  const { t } = useTranslation("patches");
   return (
     <div className={styles.list}>
       {items.map((item, i) => (
@@ -328,7 +335,12 @@ function ScalarListEditor({
             onChange={(e) => onChange(replaceAt(items, i, e.target.value))}
           />
           {!readOnly && (
-            <button type="button" className={styles.iconBtn} onClick={() => onChange(removeAt(items, i))} aria-label="Remove item">
+            <button
+              type="button"
+              className={styles.iconBtn}
+              onClick={() => onChange(removeAt(items, i))}
+              aria-label={t("valueFieldRenderer.removeItem")}
+            >
               <X size={12} />
             </button>
           )}
@@ -336,7 +348,7 @@ function ScalarListEditor({
       ))}
       {!readOnly && (
         <button type="button" className={styles.addBtn} onClick={() => onChange(insertAt(items, items.length, ""))}>
-          <Plus size={12} /> Add item
+          <Plus size={12} /> {t("valueFieldRenderer.addItem")}
         </button>
       )}
     </div>
@@ -352,6 +364,7 @@ function NamedMapEditor({
   readOnly: boolean;
   onChange: (entries: { key: string; value: string }[]) => void;
 }) {
+  const { t } = useTranslation("patches");
   return (
     <div className={styles.list}>
       {entries.map((entry, i) => (
@@ -359,19 +372,24 @@ function NamedMapEditor({
           <input
             type="text"
             value={entry.key}
-            placeholder="Key"
+            placeholder={t("valueFieldRenderer.keyPlaceholder")}
             disabled={readOnly}
             onChange={(e) => onChange(replaceAt(entries, i, { ...entry, key: e.target.value }))}
           />
           <input
             type="text"
             value={entry.value}
-            placeholder="Value"
+            placeholder={t("valueFieldRenderer.valuePlaceholder")}
             disabled={readOnly}
             onChange={(e) => onChange(replaceAt(entries, i, { ...entry, value: e.target.value }))}
           />
           {!readOnly && (
-            <button type="button" className={styles.iconBtn} onClick={() => onChange(removeAt(entries, i))} aria-label="Remove entry">
+            <button
+              type="button"
+              className={styles.iconBtn}
+              onClick={() => onChange(removeAt(entries, i))}
+              aria-label={t("valueFieldRenderer.removeEntry")}
+            >
               <X size={12} />
             </button>
           )}
@@ -383,7 +401,7 @@ function NamedMapEditor({
           className={styles.addBtn}
           onClick={() => onChange(insertAt(entries, entries.length, { key: "", value: "" }))}
         >
-          <Plus size={12} /> Add entry
+          <Plus size={12} /> {t("valueFieldRenderer.addEntry")}
         </button>
       )}
     </div>

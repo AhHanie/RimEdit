@@ -1,7 +1,10 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { Check, Pencil, X } from "lucide-react";
 import { formatError } from "../../../../lib/formatError";
+import { renderDiagnostic } from "../../../../i18n/diagnostics";
 import type { DefEditorView } from "../../../xml-editor/types/xmlDocument";
 import type { DefTypeSchema, SchemaCatalog } from "../../../schema-catalog";
 import type { UseFormViewsResult } from "../../hooks/useFormViews";
@@ -33,14 +36,17 @@ function isSelected(view: ResolvedFormView, selected: ResolvedFormView): boolean
   return view.origin === selected.origin && view.id === selected.id;
 }
 
-function sourceText(view: ResolvedFormView): string {
-  if (view.origin === "default") return "Always available · read-only";
+function sourceText(view: ResolvedFormView, t: TFunction<"editor">): string {
+  if (view.origin === "default") return t("formViews.manager.sourceAlwaysAvailable");
   if (view.origin === "schema") {
     return view.source
-      ? `Schema pack · ${view.source.packId} ${view.source.packVersion} · read-only`
-      : "Schema pack · read-only";
+      ? t("formViews.manager.sourceSchemaPackWithVersion", {
+          packId: view.source.packId,
+          packVersion: view.source.packVersion,
+        })
+      : t("formViews.manager.sourceSchemaPack");
   }
-  return "Custom view";
+  return t("formViews.manager.sourceCustom");
 }
 
 /**
@@ -54,6 +60,11 @@ function sourceText(view: ResolvedFormView): string {
  * placeholder issue 07 replaces, not a silently-broken button.
  */
 export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarget }: Props) {
+  // Two separate single-namespace hooks, not `useTranslation(["diagnostics", "editor"])` with
+  // `"editor:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { i18n } = useTranslation("diagnostics");
+  const { t } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   const containerRef = useRef<HTMLDivElement>(null);
   // Every close path (Escape via `useDialogKeyboard`, the header X, the footer Close button)
   // routes through `requestClose`, not `onClose` directly, so a dirty override is never silently
@@ -208,15 +219,12 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
   }
 
   async function handleResetStore() {
-    const ok = await confirm(
-      "Reset the custom Form View store? The current (possibly corrupt) store file will be backed up, and you'll start with no custom views. This does not affect Default or schema views.",
-      {
-        title: "Reset Form View store",
-        kind: "warning",
-        okLabel: "Reset store",
-        cancelLabel: "Cancel",
-      },
-    );
+    const ok = await confirm(t("formViews.manager.resetConfirm.message"), {
+      title: t("formViews.manager.resetConfirm.title"),
+      kind: "warning",
+      okLabel: t("formViews.manager.resetConfirm.confirmLabel"),
+      cancelLabel: tCommon("actions.cancel"),
+    });
     if (!ok) return;
     setStoreRecoveryBusy(true);
     setStoreRecoveryMessage(null);
@@ -224,8 +232,8 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
       const result = await controller.resetCustomViewStore();
       setStoreRecoveryMessage(
         result.backupPath
-          ? `Store reset. The previous file was backed up to ${result.backupPath}.`
-          : "Store reset.",
+          ? t("formViews.manager.storeResetWithBackup", { backupPath: result.backupPath })
+          : t("formViews.manager.storeReset"),
       );
     } catch (e: unknown) {
       setStoreRecoveryMessage(formatError(e));
@@ -235,11 +243,11 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
   }
 
   async function handleDelete(view: ResolvedFormView) {
-    const ok = await confirm(`Delete the custom Form View "${view.label}"? This cannot be undone.`, {
-      title: "Delete Form View",
+    const ok = await confirm(t("formViews.manager.deleteConfirm.message", { label: view.label }), {
+      title: t("formViews.manager.deleteConfirm.title"),
       kind: "warning",
-      okLabel: "Delete",
-      cancelLabel: "Cancel",
+      okLabel: tCommon("actions.delete"),
+      cancelLabel: tCommon("actions.cancel"),
     });
     if (!ok) return;
     setBusyViewId(`custom:${view.id}`);
@@ -280,13 +288,13 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
                   if (e.key === "Escape") setRenamingId(null);
                 }}
                 autoFocus
-                aria-label={`Rename ${view.label}`}
+                aria-label={t("formViews.manager.renameAriaLabel", { label: view.label })}
               />
               <button
                 type="button"
                 className={styles.iconBtn}
                 onClick={() => void commitRename(view.id)}
-                aria-label="Confirm rename"
+                aria-label={t("formViews.manager.confirmRename")}
                 disabled={busy}
               >
                 <Check size={13} />
@@ -295,7 +303,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
                 type="button"
                 className={styles.iconBtn}
                 onClick={() => setRenamingId(null)}
-                aria-label="Cancel rename"
+                aria-label={t("formViews.manager.cancelRename")}
                 disabled={busy}
               >
                 <X size={13} />
@@ -305,15 +313,18 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
             <>
               <span className={styles.rowLabel}>
                 {view.label}
-                {view.recommended ? <span className={styles.badge}>Recommended</span> : null}
-                {selected ? <span className={styles.badge}>Selected</span> : null}
+                {view.recommended ? (
+                  <span className={styles.badge}>{t("formViews.manager.recommendedBadge")}</span>
+                ) : null}
+                {selected ? (
+                  <span className={styles.badge}>{t("formViews.manager.selectedBadge")}</span>
+                ) : null}
               </span>
               {view.description && <span className={styles.rowDescription}>{view.description}</span>}
-              <span className={styles.rowSource}>{sourceText(view)}</span>
+              <span className={styles.rowSource}>{sourceText(view, t)}</span>
               {baseUnavailable && (
                 <span className={styles.rowBaseWarning}>
-                  Derived from a view that&apos;s no longer available -- this custom view is
-                  unaffected and remains fully usable.
+                  {t("formViews.manager.baseUnavailable")}
                 </span>
               )}
             </>
@@ -328,7 +339,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
               onClick={() => requestSwitch({ origin: view.origin, id: view.id })}
               disabled={selected}
             >
-              Use this view
+              {t("formViews.manager.useThisView")}
             </button>
             <button
               type="button"
@@ -336,7 +347,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
               onClick={() => void handleDuplicate(view)}
               disabled={busy}
             >
-              Duplicate
+              {t("formViews.manager.duplicate")}
             </button>
             {opts.editable && (
               <>
@@ -344,7 +355,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
                   type="button"
                   className={styles.iconBtn}
                   onClick={() => startRename(view)}
-                  aria-label={`Rename ${view.label}`}
+                  aria-label={t("formViews.manager.renameAriaLabel", { label: view.label })}
                   disabled={busy}
                 >
                   <Pencil size={13} />
@@ -355,7 +366,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
                   onClick={() => void handleDelete(view)}
                   disabled={busy}
                 >
-                  Delete
+                  {tCommon("actions.delete")}
                 </button>
               </>
             )}
@@ -366,11 +377,16 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
   }
 
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Manage Form Views">
+    <div
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-label={t("formViews.manager.dialogAriaLabel")}
+    >
       <div className={styles.panel} ref={containerRef}>
         <div className={styles.header}>
-          <span className={styles.title}>Manage Form Views</span>
-          <button className={styles.closeBtn} onClick={requestClose} aria-label="Close">
+          <span className={styles.title}>{t("formViews.manager.title")}</span>
+          <button className={styles.closeBtn} onClick={requestClose} aria-label={tCommon("actions.close")}>
             <X size={14} />
           </button>
         </div>
@@ -379,8 +395,9 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
           {controller.customViewsError && (
             <div className={styles.storeErrorBanner} role="alert">
               <p className={styles.storeErrorText}>
-                Couldn&apos;t load your custom Form Views: {controller.customViewsError}. Your
-                current view selection has been left untouched.
+                {t("formViews.manager.storeErrorMessage", {
+                  error: controller.customViewsError,
+                })}
               </p>
               <div className={styles.storeErrorActions}>
                 <button
@@ -389,7 +406,9 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
                   onClick={() => void handleRetryLoad()}
                   disabled={storeRecoveryBusy}
                 >
-                  {storeRecoveryBusy ? "Retrying…" : "Retry"}
+                  {storeRecoveryBusy
+                    ? t("formViews.manager.retrying")
+                    : t("formViews.manager.retry")}
                 </button>
                 <button
                   type="button"
@@ -397,7 +416,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
                   onClick={() => void handleResetStore()}
                   disabled={storeRecoveryBusy}
                 >
-                  Reset store
+                  {t("formViews.manager.resetStore")}
                 </button>
               </div>
               {storeRecoveryMessage && (
@@ -406,7 +425,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
             </div>
           )}
           {controller.customViewsWarning && (
-            <p className={styles.warningBanner}>{controller.customViewsWarning.message}</p>
+            <p className={styles.warningBanner}>{renderDiagnostic(controller.customViewsWarning, i18n)}</p>
           )}
           {controller.persistWarning && (
             <p className={styles.errorBanner} role="alert">
@@ -418,13 +437,13 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
           <div className={styles.createRow}>
             <input
               className={styles.createInput}
-              placeholder="New custom view name"
+              placeholder={t("formViews.manager.createPlaceholder")}
               value={newViewName}
               onChange={(e) => setNewViewName(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") void handleCreate();
               }}
-              aria-label="New custom view name"
+              aria-label={t("formViews.manager.createAriaLabel")}
             />
             <button
               type="button"
@@ -432,11 +451,11 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
               onClick={() => void handleCreate()}
               disabled={creating || !newViewName.trim()}
             >
-              {creating ? "Creating…" : "Create"}
+              {creating ? t("formViews.manager.creating") : t("formViews.manager.create")}
             </button>
           </div>
 
-          <ul className={styles.list} aria-label="Available form views">
+          <ul className={styles.list} aria-label={t("formViews.manager.availableViewsAriaLabel")}>
             {defaultView && renderRow(defaultView, { editable: false })}
             {schemaViews.map((v) => renderRow(v, { editable: false }))}
             {customViews.map((v) => renderRow(v, { editable: true }))}
@@ -451,8 +470,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
             />
           ) : (
             <div className={styles.customizePlaceholder}>
-              Field-by-field visibility customization isn&apos;t available for the current
-              selection -- use Duplicate/Create above to prepare a custom view instead.
+              {t("formViews.manager.customizePlaceholder")}
             </div>
           )}
         </div>
@@ -460,7 +478,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
         <div className={styles.footer}>
           <span className={styles.spacer} />
           <button className={styles.closeAction} onClick={requestClose}>
-            Close
+            {tCommon("actions.close")}
           </button>
         </div>
       </div>

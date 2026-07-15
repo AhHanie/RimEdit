@@ -948,6 +948,7 @@ fn inline_multi_def_pack(manifest_json: &str, def_jsons: &[&str]) -> LoadedPack 
         manifest: pack_opt.expect("assemble must succeed"),
         is_builtin: false,
         source_path: None,
+        locales: Default::default(),
     }
 }
 

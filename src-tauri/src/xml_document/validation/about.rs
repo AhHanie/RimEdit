@@ -1,3 +1,4 @@
+use crate::diagnostics::diagnostic_args;
 use crate::xml_document::about::{
     build_about_metadata_view, count_children, element_name, find_root_element, KNOWN_SCALAR_FIELDS,
 };
@@ -140,7 +141,8 @@ pub fn validate_about_metadata_document(
                         "Multiple <{name}> elements found; RimWorld will read only one, ambiguously."
                     ),
                 )
-                .with_field_path(name),
+                .with_field_path(name)
+                .with_args(diagnostic_args([("fieldName", name.into())])),
             );
         }
     }
@@ -169,7 +171,8 @@ pub fn validate_about_metadata_document(
                         "about_invalid_package_id",
                         format!("packageId '{package_id}' is not a valid RimWorld package id."),
                     )
-                    .with_field_path("packageId"),
+                    .with_field_path("packageId")
+                    .with_args(diagnostic_args([("packageId", package_id.as_str().into())])),
                 );
             }
             let lower = package_id.to_ascii_lowercase();
@@ -181,7 +184,8 @@ pub fn validate_about_metadata_document(
                         "about_reserved_package_id",
                         "packageId cannot contain 'Ludeon' unless it is an official Ludeon Studios package.",
                     )
-                    .with_field_path("packageId"),
+                    .with_field_path("packageId")
+                    .with_args(diagnostic_args([("packageId", package_id.as_str().into())])),
                 );
             }
         }
@@ -217,7 +221,8 @@ pub fn validate_about_metadata_document(
                             "Supported version '{v}' is not a well-formed Major.Minor version."
                         ),
                     )
-                    .with_field_path("supportedVersions"),
+                    .with_field_path("supportedVersions")
+                    .with_args(diagnostic_args([("version", v.as_str().into())])),
                 );
             }
         }
@@ -282,7 +287,11 @@ pub fn validate_about_metadata_document(
                 "about_unknown_top_level_element",
                 format!("Unknown top-level element <{}>.", unknown.name),
             )
-            .with_field_path(&unknown.name),
+            .with_field_path(&unknown.name)
+            .with_args(diagnostic_args([(
+                "elementName",
+                unknown.name.as_str().into(),
+            )])),
         );
     }
 
@@ -324,7 +333,7 @@ pub fn validate_about_metadata_document(
                     format!(
                         "LoadFolders.xml references version '{v}' which is not listed in supportedVersions."
                     ),
-                ));
+                ).with_args(diagnostic_args([("version", v.as_str().into())])));
             }
         }
     }
@@ -344,7 +353,7 @@ fn check_versioned_key(
             root_id,
             "about_invalid_versioned_key",
             format!("Versioned override key '{key}' is not a well-formed vMajor.Minor or Major.Minor key."),
-        ));
+        ).with_args(diagnostic_args([("key", key.into())])));
     }
 }
 

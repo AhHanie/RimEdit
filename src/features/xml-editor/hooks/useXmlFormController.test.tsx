@@ -1,10 +1,15 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
+import type { ReactNode } from "react";
 import { useXmlFormController, scalarFormValue } from "./useXmlFormController";
 import { FormFieldStore } from "../lib/formFieldStore";
 import type { XmlEditorSnapshot } from "../types/editorSession";
 import type { FieldSchema, SchemaCatalog } from "../../schema-catalog";
 import type { XmlEdit, XmlEditContext } from "../types/xmlDocument";
+import i18next from "i18next";
+import { initReactI18next } from "react-i18next";
+import { defaultNamespace, enResources, namespaces } from "../../../i18n";
+import { LocaleProvider } from "../../../i18n/LocaleProvider";
 
 function makeSnapshot(): XmlEditorSnapshot {
   return {
@@ -2132,7 +2137,7 @@ describe("useXmlFormController – Form View visibility filtering (issue 05)", (
   });
 });
 
-// --- Issue 05 review fix: uncommitted drafts must survive a pure visibility rebuild ---
+// --- Issue 05: uncommitted drafts must survive a pure visibility rebuild ---
 //
 // Plan.md section 7/9's "no value is discarded" guarantee covers the CURRENT in-memory form
 // value (including an uncommitted/dirty draft the user hasn't flushed yet), not merely the
@@ -2372,7 +2377,7 @@ describe("useXmlFormController – uncommitted drafts survive a pure visibility 
   });
 });
 
-// --- Issue 05 review fix: visibility-set signature must not collide on delimiter reuse ---
+// --- Issue 05: visibility-set signature must not collide on delimiter reuse ---
 describe("useXmlFormController – visibility signature collision safety (issue 05)", () => {
   type Props = Parameters<typeof useXmlFormController>[0];
 
@@ -2434,13 +2439,13 @@ describe("useXmlFormController – visibility signature collision safety (issue 
   });
 });
 
-// --- Issue 05 review round 2, finding 1: a pure visibility change must not invalidate an
+// --- A pure visibility change must not invalidate an
 // in-flight flush's commit-resolution guard (`draftVersionRef`). Before this fix, ANY store
 // rebuild - including one caused purely by hiding/showing a field - reset that guard to 0,
 // so a flush that started before the toggle would see a version mismatch once its commit
 // resolved and incorrectly throw "Form changed while edits were being applied", even though
 // no XML edit actually happened besides the flush's own.
-describe("useXmlFormController – visibility change does not invalidate an in-flight flush (issue 05 review finding 1)", () => {
+describe("useXmlFormController – visibility change does not invalidate an in-flight flush (issue 05)", () => {
   type Props = Parameters<typeof useXmlFormController>[0];
 
   it("resolves a flush cleanly even when a pure visibility change (hiding a DIFFERENT field) happens while it is in flight", async () => {
@@ -2556,9 +2561,9 @@ describe("useXmlFormController – visibility change does not invalidate an in-f
   });
 });
 
-// --- Issue 05 review round 2, finding 2: the hidden-draft cache (`draftOverridesRef`) must
+// --- The hidden-draft cache (`draftOverridesRef`) must
 // never resurrect a value that was already committed or explicitly discarded.
-describe("useXmlFormController – hidden-field drafts never resurrect stale/discarded values (issue 05 review finding 2)", () => {
+describe("useXmlFormController – hidden-field drafts never resurrect stale/discarded values (issue 05)", () => {
   type Props = Parameters<typeof useXmlFormController>[0];
 
   it("(a) shows the committed value, not the stale pre-commit draft, when a field hidden during its own in-flight commit is shown again", async () => {
@@ -2702,13 +2707,13 @@ describe("useXmlFormController – hidden-field drafts never resurrect stale/dis
   });
 });
 
-// --- Issue 05 review round 3: `draftVersionRef` must be a genuinely monotonic generation
+// --- `draftVersionRef` must be a genuinely monotonic generation
 // counter, not "reset to a fixed value on rebuild, increment per edit". The reset-to-0
 // scheme predates Form Views (present in the initial commit before this feature touched the
 // file), but a real rebuild happening while a flush is in flight, followed by exactly one
 // further genuine edit, could realign the counter back to the same value the stale flush
 // had already captured - silently accepting a commit that should have been rejected.
-describe("useXmlFormController – monotonic generation counter rejects a stale flush after a real rebuild (issue 05 review round 3)", () => {
+describe("useXmlFormController – monotonic generation counter rejects a stale flush after a real rebuild (issue 05)", () => {
   type Props = Parameters<typeof useXmlFormController>[0];
 
   it("rejects an in-flight flush as stale after a real document rebuild, even when exactly one further edit would have realigned a reset-to-0 counter", async () => {
@@ -2811,5 +2816,323 @@ describe("useXmlFormController – monotonic generation counter rejects a stale 
       value: "NewSteelName",
     });
     expect(restoredDefName.dirty).toBe(true);
+  });
+});
+
+// --- Locale must be part of the descriptor/model rebuild key ---
+//
+// `buildFormFieldModels`/`buildFormDescriptors` resolve translated readOnlyReason/summary text
+// (see formDescriptors.ts) at build time. Before this fix, `models`/`descriptors` and `resetKey`
+// were only keyed on `catalogId`/`selectedDef`/`visibilityId` - a locale switch that leaves the
+// catalog's own content-signature unchanged (e.g. the same structural fields, or no schema-pack
+// locale sidecar at all) would never re-run `buildFormFieldModels`, and even if it had, the store
+// would never be rebuilt from the fresh result, leaving stale prior-locale text on screen.
+describe("useXmlFormController - locale-aware rebuild", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // The real app-wide i18next instance (`createI18nInstance`/`initI18n`) hard-codes
+  // `supportedLngs: ["en"]` since English is the only shipped locale (Plan.md) -- `changeLanguage`
+  // to any other code on that instance silently stays resolved to "en". This test verifies the
+  // underlying reactive-rebuild MECHANISM (the locale-aware rebuild fix above) independent of that current
+  // product policy, so it builds its own two-locale i18next instance rather than reusing
+  // `createI18nInstance()`. Reuses the app's bundled English resources for BOTH language codes
+  // (only the language code itself needs to differ for this test - the fix targets
+  // `i18n.language`, not resource content) rather than hand-authoring a second resource bundle.
+  function createTwoLocaleI18nInstance() {
+    const instance = i18next.createInstance();
+    void instance.use(initReactI18next).init({
+      lng: "en",
+      fallbackLng: "en",
+      supportedLngs: ["en", "fr"],
+      defaultNS: defaultNamespace,
+      ns: [...namespaces],
+      resources: { en: enResources, fr: enResources },
+      interpolation: { escapeValue: false },
+      returnEmptyString: false,
+    });
+    return instance;
+  }
+
+  function withLocale(i18nInstance: ReturnType<typeof createTwoLocaleI18nInstance>) {
+    return function Wrapper({ children }: { children?: ReactNode }) {
+      return (
+        <LocaleProvider i18nInstance={i18nInstance}>{children}</LocaleProvider>
+      );
+    };
+  }
+
+  it("rebuilds the store when the active locale changes, even though catalogId/visibilityId are unchanged", async () => {
+    const i18nInstance = createTwoLocaleI18nInstance();
+    const resetSpy = vi.spyOn(FormFieldStore.prototype, "reset");
+    const catalog = makeCatalog();
+    const snapshot = makeSnapshot();
+
+    const { rerender } = renderHook(
+      () =>
+        useXmlFormController({
+          snapshot,
+          catalog,
+          selectedDefNodeId: 1,
+          commitEdits: async () => "<xml/>",
+          clearPreview: vi.fn(),
+        }),
+      { wrapper: withLocale(i18nInstance) },
+    );
+
+    // Mount only initializes the store; reset is never called on first render.
+    expect(resetSpy).not.toHaveBeenCalled();
+
+    // Same `snapshot`/`catalog` references across the rerender - only the active i18next
+    // language changes, exactly the scenario `resetKey`'s `i18n.language` term exists for.
+    // `changeLanguage` is asynchronous (it may need to load a namespace bundle for the new
+    // language), so this must be awaited before `i18n.language` actually reflects "fr".
+    await act(async () => {
+      await i18nInstance.changeLanguage("fr");
+    });
+    rerender();
+
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("preserves an in-progress dirty draft across a pure locale-only rebuild", async () => {
+    const i18nInstance = createTwoLocaleI18nInstance();
+    const resetSpy = vi.spyOn(FormFieldStore.prototype, "reset");
+    const catalog = makeCatalog();
+    const snapshot = makeSnapshot();
+
+    const { result, rerender } = renderHook(
+      () =>
+        useXmlFormController({
+          snapshot,
+          catalog,
+          selectedDefNodeId: 1,
+          commitEdits: async () => "<xml/>",
+          clearPreview: vi.fn(),
+        }),
+      { wrapper: withLocale(i18nInstance) },
+    );
+
+    const description = result.current.snapshot!.fields.find(
+      (f) => f.model.key === "description",
+    )!;
+    act(() => {
+      result.current.setFieldValue(
+        description.model.id,
+        scalarFormValue("Uncommitted draft"),
+      );
+    });
+    expect(result.current.hasDraftChanges).toBe(true);
+
+    await act(async () => {
+      await i18nInstance.changeLanguage("fr");
+    });
+    rerender();
+
+    // Confirms the rebuild actually happened (not a vacuous pass because nothing rebuilt at all).
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+
+    // A display-only (locale) rebuild must not discard the in-progress edit - same guarantee
+    // Form Views (issue 05) already established for a pure visibility-only rebuild.
+    const afterLocaleSwitch = result.current.snapshot!.fields.find(
+      (f) => f.model.key === "description",
+    )!;
+    expect(afterLocaleSwitch.value).toEqual({
+      kind: "scalar",
+      value: "Uncommitted draft",
+    });
+    expect(afterLocaleSwitch.dirty).toBe(true);
+  });
+});
+
+// --- A locale-only catalog reload must not discard drafts ---
+//
+// The fix above covers the case where the SAME `SchemaCatalog` object is reused across a
+// locale switch (`catalogId`/`docKey` unchanged) - `i18n.language` alone drives the rebuild there.
+// In the real app (issue 06), a locale switch also triggers `useSchemaCatalog` to re-fetch the
+// catalog from the backend, which resolves `label`/`description`/`message` through the new locale
+// server-side (see `src-tauri/src/schema_pack/merge.rs`) and returns a brand-new `SchemaCatalog`
+// object with different translated text but the SAME field set/shape. Before this fix, `docKey`
+// keyed on the full-content `catalogId`, so that new-object-same-structure catalog looked
+// indistinguishable from a genuine structural/document change and wiped any in-progress,
+// not-yet-flushed draft field edit purely because its translated label text changed underneath it.
+describe("useXmlFormController - locale-only catalog reload preserves drafts", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  function createTwoLocaleI18nInstance() {
+    const instance = i18next.createInstance();
+    void instance.use(initReactI18next).init({
+      lng: "en",
+      fallbackLng: "en",
+      supportedLngs: ["en", "fr"],
+      defaultNS: defaultNamespace,
+      ns: [...namespaces],
+      resources: { en: enResources, fr: enResources },
+      interpolation: { escapeValue: false },
+      returnEmptyString: false,
+    });
+    return instance;
+  }
+
+  function withLocale(i18nInstance: ReturnType<typeof createTwoLocaleI18nInstance>) {
+    return function Wrapper({ children }: { children?: ReactNode }) {
+      return (
+        <LocaleProvider i18nInstance={i18nInstance}>{children}</LocaleProvider>
+      );
+    };
+  }
+
+  // Same field set/shape as `makeCatalog()`, but with a distinct `description` field label - a
+  // stand-in for the server-side locale sidecar overlay translating that one string differently
+  // per locale, without touching any field's type/shape/order/required-ness.
+  function makeCatalogWithDescriptionLabel(label: string): SchemaCatalog {
+    const base = makeCatalog();
+    const thingDef = base.defTypes.ThingDef!;
+    return {
+      ...base,
+      defTypes: {
+        ...base.defTypes,
+        ThingDef: {
+          ...thingDef,
+          fields: {
+            ...thingDef.fields,
+            description: { ...thingDef.fields.description, label },
+          },
+        },
+      },
+    };
+  }
+
+  it("preserves an in-progress dirty draft when a locale switch delivers a new catalog object with the same structure but different translated labels", async () => {
+    type Props = Parameters<typeof useXmlFormController>[0];
+    const i18nInstance = createTwoLocaleI18nInstance();
+    const resetSpy = vi.spyOn(FormFieldStore.prototype, "reset");
+    const catalogEn = makeCatalogWithDescriptionLabel("Description (EN)");
+    const catalogFr = makeCatalogWithDescriptionLabel("Description (FR)");
+    const snapshot = makeSnapshot();
+    const initialProps: Props = {
+      snapshot,
+      catalog: catalogEn,
+      selectedDefNodeId: 1,
+      commitEdits: async () => "<xml/>",
+      clearPreview: vi.fn(),
+    };
+
+    const { result, rerender } = renderHook(
+      (p: Props) => useXmlFormController(p),
+      { wrapper: withLocale(i18nInstance), initialProps },
+    );
+
+    const description = result.current.snapshot!.fields.find(
+      (f) => f.model.key === "description",
+    )!;
+    expect(description.model.label).toBe("Description (EN)");
+    act(() => {
+      result.current.setFieldValue(
+        description.model.id,
+        scalarFormValue("Uncommitted draft"),
+      );
+    });
+    expect(result.current.hasDraftChanges).toBe(true);
+
+    // Simulate the real-app timing (issue 06): `i18n.language` flips first - `useTranslation`
+    // resubscribes the hook and re-renders it immediately, one render/reset before the
+    // locale-aware catalog re-fetch it triggers has actually resolved.
+    await act(async () => {
+      await i18nInstance.changeLanguage("fr");
+    });
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+    const midSwitch = result.current.snapshot!.fields.find(
+      (f) => f.model.key === "description",
+    )!;
+    // Still the OLD catalog's label (the re-fetch hasn't landed yet) - only hook-generated text
+    // reacts to `i18n.language` directly. The draft must already have survived this first reset.
+    expect(midSwitch.model.label).toBe("Description (EN)");
+    expect(midSwitch.value).toEqual({
+      kind: "scalar",
+      value: "Uncommitted draft",
+    });
+    expect(midSwitch.dirty).toBe(true);
+
+    // The locale-aware catalog re-fetch now lands: a brand-new `SchemaCatalog` reference
+    // (different `catalogId` - different translated label text) but the identical structural
+    // field set/shape as before.
+    rerender({ ...initialProps, catalog: catalogFr });
+
+    // Confirms this second rebuild actually happened (the label really did change) - not a
+    // vacuous pass.
+    expect(resetSpy).toHaveBeenCalledTimes(2);
+    const afterSwitch = result.current.snapshot!.fields.find(
+      (f) => f.model.key === "description",
+    )!;
+    expect(afterSwitch.model.label).toBe("Description (FR)");
+
+    // The draft must survive: only the catalog's translated display metadata changed, not the
+    // document or the schema's structure.
+    expect(afterSwitch.value).toEqual({
+      kind: "scalar",
+      value: "Uncommitted draft",
+    });
+    expect(afterSwitch.dirty).toBe(true);
+  });
+
+  it("still discards drafts when the catalog changes structurally (not just its translated text)", async () => {
+    type Props = Parameters<typeof useXmlFormController>[0];
+    const i18nInstance = createTwoLocaleI18nInstance();
+    const catalogEn = makeCatalogWithDescriptionLabel("Description (EN)");
+    // A genuine structural change: `description` becomes required, not merely relabeled.
+    const catalogStructuralChange: SchemaCatalog = {
+      ...catalogEn,
+      defTypes: {
+        ...catalogEn.defTypes,
+        ThingDef: {
+          ...catalogEn.defTypes.ThingDef!,
+          fields: {
+            ...catalogEn.defTypes.ThingDef!.fields,
+            description: {
+              ...catalogEn.defTypes.ThingDef!.fields.description,
+              required: true,
+            },
+          },
+        },
+      },
+    };
+    const snapshot = makeSnapshot();
+    const initialProps: Props = {
+      snapshot,
+      catalog: catalogEn,
+      selectedDefNodeId: 1,
+      commitEdits: async () => "<xml/>",
+      clearPreview: vi.fn(),
+    };
+
+    const { result, rerender } = renderHook(
+      (p: Props) => useXmlFormController(p),
+      { wrapper: withLocale(i18nInstance), initialProps },
+    );
+
+    const description = result.current.snapshot!.fields.find(
+      (f) => f.model.key === "description",
+    )!;
+    act(() => {
+      result.current.setFieldValue(
+        description.model.id,
+        scalarFormValue("Uncommitted draft"),
+      );
+    });
+    expect(result.current.hasDraftChanges).toBe(true);
+
+    act(() => {
+      rerender({ ...initialProps, catalog: catalogStructuralChange });
+    });
+
+    const afterSwitch = result.current.snapshot!.fields.find(
+      (f) => f.model.key === "description",
+    )!;
+    expect(afterSwitch.value).toEqual({ kind: "scalar", value: "Old" });
+    expect(afterSwitch.dirty).toBe(false);
   });
 });

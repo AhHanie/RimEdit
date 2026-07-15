@@ -12,6 +12,7 @@ pub(crate) fn app_storage_dir(app: &AppHandle, code: &str) -> Result<PathBuf, Ap
             code: code.to_string(),
             message: format!("Cannot resolve app storage directory: {}", e),
             details: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         })
 }
 

@@ -5,6 +5,7 @@ import {
   useRef,
   useSyncExternalStore,
 } from "react";
+import { useTranslation } from "react-i18next";
 import {
   buildFormDescriptors,
   buildFormFieldModels,
@@ -25,13 +26,23 @@ import type {
   FormSnapshot,
   FormValue,
 } from "../types/editorForm";
-import type { SchemaCatalog } from "../../schema-catalog";
+import type {
+  DefTemplate,
+  DefTypeSchema,
+  FieldSchema,
+  ObjectTypeSchema,
+  SchemaCatalog,
+  SchemaFormView,
+  ValidationRule,
+} from "../../schema-catalog";
 import type { XmlEditorSnapshot } from "../types/editorSession";
 import type { XmlEdit, XmlEditContext } from "../types/xmlDocument";
 import {
   buildEffectiveFieldOrder,
   buildNestedFieldOrders,
 } from "../lib/schemaFieldOrder";
+import { formatError } from "../../../lib/formatError";
+import { initI18n } from "../../../i18n";
 
 // Re-export the pure form-value helpers so existing component imports keep working.
 export {
@@ -151,6 +162,102 @@ function getCatalogId(catalog: SchemaCatalog): number {
   return id;
 }
 
+// `getCatalogId` above intentionally reflects the FULL catalog
+// content, including `label`/`description`/`message` - that is exactly right for `models`/
+// `descriptors` (they must re-resolve translated text on a locale switch)
+// but wrong for `docKey`'s draft-preservation decision below. `load_schema_catalog` resolves
+// `label`/`description`/`message` through the active locale's sidecar overlay server-side
+// (see `src-tauri/src/schema_pack/merge.rs`'s "locale sidecar" handling) and issue 06 made the
+// catalog re-fetch itself locale-aware, so a locale switch legitimately produces a brand-new
+// `SchemaCatalog` object whose translated text differs while its field set/shape does not. If
+// `docKey` used `getCatalogId` directly, that new-object-same-structure catalog would look like
+// a genuine structural/document change and wipe any in-progress, not-yet-flushed draft field
+// edit purely because its translated label text changed underneath it.
+//
+// This id strips exactly the `label`/`description`/`message` PROPERTIES the locale sidecar
+// overlay rewrites (see `merge.rs`'s per-scalar sidecar-ownership tracking for `DefTypeSchema`/
+// `FieldSchema`/`ObjectTypeSchema`/`DefTemplate`/`SchemaFormView`), so a locale-only catalog
+// reload maps to the SAME structural id, while any change to the actual field set/types/shape/
+// order/inheritance still changes it like before.
+//
+// Deliberately NOT a blind `JSON.stringify(value, replacer)` keyed on the literal strings
+// "label"/"description"/"message": `fields`/`defTypes`/`templates`/etc. are all
+// `Record<string, X>` dictionaries, so a REAL RimWorld Def field is very often itself named
+// `description` (e.g. `ThingDef.description`) - a key-name-blind replacer would strip that
+// entire field's schema (not just its `label`/`description` text) purely because its field NAME
+// collides with the text-property name, silently collapsing a genuine structural difference
+// (e.g. `description` becoming `required`) into "no change". Each `stripX` helper below instead
+// destructures the exact, known `label`/`description`/`message` PROPERTY off a specific typed
+// shape - never a dictionary key - so field/def-type/template/view names are never touched.
+function stripFieldSchemaText(field: FieldSchema): Omit<FieldSchema, "label" | "description"> {
+  const { label: _label, description: _description, ...rest } = field;
+  return rest;
+}
+function stripDefTemplateText(template: DefTemplate): Omit<DefTemplate, "label" | "description"> {
+  const { label: _label, description: _description, ...rest } = template;
+  return rest;
+}
+function stripValidationRuleText(rule: ValidationRule): Omit<ValidationRule, "message"> {
+  const { message: _message, ...rest } = rule;
+  return rest;
+}
+function stripSchemaFormViewText(
+  view: SchemaFormView,
+): Omit<SchemaFormView, "label" | "description"> {
+  const { label: _label, description: _description, ...rest } = view;
+  return rest;
+}
+function mapRecordValues<T, R>(
+  record: Record<string, T>,
+  fn: (value: T) => R,
+): Record<string, R> {
+  const result: Record<string, R> = {};
+  for (const key of Object.keys(record)) result[key] = fn(record[key]);
+  return result;
+}
+function stripDefTypeSchemaText(defType: DefTypeSchema): unknown {
+  const {
+    label: _label,
+    description: _description,
+    fields,
+    templates,
+    validationRules,
+    formViews,
+    ...rest
+  } = defType;
+  return {
+    ...rest,
+    fields: mapRecordValues(fields, stripFieldSchemaText),
+    templates: templates ? mapRecordValues(templates, stripDefTemplateText) : templates,
+    validationRules: validationRules
+      ? mapRecordValues(validationRules, stripValidationRuleText)
+      : validationRules,
+    formViews: formViews ? mapRecordValues(formViews, stripSchemaFormViewText) : formViews,
+  };
+}
+function stripObjectTypeSchemaText(objectType: ObjectTypeSchema): unknown {
+  const { label: _label, description: _description, fields, ...rest } = objectType;
+  return { ...rest, fields: mapRecordValues(fields, stripFieldSchemaText) };
+}
+const structuralCatalogIdByRef = new WeakMap<SchemaCatalog, number>();
+const structuralCatalogIdBySignature = new Map<string, number>();
+let nextStructuralCatalogId = 1;
+function getStructuralCatalogId(catalog: SchemaCatalog): number {
+  const cached = structuralCatalogIdByRef.get(catalog);
+  if (cached !== undefined) return cached;
+  const structuralDefTypes = mapRecordValues(catalog.defTypes, stripDefTypeSchemaText);
+  const structuralObjectTypes = mapRecordValues(catalog.objectTypes, stripObjectTypeSchemaText);
+  const signature =
+    JSON.stringify(structuralDefTypes) + "|" + JSON.stringify(structuralObjectTypes);
+  let id = structuralCatalogIdBySignature.get(signature);
+  if (id === undefined) {
+    id = nextStructuralCatalogId++;
+    structuralCatalogIdBySignature.set(signature, id);
+  }
+  structuralCatalogIdByRef.set(catalog, id);
+  return id;
+}
+
 // Same content-stable-id pattern as `getCatalogId`, applied to the Form Views visibility
 // set (issue 05). `0` is reserved for "no filter" (the argument omitted/null), so the
 // resetKey suffix is a fixed constant for every caller that doesn't pass this yet - it can
@@ -256,6 +363,17 @@ export function useXmlFormController({
   visibleTopLevelFieldIds,
   onFocusedFieldHidden,
 }: UseXmlFormControllerArgs): XmlFormApi {
+  // `i18n.language` is a reactive dependency of `models`/`descriptors`
+  // below (schema catalog `label`/`description` text and this hook's own generated readOnlyReason/
+  // summary strings -- see `formDescriptors.ts`/`objectDescriptors.ts` -- are resolved through the
+  // active i18next language at build time, not stored translation-neutral). Without this, a locale
+  // switch that produces a structurally-identical catalog (same fields/shape, same `catalogId` --
+  // see `getCatalogId`'s doc comment) would never rebuild the form, leaving stale prior-locale text
+  // on screen until something else forced a rebuild. `useTranslation()` (no namespace) subscribes
+  // this hook to i18next's language-changed event so `i18n.language` is a genuinely reactive value,
+  // not read once at mount.
+  const { i18n } = useTranslation();
+
   const selectedDef = useMemo(() => {
     const parsed = snapshot?.parsed;
     if (!parsed || parsed.defs.length === 0) return null;
@@ -266,10 +384,14 @@ export function useXmlFormController({
 
   // Step 2: cheap, content-stable ids. Computed before `models`/`descriptors` below so those
   // memos can depend on stable primitives instead of the raw `catalog`/`visibleTopLevelFieldIds`
-  // references (issue 05 review finding 3): a caller re-creating a content-equal catalog or
+  // references: a caller re-creating a content-equal catalog or
   // Set on every render (e.g. `new Set(someComputedArray)` inline) must not force the
-  // expensive descriptor rebuild/nested expansion this issue's filtering exists to avoid.
+  // expensive descriptor rebuild/nested expansion this filtering exists to avoid.
   const catalogId = catalog ? getCatalogId(catalog) : 0;
+  // Structural-only counterpart of `catalogId` (see
+  // `getStructuralCatalogId`'s doc comment) - unchanged by a locale-only catalog reload, used
+  // only by `docKey` below.
+  const structuralCatalogId = catalog ? getStructuralCatalogId(catalog) : 0;
   // Form Views (issue 05): `0` when no visibility filter is supplied, so this is a fixed
   // constant (never changes across renders) until a real caller passes a Set.
   const visibilityId = getVisibilityId(visibleTopLevelFieldIds);
@@ -287,8 +409,10 @@ export function useXmlFormController({
     // `catalog`/`visibleTopLevelFieldIds` are intentionally read via closure rather than
     // listed here - `catalogId`/`visibilityId` are their content-stable proxies, so a
     // content-equal-but-new-reference catalog/Set correctly does NOT retrigger this.
+    // `i18n.language` IS listed directly (see this function's top-of-hook comment): it is
+    // already a stable primitive, so it needs no content-stable proxy of its own.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catalogId, selectedDef, visibilityId]);
+  }, [catalogId, selectedDef, visibilityId, i18n.language]);
 
   const descriptors = useMemo(() => {
     if (!selectedDef) return [];
@@ -301,17 +425,38 @@ export function useXmlFormController({
       visibleTopLevelFieldIds,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catalogId, selectedDef, visibilityId]);
+  }, [catalogId, selectedDef, visibilityId, i18n.language]);
 
   // `docKey` identifies the underlying document/def/catalog identity, deliberately excluding
-  // visibility. Comparing it across renders (see `lastDocKeyRef` below) is how the rebuild
-  // effect tells "the document didn't change, only the visibility filter did" apart from
-  // every other rebuild cause - the two cases have different draft-preservation semantics.
+  // visibility AND locale. Comparing it across renders (see `lastDocKeyRef` below) is how the
+  // rebuild effect tells "the document didn't change, only the visibility filter or locale did"
+  // apart from every other rebuild cause - those two cases share the same draft-preservation
+  // semantics (see `isPureDisplayOnlyChange` below), which differ from a real document change.
+  //
+  // Uses `structuralCatalogId`, NOT `catalogId`, precisely so a
+  // locale-only catalog reload (new `SchemaCatalog` object, same field set/shape, only
+  // translated `label`/`description`/`message` text differs) does not itself change `docKey` -
+  // see `getStructuralCatalogId`'s doc comment. A genuine structural catalog change (different
+  // fields/types/shape/order/inheritance - e.g. a game-version or schema-pack switch) still
+  // changes `docKey` exactly as before.
   const docKey = useMemo(() => {
     if (!snapshot || !selectedDef) return null;
-    return `${snapshot.rawXml}:${selectedDef.nodeId}:${selectedDef.defType}:${catalogId}`;
-  }, [snapshot, selectedDef, catalogId]);
-  const resetKey = docKey === null ? "empty" : `${docKey}:${visibilityId}`;
+    return `${snapshot.rawXml}:${selectedDef.nodeId}:${selectedDef.defType}:${structuralCatalogId}`;
+  }, [snapshot, selectedDef, structuralCatalogId]);
+  // Locale is included here (not in `docKey`) for the same reason visibility is: a locale switch
+  // must still trigger the rebuild effect below (so the store is rebuilt from freshly-translated
+  // `models`/`descriptors`), but it is a display-only change, not a document change, so it must
+  // NOT discard in-progress dirty drafts the way a real document/def/catalog change does.
+  //
+  // `catalogId` (the FULL, non-structural signature) is also included here directly - not just
+  // via `docKey` - so that a catalog content change that is NOT a locale switch (e.g. a
+  // non-locale label edit coming from a different schema pack/game version, where
+  // `structuralCatalogId` may legitimately stay the same) still triggers this rebuild effect,
+  // exactly as it did before `docKey` switched to the structural id.
+  const resetKey =
+    docKey === null
+      ? "empty"
+      : `${docKey}:${visibilityId}:${i18n.language}:${catalogId}`;
 
   // Stable callbacks/values read inside effects and async commit handlers.
   const clearPreviewRef = useRef(clearPreview);
@@ -339,17 +484,19 @@ export function useXmlFormController({
   const lastCommitPrevNodeCountRef = useRef<number | null>(null);
   const appliedResetKeyRef = useRef<string | null>(null);
 
-  // Form Views (issue 05): the `docKey`/`visibilityId` last applied, so the rebuild effect
-  // can tell a pure visibility-only rebuild apart from every other rebuild cause (raw edit,
-  // undo/redo, def switch, catalog reload, form commit). Only a pure visibility change
-  // preserves uncommitted drafts (see `draftOverridesRef` below); every other cause discards
-  // stale drafts exactly as it already did before this feature existed.
+  // Form Views (issue 05), extended to also cover locale, with the comparison itself later
+  // refined - see `isPureDisplayOnlyChange`'s doc comment: the
+  // `docKey`/`i18n.language` last applied, so the rebuild effect can tell a pure visibility-,
+  // locale-, or locale-driven-catalog-metadata-only rebuild apart from every other rebuild cause
+  // (raw edit, undo/redo, def switch, structural catalog reload, form commit). Only a pure
+  // display-only change preserves uncommitted drafts (see `draftOverridesRef` below); every
+  // other cause discards stale drafts exactly as it already did before this feature existed.
   const lastDocKeyRef = useRef<string | null>(null);
-  const lastVisibilityIdRef = useRef<number>(0);
+  const lastLanguageRef = useRef<string | null>(null);
   // Field state stashed for a currently-hidden field across a pure visibility rebuild, keyed
   // by canonical FormFieldId. Usually an uncommitted (dirty/clearRequested) draft; if that
   // field's own commit later lands while it's still hidden, `flushFields` updates the entry
-  // in place to the just-committed clean value instead of deleting it (review finding 2a),
+  // in place to the just-committed clean value instead of deleting it,
   // so the field reflects the real committed value - not the stale pre-commit draft - the
   // moment it becomes visible again, without waiting for a fresh document snapshot to arrive.
   // An entry is applied and removed the moment its field becomes visible again. Cleared
@@ -366,7 +513,7 @@ export function useXmlFormController({
     storeRef.current = s;
     appliedResetKeyRef.current = resetKey;
     lastDocKeyRef.current = docKey;
-    lastVisibilityIdRef.current = visibilityId;
+    lastLanguageRef.current = i18n.language;
   }
   const store = storeRef.current;
 
@@ -402,6 +549,13 @@ export function useXmlFormController({
     // so the full rebuild is redundant work and we skip it. Anything else (raw edit,
     // undo/redo, def insert, file load, confirm-save, catalog reload, or a structural form
     // commit) rebuilds.
+    // A locale switch alone must never take the `structurallySkippable`
+    // fast path below. That path's guarantee is "field VALUES are provably unchanged, so skip the
+    // rebuild" (`storeValuesMatchFreshBuild` only compares values, never labels/descriptions/
+    // readOnlyReason text) -- correct for a raw/undo/commit-driven rebuild, but wrong here, since a
+    // locale switch is precisely a display-text-only change this rebuild exists to pick up.
+    const localeChanged = lastLanguageRef.current !== i18n.language;
+
     const isFormOriginated =
       lastCommittedRawXmlRef.current !== null &&
       newRawXml !== null &&
@@ -411,23 +565,40 @@ export function useXmlFormController({
       !lastCommitStructuralRef.current &&
       newNodeCount !== null &&
       lastCommitPrevNodeCountRef.current !== null &&
-      newNodeCount === lastCommitPrevNodeCountRef.current;
+      newNodeCount === lastCommitPrevNodeCountRef.current &&
+      !localeChanged;
 
-    // Form Views (issue 05, Plan.md section 7/9 - "no value is discarded"): this rebuild is
-    // caused *purely* by a visibility change when the underlying document/def/catalog
-    // identity (`docKey`) is exactly what was last applied, but the visibility filter
-    // changed. Mutually exclusive with `isFormOriginated`/`structurallySkippable`: a form
-    // commit always changes `snapshot.rawXml`, which is part of `docKey`.
-    const isPureVisibilityChange =
-      lastDocKeyRef.current !== null &&
-      lastDocKeyRef.current === docKey &&
-      lastVisibilityIdRef.current !== visibilityId;
+    // Form Views (issue 05, Plan.md section 7/9 - "no value is discarded"), extended to
+    // locale: this rebuild is caused *purely* by a display-only change
+    // (the visibility filter, the active locale, or a locale-only
+    // catalog re-fetch landing on a LATER render than the `i18n.language` flip that triggered it,
+    // see `resetKey`'s `catalogId` term) exactly when the underlying document/def/catalog
+    // STRUCTURAL identity (`docKey`, keyed on `structuralCatalogId`) is exactly what was last
+    // applied. Mutually exclusive with `isFormOriginated`/`structurallySkippable`: a form commit
+    // always changes `snapshot.rawXml`, which is part of `docKey`.
+    //
+    // Deliberately does NOT also require "visibility changed OR
+    // locale changed on THIS render" (the original condition, which compared against a
+    // now-removed `lastVisibilityIdRef`). `resetKey` can now change for a fourth reason beyond
+    // docKey/visibility/locale - `catalogId` (the FULL, non-structural signature) - when a
+    // locale-aware catalog re-fetch resolves on a render where `i18n.language` itself already
+    // stabilized on a PRIOR render (see the test in `useXmlFormController.test.tsx` titled
+    // "preserves an in-progress dirty draft when a locale switch delivers a new catalog
+    // object..."). In that case neither `visibilityId` nor `localeChanged` changed on THIS
+    // render, but `docKey` (structural) is still unchanged from last applied, so it alone is both
+    // necessary and sufficient: whenever the effect body runs at all (past the early-return
+    // above), at least one of docKey/visibilityId/i18n.language/catalogId must differ from what
+    // was last applied - if docKey (structural) didn't, the underlying document/field-structure
+    // genuinely didn't change, regardless of which of the other three caused this particular
+    // render.
+    const isPureDisplayOnlyChange =
+      lastDocKeyRef.current !== null && lastDocKeyRef.current === docKey;
 
     appliedResetKeyRef.current = resetKey;
     lastDocKeyRef.current = docKey;
-    lastVisibilityIdRef.current = visibilityId;
+    lastLanguageRef.current = i18n.language;
 
-    // Review finding 1 (round 2) + round 3 fix: `draftVersionRef` is the guard `flushFields`
+    // `draftVersionRef` is the guard `flushFields`
     // uses, after awaiting `commitEdits`, to detect "the draft/document generation changed
     // while this commit was in flight" and treat a resolved commit as stale (throwing "Form
     // changed while edits were being applied"). Bumping it here is only correct when the
@@ -439,14 +610,14 @@ export function useXmlFormController({
     // rawXml yet would make the *next*, real rebuild wrongly pay for a full rebuild instead
     // of the Step 4 fast path.
     //
-    // Round 3 review: this used to RESET `draftVersionRef` to the fixed constant 0, which is
+    // This used to RESET `draftVersionRef` to the fixed constant 0, which is
     // a genuine (pre-existing, not introduced by Form Views) race: an in-flight flush that
     // had captured version 1 before this reset, followed by exactly one fresh edit after the
     // rebuild (bumping the counter from 0 back to 1), would collide with the stale flush's
     // captured value and be wrongly accepted as still-current. Incrementing instead of
     // resetting makes this a genuinely monotonic generation counter - it can never loop back
     // to a value an in-flight flush already captured, however many edits/rebuilds occur.
-    if (!isPureVisibilityChange) {
+    if (!isPureDisplayOnlyChange) {
       lastCommittedRawXmlRef.current = null;
       lastCommitStructuralRef.current = false;
       lastCommitPrevNodeCountRef.current = null;
@@ -476,7 +647,7 @@ export function useXmlFormController({
     const goneFocusedIds = focusedFieldIdsGoneAfterReset(store, models);
     const fresh = buildInitialFieldState(models, descriptors);
 
-    if (isPureVisibilityChange) {
+    if (isPureDisplayOnlyChange) {
       // Stash every currently-dirty field's draft (not just ones whose own visibility just
       // changed - a full rebuild would otherwise also wipe an unrelated visible field's
       // in-progress edit), then re-apply whichever of those - old or newly stashed - now
@@ -547,7 +718,7 @@ export function useXmlFormController({
   const discardDrafts = useCallback(() => {
     clearPreviewRef.current();
     draftVersionRef.current += 1;
-    // Review finding 2(b): `store.discardAll` only resets fields currently LIVE in the
+    // `store.discardAll` only resets fields currently LIVE in the
     // store. A field hidden by a Form View visibility change while dirty has its draft
     // stashed in `draftOverridesRef`, not in the live store, so an explicit "discard all
     // drafts" action must also drop it here - otherwise the stale draft would silently
@@ -639,7 +810,7 @@ export function useXmlFormController({
           try {
             const rawXml = await commitEditsRef.current(edits, editContext);
 
-            // Round 3 review: check staleness BEFORE any of the following side effects
+            // Check staleness BEFORE any of the following side effects
             // (Step 4 markers, `store.applyCommit`, the hidden-draft stash update) rather
             // than applying them first and only afterward deciding whether to also flag an
             // error. `draftVersionRef` is a monotonic generation counter (bumped on every
@@ -650,8 +821,15 @@ export function useXmlFormController({
             // written into it, even if some individual field's value coincidentally still
             // matches what was committed.
             if (draftVersionRef.current !== flushVersion) {
-              const message =
-                "Form changed while edits were being applied. Preview again.";
+              // Not a React component, and this callback can run before/without an
+              // `I18nextProvider`/`LocaleProvider` ancestor -- resolve from the app-wide i18next
+              // singleton directly, same as `src/features/xml-editor/lib/objectDescriptors.ts`,
+              // rather than `useTranslation()` (which returns a non-functional stub, echoing the
+              // raw key back, outside a provider tree).
+              const message = initI18n().t(
+                "editor:formEditor.staleFormOnCommit",
+                "Form changed while edits were being applied. Preview again.",
+              );
               clearPreviewRef.current();
               store.markCommitError(dirtyIds, message);
               throw new Error(message);
@@ -662,7 +840,7 @@ export function useXmlFormController({
             lastCommitStructuralRef.current = structural;
             lastCommitPrevNodeCountRef.current = prevNodeCount;
             store.applyCommit(dirtyIds, committedValuesByFieldId);
-            // Review finding 2(a): `store.applyCommit` only updates a field that is
+            // `store.applyCommit` only updates a field that is
             // currently LIVE in the store - it silently skips one hidden by a Form View
             // visibility change at commit time (that field isn't in the store's field map
             // at all). Update this commit's fields' stashed override (if any) to the
@@ -690,7 +868,7 @@ export function useXmlFormController({
             }
             return rawXml;
           } catch (e) {
-            const message = e instanceof Error ? e.message : String(e);
+            const message = formatError(e);
             store.markCommitError(dirtyIds, message);
             throw e;
           }

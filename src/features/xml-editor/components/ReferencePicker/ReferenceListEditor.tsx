@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Plus, Trash2 } from "lucide-react";
 import type { ReferenceMetadata } from "../../../schema-catalog";
 import type { XmlEditorFileRef } from "../../hooks/useXmlEditorSession";
@@ -27,6 +28,7 @@ export function ReferenceListEditor({
   readOnly,
   onNavigateDef,
 }: Props) {
+  const { t } = useTranslation("editor");
   function updateItem(index: number, value: string) {
     if (readOnly) return;
     onChangeItems(items.map((existing, i) => (i === index ? value : existing)));
@@ -71,7 +73,7 @@ export function ReferenceListEditor({
             <button
               className={listStyles.listRemove}
               onClick={() => removeItem(index)}
-              aria-label={`Remove item ${index + 1}`}
+              aria-label={t("referencePicker.removeItem", { index: index + 1 })}
               type="button"
             >
               <Trash2 size={12} />
@@ -82,7 +84,7 @@ export function ReferenceListEditor({
       {!readOnly && (
         <button className={listStyles.listAdd} onClick={addItem} type="button">
           <Plus size={12} />
-          Add item
+          {t("referencePicker.addItem")}
         </button>
       )}
     </div>

@@ -892,7 +892,15 @@ mod tests {
         let (views, warning) = list_views_in(&root, "proj1", None, None).unwrap();
         assert!(views.is_empty());
         let warning = warning.expect("expected a newer-version warning");
-        assert_eq!(warning.code, "form_view_store_unsupported_version");
+        // Same stable code as `FormViewStoreError::UnsupportedNewerVersion`'s `AppError`
+        // conversion below (`form_view_unsupported_version`), and present in the frontend's
+        // diagnostic catalog, so `renderDiagnostic` actually translates it instead of silently
+        // falling back to the raw `message` text.
+        assert_eq!(warning.code, "form_view_unsupported_version");
+        assert_eq!(
+            warning.args.get("schemaVersion"),
+            Some(&crate::diagnostics::DiagnosticArgValue::Int(999))
+        );
 
         // Mutations refuse outright rather than risk destroying data this build can't parse.
         let err = create_view_in(&root, "proj1", sample_new_view("1.6", "ThingDef", "Weapon"))

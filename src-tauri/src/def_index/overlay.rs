@@ -31,6 +31,10 @@ pub fn apply_replacement_overlay(
             message: format!("Location not found: {}", replacement.location_id),
             line: None,
             column: None,
+            args: crate::diagnostics::diagnostic_args([(
+                "locationId",
+                replacement.location_id.into(),
+            )]),
         });
         return index;
     };

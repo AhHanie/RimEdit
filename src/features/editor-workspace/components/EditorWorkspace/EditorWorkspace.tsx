@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import type { ActiveEditorCommands, OpenFileTab } from "../../types";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import type { XmlEditorFileRef } from "../../../xml-editor/hooks/useXmlEditorSession";
@@ -37,16 +38,15 @@ export function EditorWorkspace({
   onNavigateDef,
   onActiveCommandsChange,
 }: EditorWorkspaceProps) {
+  const { t } = useTranslation("editor");
   const handleCloseTab = useCallback(async (tabKey: string) => {
     const tab = tabs.find((candidate) => candidate.tabKey === tabKey);
     if (tab?.dirty) {
-      const discard = await confirmDiscardChanges(
-        "Close this file and discard unsaved changes?",
-      );
+      const discard = await confirmDiscardChanges(t("workspace.confirmCloseDiscard"));
       if (!discard) return;
     }
     onCloseTab(tabKey);
-  }, [tabs, onCloseTab]);
+  }, [tabs, onCloseTab, t]);
 
   // Keep a ref so close-command closures always call the latest handleCloseTab.
   const handleCloseTabRef = useRef(handleCloseTab);

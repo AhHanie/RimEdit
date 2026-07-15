@@ -1,4 +1,5 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import userEvent from "@testing-library/user-event";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
@@ -682,6 +683,50 @@ describe("CreateDefWizard - structured backend errors", () => {
 
     expect(await screen.findByText("Source def not found")).toBeTruthy();
     expect(screen.queryByText("[object Object]")).toBeNull();
+  });
+
+  it("renders a code/args pair through the shared diagnostic catalog even when the rejection arrives as a JSON-encoded string, not just an object", async () => {
+    invokeMock.mockReset();
+    invokeMock.mockImplementation(async (cmd: string) => {
+      if (cmd === "search_defs") return [makeIndexedSearchResult()];
+      return [];
+    });
+    const session = makeSession({
+      // Some rejection paths still surface as a JSON-encoded string rather than a plain
+      // `{ code, message, args }` object (e.g. a command returning `Result<T, String>`).
+      // `formatWizardError` must still route `code`/`args` through the shared translator instead
+      // of hand-extracting the embedded `message` field and skipping translation.
+      insertDefFromIndexedDef: vi.fn().mockRejectedValue(
+        JSON.stringify({
+          code: "invalid_location_path",
+          message: "backend raw message that must not be shown",
+          args: { path: "Defs/Thing.xml" },
+        }),
+      ),
+    });
+    render(
+      <CreateDefWizard
+        catalog={makeCatalog()}
+        session={session}
+        onClose={vi.fn()}
+        onCreated={vi.fn()}
+      />,
+    );
+
+    await userEvent.click(screen.getByText("Thing"));
+    await userEvent.click(screen.getByRole("tab", { name: "Indexed Defs" }));
+    await userEvent.click(await screen.findByText("autopistol"));
+
+    const input = screen.getByPlaceholderText("e.g. MyThing");
+    await userEvent.type(input, "Gun_MyPistol");
+    await userEvent.click(screen.getByText("Create"));
+
+    expect(
+      await screen.findByText('"Defs/Thing.xml" is not a valid location path.'),
+    ).toBeTruthy();
+    expect(
+      screen.queryByText("backend raw message that must not be shown"),
+    ).toBeNull();
   });
 
   it("shows the backend message when search_defs rejects with a structured AppError", async () => {

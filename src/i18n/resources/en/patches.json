@@ -1,0 +1,113 @@
+{
+  "editorPane": {
+    "parsing": "Parsing patch file…"
+  },
+  "operationTree": {
+    "empty": "This patch file has no operations yet."
+  },
+  "operationRow": {
+    "collapseOperation": "Collapse operation",
+    "expandOperation": "Expand operation",
+    "rawXmlOnly": "Raw XML only",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "duplicateOperation": "Duplicate operation",
+    "removeOperation": "Remove operation",
+    "rawXmlLabel": "Raw XML (unrecognized or custom operation class)",
+    "addSequenceOperation": "Add sequence operation",
+    "setSlotOperation": "Set {{slot}} operation"
+  },
+  "operationSummary": {
+    "operationCount_one": "{{count}} operation",
+    "operationCount_other": "{{count}} operations"
+  },
+  "addOperationPanel": {
+    "defaultTrigger": "Add operation",
+    "couldNotParse": "Could not parse the built operation XML.",
+    "success": "Success",
+    "successNormal": "Normal",
+    "successInvert": "Invert",
+    "successAlways": "Always",
+    "successNever": "Never",
+    "create": "Create"
+  },
+  "typePicker": {
+    "searchPlaceholder": "Search operation type…",
+    "customSuffix": " · custom",
+    "empty": "No matching operation type."
+  },
+  "operationForm": {
+    "success": "Success",
+    "mayRequire": "MayRequire",
+    "mayRequireAnyOf": "MayRequireAnyOf",
+    "xpathFallback": "XPath",
+    "valueFallback": "Value",
+    "attributeFallback": "Attribute",
+    "nameFallback": "Name",
+    "order": "Order",
+    "orderDefault": "(default)",
+    "orderAppend": "Append",
+    "orderPrepend": "Prepend",
+    "otherAttributes": "Other attributes",
+    "namePlaceholder": "Name",
+    "valuePlaceholder": "Value",
+    "removeAttribute": "Remove attribute",
+    "addAttribute": "Add attribute",
+    "mods": "Mods",
+    "modNamePlaceholder": "Mod name",
+    "removeMod": "Remove mod",
+    "addMod": "Add mod"
+  },
+  "classificationDiagnostics": {
+    "previewMessageUnavailable": "unsupported"
+  },
+  "valueEditor": {
+    "rawXml": "Raw XML",
+    "structured": "Structured",
+    "noStructuredEditor": "No structured editor for this target",
+    "fieldToInsert": "Field to insert",
+    "fieldToAdd": "Field to add",
+    "chooseAField": "(choose a field)",
+    "mismatch": "Existing value is <{{actualName}}>, which doesn't match the target field <{{fieldName}}>. Edit as raw XML, or clear the value to start structured editing fresh.",
+    "unsupportedMultipleTopLevelElements": "The value contains more than one top-level element.",
+    "unsupportedListItemsHaveStructure": "The value's list items have their own attributes or child elements.",
+    "unsupportedMapEntriesHaveStructure": "The value's entries have their own attributes or child elements."
+  },
+  "valueFieldRenderer": {
+    "unknownObjectType": "Unknown object type -- edit as raw XML.",
+    "chooseClass": "(choose class)",
+    "noneOption": "(none)",
+    "removeItem": "Remove item",
+    "unknownClass": "Unknown class -- edit as raw XML to set its fields.",
+    "addItem": "Add item",
+    "removeEntry": "Remove entry",
+    "addEntry": "Add entry",
+    "keyPlaceholder": "Key",
+    "valuePlaceholder": "Value"
+  },
+  "previewDialog": {
+    "dialogAriaLabel": "Patch preview",
+    "title": "Patch preview - {{defType}}:{{identity}}",
+    "loadingPreview": "Loading preview…",
+    "defNotFound": "Def not found in the combined document.",
+    "partialPreview": "Partial preview - some operations could not be fully previewed.",
+    "completePreview": "Complete preview.",
+    "patchOperations": "Patch operations ({{count}})",
+    "resetOrder": "Reset order",
+    "noPatchesAffect": "No patches affect this Def.",
+    "unknownImpact": "Unknown impact ({{count}})",
+    "unknownImpactHint": "These operations' XPath could not be statically resolved. They are included here only because a runtime trace matched them against this Def's pre-patch ancestor chain.",
+    "finalXml": "Final XML",
+    "defNotFoundXml": "(Def not found)",
+    "enableOperation": "Enable {{className}}",
+    "moveUp": "Move {{className}} up",
+    "moveDown": "Move {{className}} down",
+    "statusNotAvailable": "n/a",
+    "previewUnsupported": "Preview unsupported: {{reason}}",
+    "reasonTargetsDefDirectly": "Targets {{defType}}:{{defName}} directly",
+    "reasonTargetsEveryDefType": "Targets every {{defType}}",
+    "reasonTargetsDefsByName_one": "Targets {{count}} Def directly by defName",
+    "reasonTargetsDefsByName_other": "Targets {{count}} Defs directly by defName",
+    "reasonUnknownStaticImpact": "Unknown static impact - matched via runtime trace"
+  }
+}

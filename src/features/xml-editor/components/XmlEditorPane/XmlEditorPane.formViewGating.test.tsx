@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { invoke } from "@tauri-apps/api/core";
 import { XmlEditorPane } from "./XmlEditorPane";
 import { useXmlEditorSession } from "../../hooks/useXmlEditorSession";

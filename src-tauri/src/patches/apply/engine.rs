@@ -9,8 +9,8 @@ use sxd_document::dom::Document;
 
 use super::{control_flow, mutations};
 use super::{
-    ApplyDiagnostic, ApplyDiagnosticSeverity, OperationTraceEntry, OperationTraceStatus,
-    PatchApplyOptions, PatchApplyResult, PatchOperationKey, TopLevelOperation,
+    ApplyDiagnostic, OperationTraceEntry, OperationTraceStatus, PatchApplyOptions,
+    PatchApplyResult, PatchOperationKey, TopLevelOperation,
 };
 use crate::patches::index::CustomOperationMetadataMap;
 use crate::patches::model::{PatchOperationKind, PatchOperationNode, PatchSuccessMode};
@@ -95,6 +95,8 @@ impl ApplyEngine {
                 class_name: node.class_name.clone(),
                 status: OperationTraceStatus::Skipped,
                 message: None,
+                code: None,
+                args: crate::diagnostics::DiagnosticArgs::new(),
             });
             return true;
         }
@@ -112,18 +114,22 @@ impl ApplyEngine {
                     node.class_name
                 )
             };
+            let class_name_args = crate::diagnostics::diagnostic_args([(
+                "className",
+                node.class_name.as_str().into(),
+            )]);
             self.trace.push(OperationTraceEntry {
                 key: key.clone(),
                 class_name: node.class_name.clone(),
                 status: OperationTraceStatus::Unsupported,
                 message: Some(message.clone()),
+                code: Some("patch_apply_unsupported_operation".to_string()),
+                args: class_name_args.clone(),
             });
-            self.diagnostics.push(ApplyDiagnostic {
-                severity: ApplyDiagnosticSeverity::Warning,
-                code: "patch_apply_unsupported_operation".to_string(),
-                message,
-                key: Some(key),
-            });
+            self.diagnostics.push(
+                ApplyDiagnostic::warning("patch_apply_unsupported_operation", message, Some(key))
+                    .with_args(class_name_args),
+            );
             self.is_partial = true;
             // Assumed to have "worked" (see struct docs) so `success="Never"`/`"Invert"` on an
             // unsupported operation still visibly fails rather than silently no-op-succeeding.
@@ -133,13 +139,11 @@ impl ApplyEngine {
         let raw = self.apply_worker(document, node, ctx, &key);
         let adjusted = control_flow::apply_success_mode(node.success, raw);
         if node.success == PatchSuccessMode::Always && !raw {
-            self.diagnostics.push(ApplyDiagnostic {
-                severity: ApplyDiagnosticSeverity::Warning,
-                code: "patch_apply_success_always_masks_failure".to_string(),
-                message: "Operation would have failed, but success=\"Always\" forces it to succeed"
-                    .to_string(),
-                key: Some(key.clone()),
-            });
+            self.diagnostics.push(ApplyDiagnostic::warning(
+                "patch_apply_success_always_masks_failure",
+                "Operation would have failed, but success=\"Always\" forces it to succeed",
+                Some(key.clone()),
+            ));
         }
         self.trace.push(OperationTraceEntry {
             key,
@@ -150,6 +154,8 @@ impl ApplyEngine {
                 OperationTraceStatus::Failed
             },
             message: None,
+            code: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         });
         adjusted
     }

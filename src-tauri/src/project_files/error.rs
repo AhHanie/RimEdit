@@ -1,3 +1,4 @@
+use crate::diagnostics::diagnostic_args;
 use crate::project_model::AppError;
 
 #[derive(Debug, thiserror::Error)]
@@ -38,10 +39,46 @@ impl From<ProjectFileError> for AppError {
             ProjectFileError::KindMismatch(_) => "kind_mismatch",
             ProjectFileError::CannotModifyRoot => "cannot_modify_root",
         };
+        // Only variants whose payload is a clean literal identifier (a project id or a relative
+        // path) get typed args; `ScanFailed` wraps arbitrary IO-error text, which Plan.md says to
+        // keep as unbounded English technical detail rather than force into a translation key.
+        let args = match &e {
+            ProjectFileError::ProjectNotFound(id) | ProjectFileError::ProjectNotEditable(id) => {
+                diagnostic_args([("projectId", id.as_str().into())])
+            }
+            ProjectFileError::FileNotFound(path)
+            | ProjectFileError::InvalidFileName(path)
+            | ProjectFileError::PathAlreadyExists(path)
+            | ProjectFileError::KindMismatch(path) => {
+                diagnostic_args([("path", path.as_str().into())])
+            }
+            _ => crate::diagnostics::DiagnosticArgs::new(),
+        };
         AppError {
             code: code.to_string(),
             message: e.to_string(),
             details: None,
+            args,
         }
+    }
+}
+
+#[cfg(test)]
+mod diagnostic_ref_wire_tests {
+    use super::*;
+
+    #[test]
+    fn file_not_found_carries_path_arg() {
+        let err: AppError = ProjectFileError::FileNotFound("Defs/Foo.xml".to_string()).into();
+        let json = serde_json::to_value(&err).unwrap();
+        assert_eq!(json["code"], "project_file_not_found");
+        assert_eq!(json["args"]["path"], "Defs/Foo.xml");
+    }
+
+    #[test]
+    fn scan_failed_omits_args() {
+        let err: AppError = ProjectFileError::ScanFailed("boom".to_string()).into();
+        let json = serde_json::to_value(&err).unwrap();
+        assert!(json.get("args").is_none());
     }
 }

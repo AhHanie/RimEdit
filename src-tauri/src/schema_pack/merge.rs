@@ -1,4 +1,5 @@
 use super::loader::LoadedPack;
+use super::locale::{apply_locale_overlays, LocaleOwnerMaps};
 use super::lookup::collect_effective_top_level_def_fields_from_map;
 use super::model::{
     DefTemplate, DefTypeSchema, FieldSchema, FieldSchemaDef, FieldTypeKind, FormViewDef,
@@ -20,7 +21,13 @@ use std::collections::HashSet;
 /// author of an external pack can locate the offending file.
 type PackFormViewDecls = (String, String, String, BTreeMap<String, FormViewDef>);
 
-/// Merge a set of loaded packs into a single catalog.
+/// Test-only convenience wrapper around [`merge_packs_with_locale`] that always applies locale
+/// overlays for `crate::locale::FALLBACK_LOCALE`. Every real production call site now threads an
+/// explicit, caller-resolved locale through `merge_packs_with_locale` directly (issue 06 --
+/// see `schema_pack::build_schema_catalog_with_locale`); this wrapper exists only so the large
+/// pre-existing test surface (`schema_pack/tests/*`), which never varies locale and predates
+/// issue 06, doesn't need every one of its several dozen call sites touched to pass one
+/// explicitly. `#[cfg(test)]` because nothing outside `schema_pack/tests` calls it.
 ///
 /// Precedence (applied in merge order, so last writer wins for scalars):
 ///   1. Lower `priority` merges first.
@@ -30,7 +37,20 @@ type PackFormViewDecls = (String, String, String, BTreeMap<String, FormViewDef>)
 ///
 /// Duplicate `packId` values are deduplicated: the first occurrence (lowest precedence)
 /// is kept and later duplicates are skipped with a warning diagnostic.
+#[cfg(test)]
 pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>) -> SchemaCatalog {
+    merge_packs_with_locale(packs, diags, crate::locale::FALLBACK_LOCALE)
+}
+
+/// Same as [`merge_packs`], but applies locale overlays for the given `locale` instead of the
+/// fixed fallback. `locale` is expected to already be resolved/validated by the caller (see
+/// `schema_pack::build_schema_catalog_with_locale`, which validates against the application
+/// locale registry before calling this).
+pub fn merge_packs_with_locale(
+    packs: Vec<LoadedPack>,
+    diags: &mut Vec<SchemaLoadDiagnostic>,
+    locale: &str,
+) -> SchemaCatalog {
     // Sort so that the lowest-precedence pack merges first (last writer wins).
     // builtins (0) sort before externals (1) at the same priority.
     let mut sorted = packs;
@@ -71,6 +91,11 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
     let mut merged_object_types: BTreeMap<String, ObjectTypeSchema> = BTreeMap::new();
     let mut merged_patch_operations: BTreeMap<String, PatchOperationMetadata> = BTreeMap::new();
     let mut summaries: Vec<LoadedSchemaPackSummary> = Vec::new();
+    // Per-scalar "pack that explicitly last set this label/description/message" provenance for
+    // locale-overlay ownership checks (issue 05). See `locale::LocaleOwnerMaps` doc comment for why
+    // this per-scalar granularity is required even for record kinds (fields, patch operations,
+    // form views) that also carry their own coarser, always-overwritten `source_pack_id`/`source`.
+    let mut locale_owners = LocaleOwnerMaps::default();
     // Raw `FormViewDef` declarations per def type, one entry per contributing pack, in the same
     // pack-precedence order as `deduped` (lowest precedence first). Form View resolution
     // (`resolve_all_form_views`) folds these together with each def type's ancestor chain after
@@ -117,12 +142,22 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
                     form_views: BTreeMap::new(),
                 });
 
-            // Scalar fields: later pack wins when explicitly provided.
+            // Scalar fields: later pack wins when explicitly provided. Locale-sidecar ownership of
+            // `label`/`description` is tracked per scalar, only when this pack actually set it --
+            // never for the def type as a whole -- so a pack that only amends some other part of
+            // this Def (fields, templates, validation rules, ...) can't thereby become able to
+            // sidecar-override a label/description it never supplied (see `locale` module docs).
             if incoming_def.label.is_some() {
                 entry.label = incoming_def.label.clone();
+                locale_owners
+                    .def_type_labels
+                    .insert(def_name.clone(), pack.manifest.pack_id.clone());
             }
             if incoming_def.description.is_some() {
                 entry.description = incoming_def.description.clone();
+                locale_owners
+                    .def_type_descriptions
+                    .insert(def_name.clone(), pack.manifest.pack_id.clone());
             }
             if incoming_def.abstract_type {
                 entry.abstract_type = true;
@@ -180,6 +215,10 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
             // Validation rules: later pack with same id replaces earlier one.
             for (rule_id, rule) in &incoming_def.validation_rules {
                 entry.validation_rules.insert(rule_id.clone(), rule.clone());
+                locale_owners.validation_rules.insert(
+                    (def_name.clone(), rule_id.clone()),
+                    pack.manifest.pack_id.clone(),
+                );
             }
 
             // Form Views: record this pack's raw declarations for this def type; resolution
@@ -205,6 +244,17 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
         }
 
         for (obj_name, incoming_obj) in &pack.manifest.object_types {
+            // Same per-scalar (not per-record) ownership rule as def types above.
+            if incoming_obj.label.is_some() {
+                locale_owners
+                    .object_type_labels
+                    .insert(obj_name.clone(), pack.manifest.pack_id.clone());
+            }
+            if incoming_obj.description.is_some() {
+                locale_owners
+                    .object_type_descriptions
+                    .insert(obj_name.clone(), pack.manifest.pack_id.clone());
+            }
             if let Some(entry) = merged_object_types.get_mut(obj_name) {
                 apply_object_type_override(entry, incoming_obj, &pack.manifest.pack_id);
             } else {
@@ -233,6 +283,8 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
                     }),
                 incoming_op,
                 &pack.manifest.pack_id,
+                class_name,
+                &mut locale_owners,
                 diags,
             );
         }
@@ -241,8 +293,12 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
     // Resolve schema-defined Form Views (issue 03): fold pack-precedence overlays and Def-type
     // inheritance for every def type now that `merged_def_types` (fields + `inherits`) is
     // complete. See `resolve_all_form_views` for the algorithm.
-    let resolved_form_views =
-        resolve_all_form_views(&merged_def_types, &raw_form_view_layers, diags);
+    let resolved_form_views = resolve_all_form_views(
+        &merged_def_types,
+        &raw_form_view_layers,
+        &mut locale_owners,
+        diags,
+    );
     for (def_name, views) in resolved_form_views {
         if let Some(entry) = merged_def_types.get_mut(&def_name) {
             entry.form_views = views;
@@ -409,6 +465,24 @@ pub fn merge_packs(packs: Vec<LoadedPack>, diags: &mut Vec<SchemaLoadDiagnostic>
         }
     }
 
+    // Apply pack-owned locale sidecar overlays, strictly after every other merge/inheritance/
+    // validation pass above (see `locale` module docs and this issue's "Risks" section on merge
+    // provenance). `locale` is the caller-supplied, already-resolved locale (issue 06 threads this
+    // explicitly through `merge_packs_with_locale`/`build_schema_catalog_with_locale`/the
+    // `load_schema_catalog` Tauri command; `merge_packs` itself keeps defaulting to
+    // `crate::locale::FALLBACK_LOCALE` for the large existing test surface and every
+    // locale-neutral structural caller -- see issue 06's "Document that indexing, save/validation,
+    // patch computation, and diagnostic creation ... do not receive locale").
+    let locale_diags = apply_locale_overlays(
+        &mut merged_def_types,
+        &mut merged_object_types,
+        &mut merged_patch_operations,
+        &deduped,
+        locale,
+        &locale_owners,
+    );
+    diags.extend(locale_diags);
+
     SchemaCatalog {
         format_version: 1,
         packs: summaries,
@@ -439,6 +513,10 @@ fn field_def_to_schema(def: &FieldSchemaDef, pack_id: &str) -> FieldSchema {
         repeatable: def.repeatable.unwrap_or(false),
         xml: def.xml.clone().unwrap_or(XmlFieldShape::Element),
         source_pack_id: Some(pack_id.to_string()),
+        // Only recorded as owner when this pack's own JSON explicitly set the scalar -- see
+        // `FieldSchema::label_source_pack_id` doc comment and `apply_field_override` below.
+        label_source_pack_id: def.label.is_some().then(|| pack_id.to_string()),
+        description_source_pack_id: def.description.is_some().then(|| pack_id.to_string()),
         items: def.items.clone(),
         flags: def.flags.unwrap_or(false),
         default_collapsed: def.default_collapsed,
@@ -454,11 +532,18 @@ fn field_def_to_schema(def: &FieldSchemaDef, pack_id: &str) -> FieldSchema {
 /// an override pack that only adds examples from accidentally clearing
 /// `required`, resetting `xml`, or removing `defaultValue`.
 fn apply_field_override(base: &mut FieldSchema, incoming: &FieldSchemaDef, pack_id: &str) {
+    // Label/description ownership is tracked per-scalar, independent of every other property on
+    // this field, and only transferred to `pack_id` when its own JSON explicitly sets that
+    // specific scalar -- otherwise a pack that amends only some other property (type, examples,
+    // xml shape, ...) would wrongly gain sidecar-override rights over a label/description it
+    // never supplied. See `FieldSchema::label_source_pack_id` doc comment.
     if incoming.label.is_some() {
         base.label = incoming.label.clone();
+        base.label_source_pack_id = Some(pack_id.to_string());
     }
     if incoming.description.is_some() {
         base.description = incoming.description.clone();
+        base.description_source_pack_id = Some(pack_id.to_string());
     }
 
     // field_type is always replaced; a field entry without a type is invalid JSON.
@@ -533,17 +618,34 @@ fn apply_field_override(base: &mut FieldSchema, incoming: &FieldSchemaDef, pack_
 /// `apply_field_override`. `preview` is only replaced when the incoming pack explicitly declares
 /// one, so a lower-priority pack's declared preview support isn't silently cleared by a
 /// higher-priority pack that only adds a label or an extra field.
+///
+/// Locale-sidecar ownership of `label`/`description`/`preview.message` is recorded into `owners`
+/// (keyed by `class_name`) only when this pack's own JSON explicitly sets that specific scalar --
+/// mirroring `apply_field_override` -- so a pack that amends only some other part of this patch
+/// operation (a new field, `fieldOrder`, ...) doesn't thereby gain sidecar-override rights over
+/// display text it never supplied. `base.source_pack_id` remains the coarser "last pack that
+/// touched this record at all" and must not be used for that check (see `LocaleOwnerMaps` doc
+/// comment).
+#[allow(clippy::too_many_arguments)]
 fn apply_patch_operation_override(
     base: &mut PatchOperationMetadata,
     incoming: &PatchOperationMetadataDef,
     pack_id: &str,
+    class_name: &str,
+    owners: &mut LocaleOwnerMaps,
     diags: &mut Vec<SchemaLoadDiagnostic>,
 ) {
     if incoming.label.is_some() {
         base.label = incoming.label.clone();
+        owners
+            .patch_operation_labels
+            .insert(class_name.to_string(), pack_id.to_string());
     }
     if incoming.description.is_some() {
         base.description = incoming.description.clone();
+        owners
+            .patch_operation_descriptions
+            .insert(class_name.to_string(), pack_id.to_string());
     }
 
     let pre_existing_keys: HashSet<String> = base.fields.keys().cloned().collect();
@@ -573,6 +675,9 @@ fn apply_patch_operation_override(
     if let Some(preview_def) = &incoming.preview {
         base.preview =
             resolve_patch_operation_preview(preview_def, &base.class_name, pack_id, diags);
+        owners
+            .patch_operation_preview_messages
+            .insert(class_name.to_string(), pack_id.to_string());
     }
 
     base.source_pack_id = Some(pack_id.to_string());
@@ -841,6 +946,7 @@ type EffectiveFormViewLayer = (
 fn resolve_all_form_views(
     def_types: &BTreeMap<String, DefTypeSchema>,
     raw_form_view_layers: &BTreeMap<String, Vec<PackFormViewDecls>>,
+    owners: &mut LocaleOwnerMaps,
     diags: &mut Vec<SchemaLoadDiagnostic>,
 ) -> BTreeMap<String, BTreeMap<String, SchemaFormView>> {
     let sanitized_layers = sanitize_form_view_layers(def_types, raw_form_view_layers, diags);
@@ -852,7 +958,13 @@ fn resolve_all_form_views(
     for def_type in def_types.keys() {
         let layers =
             compute_effective_layers(def_type, def_types, &sanitized_layers, &mut layer_cache);
-        let views = fold_effective_layers(&layers, &mut diagnosed_amendments_without_base, diags);
+        let views = fold_effective_layers(
+            def_type,
+            &layers,
+            &mut diagnosed_amendments_without_base,
+            owners,
+            diags,
+        );
         resolved.insert(def_type.clone(), views);
     }
     resolved
@@ -1006,8 +1118,10 @@ fn compute_effective_layers(
 /// inherited base" diagnostic across repeated folds of the same shared-ancestor declaration (see
 /// the module section comment above).
 fn fold_effective_layers(
+    consuming_def_type: &str,
     layers: &[EffectiveFormViewLayer],
     diagnosed_amendments_without_base: &mut HashSet<(String, String, String)>,
+    owners: &mut LocaleOwnerMaps,
     diags: &mut Vec<SchemaLoadDiagnostic>,
 ) -> BTreeMap<String, SchemaFormView> {
     let mut current: BTreeMap<String, SchemaFormView> = BTreeMap::new();
@@ -1017,6 +1131,7 @@ fn fold_effective_layers(
             let base = current.get(view_id).cloned();
             let result = apply_form_view_declaration(
                 owner_def_type,
+                consuming_def_type,
                 view_id,
                 base.as_ref(),
                 view_def,
@@ -1025,6 +1140,7 @@ fn fold_effective_layers(
                 path,
                 &field_path,
                 diagnosed_amendments_without_base,
+                owners,
                 diags,
             );
             match result {
@@ -1063,9 +1179,19 @@ fn fold_effective_layers(
 /// Returns `None` when the view is disabled/removed, or when a delta-only declaration (no label)
 /// has no base to amend -- Plan.md's recoverable "inherited view amendment with no inherited
 /// base" warning; the caller removes the id from the working set in that case.
+///
+/// Locale-sidecar ownership of `label`/`description` is recorded into `owners`, keyed by
+/// `(consuming_def_type, view_id)` -- the SAME key `apply_locale_overlays` looks resources up by
+/// (`consuming_def_type` is the def type whose `form_views` map this resolved view ends up under,
+/// which is not always `def_type`/`declared_on_def_type`: a descendant that inherits a view
+/// unchanged resolves it under its own key too) -- only when the incoming declaration explicitly
+/// sets that specific scalar. `view.source.pack_id` is set unconditionally on every fold (even a
+/// pure `hiddenFields` delta amendment that touches neither label nor description) and must NOT be
+/// used for this check; see `LocaleOwnerMaps` doc comment.
 #[allow(clippy::too_many_arguments)]
 fn apply_form_view_declaration(
     def_type: &str,
+    consuming_def_type: &str,
     view_id: &str,
     base: Option<&SchemaFormView>,
     incoming: &FormViewDef,
@@ -1074,6 +1200,7 @@ fn apply_form_view_declaration(
     path: &str,
     field_path: &str,
     diagnosed_amendments_without_base: &mut HashSet<(String, String, String)>,
+    owners: &mut LocaleOwnerMaps,
     diags: &mut Vec<SchemaLoadDiagnostic>,
 ) -> Option<SchemaFormView> {
     if incoming.disabled == Some(true) {
@@ -1113,6 +1240,18 @@ fn apply_form_view_declaration(
                 .unwrap_or_default()
                 .into_iter()
                 .collect();
+            // A first (non-amendment) declaration always supplies its own label (enforced above),
+            // so its owner is unconditionally this pack; description only if actually supplied.
+            owners.form_view_labels.insert(
+                (consuming_def_type.to_string(), view_id.to_string()),
+                pack_id.to_string(),
+            );
+            if incoming.description.is_some() {
+                owners.form_view_descriptions.insert(
+                    (consuming_def_type.to_string(), view_id.to_string()),
+                    pack_id.to_string(),
+                );
+            }
             Some(SchemaFormView {
                 id: view_id.to_string(),
                 label,
@@ -1143,6 +1282,21 @@ fn apply_form_view_declaration(
                 for name in remove {
                     hidden_set.remove(name);
                 }
+            }
+            // Only transfer label/description ownership to this pack when its own declaration
+            // explicitly supplied that scalar -- a delta amendment (e.g. hiddenFields-only) must
+            // not thereby gain sidecar-override rights over display text it never touched.
+            if incoming.label.is_some() {
+                owners.form_view_labels.insert(
+                    (consuming_def_type.to_string(), view_id.to_string()),
+                    pack_id.to_string(),
+                );
+            }
+            if incoming.description.is_some() {
+                owners.form_view_descriptions.insert(
+                    (consuming_def_type.to_string(), view_id.to_string()),
+                    pack_id.to_string(),
+                );
             }
             Some(SchemaFormView {
                 id: view_id.to_string(),

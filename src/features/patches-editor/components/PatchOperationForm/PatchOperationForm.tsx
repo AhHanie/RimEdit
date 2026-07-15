@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { Plus, X } from "lucide-react";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import { emptyToNull, insertAt, nullToEmpty, removeAt, replaceAt } from "../../lib/arrayUtils";
@@ -40,6 +42,7 @@ function fieldLabel(
 }
 
 export function PatchOperationForm({ node, catalog, readOnly, projectId, onChange }: Props) {
+  const { t } = useTranslation("patches");
   function updateData(patch: Partial<FlatDataKind["data"]>) {
     onChange((n) => {
       const kind = n.kind;
@@ -98,20 +101,20 @@ export function PatchOperationForm({ node, catalog, readOnly, projectId, onChang
     <div className={styles.form}>
       <div className={styles.commonRow}>
         <label className={styles.field}>
-          <span className={styles.label}>Success</span>
+          <span className={styles.label}>{t("operationForm.success")}</span>
           <select
             value={node.success}
             disabled={readOnly}
             onChange={(e) => setSuccess(e.target.value as PatchSuccessMode)}
           >
-            <option value="normal">Normal</option>
-            <option value="invert">Invert</option>
-            <option value="always">Always</option>
-            <option value="never">Never</option>
+            <option value="normal">{t("addOperationPanel.successNormal")}</option>
+            <option value="invert">{t("addOperationPanel.successInvert")}</option>
+            <option value="always">{t("addOperationPanel.successAlways")}</option>
+            <option value="never">{t("addOperationPanel.successNever")}</option>
           </select>
         </label>
         <label className={styles.field}>
-          <span className={styles.label}>MayRequire</span>
+          <span className={styles.label}>{t("operationForm.mayRequire")}</span>
           <input
             type="text"
             value={namedAttribute("MayRequire")}
@@ -121,7 +124,7 @@ export function PatchOperationForm({ node, catalog, readOnly, projectId, onChang
           />
         </label>
         <label className={styles.field}>
-          <span className={styles.label}>MayRequireAnyOf</span>
+          <span className={styles.label}>{t("operationForm.mayRequireAnyOf")}</span>
           <input
             type="text"
             value={namedAttribute("MayRequireAnyOf")}
@@ -132,29 +135,34 @@ export function PatchOperationForm({ node, catalog, readOnly, projectId, onChang
         </label>
       </div>
 
-      {kindFields(kind, node.className, catalog, readOnly, projectId, updateData)}
+      {kindFields(kind, node.className, catalog, readOnly, projectId, updateData, t)}
 
       {otherAttributes.length > 0 || !readOnly ? (
         <div className={styles.otherAttributes}>
-          <span className={styles.label}>Other attributes</span>
+          <span className={styles.label}>{t("operationForm.otherAttributes")}</span>
           {otherAttributes.map((attr, i) => (
             <div key={i} className={styles.attrRow}>
               <input
                 type="text"
                 value={attr.name}
                 disabled={readOnly}
-                placeholder="Name"
+                placeholder={t("operationForm.namePlaceholder")}
                 onChange={(e) => setOtherAttribute(i, "name", e.target.value)}
               />
               <input
                 type="text"
                 value={attr.value}
                 disabled={readOnly}
-                placeholder="Value"
+                placeholder={t("operationForm.valuePlaceholder")}
                 onChange={(e) => setOtherAttribute(i, "value", e.target.value)}
               />
               {!readOnly && (
-                <button type="button" className={styles.iconBtn} onClick={() => removeOtherAttribute(i)} aria-label="Remove attribute">
+                <button
+                  type="button"
+                  className={styles.iconBtn}
+                  onClick={() => removeOtherAttribute(i)}
+                  aria-label={t("operationForm.removeAttribute")}
+                >
                   <X size={12} />
                 </button>
               )}
@@ -162,7 +170,7 @@ export function PatchOperationForm({ node, catalog, readOnly, projectId, onChang
           ))}
           {!readOnly && (
             <button type="button" className={styles.addBtn} onClick={addOtherAttribute}>
-              <Plus size={12} /> Add attribute
+              <Plus size={12} /> {t("operationForm.addAttribute")}
             </button>
           )}
         </div>
@@ -178,10 +186,17 @@ function kindFields(
   readOnly: boolean,
   projectId: string | null,
   updateData: (patch: Record<string, unknown>) => void,
+  t: TFunction<"patches">,
 ) {
   const label = (field: string, fallback: string) => fieldLabel(catalog, className, field, fallback);
   const xpathField = (value: string | null, onChange: (xpath: string | null) => void) => (
-    <PatchPathInput value={value} readOnly={readOnly} label={label("xpath", "XPath")} projectId={projectId} onChange={onChange} />
+    <PatchPathInput
+      value={value}
+      readOnly={readOnly}
+      label={label("xpath", t("operationForm.xpathFallback"))}
+      projectId={projectId}
+      onChange={onChange}
+    />
   );
 
   switch (kind.type) {
@@ -198,10 +213,10 @@ function kindFields(
             catalog={catalog}
             projectId={projectId}
             operationType={kind.type}
-            label={label("value", "Value")}
+            label={label("value", t("operationForm.valueFallback"))}
             onChange={(valueXml) => updateData({ valueXml })}
           />
-          <OrderField value={data.order} readOnly={readOnly} onChange={(order) => updateData({ order })} />
+          <OrderField value={data.order} readOnly={readOnly} onChange={(order) => updateData({ order })} t={t} />
         </>
       );
     }
@@ -223,7 +238,7 @@ function kindFields(
             catalog={catalog}
             projectId={projectId}
             operationType={kind.type}
-            label={label("value", "Value")}
+            label={label("value", t("operationForm.valueFallback"))}
             onChange={(valueXml) => updateData({ valueXml })}
           />
         </>
@@ -238,10 +253,15 @@ function kindFields(
           <TextField
             value={data.attribute}
             readOnly={readOnly}
-            label={label("attribute", "Attribute")}
+            label={label("attribute", t("operationForm.attributeFallback"))}
             onChange={(attribute) => updateData({ attribute })}
           />
-          <TextField value={data.value} readOnly={readOnly} label={label("value", "Value")} onChange={(value) => updateData({ value })} />
+          <TextField
+            value={data.value}
+            readOnly={readOnly}
+            label={label("value", t("operationForm.valueFallback"))}
+            onChange={(value) => updateData({ value })}
+          />
         </>
       );
     }
@@ -253,7 +273,7 @@ function kindFields(
           <TextField
             value={data.attribute}
             readOnly={readOnly}
-            label={label("attribute", "Attribute")}
+            label={label("attribute", t("operationForm.attributeFallback"))}
             onChange={(attribute) => updateData({ attribute })}
           />
         </>
@@ -264,14 +284,21 @@ function kindFields(
       return (
         <>
           {xpathField(data.xpath, (xpath) => updateData({ xpath }))}
-          <TextField value={data.name} readOnly={readOnly} label={label("name", "Name")} onChange={(name) => updateData({ name })} />
+          <TextField
+            value={data.name}
+            readOnly={readOnly}
+            label={label("name", t("operationForm.nameFallback"))}
+            onChange={(name) => updateData({ name })}
+          />
         </>
       );
     }
     case "conditional":
       return xpathField(kind.data.xpath, (xpath) => updateData({ xpath }));
     case "findMod":
-      return <ModsListField mods={kind.data.mods} readOnly={readOnly} onChange={(mods) => updateData({ mods })} />;
+      return (
+        <ModsListField mods={kind.data.mods} readOnly={readOnly} onChange={(mods) => updateData({ mods })} t={t} />
+      );
     case "sequence":
     case "unknown":
       return null;
@@ -306,22 +333,24 @@ function OrderField({
   value,
   readOnly,
   onChange,
+  t,
 }: {
   value: PatchOrderMode | null;
   readOnly: boolean;
   onChange: (value: PatchOrderMode | null) => void;
+  t: TFunction<"patches">;
 }) {
   return (
     <label className={styles.field}>
-      <span className={styles.label}>Order</span>
+      <span className={styles.label}>{t("operationForm.order")}</span>
       <select
         value={value ?? ""}
         disabled={readOnly}
         onChange={(e) => onChange(e.target.value === "" ? null : (e.target.value as PatchOrderMode))}
       >
-        <option value="">(default)</option>
-        <option value="append">Append</option>
-        <option value="prepend">Prepend</option>
+        <option value="">{t("operationForm.orderDefault")}</option>
+        <option value="append">{t("operationForm.orderAppend")}</option>
+        <option value="prepend">{t("operationForm.orderPrepend")}</option>
       </select>
     </label>
   );
@@ -331,25 +360,32 @@ function ModsListField({
   mods,
   readOnly,
   onChange,
+  t,
 }: {
   mods: string[];
   readOnly: boolean;
   onChange: (mods: string[]) => void;
+  t: TFunction<"patches">;
 }) {
   return (
     <div className={styles.field}>
-      <span className={styles.label}>Mods</span>
+      <span className={styles.label}>{t("operationForm.mods")}</span>
       {mods.map((mod, i) => (
         <div key={i} className={styles.attrRow}>
           <input
             type="text"
             value={mod}
             disabled={readOnly}
-            placeholder="Mod name"
+            placeholder={t("operationForm.modNamePlaceholder")}
             onChange={(e) => onChange(replaceAt(mods, i, e.target.value))}
           />
           {!readOnly && (
-            <button type="button" className={styles.iconBtn} onClick={() => onChange(removeAt(mods, i))} aria-label="Remove mod">
+            <button
+              type="button"
+              className={styles.iconBtn}
+              onClick={() => onChange(removeAt(mods, i))}
+              aria-label={t("operationForm.removeMod")}
+            >
               <X size={12} />
             </button>
           )}
@@ -357,7 +393,7 @@ function ModsListField({
       ))}
       {!readOnly && (
         <button type="button" className={styles.addBtn} onClick={() => onChange(insertAt(mods, mods.length, ""))}>
-          <Plus size={12} /> Add mod
+          <Plus size={12} /> {t("operationForm.addMod")}
         </button>
       )}
     </div>

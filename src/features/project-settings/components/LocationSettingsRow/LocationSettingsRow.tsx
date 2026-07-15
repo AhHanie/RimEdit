@@ -1,14 +1,8 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pencil, Trash2, Check, X, Loader2 } from "lucide-react";
 import type { RegisteredLocation, RegisteredLocationUpdate, SourceType } from "../../types";
 import styles from "./LocationSettingsRow.module.css";
-
-const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
-  baseGame: "Base Game",
-  localMod: "Local Mod",
-  steamWorkshop: "Steam Workshop",
-  folder: "Folder",
-};
 
 const SOURCE_TYPE_OPTIONS: SourceType[] = [
   "baseGame",
@@ -44,9 +38,14 @@ export function LocationSettingsRow({
   onSave,
   onRemove,
 }: LocationSettingsRowProps) {
+  const { t } = useTranslation(["settings", "common"]);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<Draft>(() => draftFromLocation(location));
   const [saving, setSaving] = useState(false);
+
+  function sourceTypeLabel(type: SourceType): string {
+    return t(`settings:location.sourceTypeLabels.${type}`);
+  }
 
   function startEdit() {
     setDraft(draftFromLocation(location));
@@ -99,7 +98,7 @@ export function LocationSettingsRow({
             onKeyDown={handleKeyDown}
             disabled={saving}
             autoFocus
-            aria-label="Display name"
+            aria-label={t("settings:location.displayNameLabel")}
           />
           {location.kind === "source" && (
             <select
@@ -109,11 +108,11 @@ export function LocationSettingsRow({
                 setDraft((d) => ({ ...d, sourceType: e.target.value as SourceType }))
               }
               disabled={saving}
-              aria-label="Source type"
+              aria-label={t("settings:location.sourceTypeLabel")}
             >
-              {SOURCE_TYPE_OPTIONS.map((t) => (
-                <option key={t} value={t}>
-                  {SOURCE_TYPE_LABELS[t]}
+              {SOURCE_TYPE_OPTIONS.map((type) => (
+                <option key={type} value={type}>
+                  {sourceTypeLabel(type)}
                 </option>
               ))}
             </select>
@@ -124,8 +123,8 @@ export function LocationSettingsRow({
               value={draft.modId}
               onChange={(e) => setDraft((d) => ({ ...d, modId: e.target.value }))}
               disabled={saving}
-              placeholder="Mod ID (optional)"
-              aria-label="Mod ID"
+              placeholder={t("settings:location.modIdPlaceholder")}
+              aria-label={t("settings:location.modIdLabel")}
             />
           )}
         </div>
@@ -134,8 +133,8 @@ export function LocationSettingsRow({
             className="icon-btn"
             onClick={() => void handleSave()}
             disabled={saving || !canSave}
-            aria-label="Save"
-            title="Save"
+            aria-label={t("common:actions.save")}
+            title={t("common:actions.save")}
           >
             {saving ? <Loader2 size={14} className={styles.spinner} /> : <Check size={14} />}
           </button>
@@ -143,8 +142,8 @@ export function LocationSettingsRow({
             className="icon-btn"
             onClick={cancelEdit}
             disabled={saving}
-            aria-label="Cancel"
-            title="Cancel"
+            aria-label={t("common:actions.cancel")}
+            title={t("common:actions.cancel")}
           >
             <X size={14} />
           </button>
@@ -159,25 +158,35 @@ export function LocationSettingsRow({
         <div className={styles.rowInfo}>
           <span className={styles.nameText}>
             {location.displayName}
-            {isActive && <span className={`${styles.badge} ${styles.badgeActive}`}>Active</span>}
+            {isActive && (
+              <span className={`${styles.badge} ${styles.badgeActive}`}>
+                {t("settings:location.active")}
+              </span>
+            )}
           </span>
           <span className={styles.pathText} title={location.rootPath}>
             {location.rootPath}
           </span>
           <div className={styles.badgeRow}>
-            <span className={styles.badge}>{location.kind}</span>
             <span className={styles.badge}>
-              {SOURCE_TYPE_LABELS[location.sourceType] ?? location.sourceType}
+              {t(location.kind === "project" ? "settings:location.kindProject" : "settings:location.kindSource")}
             </span>
-            {location.readOnly && <span className={styles.badge}>read-only</span>}
+            <span className={styles.badge}>{sourceTypeLabel(location.sourceType)}</span>
+            {location.readOnly && (
+              <span className={styles.badge}>{t("settings:location.readOnly")}</span>
+            )}
           </div>
           {(location.modId || location.gameVersion) && (
             <div className={styles.metaRow}>
               {location.modId && (
-                <span className={styles.metaItem}>mod: {location.modId}</span>
+                <span className={styles.metaItem}>
+                  {t("settings:location.mod", { modId: location.modId })}
+                </span>
               )}
               {location.gameVersion && (
-                <span className={styles.metaItem}>version: {location.gameVersion}</span>
+                <span className={styles.metaItem}>
+                  {t("settings:location.version", { version: location.gameVersion })}
+                </span>
               )}
             </div>
           )}
@@ -186,16 +195,16 @@ export function LocationSettingsRow({
           <button
             className="icon-btn"
             onClick={startEdit}
-            aria-label="Edit"
-            title="Edit"
+            aria-label={t("common:actions.edit")}
+            title={t("common:actions.edit")}
           >
             <Pencil size={14} />
           </button>
           <button
             className="icon-btn"
             onClick={() => void onRemove(location.id)}
-            aria-label="Remove"
-            title="Remove"
+            aria-label={t("common:actions.remove")}
+            title={t("common:actions.remove")}
           >
             <Trash2 size={14} />
           </button>

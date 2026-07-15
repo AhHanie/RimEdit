@@ -153,8 +153,9 @@ mod tests {
         .unwrap();
 
         let settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![
                 location(
                     "project",

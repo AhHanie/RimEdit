@@ -2,6 +2,7 @@
  * `complete_patch_operation_xpath` Tauri command. See that module's doc comment for the
  * conservative-subset philosophy (what's completed vs. merely left editable). */
 
+import type { DiagnosticArgs } from "../../../lib/diagnostics";
 import type { FieldSchema } from "../../schema-catalog";
 
 /** Mirrors `patches::impact_graph::XPathTarget`. `"unsupported"` covers both "not rooted at Defs"
@@ -38,6 +39,8 @@ export interface XPathDiagnostic {
   severity: XPathDiagnosticSeverity;
   code: string;
   message: string;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 /** The field a fully- (or mostly-) typed XPath resolves to, for a structured value subform. Only

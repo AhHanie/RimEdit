@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { invoke } from "@tauri-apps/api/core";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { PatchOperationForm } from "./PatchOperationForm";
 import type { PatchOperationNode } from "../../types/patchFile";
 

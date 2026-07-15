@@ -20,28 +20,45 @@ fn app_error(code: &str, message: impl Into<String>) -> AppError {
         code: code.to_string(),
         message: message.into(),
         details: None,
+        args: crate::diagnostics::DiagnosticArgs::new(),
     }
+}
+
+fn app_error_with_args(
+    code: &str,
+    message: impl Into<String>,
+    args: crate::diagnostics::DiagnosticArgs,
+) -> AppError {
+    app_error(code, message).with_args(args)
 }
 
 /// Verify `project_id` refers to a registered, writable project location.
 /// Every def-template command is scoped to (and can mutate) a project's
 /// template store, so each one must reject unknown/read-only/non-project ids
 /// rather than trusting whatever id the caller passes through to the store.
+/// Uses two distinct codes -- `def_template_invalid_target` (no such id) vs.
+/// `def_template_target_not_editable` (a real id that is read-only or not a
+/// project) -- since the two conditions have different causes and only the
+/// former can be caused by an arbitrary caller-supplied id. Mirrors
+/// `commands::create_def::require_writable_project` /
+/// `commands::form_views::require_writable_project` exactly.
 fn require_writable_project(settings: &ProjectSettings, project_id: &str) -> Result<(), AppError> {
     let location = settings
         .locations
         .iter()
         .find(|l| l.id == project_id)
         .ok_or_else(|| {
-            app_error(
+            app_error_with_args(
                 "def_template_invalid_target",
                 format!("No project with id '{}'.", project_id),
+                crate::diagnostics::diagnostic_args([("projectId", project_id.into())]),
             )
         })?;
     if location.read_only || location.kind != LocationKind::Project {
-        return Err(app_error(
-            "def_template_invalid_target",
-            "Target location is read-only or is not a project.",
+        return Err(app_error_with_args(
+            "def_template_target_not_editable",
+            format!("The project '{}' is not editable.", project_id),
+            crate::diagnostics::diagnostic_args([("projectId", project_id.into())]),
         ));
     }
     Ok(())
@@ -256,13 +273,14 @@ fn validate_def_name_pattern(def_type: &str, def_name: &str) -> Result<(), AppEr
         if let Some(hints) = &def_name_schema.validation_hints {
             if let Some(pattern) = &hints.pattern {
                 if !matches_simple_pattern(def_name, pattern) {
-                    return Err(app_error(
+                    return Err(app_error_with_args(
                         "create_def_clone_invalid_def_name",
                         format!(
                             "defName '{}' contains invalid characters. \
                              Only letters, digits, underscores, and hyphens are allowed.",
                             def_name
                         ),
+                        crate::diagnostics::diagnostic_args([("fieldValue", def_name.into())]),
                     ));
                 }
             }
@@ -284,12 +302,16 @@ fn reject_duplicate_def_name(
         .find_project_duplicates(def_type, def_name)
         .is_empty()
     {
-        return Err(app_error(
+        return Err(app_error_with_args(
             "create_def_clone_duplicate_def_name",
             format!(
                 "A '{}' def named '{}' already exists in this project.",
                 def_type, def_name
             ),
+            crate::diagnostics::diagnostic_args([
+                ("defType", def_type.into()),
+                ("defName", def_name.into()),
+            ]),
         ));
     }
     Ok(())
@@ -320,12 +342,17 @@ fn reject_missing_indexed_source(
             && source_node_id.is_none_or(|nid| d.node_id == Some(nid))
     });
     if !found {
-        return Err(app_error(
+        return Err(app_error_with_args(
             "create_def_from_indexed_def_source_not_found",
             format!(
                 "'{}' ({}) was not found in the index at '{}'.",
                 source_def_name, source_def_type, source_relative_path
             ),
+            crate::diagnostics::diagnostic_args([
+                ("defName", source_def_name.into()),
+                ("defType", source_def_type.into()),
+                ("relativePath", source_relative_path.into()),
+            ]),
         ));
     }
     Ok(())
@@ -590,9 +617,13 @@ pub fn create_def_from_indexed_def(
         validate_and_resolve_location(&settings, &source_location_id, &source_relative_path)
             .map_err(AppError::from)?;
     let source_raw_xml = std::fs::read_to_string(&canonical).map_err(|e| {
-        app_error(
+        app_error_with_args(
             "create_def_from_indexed_def_source_read_failed",
             format!("Failed to read '{}': {}", canonical.display(), e),
+            crate::diagnostics::diagnostic_args([(
+                "path",
+                canonical.to_string_lossy().into_owned().into(),
+            )]),
         )
     })?;
 
@@ -699,8 +730,9 @@ mod project_validation_tests {
 
     fn make_settings(locations: Vec<RegisteredLocation>) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations,
             active_project_id: None,
         }
@@ -725,14 +757,20 @@ mod project_validation_tests {
         // independently in case that invariant ever changes.
         let settings = make_settings(vec![make_location("src1", LocationKind::Source, true)]);
         let err = require_writable_project(&settings, "src1").unwrap_err();
-        assert_eq!(err.code, "def_template_invalid_target");
+        assert_eq!(err.code, "def_template_target_not_editable");
+        assert_eq!(
+            err.args.get("projectId"),
+            Some(&crate::diagnostics::DiagnosticArgValue::Text(
+                "src1".to_string()
+            ))
+        );
     }
 
     #[test]
     fn rejects_read_only_project_locations() {
         let settings = make_settings(vec![make_location("proj1", LocationKind::Project, true)]);
         let err = require_writable_project(&settings, "proj1").unwrap_err();
-        assert_eq!(err.code, "def_template_invalid_target");
+        assert_eq!(err.code, "def_template_target_not_editable");
     }
 }
 
@@ -1167,8 +1205,9 @@ mod duplicate_check_pipeline_tests {
 
     fn make_settings(locations: Vec<RegisteredLocation>) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations,
             active_project_id: None,
         }
@@ -1497,14 +1536,15 @@ mod source_existence_pipeline_tests {
 
     fn make_settings(locations: Vec<RegisteredLocation>) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations,
             active_project_id: None,
         }
     }
 
-    /// Reproduces the bug a code review caught: when the clone source lives in the
+    /// Reproduces a bug where, when the clone source lives in the
     /// same file as the target buffer being edited, checking existence against the
     /// *overlaid* index (which reflects the unsaved buffer) rather than the *base*
     /// (on-disk-reflecting) index disagrees with where `create_def_from_indexed_def`

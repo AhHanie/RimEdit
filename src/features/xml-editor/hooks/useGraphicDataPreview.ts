@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { resolveGraphicPreviewAssets } from "../api/xmlDocument";
-import type { GraphicPreviewAssetResult, GraphicPreviewVariant } from "../types/graphicPreview";
+import type {
+  GraphicPreviewAssetResult,
+  GraphicPreviewVariant,
+  GraphicPreviewWarning,
+} from "../types/graphicPreview";
 import { formatError } from "../../../lib/formatError";
 
 export interface GraphicDataPreviewState {
@@ -8,7 +12,7 @@ export interface GraphicDataPreviewState {
   result: GraphicPreviewAssetResult | null;
   selectedIndex: number;
   selectedVariant: GraphicPreviewVariant | null;
-  warnings: string[];
+  warnings: GraphicPreviewWarning[];
   error: string | null;
   canGoPrevious: boolean;
   canGoNext: boolean;

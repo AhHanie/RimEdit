@@ -180,9 +180,9 @@ mod tests {
         }
     }
 
-    /// Reproduces the "blocking" review finding for this issue: a mod that ships its own
+    /// Reproduces a bug where a mod that ships its own
     /// `schema-pack.json` (with a `patch-operations/` directory) inside its registered location
-    /// root must actually be discovered by patch indexing, not just by the schema-catalog UI's
+    /// root wasn't discovered by patch indexing, only by the schema-catalog UI's
     /// `extraSchemaRoots` parameter.
     #[test]
     fn discovers_custom_operation_metadata_from_a_registered_location_root() {
@@ -211,8 +211,9 @@ mod tests {
         .unwrap();
 
         let settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![mod_location(&root)],
             active_project_id: None,
         };

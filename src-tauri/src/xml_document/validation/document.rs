@@ -32,7 +32,11 @@ pub(super) fn validate_document(
                         summary.def_type
                     ),
                 )
-                .with_def(&summary.def_type, summary.def_name.as_deref()),
+                .with_def(&summary.def_type, summary.def_name.as_deref())
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "defType",
+                    summary.def_type.as_str().into(),
+                )])),
             );
             continue;
         }
@@ -73,7 +77,12 @@ fn validate_def_identity(
                 ),
             )
             .with_def(&summary.def_type, Some(def_name))
-            .with_field_path("defName"),
+            .with_field_path("defName")
+            .with_args(crate::diagnostics::diagnostic_args([
+                ("defType", summary.def_type.as_str().into()),
+                ("defName", def_name.into()),
+                ("occurrenceCount", occurrences.len().into()),
+            ])),
         );
     }
 
@@ -95,7 +104,11 @@ fn validate_def_identity(
                 ),
             )
             .with_def(&summary.def_type, Some(def_name))
-            .with_field_path("defName"),
+            .with_field_path("defName")
+            .with_args(crate::diagnostics::diagnostic_args([
+                ("defType", summary.def_type.as_str().into()),
+                ("defName", def_name.into()),
+            ])),
         );
     }
 }
@@ -126,7 +139,11 @@ fn validate_def_fields(
                     "validation_unknown_field",
                     format!("Unknown field '{}' on {}.", field_name, summary.def_type),
                 )
-                .with_field_path(field_name),
+                .with_field_path(field_name)
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("fieldName", field_name.into()),
+                    ("defType", summary.def_type.as_str().into()),
+                ])),
             );
             continue;
         };
@@ -261,7 +278,11 @@ fn check_required_fields_in_type(
                         field_name, summary.def_type
                     ),
                 )
-                .with_field_path(field_name),
+                .with_field_path(field_name)
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("fieldName", field_name.as_str().into()),
+                    ("defType", summary.def_type.as_str().into()),
+                ])),
             );
         }
     }
@@ -335,7 +356,11 @@ fn evaluate_rule(
                         "validation_missing_required_field",
                         message.clone(),
                     )
-                    .with_field_path(field),
+                    .with_field_path(field)
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("fieldName", field.as_str().into()),
+                        ("defType", summary.def_type.as_str().into()),
+                    ])),
                 );
             }
         }

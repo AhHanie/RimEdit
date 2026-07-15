@@ -1,4 +1,5 @@
 import React, { useCallback, useSyncExternalStore } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, RotateCcw, Trash2, X } from "lucide-react";
 import type { FormFieldState, FormValue } from "../../types/editorForm";
 import type { XmlFormApi } from "../../hooks/useXmlFormController";
@@ -17,6 +18,7 @@ import { ReferencePicker } from "../ReferencePicker/ReferencePicker";
 import { ReferenceListEditor } from "../ReferencePicker/ReferenceListEditor";
 import { ObjectListEditor } from "../ObjectListEditor/ObjectListEditor";
 import { TypedReferenceListEditor } from "../TypedReferenceListEditor/TypedReferenceListEditor";
+import { initI18n } from "../../../../i18n";
 import styles from "./FormFieldControl.module.css";
 
 interface Props {
@@ -53,6 +55,7 @@ export const FormFieldControl = React.memo(
     );
     const field = useSyncExternalStore(subscribe, getSnapshot);
     const { readOnly } = useXmlEditorContext();
+    const { t } = useTranslation("editor");
 
     if (!field) return null;
     const { model } = field;
@@ -82,14 +85,16 @@ export const FormFieldControl = React.memo(
             {model.required && <span className={styles.required}>*</span>}
           </label>
           <div className={styles.fieldState}>
-            {field.pending && <span className={styles.pending}>Saving...</span>}
+            {field.pending && (
+              <span className={styles.pending}>{t("formFieldControl.saving")}</span>
+            )}
             {field.dirty && (
               <button
                 className={styles.resetBtn}
                 onClick={() => formApi.resetField(model.id)}
                 type="button"
-                title="Reset field"
-                aria-label={`Reset ${model.label}`}
+                title={t("formFieldControl.resetField")}
+                aria-label={t("formFieldControl.resetFieldAria", { label: model.label })}
               >
                 <RotateCcw size={12} />
               </button>
@@ -99,8 +104,8 @@ export const FormFieldControl = React.memo(
                 className={styles.clearBtn}
                 onClick={() => formApi.clearField(model.id)}
                 type="button"
-                title={`Clear ${model.label}`}
-                aria-label={`Clear ${model.label}`}
+                title={t("formFieldControl.clearField", { label: model.label })}
+                aria-label={t("formFieldControl.clearField", { label: model.label })}
                 disabled={clearDisabled}
               >
                 <X size={12} />
@@ -114,7 +119,9 @@ export const FormFieldControl = React.memo(
         <FieldInput inputId={inputId} field={field} formApi={formApi} />
         {model.examples.length > 0 && (
           <p className={styles.hint}>
-            e.g. {model.examples.slice(0, 2).join(", ")}
+            {t("formFieldControl.examplesPrefix", {
+              examples: model.examples.slice(0, 2).join(", "),
+            })}
           </p>
         )}
         {model.readOnlyReason && (
@@ -144,6 +151,7 @@ interface FieldInputProps {
 
 function FieldInput({ inputId, field, formApi }: FieldInputProps) {
   const { projectId, readOnly, onNavigateDef } = useXmlEditorContext();
+  const { t } = useTranslation("editor");
   const { model, value } = field;
   const isReadOnlyView = model.readonly || readOnly;
 
@@ -346,11 +354,11 @@ function FieldInput({ inputId, field, formApi }: FieldInputProps) {
       return (
         <span
           className={styles.readonlyValue}
-          title="Use Raw XML mode to edit this field"
+          title={t("formFieldControl.useRawXmlHint")}
         >
           {field.value.kind === "readonly"
             ? field.value.value
-            : "[object list - edit in Raw XML mode]"}
+            : t("formFieldControl.objectListRawOnly")}
         </span>
       );
 
@@ -358,9 +366,9 @@ function FieldInput({ inputId, field, formApi }: FieldInputProps) {
       return (
         <span
           className={styles.readonlyValue}
-          title="Use Raw XML mode to edit this field"
+          title={t("formFieldControl.useRawXmlHint")}
         >
-          [structured - edit in Raw XML mode]
+          {t("formFieldControl.objectRawOnly")}
         </span>
       );
 
@@ -438,6 +446,7 @@ interface ListEditorProps {
 }
 
 function ListEditor({ inputId, field, formApi }: ListEditorProps) {
+  const { t } = useTranslation("editor");
   const items = field.value.kind === "list" ? field.value.items : [];
 
   function updateItems(next: string[]) {
@@ -476,7 +485,7 @@ function ListEditor({ inputId, field, formApi }: ListEditorProps) {
           <button
             className={styles.listRemove}
             onClick={() => updateItems(items.filter((_, i) => i !== index))}
-            aria-label={`Remove item ${index + 1}`}
+            aria-label={t("formFieldControl.removeItem", { index: index + 1 })}
             type="button"
           >
             <Trash2 size={12} />
@@ -489,7 +498,7 @@ function ListEditor({ inputId, field, formApi }: ListEditorProps) {
         type="button"
       >
         <Plus size={12} />
-        Add item
+        {t("formFieldControl.addItem")}
       </button>
     </div>
   );
@@ -502,6 +511,7 @@ interface FlagsEditorProps {
 }
 
 function FlagsEditor({ inputId, field, formApi }: FlagsEditorProps) {
+  const { t } = useTranslation("editor");
   const { model } = field;
   const flags =
     field.value.kind === "flags"
@@ -552,14 +562,14 @@ function FlagsEditor({ inputId, field, formApi }: FlagsEditorProps) {
       ))}
       {flags.custom.length > 0 && (
         <div className={styles.flagsCustomSection}>
-          <span className={styles.hint}>Unknown values (preserved):</span>
+          <span className={styles.hint}>{t("formFieldControl.unknownValuesPreserved")}</span>
           {flags.custom.map((v) => (
             <div key={v} className={styles.flagsRow}>
               <span className={styles.readonlyValue}>{v}</span>
               <button
                 className={styles.listRemove}
                 onClick={() => removeCustom(v)}
-                aria-label={`Remove unknown flag ${v}`}
+                aria-label={t("formFieldControl.removeUnknownFlag", { value: v })}
                 type="button"
               >
                 <Trash2 size={12} />
@@ -580,6 +590,7 @@ interface NamedMapEditorProps {
 
 function NamedMapEditor({ inputId, field, formApi }: NamedMapEditorProps) {
   const { projectId, onNavigateDef } = useXmlEditorContext();
+  const { t } = useTranslation("editor");
   const { model } = field;
   const entries = field.value.kind === "namedMap" ? field.value.entries : [];
 
@@ -647,7 +658,7 @@ function NamedMapEditor({ inputId, field, formApi }: NamedMapEditorProps) {
               type="text"
               className={styles.mapKey}
               value={entry.key}
-              placeholder="key"
+              placeholder={t("formFieldControl.keyPlaceholder")}
               onChange={(e) =>
                 updateEntry(index, e.currentTarget.value, entry.value)
               }
@@ -660,7 +671,7 @@ function NamedMapEditor({ inputId, field, formApi }: NamedMapEditorProps) {
             type="text"
             className={styles.mapValue}
             value={entry.value}
-            placeholder="value"
+            placeholder={t("formFieldControl.valuePlaceholder")}
             onChange={(e) =>
               updateEntry(index, entry.key, e.currentTarget.value)
             }
@@ -671,7 +682,7 @@ function NamedMapEditor({ inputId, field, formApi }: NamedMapEditorProps) {
           <button
             className={styles.listRemove}
             onClick={() => removeEntry(index)}
-            aria-label={`Remove entry ${entry.key || index}`}
+            aria-label={t("formFieldControl.removeEntry", { key: entry.key || index })}
             type="button"
           >
             <Trash2 size={12} />
@@ -679,11 +690,11 @@ function NamedMapEditor({ inputId, field, formApi }: NamedMapEditorProps) {
         </div>
       ))}
       {hasDuplicateKeys && (
-        <p className={styles.error}>Duplicate keys are not allowed.</p>
+        <p className={styles.error}>{t("formFieldControl.duplicateKeysError")}</p>
       )}
       <button className={styles.listAdd} onClick={addEntry} type="button">
         <Plus size={12} />
-        Add entry
+        {t("formFieldControl.addEntry")}
       </button>
     </div>
   );
@@ -747,6 +758,9 @@ function ColorFieldInput({
   );
 }
 
+// Plain module function, not a React component -- resolves translated text from the app-wide
+// i18next singleton (`initI18n().t(...)`, same as `src/features/xml-editor/lib/objectDescriptors.ts`)
+// rather than a `useTranslation()` hook, which is unavailable here.
 function formValueText(value: FormValue): string {
   switch (value.kind) {
     case "boolean":
@@ -763,7 +777,13 @@ function formValueText(value: FormValue): string {
       return value.entries.map((e) => `${e.key}=${e.value}`).join("\n");
     case "typedReferenceList":
       return value.items.map((i) => `${i.defType}:${i.defName}`).join("\n");
-    case "objectList":
-      return `(${value.items.length} item${value.items.length === 1 ? "" : "s"})`;
+    case "objectList": {
+      const count = value.items.length;
+      return initI18n().t(
+        "editor:objectListEditor.itemCountParens",
+        `(${count} item${count === 1 ? "" : "s"})`,
+        { count },
+      );
+    }
   }
 }

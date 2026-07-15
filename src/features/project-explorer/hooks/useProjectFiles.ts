@@ -15,6 +15,7 @@ import {
   deleteProjectPath,
 } from "../api/projectFiles";
 import { formatError } from "../../../lib/formatError";
+import { noActiveProjectError } from "../lib/projectFilesErrors";
 
 interface UseProjectFilesReturn {
   scan: ProjectFileScan | null;
@@ -133,7 +134,7 @@ export function useProjectFiles(activeProjectId: string | undefined): UseProject
 
   const createFile = useCallback(
     async (parentPath: string, fileName: string, contents?: string) => {
-      if (!activeProjectId) throw new Error("No active project");
+      if (!activeProjectId) throw noActiveProjectError("No active project");
       setMutationError(null);
       setMutatingPath(fileName);
       try {
@@ -152,7 +153,7 @@ export function useProjectFiles(activeProjectId: string | undefined): UseProject
 
   const createFolder = useCallback(
     async (parentPath: string, folderName: string) => {
-      if (!activeProjectId) throw new Error("No active project");
+      if (!activeProjectId) throw noActiveProjectError("No active project");
       setMutationError(null);
       setMutatingPath(folderName);
       try {
@@ -171,7 +172,7 @@ export function useProjectFiles(activeProjectId: string | undefined): UseProject
 
   const renamePath = useCallback(
     async (relativePath: string, newName: string, kind: "file" | "folder") => {
-      if (!activeProjectId) throw new Error("No active project");
+      if (!activeProjectId) throw noActiveProjectError("No active project");
       setMutationError(null);
       setMutatingPath(relativePath);
       try {
@@ -190,7 +191,7 @@ export function useProjectFiles(activeProjectId: string | undefined): UseProject
 
   const deletePath = useCallback(
     async (relativePath: string, kind: "file" | "folder") => {
-      if (!activeProjectId) throw new Error("No active project");
+      if (!activeProjectId) throw noActiveProjectError("No active project");
       setMutationError(null);
       setMutatingPath(relativePath);
       try {

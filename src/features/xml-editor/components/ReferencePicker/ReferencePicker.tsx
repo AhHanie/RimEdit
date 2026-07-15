@@ -1,4 +1,5 @@
 import { startTransition, useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ExternalLink } from "lucide-react";
 import type { ReferenceMetadata } from "../../../schema-catalog";
 import { resolveDefReference, suggestDefReferences } from "../../../def-index/api/defIndex";
@@ -47,6 +48,7 @@ export function ReferencePicker({
   readOnly,
   onNavigateDef,
 }: Props) {
+  const { t } = useTranslation("editor");
   const [draftValue, setDraftValue] = useState(value);
   const [suggestions, setSuggestions] = useState<DefReferenceSuggestion[]>([]);
   const [open, setOpen] = useState(false);
@@ -257,8 +259,8 @@ export function ReferencePicker({
           className={styles.actionBtn}
           onClick={() => void handleGoToDef()}
           type="button"
-          title={`Go to ${reference.defType}`}
-          aria-label={`Go to ${reference.defType}`}
+          title={t("referencePicker.goTo", { defType: reference.defType })}
+          aria-label={t("referencePicker.goTo", { defType: reference.defType })}
           disabled={!draftValue.trim()}
         >
           <ExternalLink size={12} />
@@ -279,7 +281,9 @@ export function ReferencePicker({
               <span className={styles.suggestionName}>{s.defName}</span>
               <span className={styles.suggestionType}>{s.defType}</span>
               <span className={styles.suggestionSource}>{s.locationName}</span>
-              {s.readOnly && <span className={styles.badge}>read-only</span>}
+              {s.readOnly && (
+                <span className={styles.badge}>{t("referencePicker.readOnlyBadge")}</span>
+              )}
             </div>
           ))}
         </div>

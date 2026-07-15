@@ -4,7 +4,9 @@ use crate::patches::{
     XPathCompletionResult,
 };
 use crate::project_model::AppError;
-use crate::schema_pack::SchemaCatalogCacheState;
+use crate::schema_pack::{
+    build_schema_catalog_with_locale, schema_pack_roots, SchemaCatalog, SchemaCatalogCacheState,
+};
 use crate::services::patch_preview::{
     self, PatchPreviewRequest, PatchPreviewResult, PatchPreviewTarget,
 };
@@ -13,6 +15,7 @@ use crate::settings_store::load_settings;
 use crate::xml_document::model::XmlChildView;
 use crate::xml_document::InitialElement;
 use serde::Serialize;
+use std::sync::Arc;
 use tauri::{AppHandle, Manager};
 
 #[tauri::command]
@@ -102,24 +105,50 @@ pub fn query_patch_operations_for_def(
 }
 
 /// Schema- and Def-index-aware XPath completions/target inference for `PatchPathInput` (issue 05).
-/// Builds the schema catalog the same way the project's already-loaded catalog is built (no extra
-/// schema roots, filtered by the project's game version) so completions match the fields the
-/// patch editor's forms already render, and reads the Def index via the same non-blocking cached
-/// query path `suggest_def_references_cmd` uses.
+/// Builds the schema catalog the same way the project's already-loaded display catalog is built --
+/// including every registered location's root as a candidate external-schema-pack search root
+/// (`schema_pack_roots`, the same helper `services::validation`/`patch_preview` use), filtered by
+/// the project's game version -- so completions match the fields the patch editor's forms already
+/// render, including fields contributed by an external pack. Reads the Def index via the same
+/// non-blocking cached query path `suggest_def_references_cmd` uses.
+///
+/// `locale` is the frontend's active UI locale (`useLocale()`'s current value), passed explicitly
+/// rather than read from persisted `settings.locale` -- see issue 06's "commands needing localized
+/// schema metadata receive an explicit, validated `locale` argument ... makes concurrent/background
+/// work deterministic" -- so a runtime locale switch that has not yet finished persisting can never
+/// race a completion request into serving a stale locale's labels.
 ///
 /// This command fires on a per-keystroke (debounced) cadence from `PatchPathInput`, unlike other
-/// `build_schema_catalog` callers, so the catalog is served from `SchemaCatalogCacheState` instead
-/// of being rebuilt (re-parsing ~1,300 embedded schema JSON files) on every call.
+/// `build_schema_catalog` callers, so when the project has no registered locations (no external
+/// roots to consider) the catalog is served from `SchemaCatalogCacheState` instead of being rebuilt
+/// (re-parsing ~1,300 embedded schema JSON files) on every call, keyed by `(gameVersion, locale)`.
+/// A project with at least one registered location always builds directly (uncached) via
+/// `build_schema_catalog_with_locale`, exactly like `load_schema_catalog` does -- `SchemaCatalogCacheState`
+/// is documented to never cache an external-root catalog (see `schema_pack::cache`'s module docs),
+/// so caching on `(gameVersion, locale)` alone here would otherwise let an external pack's fields
+/// silently appear in the display catalog but not in XPath completion.
 #[tauri::command]
 pub fn complete_patch_operation_xpath(
     app: AppHandle,
     project_id: String,
     xpath: String,
+    locale: Option<String>,
 ) -> Result<XPathCompletionResult, AppError> {
     let settings = load_settings(&app)?;
-    let catalog = app
-        .state::<SchemaCatalogCacheState>()
-        .get_or_build(Some(&settings.game_version));
+    let roots = schema_pack_roots(&settings);
+    let catalog: Arc<SchemaCatalog> = if roots.is_empty() {
+        app.state::<SchemaCatalogCacheState>()
+            .get_or_build(Some(&settings.game_version), locale.as_deref())
+    } else {
+        Arc::new(
+            build_schema_catalog_with_locale(
+                &roots,
+                Some(&settings.game_version),
+                locale.as_deref(),
+            )
+            .catalog,
+        )
+    };
     let def_index = def_index_cache::load_for_project_query(&app, &settings, &project_id)?;
     Ok(complete_patch_xpath(&catalog, &def_index, &xpath))
 }
@@ -131,10 +160,15 @@ pub fn complete_patch_operation_xpath(
 /// structured editing over malformed content.
 #[tauri::command]
 pub fn parse_patch_value_xml(value_xml: String) -> Result<Vec<XmlChildView>, AppError> {
-    parse_value_fragment(&value_xml).map_err(|message| AppError {
-        code: "patch_value_xml_malformed".to_string(),
-        message,
+    // Propagate the shared XML parser's own diagnostic (`code` + `args`, e.g.
+    // `parse_xml_syntax_error`/`parse_unexpected_eof`) rather than collapsing it to raw parser
+    // text -- `message` is kept only as compatibility/technical detail, never the sole rendered
+    // string (see `renderDiagnostic`'s priority: catalog-backed `code` wins over `message`).
+    parse_value_fragment(&value_xml).map_err(|diagnostic| AppError {
+        code: diagnostic.code,
+        message: diagnostic.message,
         details: None,
+        args: diagnostic.args,
     })
 }
 

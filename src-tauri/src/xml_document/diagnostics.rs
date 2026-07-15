@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::diagnostics::DiagnosticArgs;
+
 use super::model::XmlNodeId;
 
 #[derive(Clone, Debug, Default)]
@@ -10,6 +12,10 @@ pub(crate) struct XmlSpan {
     pub column: usize,
 }
 
+/// A parse-time failure. `code` normalizes the underlying `quick-xml` failure into a stable,
+/// documented identifier (see `docs/i18n/diagnostic-codes.md`); `message` keeps the raw
+/// parser-library text as an English technical detail (Plan.md: "raw parser text stays as
+/// optional English technical detail for logs/support, not normal UI rendering").
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParseDiagnostic {
@@ -18,6 +24,35 @@ pub struct ParseDiagnostic {
     pub column: Option<usize>,
     pub byte_offset: Option<usize>,
     pub message: String,
+    pub code: String,
+    #[serde(default, skip_serializing_if = "DiagnosticArgs::is_empty")]
+    pub args: DiagnosticArgs,
+}
+
+impl ParseDiagnostic {
+    pub(crate) fn new(
+        relative_path: impl Into<String>,
+        line: Option<usize>,
+        column: Option<usize>,
+        byte_offset: Option<usize>,
+        code: impl Into<String>,
+        message: impl Into<String>,
+    ) -> Self {
+        Self {
+            relative_path: relative_path.into(),
+            line,
+            column,
+            byte_offset,
+            message: message.into(),
+            code: code.into(),
+            args: DiagnosticArgs::new(),
+        }
+    }
+
+    pub(crate) fn with_args(mut self, args: DiagnosticArgs) -> Self {
+        self.args.extend(args);
+        self
+    }
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -34,6 +69,8 @@ pub struct ValidationDiagnostic {
     pub def_name: Option<String>,
     pub field_path: Option<String>,
     pub blocking: bool,
+    #[serde(default, skip_serializing_if = "DiagnosticArgs::is_empty")]
+    pub args: DiagnosticArgs,
 }
 
 impl ValidationDiagnostic {
@@ -57,6 +94,7 @@ impl ValidationDiagnostic {
             def_name: None,
             field_path: None,
             blocking: true,
+            args: DiagnosticArgs::new(),
         }
     }
 
@@ -80,7 +118,15 @@ impl ValidationDiagnostic {
             def_name: None,
             field_path: None,
             blocking: false,
+            args: DiagnosticArgs::new(),
         }
+    }
+
+    /// Attaches typed args for `code` (see `crate::diagnostics` module docs). Additive on top of
+    /// the still-English `message`.
+    pub(crate) fn with_args(mut self, args: DiagnosticArgs) -> Self {
+        self.args.extend(args);
+        self
     }
 
     pub(crate) fn with_def(mut self, def_type: &str, def_name: Option<&str>) -> Self {
@@ -131,5 +177,61 @@ pub(crate) fn make_span(newline_index: &[usize], start: usize, end: usize) -> Xm
         end,
         line,
         column,
+    }
+}
+
+#[cfg(test)]
+mod diagnostic_ref_wire_tests {
+    use super::*;
+    use crate::diagnostics::diagnostic_args;
+
+    #[test]
+    fn parse_diagnostic_wire_shape_carries_code_and_args() {
+        let diag = ParseDiagnostic::new(
+            "About/About.xml",
+            None,
+            None,
+            None,
+            "parse_invalid_root_element_count",
+            "document has 2 root elements; exactly one is required",
+        )
+        .with_args(diagnostic_args([("elementCount", 2usize.into())]));
+        let json = serde_json::to_value(&diag).unwrap();
+        assert_eq!(json["code"], "parse_invalid_root_element_count");
+        assert_eq!(json["args"]["elementCount"], 2);
+    }
+
+    #[test]
+    fn parse_diagnostic_without_args_omits_the_field() {
+        let diag = ParseDiagnostic::new("x.xml", None, None, None, "parse_xml_syntax_error", "bad");
+        let json = serde_json::to_value(&diag).unwrap();
+        assert!(json.get("args").is_none());
+    }
+
+    #[test]
+    fn validation_diagnostic_wire_shape_carries_code_and_args() {
+        let diag = ValidationDiagnostic::warning(
+            "Defs/Things.xml",
+            None,
+            None,
+            None,
+            "validation_missing_required_field",
+            "Required field 'label' is missing from ThingDef.",
+        )
+        .with_args(diagnostic_args([
+            ("fieldName", "label".into()),
+            ("defType", "ThingDef".into()),
+        ]));
+        let json = serde_json::to_value(&diag).unwrap();
+        assert_eq!(json["code"], "validation_missing_required_field");
+        assert_eq!(json["args"]["fieldName"], "label");
+        assert_eq!(json["args"]["defType"], "ThingDef");
+    }
+
+    #[test]
+    fn validation_diagnostic_without_args_omits_the_field() {
+        let diag = ValidationDiagnostic::error("x.xml", None, None, None, "some_code", "message");
+        let json = serde_json::to_value(&diag).unwrap();
+        assert!(json.get("args").is_none());
     }
 }

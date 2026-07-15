@@ -67,12 +67,18 @@ pub enum XPathDiagnosticSeverity {
     Warning,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+// Not `Eq`: `args` can carry a `DiagnosticArgValue::Float`, and `f64` has no `Eq` impl.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct XPathDiagnostic {
     pub severity: XPathDiagnosticSeverity,
     pub code: String,
     pub message: String,
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
 }
 
 impl XPathDiagnostic {
@@ -81,6 +87,7 @@ impl XPathDiagnostic {
             severity: XPathDiagnosticSeverity::Error,
             code: code.to_string(),
             message: message.into(),
+            args: crate::diagnostics::DiagnosticArgs::new(),
         }
     }
 
@@ -89,7 +96,14 @@ impl XPathDiagnostic {
             severity: XPathDiagnosticSeverity::Warning,
             code: code.to_string(),
             message: message.into(),
+            args: crate::diagnostics::DiagnosticArgs::new(),
         }
+    }
+
+    /// Attaches typed args for `code`. Additive on top of the still-English `message`.
+    fn with_args(mut self, args: crate::diagnostics::DiagnosticArgs) -> Self {
+        self.args.extend(args);
+        self
     }
 }
 
@@ -541,7 +555,11 @@ fn predicate_completion(
                 XPathDiagnostic::warning(
                     "xpath_autocomplete_unsupported_pattern",
                     format!("'{key}' predicate values must be quoted, e.g. {key}=\"Wall\"."),
-                ),
+                )
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "predicateKey",
+                    key.into(),
+                )])),
             );
         };
         let after_quote = &after_eq_trimmed[1..];
@@ -770,7 +788,11 @@ fn resolve_field(
                 format!(
                     "'{name}' is declared on a schema parent of '{def_type}', not on '{def_type}' itself. RimWorld applies patches before XML inheritance, so this field can only be targeted if it is physically present in the XML being patched."
                 ),
-            )],
+            )
+            .with_args(crate::diagnostics::diagnostic_args([
+                ("fieldName", name.into()),
+                ("defType", def_type.into()),
+            ]))],
         );
     }
     (None, Vec::new())
@@ -855,5 +877,33 @@ fn empty(replace_from: usize, target: XPathTarget) -> XPathCompletionResult {
         diagnostics: Vec::new(),
         target,
         resolved_field: None,
+    }
+}
+
+#[cfg(test)]
+mod diagnostic_ref_wire_tests {
+    use super::*;
+    use crate::diagnostics::diagnostic_args;
+
+    #[test]
+    fn xpath_diagnostic_wire_shape_carries_code_and_args() {
+        let diag = XPathDiagnostic::warning(
+            "xpath_autocomplete_inherited_field",
+            "'label' is declared on a schema parent of 'Building', not on 'Building' itself.",
+        )
+        .with_args(diagnostic_args([
+            ("fieldName", "label".into()),
+            ("defType", "Building".into()),
+        ]));
+        let json = serde_json::to_value(&diag).unwrap();
+        assert_eq!(json["code"], "xpath_autocomplete_inherited_field");
+        assert_eq!(json["args"]["fieldName"], "label");
+    }
+
+    #[test]
+    fn xpath_diagnostic_without_args_omits_the_field() {
+        let diag = XPathDiagnostic::error("xpath_invalid_syntax", "Unexpected ']'.");
+        let json = serde_json::to_value(&diag).unwrap();
+        assert!(json.get("args").is_none());
     }
 }

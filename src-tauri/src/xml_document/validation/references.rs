@@ -2,6 +2,7 @@ use super::context::ValidationContext;
 use super::diagnostics as diag;
 use super::scalar::is_valid_scalar_value;
 use super::xml::scalar_text;
+use crate::diagnostics::diagnostic_args;
 use crate::schema_pack::{collect_def_subtypes, FieldSchema, ReferenceMetadata, XmlFieldShape};
 use crate::xml_document::diagnostics::ValidationDiagnostic;
 use crate::xml_document::model::{DefSummary, XmlDocument, XmlNodeId, XmlNodeKind};
@@ -94,7 +95,11 @@ pub(super) fn validate_field_references(
                                 field_name, def_type
                             ),
                         )
-                        .with_field_path(format!("{field_name}.{def_type}")),
+                        .with_field_path(format!("{field_name}.{def_type}"))
+                        .with_args(diagnostic_args([
+                            ("fieldName", field_name.into()),
+                            ("defType", def_type.into()),
+                        ])),
                     );
                     continue;
                 }
@@ -112,7 +117,12 @@ pub(super) fn validate_field_references(
                                 field_name, def_type, def_name
                             ),
                         )
-                        .with_field_path(format!("{field_name}.{def_type}.{def_name}")),
+                        .with_field_path(format!("{field_name}.{def_type}.{def_name}"))
+                        .with_args(diagnostic_args([
+                            ("fieldName", field_name.into()),
+                            ("defType", def_type.into()),
+                            ("defName", def_name.into()),
+                        ])),
                     );
                 } else {
                     seen.insert(pair);
@@ -130,7 +140,12 @@ pub(super) fn validate_field_references(
                                 field_name, def_type, def_name
                             ),
                         )
-                        .with_field_path(format!("{field_name}.{def_type}.{def_name}")),
+                        .with_field_path(format!("{field_name}.{def_type}.{def_name}"))
+                        .with_args(diagnostic_args([
+                            ("fieldName", field_name.into()),
+                            ("defType", def_type.into()),
+                            ("defName", def_name.into()),
+                        ])),
                     );
                 }
             }
@@ -178,7 +193,12 @@ pub(super) fn validate_field_references(
                                      was not found in the Def index.",
                                 ),
                             )
-                            .with_field_path(format!("{field_name}.{trimmed}")),
+                            .with_field_path(format!("{field_name}.{trimmed}"))
+                            .with_args(diagnostic_args([
+                                ("fieldName", field_name.into()),
+                                ("key", trimmed.into()),
+                                ("defType", target_label.as_str().into()),
+                            ])),
                         );
                     }
                     break;
@@ -219,7 +239,12 @@ pub(super) fn validate_field_references(
                                 field_name, key_name, target_label
                             ),
                         )
-                        .with_field_path(format!("{field_name}.{key_name}")),
+                        .with_field_path(format!("{field_name}.{key_name}"))
+                        .with_args(diagnostic_args([
+                            ("fieldName", field_name.into()),
+                            ("key", key_name.into()),
+                            ("defType", target_label.as_str().into()),
+                        ])),
                     );
                 }
             }
@@ -249,7 +274,13 @@ pub(super) fn validate_field_references(
                                     field_name, child_el.name, trimmed, vt.kind
                                 ),
                             )
-                            .with_field_path(format!("{field_name}.{}", child_el.name)),
+                            .with_field_path(format!("{field_name}.{}", child_el.name))
+                            .with_args(diagnostic_args([
+                                ("fieldName", field_name.into()),
+                                ("key", child_el.name.as_str().into()),
+                                ("value", trimmed.into()),
+                                ("expectedType", format!("{:?}", vt.kind).into()),
+                            ])),
                         );
                     }
                 }
@@ -299,7 +330,12 @@ pub(super) fn validate_field_references(
                 };
                 diagnostics.push(
                     diag.with_def(&summary.def_type, summary.def_name.as_deref())
-                        .with_field_path(field_name),
+                        .with_field_path(field_name)
+                        .with_args(diagnostic_args([
+                            ("fieldName", field_name.into()),
+                            ("value", trimmed.into()),
+                            ("defType", target_label.as_str().into()),
+                        ])),
                 );
             }
         }
@@ -347,7 +383,12 @@ pub(super) fn validate_field_references(
                     };
                     diagnostics.push(
                         diag.with_def(&summary.def_type, summary.def_name.as_deref())
-                            .with_field_path(field_name),
+                            .with_field_path(field_name)
+                            .with_args(diagnostic_args([
+                                ("fieldName", field_name.into()),
+                                ("value", trimmed.into()),
+                                ("defType", target_label.as_str().into()),
+                            ])),
                     );
                 }
             }

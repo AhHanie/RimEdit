@@ -29,8 +29,9 @@ const listInstalledSchemaGameVersionsMock = vi.mocked(listInstalledSchemaGameVer
 
 function makeSettings(overrides: Partial<ProjectSettings> = {}): ProjectSettings {
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     gameVersion: "1.6",
+    locale: "en",
     locations: [
       {
         id: "loc1",
@@ -65,9 +66,9 @@ describe("useProjectSettings - external schema root threading (issue 09)", () =>
     expect(result.current.installedSchemaVersions).toEqual(["1.5", "1.6"]);
   });
 
-  // Issue 09 review round 2, finding 2: initial mount with non-empty configured roots must
-  // fetch installed schema versions exactly ONCE (the initial-load effect's own fetch), not
-  // twice -- a naive "is this the reactive effect's first run" guard fires on the reactive
+  // Initial mount with non-empty configured roots must fetch installed schema versions exactly
+  // ONCE (the initial-load effect's own fetch), not twice -- a naive "is this the reactive effect's
+  // first run" guard fires on the reactive
   // effect's pre-load run (roots still empty) instead of the run that actually corresponds to
   // settings/locations populating, letting a real second fetch slip through once settings load.
   it("fetches installed schema versions exactly once on initial mount with non-empty configured roots", async () => {

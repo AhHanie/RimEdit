@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import type { ThemeMode } from "../../../types/ui";
 import type { IndexingStatus } from "../../../features/def-index";
+import { formatFileSize } from "../../../i18n/format";
 import styles from "./StatusBar.module.css";
 
 interface StatusBarProps {
@@ -14,11 +16,6 @@ interface StatusBarProps {
   indexingStatus?: IndexingStatus | null;
 }
 
-function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  return `${(bytes / 1024).toFixed(1)} KB`;
-}
-
 export function StatusBar({
   hasActiveProject,
   loadingScan,
@@ -28,26 +25,27 @@ export function StatusBar({
   activeFileSizeBytes,
   indexingStatus,
 }: StatusBarProps) {
+  const { t, i18n } = useTranslation(["shell", "common"]);
   return (
     <div className={styles.root} role="status" aria-live="polite">
       <div className={styles.segment}>
         {loadingScan ? (
           <>
             <Loader2 size={11} className={`${styles.icon} spin`} />
-            <span>Scanning…</span>
+            <span>{t("shell:statusBar.scanning")}</span>
           </>
         ) : scanError ? (
           <>
             <AlertCircle size={11} className={styles.icon} />
-            <span>Error</span>
+            <span>{t("shell:statusBar.error")}</span>
           </>
         ) : hasActiveProject ? (
           <>
             <CheckCircle2 size={11} className={styles.icon} />
-            <span>Ready</span>
+            <span>{t("shell:statusBar.ready")}</span>
           </>
         ) : (
-          <span>No project</span>
+          <span>{t("shell:statusBar.noProject")}</span>
         )}
       </div>
 
@@ -59,26 +57,27 @@ export function StatusBar({
               <>
                 <Loader2 size={11} className={`${styles.icon} spin`} />
                 <span>
-                  {indexingStatus.phase === "pending" ? "Index pending" : "Indexing…"}
+                  {indexingStatus.phase === "pending"
+                    ? t("shell:statusBar.indexPending")
+                    : t("shell:statusBar.indexing")}
                 </span>
               </>
             ) : indexingStatus.phase === "complete" && indexingStatus.errors > 0 ? (
               <>
                 <AlertCircle size={11} className={styles.icon} />
-                <span>
-                  {indexingStatus.errors}{" "}
-                  {indexingStatus.errors === 1 ? "index error" : "index errors"}
-                </span>
+                <span>{t("shell:statusBar.indexErrors", { count: indexingStatus.errors })}</span>
               </>
             ) : indexingStatus.phase === "complete" ? (
               <>
                 <CheckCircle2 size={11} className={styles.icon} />
-                <span>Indexed {indexingStatus.indexedDefs} defs</span>
+                <span>
+                  {t("shell:statusBar.indexed", { count: indexingStatus.indexedDefs })}
+                </span>
               </>
             ) : indexingStatus.phase === "failed" ? (
               <>
                 <AlertCircle size={11} className={styles.icon} />
-                <span>Index failed</span>
+                <span>{t("shell:statusBar.indexFailed")}</span>
               </>
             ) : null}
           </div>
@@ -89,9 +88,7 @@ export function StatusBar({
         <>
           <span className={styles.divider}>|</span>
           <div className={styles.segment}>
-            <span>
-              {fileCount} {fileCount === 1 ? "file" : "files"}
-            </span>
+            <span>{t("shell:statusBar.filesCount", { count: fileCount })}</span>
           </div>
         </>
       )}
@@ -109,16 +106,16 @@ export function StatusBar({
         <>
           <span className={styles.divider}>|</span>
           <div className={styles.segment}>
-            <span>{formatSize(activeFileSizeBytes)}</span>
+            <span>{formatFileSize(activeFileSizeBytes, { locale: i18n.language })}</span>
           </div>
         </>
       )}
 
       <div className={styles.right}>
         <div className={styles.segment}>
-          <span>XML</span>
+          <span>{t("shell:statusBar.xmlLabel")}</span>
           <span className={styles.divider}>•</span>
-          <span>Read-only</span>
+          <span>{t("shell:statusBar.readOnlyLabel")}</span>
         </div>
       </div>
     </div>

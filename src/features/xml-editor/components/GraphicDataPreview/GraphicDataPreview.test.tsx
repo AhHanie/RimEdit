@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import userEvent from "@testing-library/user-event";
 import { vi, describe, it, expect } from "vitest";
 import { GraphicDataPreview } from "./GraphicDataPreview";
@@ -19,7 +20,7 @@ const mockUsePreview = vi.mocked(hookModule.useGraphicDataPreview);
 function makeVariant(overrides?: Partial<GraphicPreviewVariant>): GraphicPreviewVariant {
   return {
     id: "v1",
-    label: "South",
+    label: { kind: "direction", direction: "south" },
     role: "south",
     sourceLocationId: "loc1",
     sourceLocationName: "Project",
@@ -107,10 +108,15 @@ describe("GraphicDataPreview", () => {
 
   it("shows South 3/4 style carousel label for multi variants", () => {
     const variants = [
-      makeVariant({ id: "n", label: "North", role: "north" }),
-      makeVariant({ id: "e", label: "East", role: "east" }),
-      makeVariant({ id: "s", label: "South", role: "south", assetUrl: "rimedit-asset://localhost/t3" }),
-      makeVariant({ id: "w", label: "West", role: "west" }),
+      makeVariant({ id: "n", label: { kind: "direction", direction: "north" }, role: "north" }),
+      makeVariant({ id: "e", label: { kind: "direction", direction: "east" }, role: "east" }),
+      makeVariant({
+        id: "s",
+        label: { kind: "direction", direction: "south" },
+        role: "south",
+        assetUrl: "rimedit-asset://localhost/t3",
+      }),
+      makeVariant({ id: "w", label: { kind: "direction", direction: "west" }, role: "west" }),
     ];
     mockUsePreview.mockReturnValue(
       makeState({
@@ -141,7 +147,10 @@ describe("GraphicDataPreview", () => {
     const user = userEvent.setup();
     const goPrev = vi.fn();
     const goNext = vi.fn();
-    const variants = [makeVariant({ id: "a" }), makeVariant({ id: "b", label: "B" })];
+    const variants = [
+      makeVariant({ id: "a" }),
+      makeVariant({ id: "b", label: { kind: "variant", index: 2 } }),
+    ];
     mockUsePreview.mockReturnValue(
       makeState({
         status: "ready",
@@ -201,9 +210,9 @@ describe("GraphicDataPreview", () => {
           texPath: "p",
           graphicClass: "g",
           variants: [variant],
-          warnings: ["Missing mask texture"],
+          warnings: [{ code: "test_missing_mask_texture", message: "Missing mask texture" }],
         },
-        warnings: ["Missing mask texture"],
+        warnings: [{ code: "test_missing_mask_texture", message: "Missing mask texture" }],
       }),
     );
     render(<GraphicDataPreview projectId="p1" texPath="p" graphicClass="g" />);
@@ -212,8 +221,16 @@ describe("GraphicDataPreview", () => {
 
   it("renders fixture multi result and changes active variant", async () => {
     const user = userEvent.setup();
-    const variantNorth = makeGraphicPreviewVariant({ id: "north", label: "North", role: "north" });
-    const variantSouth = makeGraphicPreviewVariant({ id: "south", label: "South", role: "south" });
+    const variantNorth = makeGraphicPreviewVariant({
+      id: "north",
+      label: { kind: "direction", direction: "north" },
+      role: "north",
+    });
+    const variantSouth = makeGraphicPreviewVariant({
+      id: "south",
+      label: { kind: "direction", direction: "south" },
+      role: "south",
+    });
     const result = makeGraphicPreviewResult({
       graphicClass: "Graphic_Multi",
       variants: [variantNorth, variantSouth],

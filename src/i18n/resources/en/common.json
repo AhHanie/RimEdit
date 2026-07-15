@@ -1,0 +1,29 @@
+{
+  "app": {
+    "name": "RimEdit"
+  },
+  "actions": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "discard": "Discard",
+    "close": "Close",
+    "retry": "Retry",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "rename": "Rename",
+    "delete": "Delete",
+    "refresh": "Refresh",
+    "dismiss": "Dismiss",
+    "openProject": "Open Project",
+    "addSourceFolder": "Add Source Folder"
+  },
+  "severity": {
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "itemCount_one": "{{count}} item",
+  "itemCount_other": "{{count}} items"
+}

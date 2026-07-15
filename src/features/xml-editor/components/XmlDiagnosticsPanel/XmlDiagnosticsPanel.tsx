@@ -1,5 +1,14 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AlertTriangle, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  renderDiagnostic,
+  renderDiagnosticCountSummary,
+  renderDiagnosticLocation,
+  renderDiagnosticSeverity,
+  renderDiagnosticSource,
+} from "../../../../i18n/diagnostics";
+import type { DiagnosticArgs } from "../../../../lib/diagnostics";
 import type { ParseDiagnostic, ValidationDiagnostic } from "../../types/xmlDocument";
 import styles from "./XmlDiagnosticsPanel.module.css";
 
@@ -9,6 +18,7 @@ interface Props {
 
 export function XmlDiagnosticsPanel({ diagnostics }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const { t, i18n } = useTranslation(["diagnostics", "common"]);
 
   if (diagnostics.length === 0) return null;
 
@@ -22,35 +32,31 @@ export function XmlDiagnosticsPanel({ diagnostics }: Props) {
         className={styles.header}
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
+        aria-label={t("diagnostics:panel.toggleAriaLabel")}
       >
         <AlertTriangle size={12} className={styles.icon} />
         <span className={styles.count}>
-          {diagnostics.length} {diagnostics.length === 1 ? "issue" : "issues"}
-          {errorCount > 0 && `, ${errorCount} ${errorCount === 1 ? "error" : "errors"}`}
-          {warningCount > 0 &&
-            `, ${warningCount} ${warningCount === 1 ? "warning" : "warnings"}`}
+          {renderDiagnosticCountSummary({ total: diagnostics.length, errorCount, warningCount }, i18n)}
         </span>
         {expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
       </button>
       {expanded && (
         <ul className={styles.list} role="list">
-          {normalized.map((d, i) => (
-            <li key={i} className={`${styles.item} ${styles[`severity${d.severity}`]}`}>
-              <span className={styles.badge}>{d.source}</span>
-              <span className={styles.badge}>{d.severity}</span>
-              {d.line != null && (
-                <span className={styles.location}>
-                  line {d.line}
-                  {d.column != null && `:${d.column}`}
+          {normalized.map((d, i) => {
+            const location = renderDiagnosticLocation({ line: d.line, column: d.column }, i18n);
+            return (
+              <li key={i} className={`${styles.item} ${styles[`severity${d.severity}`]}`}>
+                <span className={styles.badge}>{renderDiagnosticSource(d.source, i18n)}</span>
+                <span className={styles.badge}>{renderDiagnosticSeverity(d.severity, i18n)}</span>
+                {location && <span className={styles.location}>{location}</span>}
+                <span className={styles.message}>
+                  {d.defName && <span className={styles.context}>{d.defName}: </span>}
+                  {d.fieldPath && <span className={styles.context}>{d.fieldPath}: </span>}
+                  {renderDiagnostic(d, i18n)}
                 </span>
-              )}
-              <span className={styles.message}>
-                {d.defName && <span className={styles.context}>{d.defName}: </span>}
-                {d.fieldPath && <span className={styles.context}>{d.fieldPath}: </span>}
-                {d.message}
-              </span>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
@@ -59,9 +65,11 @@ export function XmlDiagnosticsPanel({ diagnostics }: Props) {
 
 interface UiDiagnostic {
   severity: "Error" | "Warning" | "Info";
-  source: "Parse" | "Validation";
+  source: "parse" | "validation";
   line: number | null;
   column: number | null;
+  code?: string;
+  args?: DiagnosticArgs;
   message: string;
   defName: string | null;
   fieldPath: string | null;
@@ -71,9 +79,11 @@ function normalizeDiagnostic(diagnostic: ParseDiagnostic | ValidationDiagnostic)
   if ("severity" in diagnostic) {
     return {
       severity: diagnostic.severity,
-      source: "Validation",
+      source: "validation",
       line: diagnostic.line,
       column: diagnostic.column,
+      code: diagnostic.code,
+      args: diagnostic.args,
       message: diagnostic.message,
       defName: diagnostic.defName,
       fieldPath: diagnostic.fieldPath,
@@ -82,9 +92,11 @@ function normalizeDiagnostic(diagnostic: ParseDiagnostic | ValidationDiagnostic)
 
   return {
     severity: "Error",
-    source: "Parse",
+    source: "parse",
     line: diagnostic.line,
     column: diagnostic.column,
+    code: diagnostic.code,
+    args: diagnostic.args,
     message: diagnostic.message,
     defName: null,
     fieldPath: null,

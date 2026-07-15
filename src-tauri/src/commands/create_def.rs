@@ -1,5 +1,5 @@
 use crate::def_index::{apply_replacement_overlay, DefIndexReplacement};
-use crate::project_model::{AppError, LocationKind};
+use crate::project_model::{AppError, LocationKind, ProjectSettings};
 use crate::schema_pack::{
     build_schema_catalog, lookup_object_field_inherited, DefTemplate, DefTypeSchema, FieldTypeKind,
     SchemaCatalog, XmlFieldShape,
@@ -25,7 +25,48 @@ fn app_error(code: &str, message: impl Into<String>) -> AppError {
         code: code.to_string(),
         message: message.into(),
         details: None,
+        args: crate::diagnostics::DiagnosticArgs::new(),
     }
+}
+
+fn app_error_with_args(
+    code: &str,
+    message: impl Into<String>,
+    args: crate::diagnostics::DiagnosticArgs,
+) -> AppError {
+    app_error(code, message).with_args(args)
+}
+
+/// Verify `project_id` refers to a registered, writable project location. Mirrors
+/// `commands::def_templates::require_writable_project` / `commands::form_views::require_writable_project`
+/// exactly: every mutating create-def command is scoped to (and can mutate) a project's XML files,
+/// so it must reject unknown/read-only/non-project ids rather than trusting whatever id the caller
+/// passes through. Split into two distinct codes -- `create_def_invalid_target` (no such id) vs.
+/// `create_def_target_not_editable` (a real id that is read-only or not a project) -- because the
+/// two conditions have different causes and, unlike the "not found" case, the "not editable" case
+/// has no `projectId` to report if a bare code with no args were reused for both (see the sibling
+/// fix in `commands::def_templates`/`commands::form_views`, and Plan.md's "one code, one meaning"
+/// diagnostic-code contract).
+fn require_writable_project(settings: &ProjectSettings, project_id: &str) -> Result<(), AppError> {
+    let location = settings
+        .locations
+        .iter()
+        .find(|l| l.id == project_id)
+        .ok_or_else(|| {
+            app_error_with_args(
+                "create_def_invalid_target",
+                format!("No project with id '{}'.", project_id),
+                crate::diagnostics::diagnostic_args([("projectId", project_id.into())]),
+            )
+        })?;
+    if location.read_only || location.kind != LocationKind::Project {
+        return Err(app_error_with_args(
+            "create_def_target_not_editable",
+            format!("The project '{}' is not editable.", project_id),
+            crate::diagnostics::diagnostic_args([("projectId", project_id.into())]),
+        ));
+    }
+    Ok(())
 }
 
 #[tauri::command]
@@ -39,43 +80,28 @@ pub fn create_def_from_template(
     field_values: BTreeMap<String, serde_json::Value>,
 ) -> Result<CreateDefResult, AppError> {
     let settings = load_settings(&app)?;
-
-    // Verify the project_id is a writable project location.
-    let location = settings
-        .locations
-        .iter()
-        .find(|l| l.id == project_id)
-        .ok_or_else(|| {
-            app_error(
-                "create_def_invalid_target",
-                format!("No project with id '{}'.", project_id),
-            )
-        })?;
-    if location.read_only || location.kind != LocationKind::Project {
-        return Err(app_error(
-            "create_def_invalid_target",
-            "Target location is read-only or is not a project.",
-        ));
-    }
+    require_writable_project(&settings, &project_id)?;
 
     // Load schema catalog and look up the def type.
     let catalog_result = build_schema_catalog(&[], None);
     let catalog = &catalog_result.catalog;
 
     let def_type_schema = catalog.def_types.get(&def_type).ok_or_else(|| {
-        app_error(
+        app_error_with_args(
             "create_def_unknown_def_type",
             format!("Unknown def type '{}'.", def_type),
+            crate::diagnostics::diagnostic_args([("defType", def_type.as_str().into())]),
         )
     })?;
 
     if def_type_schema.abstract_type {
-        return Err(app_error(
+        return Err(app_error_with_args(
             "create_def_unknown_def_type",
             format!(
                 "Def type '{}' is abstract and cannot be created directly.",
                 def_type
             ),
+            crate::diagnostics::diagnostic_args([("defType", def_type.as_str().into())]),
         ));
     }
 
@@ -83,9 +109,13 @@ pub fn create_def_from_template(
     let template: Option<&DefTemplate> = match &template_id {
         Some(id) => {
             let tpl = def_type_schema.templates.get(id).ok_or_else(|| {
-                app_error(
+                app_error_with_args(
                     "create_def_unknown_template",
                     format!("Template '{}' not found for '{}'.", id, def_type),
+                    crate::diagnostics::diagnostic_args([
+                        ("templateId", id.as_str().into()),
+                        ("defType", def_type.as_str().into()),
+                    ]),
                 )
             })?;
             Some(tpl)
@@ -131,13 +161,17 @@ pub fn create_def_from_template(
             if let Some(hints) = &def_name_schema.validation_hints {
                 if let Some(pattern) = &hints.pattern {
                     if !matches_simple_pattern(dn, pattern) {
-                        return Err(app_error(
+                        return Err(app_error_with_args(
                             "create_def_invalid_field_value",
                             format!(
                                 "defName '{}' contains invalid characters. \
                                  Only letters, digits, underscores, and hyphens are allowed.",
                                 dn
                             ),
+                            crate::diagnostics::diagnostic_args([
+                                ("fieldName", "defName".into()),
+                                ("fieldValue", dn.as_str().into()),
+                            ]),
                         ));
                     }
                 }
@@ -168,12 +202,16 @@ pub fn create_def_from_template(
     );
     if let Some(ref dn) = def_name {
         if !def_index.find_project_duplicates(&def_type, dn).is_empty() {
-            return Err(app_error(
+            return Err(app_error_with_args(
                 "create_def_duplicate_def_name",
                 format!(
                     "A '{}' def named '{}' already exists in this project.",
                     def_type, dn
                 ),
+                crate::diagnostics::diagnostic_args([
+                    ("defType", def_type.as_str().into()),
+                    ("defName", dn.as_str().into()),
+                ]),
             ));
         }
     }
@@ -327,13 +365,17 @@ fn build_field_lines(
                         xml_shape,
                         XmlFieldShape::Object | XmlFieldShape::NamedChildrenMap
                     ) {
-                        return Err(app_error(
+                        return Err(app_error_with_args(
                             "create_def_unsupported_required_field",
                             format!(
                                 "Required field '{}' has an unsupported XML shape and cannot be generated. \
                                  Provide a value for it in the template or supply it as a field value.",
                                 name
                             ),
+                            crate::diagnostics::diagnostic_args([(
+                                "fieldName",
+                                name.as_str().into(),
+                            )]),
                         ));
                     }
                     included.push(name.clone());
@@ -363,12 +405,13 @@ fn build_field_lines(
                     default_storage = dv.clone();
                     effective_value = Some(&default_storage);
                 } else {
-                    return Err(app_error(
+                    return Err(app_error_with_args(
                         "create_def_missing_required_field",
                         format!(
                             "Required field '{}' has no value and no schema default.",
                             name
                         ),
+                        crate::diagnostics::diagnostic_args([("fieldName", name.as_str().into())]),
                     ));
                 }
             } else {
@@ -389,9 +432,13 @@ fn build_field_lines(
                 let mut inner = format!("{}<{}>", inner_indent, name);
                 for item in items {
                     let s = json_value_to_string(item).map_err(|_| {
-                        app_error(
+                        app_error_with_args(
                             "create_def_invalid_field_value",
                             format!("List items for '{}' must be strings or numbers.", name),
+                            crate::diagnostics::diagnostic_args([(
+                                "fieldName",
+                                name.as_str().into(),
+                            )]),
                         )
                     })?;
                     let s = apply_placeholders(&s, merged_values);
@@ -479,9 +526,10 @@ fn build_field_lines(
                 serde_json::Value::String(s) => s.eq_ignore_ascii_case("true"),
                 serde_json::Value::Number(n) => n.as_i64().is_some_and(|i| i != 0),
                 _ => {
-                    return Err(app_error(
+                    return Err(app_error_with_args(
                         "create_def_invalid_field_value",
                         format!("Field '{}' requires a boolean value.", name),
+                        crate::diagnostics::diagnostic_args([("fieldName", name.as_str().into())]),
                     ))
                 }
             };
@@ -489,9 +537,10 @@ fn build_field_lines(
         } else {
             // Default: render as simple element text.
             let text = json_value_to_string(val).map_err(|_| {
-                app_error(
+                app_error_with_args(
                     "create_def_invalid_field_value",
                     format!("Field '{}' has an unsupported JSON value type.", name),
+                    crate::diagnostics::diagnostic_args([("fieldName", name.as_str().into())]),
                 )
             })?;
             let text = apply_placeholders(&text, merged_values);
@@ -835,6 +884,81 @@ fn char_in_class(c: char, class: &str) -> bool {
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod project_validation_tests {
+    use super::*;
+    use crate::project_model::{RegisteredLocation, SourceType};
+    use std::path::Path;
+    use time::OffsetDateTime;
+
+    fn make_location(id: &str, kind: LocationKind, read_only: bool) -> RegisteredLocation {
+        RegisteredLocation {
+            id: id.to_string(),
+            display_name: id.to_string(),
+            root_path: Path::new("/tmp").join(id).to_string_lossy().to_string(),
+            kind,
+            source_type: SourceType::Folder,
+            read_only,
+            mod_id: None,
+            game_version: None,
+            expansion_name: None,
+            created_at: OffsetDateTime::now_utc(),
+            updated_at: OffsetDateTime::now_utc(),
+        }
+    }
+
+    fn make_settings(locations: Vec<RegisteredLocation>) -> ProjectSettings {
+        ProjectSettings {
+            schema_version: 3,
+            game_version: "1.6".to_string(),
+            locale: "en".to_string(),
+            locations,
+            active_project_id: None,
+        }
+    }
+
+    #[test]
+    fn accepts_a_writable_project_location() {
+        let settings = make_settings(vec![make_location("proj1", LocationKind::Project, false)]);
+        assert!(require_writable_project(&settings, "proj1").is_ok());
+    }
+
+    #[test]
+    fn rejects_unknown_project_id_with_projectid_arg() {
+        let settings = make_settings(vec![make_location("proj1", LocationKind::Project, false)]);
+        let err = require_writable_project(&settings, "does-not-exist").unwrap_err();
+        assert_eq!(err.code, "create_def_invalid_target");
+        assert_eq!(
+            err.args.get("projectId"),
+            Some(&crate::diagnostics::DiagnosticArgValue::Text(
+                "does-not-exist".to_string()
+            ))
+        );
+    }
+
+    #[test]
+    fn rejects_source_locations_as_not_editable_with_projectid_arg() {
+        // Source locations are always read_only, but this asserts on `kind`
+        // independently in case that invariant ever changes.
+        let settings = make_settings(vec![make_location("src1", LocationKind::Source, true)]);
+        let err = require_writable_project(&settings, "src1").unwrap_err();
+        assert_eq!(err.code, "create_def_target_not_editable");
+        assert_eq!(
+            err.args.get("projectId"),
+            Some(&crate::diagnostics::DiagnosticArgValue::Text(
+                "src1".to_string()
+            ))
+        );
+    }
+
+    #[test]
+    fn rejects_read_only_project_locations_as_not_editable() {
+        let settings = make_settings(vec![make_location("proj1", LocationKind::Project, true)]);
+        let err = require_writable_project(&settings, "proj1").unwrap_err();
+        assert_eq!(err.code, "create_def_target_not_editable");
+    }
+}
 
 #[cfg(test)]
 mod tests {

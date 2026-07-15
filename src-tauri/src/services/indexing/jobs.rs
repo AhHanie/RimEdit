@@ -191,6 +191,7 @@ pub(crate) fn start_worker(app: &AppHandle) -> Result<(), AppError> {
             code: "indexing_already_started".into(),
             message: "Indexing worker already started.".into(),
             details: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         })?;
     let watcher_rx = svc
         .watcher_receiver
@@ -201,6 +202,7 @@ pub(crate) fn start_worker(app: &AppHandle) -> Result<(), AppError> {
             code: "indexing_already_started".into(),
             message: "Indexing watcher channel already taken.".into(),
             details: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         })?;
     let app_clone = app.clone();
     tauri::async_runtime::spawn(run_worker(app_clone, job_rx, watcher_rx));

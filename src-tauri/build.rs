@@ -1,5 +1,12 @@
 use std::{env, fs, path::Path};
 
+// Shared path-escape guard, also `include!`d by a Rust unit test (see
+// `src/schema_pack/tests/build_path_safety.rs`) since `cargo test` never runs `build.rs` itself.
+include!("build_support/path_safety.rs");
+// Shared symlink-rejecting file-collection walk, also `include!`d by a Rust unit test (see
+// `src/schema_pack/tests/build_file_collection.rs`) for the same reason.
+include!("build_support/file_collection.rs");
+
 fn main() {
     tauri_build::build();
 
@@ -32,6 +39,20 @@ fn main() {
     // Emit rerun-if-changed for the entire schema-packs tree so cargo knows to
     // rebuild when any file changes.
     println!("cargo:rerun-if-changed={}", schema_packs_root.display());
+    println!(
+        "cargo:rerun-if-changed={}",
+        Path::new(&manifest_dir)
+            .join("build_support")
+            .join("path_safety.rs")
+            .display()
+    );
+    println!(
+        "cargo:rerun-if-changed={}",
+        Path::new(&manifest_dir)
+            .join("build_support")
+            .join("file_collection.rs")
+            .display()
+    );
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_path = Path::new(&out_dir).join("built_in_schema_packs.rs");
@@ -41,7 +62,7 @@ fn main() {
     // where def_files, obj_files, and patch_op_files are slices of (label, content) pairs.
     let mut out = String::new();
     out.push_str(
-        "#[allow(clippy::type_complexity)]\npub const BUILT_IN_SCHEMA_PACKS: &[(&str, &str, &[(&str, &str)], &[(&str, &str)], &[(&str, &str)])] = &[\n",
+        "#[allow(clippy::type_complexity)]\npub const BUILT_IN_SCHEMA_PACKS: &[(&str, &str, &[(&str, &str)], &[(&str, &str)], &[(&str, &str)], &[(&str, &str)])] = &[\n",
     );
 
     for pack in &manifests {
@@ -86,6 +107,17 @@ fn main() {
         }
         out.push_str("        ],\n");
 
+        // locale sidecar files
+        out.push_str("        &[\n");
+        for (label, rel) in &pack.locale_files {
+            out.push_str(&format!(
+                "            (\"{label}\", include_str!(concat!(env!(\"CARGO_MANIFEST_DIR\"), \"/{rel}\"))),\n",
+                label = label.replace('\\', "/"),
+                rel = rel.replace('\\', "/")
+            ));
+        }
+        out.push_str("        ],\n");
+
         out.push_str("    ),\n");
     }
     out.push_str("];\n");
@@ -101,6 +133,9 @@ struct PackInfo {
     def_files: Vec<(String, String)>,
     obj_files: Vec<(String, String)>,
     patch_op_files: Vec<(String, String)>,
+    /// Locale sidecar JSON files (issue 05) discovered under the manifest's declared
+    /// `localesDirectory`, if any -- one flat file per BCP-47 locale tag (e.g. `locales/en.json`).
+    locale_files: Vec<(String, String)>,
 }
 
 /// Walk `schema-packs/` and find all schema-pack.json manifests.
@@ -207,6 +242,11 @@ fn load_pack_info(
         })
         .unwrap_or_default();
 
+    let locales_dir: Option<String> = manifest_json
+        .get("localesDirectory")
+        .and_then(|v| v.as_str())
+        .map(str::to_string);
+
     let manifest_rel = manifest_path
         .strip_prefix(manifest_dir)
         .unwrap_or(manifest_path)
@@ -217,38 +257,60 @@ fn load_pack_info(
 
     let label = format!("built-in:{}/schema-pack.json", label_name);
 
+    // Every directory declared by the manifest (defTypeDirectories/objectTypeDirectories/
+    // patchOperationDirectories/localesDirectory) is validated to stay within `pack_root` before
+    // it is ever joined and walked -- mirrors the runtime external-pack loader's
+    // `resolve_manifest_relative_dir` safety check (see `schema_pack/loader.rs`). Built-in packs
+    // are this repository's own shipped content, not third-party input, and `build.rs` has no
+    // diagnostics channel to recover through, so an escaping entry here is treated as an
+    // authoring bug and fails the build outright rather than silently embedding files from
+    // outside the pack directory.
     let mut def_files = Vec::new();
     for dir in &def_dirs {
-        collect_json_files_for_build(
-            &pack_root.join(dir),
-            manifest_dir,
-            pack_root,
-            &mut def_files,
-        );
+        let resolved = resolve_relative_dir_within_root(pack_root, dir).unwrap_or_else(|| {
+            panic!(
+                "schema pack '{label_name}': defTypeDirectories entry '{dir}' escapes the pack root via '..' or is absolute"
+            )
+        });
+        collect_json_files_for_build(&resolved, manifest_dir, pack_root, &mut def_files);
     }
     def_files.sort_by(|a, b| a.0.cmp(&b.0));
 
     let mut obj_files = Vec::new();
     for dir in &obj_dirs {
-        collect_json_files_for_build(
-            &pack_root.join(dir),
-            manifest_dir,
-            pack_root,
-            &mut obj_files,
-        );
+        let resolved = resolve_relative_dir_within_root(pack_root, dir).unwrap_or_else(|| {
+            panic!(
+                "schema pack '{label_name}': objectTypeDirectories entry '{dir}' escapes the pack root via '..' or is absolute"
+            )
+        });
+        collect_json_files_for_build(&resolved, manifest_dir, pack_root, &mut obj_files);
     }
     obj_files.sort_by(|a, b| a.0.cmp(&b.0));
 
     let mut patch_op_files = Vec::new();
     for dir in &patch_op_dirs {
-        collect_json_files_for_build(
-            &pack_root.join(dir),
-            manifest_dir,
-            pack_root,
-            &mut patch_op_files,
-        );
+        let resolved = resolve_relative_dir_within_root(pack_root, dir).unwrap_or_else(|| {
+            panic!(
+                "schema pack '{label_name}': patchOperationDirectories entry '{dir}' escapes the pack root via '..' or is absolute"
+            )
+        });
+        collect_json_files_for_build(&resolved, manifest_dir, pack_root, &mut patch_op_files);
     }
     patch_op_files.sort_by(|a, b| a.0.cmp(&b.0));
+
+    // Locale sidecars are a flat `locales/<tag>.json` layout (not recursive), unlike
+    // def/object/patch-operation directories -- mirrors the runtime loader's
+    // `read_locale_directory_files` in `schema_pack/loader.rs`.
+    let mut locale_files = Vec::new();
+    if let Some(dir) = &locales_dir {
+        let resolved = resolve_relative_dir_within_root(pack_root, dir).unwrap_or_else(|| {
+            panic!(
+                "schema pack '{label_name}': localesDirectory entry '{dir}' escapes the pack root via '..' or is absolute"
+            )
+        });
+        collect_flat_json_files_for_build(&resolved, manifest_dir, pack_root, &mut locale_files);
+    }
+    locale_files.sort_by(|a, b| a.0.cmp(&b.0));
 
     Some(PackInfo {
         label,
@@ -256,41 +318,12 @@ fn load_pack_info(
         def_files,
         obj_files,
         patch_op_files,
+        locale_files,
     })
 }
 
-/// Walk `dir` recursively collecting (label_within_pack, relative_from_manifest_dir) pairs for JSON files.
-/// Intentionally mirrors the runtime recursive traversal in `loader::collect_json_files`.
-fn collect_json_files_for_build(
-    dir: &Path,
-    manifest_dir: &str,
-    pack_root: &Path,
-    out: &mut Vec<(String, String)>,
-) {
-    let entries = match fs::read_dir(dir) {
-        Ok(e) => e,
-        Err(_) => return,
-    };
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_file() {
-            if path.extension().and_then(|x| x.to_str()) == Some("json") {
-                let label = path
-                    .strip_prefix(pack_root)
-                    .unwrap_or(&path)
-                    .to_string_lossy()
-                    .replace('\\', "/");
-                let rel = path
-                    .strip_prefix(manifest_dir)
-                    .unwrap_or(&path)
-                    .to_string_lossy()
-                    .replace('\\', "/")
-                    .trim_start_matches('/')
-                    .to_string();
-                out.push((label, rel));
-            }
-        } else if path.is_dir() {
-            collect_json_files_for_build(&path, manifest_dir, pack_root, out);
-        }
-    }
-}
+// `collect_flat_json_files_for_build`, `collect_json_files_for_build`, and the `is_symlink` guard
+// they both use now live in `build_support/file_collection.rs` (see the `include!` near the top of
+// this file) so the exact symlink-rejecting logic build.rs runs at compile time can also be
+// exercised by a real `#[test]` (see `src/schema_pack/tests/build_file_collection.rs`), mirroring
+// how `build_support/path_safety.rs` is already shared the same way.

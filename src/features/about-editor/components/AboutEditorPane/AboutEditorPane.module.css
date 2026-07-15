@@ -28,7 +28,7 @@
 }
 
 .supportBadge {
-  margin-left: auto;
+  margin-inline-start: auto;
   font-size: 10px;
   color: var(--text-muted);
 }

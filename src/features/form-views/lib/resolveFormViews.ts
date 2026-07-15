@@ -3,6 +3,8 @@
 // caller that wires this to live catalog/store/session data. Kept pure and colocated with its
 // own test file so the resolver contract (ordering, fallback, visibility intersection) is
 // independently verifiable without mounting hooks/components.
+import { FALLBACK_LOCALE } from "../../../i18n/locale";
+import { initI18n } from "../../../i18n";
 import type { SchemaFormView } from "../../schema-catalog";
 import type { CustomFormView, SelectedFormViewRef } from "../types/formViews";
 import {
@@ -12,12 +14,14 @@ import {
 } from "../types/resolvedFormView";
 
 /** The immutable, always-selectable full form. Empty hidden set by construction (Plan.md
- * section 7: "Default View has an empty hidden set"). */
+ * section 7: "Default View has an empty hidden set"). A plain module function, not a React
+ * component, so there is no `useTranslation()` hook to call -- resolves the label from the
+ * app-wide i18next singleton instead, same as `src/features/xml-editor/lib/objectDescriptors.ts`. */
 export function buildDefaultFormView(targetDefType: string): ResolvedFormView {
   return {
     id: DEFAULT_FORM_VIEW_ID,
     targetDefType,
-    label: "Default View",
+    label: initI18n().t("editor:formViews.defaultViewLabel", "Default View"),
     order: Number.NEGATIVE_INFINITY,
     origin: "default",
     hiddenFieldIds: [],
@@ -35,13 +39,14 @@ export function buildAvailableFormViews(
   targetDefType: string,
   schemaFormViews: Record<string, SchemaFormView> | undefined,
   customViews: readonly CustomFormView[],
+  locale: string = FALLBACK_LOCALE,
 ): ResolvedFormView[] {
   const schemaViews: ResolvedFormView[] = Object.values(schemaFormViews ?? {})
     .slice()
     .sort((a, b) => {
       if (a.order !== b.order) return a.order - b.order;
       if (a.recommended !== b.recommended) return a.recommended ? -1 : 1;
-      return a.label.localeCompare(b.label);
+      return a.label.localeCompare(b.label, locale);
     })
     .map((v) => ({
       id: v.id,
@@ -57,9 +62,11 @@ export function buildAvailableFormViews(
       source: v.source,
     }));
 
+  // `createdAt` is a persisted ISO-8601 timestamp, not human display text: a plain
+  // codepoint comparison sorts it correctly and needs no locale-aware collation.
   const customSorted: ResolvedFormView[] = customViews
     .slice()
-    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    .sort((a, b) => (a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0))
     .map((v, index) => ({
       id: v.id,
       targetDefType,

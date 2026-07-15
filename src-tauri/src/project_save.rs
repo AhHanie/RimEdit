@@ -47,6 +47,11 @@ pub struct DiffLine {
     pub old_line: Option<usize>,
     pub new_line: Option<usize>,
     pub text: String,
+    /// Set only for `DiffLineKind::Gap`: the number of elided unchanged lines this marker
+    /// stands in for. Machine-readable so the frontend can pluralize/format it via `t()`
+    /// instead of Rust assembling an English sentence (`text` is empty for gap rows).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub count: Option<usize>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -55,8 +60,8 @@ pub enum DiffLineKind {
     Unchanged,
     Added,
     Removed,
-    /// A collapsed run of unchanged lines elided from the preview. `text` holds a human
-    /// label (e.g. "142 unchanged lines"); both line numbers are `None`.
+    /// A collapsed run of unchanged lines elided from the preview. `count` holds the number
+    /// of elided lines; both line numbers are `None` and `text` is empty.
     Gap,
 }
 
@@ -114,11 +119,36 @@ impl From<ProjectSaveError> for AppError {
             ProjectSaveError::TempWriteFailed(_) => "save_temp_write_failed",
             ProjectSaveError::ReplaceFailed(_) => "save_replace_failed",
         };
+        // `ProjectNotFound`/`ProjectNotEditable`/`FileNotFound` carry clean literal identifiers;
+        // the remaining variants wrap arbitrary IO-error text.
+        let args = match &e {
+            ProjectSaveError::ProjectNotFound(id) | ProjectSaveError::ProjectNotEditable(id) => {
+                crate::diagnostics::diagnostic_args([("projectId", id.as_str().into())])
+            }
+            ProjectSaveError::FileNotFound(path) => {
+                crate::diagnostics::diagnostic_args([("path", path.as_str().into())])
+            }
+            _ => crate::diagnostics::DiagnosticArgs::new(),
+        };
         AppError {
             code: code.to_string(),
             message: e.to_string(),
             details: None,
+            args,
         }
+    }
+}
+
+#[cfg(test)]
+mod diagnostic_ref_wire_tests {
+    use super::*;
+
+    #[test]
+    fn file_not_found_carries_path_arg() {
+        let err: AppError = ProjectSaveError::FileNotFound("Defs/Foo.xml".to_string()).into();
+        let json = serde_json::to_value(&err).unwrap();
+        assert_eq!(json["code"], "save_file_not_found");
+        assert_eq!(json["args"]["path"], "Defs/Foo.xml");
     }
 }
 
@@ -340,6 +370,7 @@ fn generate_line_diff_inner(old_xml: &str, proposed_xml: &str, collapse: bool) -
             old_line,
             new_line,
             text,
+            count: None,
         });
     }
     if collapse {
@@ -375,23 +406,11 @@ fn collapse_unchanged_runs(lines: Vec<DiffLine>, context: usize) -> Vec<DiffLine
                 kind: DiffLineKind::Gap,
                 old_line: None,
                 new_line: None,
-                text: String::from("1"),
+                text: String::new(),
+                count: Some(1),
             });
         } else if let Some(last) = out.last_mut() {
-            let count: usize = last.text.parse().unwrap_or(1) + 1;
-            last.text = count.to_string();
-        }
-    }
-
-    // Replace the bare counts in gap markers with a human label.
-    for line in out.iter_mut() {
-        if matches!(line.kind, DiffLineKind::Gap) {
-            let count: usize = line.text.parse().unwrap_or(0);
-            line.text = format!(
-                "{} unchanged line{}",
-                count,
-                if count == 1 { "" } else { "s" }
-            );
+            last.count = Some(last.count.unwrap_or(1) + 1);
         }
     }
 
@@ -640,8 +659,9 @@ mod tests {
 
     fn make_settings(root: &Path) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![RegisteredLocation {
                 id: "proj1".to_string(),
                 display_name: "Test Project".to_string(),
@@ -800,7 +820,8 @@ mod tests {
             "expected a leading and trailing gap: {:?}",
             gaps
         );
-        assert!(gaps[0].text.contains("unchanged line"));
+        assert!(gaps[0].count.is_some_and(|c| c > 0));
+        assert!(gaps[0].text.is_empty());
         // Context lines immediately around the change are kept.
         assert!(diff
             .iter()
@@ -1006,9 +1027,9 @@ mod tests {
         fs::remove_dir_all(&app_data_dir).ok();
     }
 
-    // Issue 09 finding 1 follow-up: save validation now filters by `settings.game_version`
-    // instead of the old version-blind `build_schema_catalog(&[], None)`. Reviewer concern
-    // (round 2): could an existing project whose configured game version doesn't resolve to ANY
+    // Save validation now filters by `settings.game_version`
+    // instead of the old version-blind `build_schema_catalog(&[], None)`. Could an existing
+    // project whose configured game version doesn't resolve to ANY
     // installed schema pack (e.g. a stale/orphaned version left over from a removed external
     // pack) start seeing NEW save failures purely because of this filtering -- possibly even a
     // genuinely NEW *blocking* diagnostic, not just a non-blocking "unknown def type" warning, if
@@ -1374,7 +1395,7 @@ mod tests {
 
         let settings = make_settings(&project_dir);
         let secret = b"test-secret";
-        // Token was issued with one index fingerprint…
+        // Token was issued with one index fingerprintÃ¢â‚¬Â¦
         let token = make_fast_token(
             secret,
             &project_dir,
@@ -1383,7 +1404,7 @@ mod tests {
             VALID_XML_2,
             "fp-at-preview",
         );
-        // …but at save time the index changed (different fingerprint)
+        // Ã¢â‚¬Â¦but at save time the index changed (different fingerprint)
         let result = try_save_with_fast_token(
             &settings,
             &app_data_dir,

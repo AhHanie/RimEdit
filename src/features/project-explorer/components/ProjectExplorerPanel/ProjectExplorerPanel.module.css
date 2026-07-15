@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   background: var(--surface-panel);
-  border-right: 1px solid var(--border-subtle);
+  border-inline-end: 1px solid var(--border-subtle);
   overflow: hidden;
 }
 
@@ -108,14 +108,14 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding-right: 8px;
+  padding-inline-end: 8px;
   background: none;
   border: none;
   cursor: pointer;
   color: var(--text-primary);
   font-family: var(--font-ui);
   font-size: 13px;
-  text-align: left;
+  text-align: start;
 }
 
 .searchRow:hover {

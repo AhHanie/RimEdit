@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { formatError } from "../../../../lib/formatError";
 import type { UserDefTemplate } from "../../types/defTemplates";
@@ -17,6 +18,10 @@ export function SaveDefTemplateDialog({
   onClose,
   onSaved,
 }: Props) {
+  // Two separate single-namespace hooks, not `useTranslation(["editor", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   const [name, setName] = useState(defaultName);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,12 +47,12 @@ export function SaveDefTemplateDialog({
       className={styles.overlay}
       role="dialog"
       aria-modal="true"
-      aria-label="Save as Template"
+      aria-label={t("saveDefTemplateDialog.dialogAriaLabel")}
     >
       <div className={styles.panel}>
         <div className={styles.header}>
-          <span className={styles.title}>Save as Template</span>
-          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+          <span className={styles.title}>{t("saveDefTemplateDialog.title")}</span>
+          <button className={styles.closeBtn} onClick={onClose} aria-label={tCommon("actions.close")}>
             <X size={14} />
           </button>
         </div>
@@ -55,7 +60,7 @@ export function SaveDefTemplateDialog({
         <div className={styles.body}>
           <div className={styles.fieldRow}>
             <label className={styles.fieldLabel} htmlFor="save-def-template-name">
-              Template name
+              {t("saveDefTemplateDialog.templateNameLabel")}
             </label>
             <input
               ref={inputRef}
@@ -82,14 +87,14 @@ export function SaveDefTemplateDialog({
             <span className={styles.spacer} />
           )}
           <button className={styles.cancelBtn} onClick={onClose} disabled={busy}>
-            Cancel
+            {tCommon("actions.cancel")}
           </button>
           <button
             className={styles.saveBtn}
             onClick={() => void handleSave()}
             disabled={busy || !trimmedName}
           >
-            {busy ? "Saving…" : "Save"}
+            {busy ? t("saveDefTemplateDialog.saving") : tCommon("actions.save")}
           </button>
         </div>
       </div>

@@ -112,13 +112,14 @@ pub fn parse_to_document(relative_path: &str, source: &str) -> XmlDocument {
             Err(e) => {
                 let offset = reader.buffer_position() as usize + bom_offset;
                 let (line, col) = offset_to_line_col(&newline_index, offset);
-                diagnostics.push(ParseDiagnostic {
-                    relative_path: relative_path.to_string(),
-                    line: Some(line),
-                    column: Some(col),
-                    byte_offset: Some(offset),
-                    message: e.to_string(),
-                });
+                diagnostics.push(ParseDiagnostic::new(
+                    relative_path,
+                    Some(line),
+                    Some(col),
+                    Some(offset),
+                    "parse_xml_syntax_error",
+                    e.to_string(),
+                ));
                 had_fatal_error = true;
                 break;
             }
@@ -133,13 +134,14 @@ pub fn parse_to_document(relative_path: &str, source: &str) -> XmlDocument {
                 let attributes = collect_attributes(e, &span, &mut attr_errors);
                 for msg in attr_errors {
                     let (line, col) = offset_to_line_col(&newline_index, event_start);
-                    diagnostics.push(ParseDiagnostic {
-                        relative_path: relative_path.to_string(),
-                        line: Some(line),
-                        column: Some(col),
-                        byte_offset: Some(event_start),
-                        message: msg,
-                    });
+                    diagnostics.push(ParseDiagnostic::new(
+                        relative_path,
+                        Some(line),
+                        Some(col),
+                        Some(event_start),
+                        "parse_invalid_attribute",
+                        msg,
+                    ));
                 }
                 let node_id = nodes.len();
                 let parent = open_stack.last().copied();
@@ -178,13 +180,14 @@ pub fn parse_to_document(relative_path: &str, source: &str) -> XmlDocument {
                 let attributes = collect_attributes(e, &span, &mut attr_errors);
                 for msg in attr_errors {
                     let (line, col) = offset_to_line_col(&newline_index, event_start);
-                    diagnostics.push(ParseDiagnostic {
-                        relative_path: relative_path.to_string(),
-                        line: Some(line),
-                        column: Some(col),
-                        byte_offset: Some(event_start),
-                        message: msg,
-                    });
+                    diagnostics.push(ParseDiagnostic::new(
+                        relative_path,
+                        Some(line),
+                        Some(col),
+                        Some(event_start),
+                        "parse_invalid_attribute",
+                        msg,
+                    ));
                 }
                 let node_id = nodes.len();
                 let parent = open_stack.last().copied();
@@ -213,13 +216,14 @@ pub fn parse_to_document(relative_path: &str, source: &str) -> XmlDocument {
                     Ok(v) => v.into_owned(),
                     Err(err) => {
                         let (line, col) = offset_to_line_col(&newline_index, event_start);
-                        diagnostics.push(ParseDiagnostic {
-                            relative_path: relative_path.to_string(),
-                            line: Some(line),
-                            column: Some(col),
-                            byte_offset: Some(event_start),
-                            message: format!("Invalid XML entity in text: {}", err),
-                        });
+                        diagnostics.push(ParseDiagnostic::new(
+                            relative_path,
+                            Some(line),
+                            Some(col),
+                            Some(event_start),
+                            "parse_invalid_text_entity",
+                            format!("Invalid XML entity in text: {}", err),
+                        ));
                         String::from_utf8_lossy(e.as_ref()).into_owned()
                     }
                 };
@@ -287,16 +291,22 @@ pub fn parse_to_document(relative_path: &str, source: &str) -> XmlDocument {
                 if !open_stack.is_empty() {
                     let offset = reader.buffer_position() as usize + bom_offset;
                     let (line, col) = offset_to_line_col(&newline_index, offset);
-                    diagnostics.push(ParseDiagnostic {
-                        relative_path: relative_path.to_string(),
-                        line: Some(line),
-                        column: Some(col),
-                        byte_offset: Some(offset),
-                        message: format!(
-                            "Unexpected end of file: {} unclosed element(s)",
-                            open_stack.len()
-                        ),
-                    });
+                    diagnostics.push(
+                        ParseDiagnostic::new(
+                            relative_path,
+                            Some(line),
+                            Some(col),
+                            Some(offset),
+                            "parse_unexpected_eof",
+                            format!(
+                                "Unexpected end of file: {} unclosed element(s)",
+                                open_stack.len()
+                            ),
+                        )
+                        .with_args(crate::diagnostics::diagnostic_args([
+                            ("unclosedCount", open_stack.len().into()),
+                        ])),
+                    );
                     had_fatal_error = true;
                 }
                 break;
@@ -389,13 +399,20 @@ pub fn parse_xml_document(relative_path: &str, source: &str) -> XmlDocumentLoadR
         };
         let parsed_relative_path = doc.relative_path.clone();
         let mut diags = doc.parse_diagnostics;
-        diags.push(ParseDiagnostic {
-            relative_path: parsed_relative_path,
-            line: None,
-            column: None,
-            byte_offset: None,
-            message: msg,
-        });
+        diags.push(
+            ParseDiagnostic::new(
+                parsed_relative_path,
+                None,
+                None,
+                None,
+                "parse_invalid_root_element_count",
+                msg,
+            )
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "elementCount",
+                element_count.into(),
+            )])),
+        );
         return make_error_result(relative_path, source, diags);
     }
 

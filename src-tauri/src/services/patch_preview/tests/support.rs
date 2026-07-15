@@ -36,8 +36,9 @@ pub(super) fn write(root: &Path, rel: &str, content: &str) {
 
 pub(super) fn settings_for(root: &Path) -> ProjectSettings {
     ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations: vec![location(root, "proj", LocationKind::Project)],
         active_project_id: Some("proj".to_string()),
     }

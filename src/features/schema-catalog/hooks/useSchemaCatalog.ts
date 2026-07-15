@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import type {
   SchemaCatalog,
   DefTypeSchema,
@@ -7,7 +7,7 @@ import type {
   SchemaLoadDiagnostic,
 } from "../types";
 import { loadSchemaCatalog } from "../api/schemaPack";
-import { formatError } from "../../../lib/formatError";
+import { formatCommandError } from "../../../i18n/diagnostics";
 
 export interface UseSchemaCatalogReturn {
   catalog: SchemaCatalog | null;
@@ -23,27 +23,36 @@ export interface UseSchemaCatalogReturn {
 export function useSchemaCatalog(
   extraSchemaRoots?: string[],
   gameVersion?: string,
+  locale?: string,
 ): UseSchemaCatalogReturn {
   const [catalog, setCatalog] = useState<SchemaCatalog | null>(null);
   const [diagnostics, setDiagnostics] = useState<SchemaLoadDiagnostic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Guards against an out-of-order response: a locale switch (or game-version/roots change)
+  // fires a new `reload` before a previous in-flight one resolves. Only the response matching
+  // the latest request token is ever applied, so a slow stale request can never clobber a
+  // faster newer one's result (see issue 06's "Risks" section).
+  const requestTokenRef = useRef(0);
 
   const reload = useCallback(async () => {
+    const token = ++requestTokenRef.current;
     setLoading(true);
     setError(null);
     try {
-      const result = await loadSchemaCatalog(extraSchemaRoots, gameVersion);
+      const result = await loadSchemaCatalog(extraSchemaRoots, gameVersion, locale);
+      if (requestTokenRef.current !== token) return;
       setCatalog(result.catalog);
       setDiagnostics(result.diagnostics);
     } catch (e: unknown) {
-      setError(formatError(e));
+      if (requestTokenRef.current !== token) return;
+      setError(formatCommandError(e));
       setCatalog(null);
       setDiagnostics([]);
     } finally {
-      setLoading(false);
+      if (requestTokenRef.current === token) setLoading(false);
     }
-  }, [extraSchemaRoots, gameVersion]);
+  }, [extraSchemaRoots, gameVersion, locale]);
 
   useEffect(() => {
     reload();

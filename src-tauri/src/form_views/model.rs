@@ -150,23 +150,40 @@ impl UserFormViewStore {
 /// on-disk store's `schemaVersion` is newer than this build supports). Distinct from
 /// `FormViewStoreError`: a warning still returns usable (if reduced) data, while an error means
 /// the caller could not read the store's custom-view data at all.
+///
+/// `code` intentionally matches `FormViewStoreError`'s `form_view_unsupported_version` (see
+/// `form_views::error`) -- both describe the exact same condition, just on the warning vs. hard
+/// -error path, and the frontend's diagnostic catalog (`src/i18n/resources/en/diagnostics.json`)
+/// keys off this one shared code.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FormViewStoreWarning {
     pub code: String,
+    /// Compatibility English text mirroring `code`/`args` (see `AppError`'s doc comment for the
+    /// same pattern). Prefer rendering `code`/`args` through the frontend's shared diagnostic
+    /// renderer; this remains only as a fallback for the migration window.
     pub message: String,
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
 }
 
 impl FormViewStoreWarning {
     pub fn unsupported_newer_version(schema_version: u32) -> Self {
         Self {
-            code: "form_view_store_unsupported_version".to_string(),
+            code: "form_view_unsupported_version".to_string(),
             message: format!(
                 "The custom Form View store was saved by a newer version of RimEdit \
                  (schema version {}). Custom views are unavailable in this session until \
                  RimEdit is upgraded.",
                 schema_version
             ),
+            args: crate::diagnostics::diagnostic_args([(
+                "schemaVersion",
+                (schema_version as i64).into(),
+            )]),
         }
     }
 }

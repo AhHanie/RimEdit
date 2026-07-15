@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { ValidationDiagnostic } from "../../../xml-editor/types/xmlDocument";
 import { fieldSeverity } from "../../lib/aboutValidationText";
+import { renderDiagnostic } from "../../../../i18n/diagnostics";
 import styles from "./AboutTextField.module.css";
 
 interface Props {
@@ -22,6 +24,7 @@ export function AboutTextField({
   diagnostics = [],
   onCommit,
 }: Props) {
+  const { i18n } = useTranslation("diagnostics");
   const [draft, setDraft] = useState(value);
 
   useEffect(() => {
@@ -41,7 +44,7 @@ export function AboutTextField({
         {severity && (
           <span
             className={`${styles.badge} ${severity === "Error" ? styles.badgeError : styles.badgeWarning}`}
-            title={diagnostics.map((d) => d.message).join("\n")}
+            title={diagnostics.map((d) => renderDiagnostic(d, i18n)).join("\n")}
           >
             {severity === "Error" ? "!" : "?"}
           </span>

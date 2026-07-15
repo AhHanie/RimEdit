@@ -5,7 +5,7 @@ import { useXmlFormController } from "./useXmlFormController";
 import type { XmlEditorSnapshot } from "../types/editorSession";
 import type { SchemaCatalog } from "../../schema-catalog";
 
-// Issue 05 review round 2, finding 3: `models`/`descriptors` must depend on the content-
+// `models`/`descriptors` must depend on the content-
 // stable id (mirroring `getCatalogId`'s role for catalog identity), not the raw
 // `visibleTopLevelFieldIds` Set (or `catalog`) reference - otherwise a caller that
 // re-creates a content-equal Set/catalog on every render (a common React pattern, e.g.
@@ -111,7 +111,7 @@ function makeCatalog(): SchemaCatalog {
   };
 }
 
-describe("useXmlFormController – descriptor/model memo stability (issue 05 review finding 3)", () => {
+describe("useXmlFormController – descriptor/model memo stability (issue 05)", () => {
   type Props = Parameters<typeof useXmlFormController>[0];
 
   it("does not rebuild descriptors/models when rerendered with a content-equal but new-instance visibility Set", () => {

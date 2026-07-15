@@ -87,12 +87,22 @@ impl PatchOrderMode {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+// Not `Eq`: `args` can carry a `DiagnosticArgValue::Float`, and `f64` has no `Eq` impl.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PatchDiagnostic {
     pub line: Option<usize>,
     pub column: Option<usize>,
     pub message: String,
+    /// Stable code for this diagnostic (see `crate::diagnostics` module docs). `None` for
+    /// diagnostics still awaiting migration off the raw parser-library `message` alone.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub code: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
 }
 
 impl PatchDiagnostic {
@@ -105,7 +115,21 @@ impl PatchDiagnostic {
             line,
             column,
             message: message.into(),
+            code: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         }
+    }
+
+    /// Attaches a stable code (see `crate::diagnostics` module docs), for producers that already
+    /// know a normalized condition rather than only having raw parser-library text.
+    pub(crate) fn with_code(mut self, code: impl Into<String>) -> Self {
+        self.code = Some(code.into());
+        self
+    }
+
+    pub(crate) fn with_args(mut self, args: crate::diagnostics::DiagnosticArgs) -> Self {
+        self.args.extend(args);
+        self
     }
 }
 
@@ -254,5 +278,29 @@ pub const BUILT_IN_OPERATION_CLASSES: &[&str] = &[
 impl PatchOperationNode {
     pub fn is_known_class(&self) -> bool {
         !matches!(self.kind, PatchOperationKind::Unknown(_))
+    }
+}
+
+#[cfg(test)]
+mod diagnostic_ref_wire_tests {
+    use super::*;
+    use crate::diagnostics::diagnostic_args;
+
+    #[test]
+    fn patch_diagnostic_wire_shape_carries_code_and_args() {
+        let diag = PatchDiagnostic::new(Some(3), Some(1), "missing required <xpath> field")
+            .with_code("patch_missing_required_field")
+            .with_args(diagnostic_args([("fieldName", "xpath".into())]));
+        let json = serde_json::to_value(&diag).unwrap();
+        assert_eq!(json["code"], "patch_missing_required_field");
+        assert_eq!(json["args"]["fieldName"], "xpath");
+    }
+
+    #[test]
+    fn patch_diagnostic_without_code_or_args_omits_both_fields() {
+        let diag = PatchDiagnostic::new(None, None, "raw parser text");
+        let json = serde_json::to_value(&diag).unwrap();
+        assert!(json.get("code").is_none());
+        assert!(json.get("args").is_none());
     }
 }

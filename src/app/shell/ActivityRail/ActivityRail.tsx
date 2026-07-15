@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Files, Search, Settings } from "lucide-react";
 import type { ActivityView } from "../types";
 import styles from "./ActivityRail.module.css";
@@ -8,13 +9,14 @@ interface ActivityRailProps {
 }
 
 export function ActivityRail({ activeView, onSelectView }: ActivityRailProps) {
+  const { t } = useTranslation(["shell", "common"]);
   return (
-    <nav className={styles.root} aria-label="Activity">
+    <nav className={styles.root} aria-label={t("shell:activityRail.ariaLabel")}>
       <button
         className={`icon-btn ${styles.btn}${activeView === "explorer" ? ` ${styles.btnActive}` : ""}`}
         onClick={() => onSelectView("explorer")}
-        aria-label="Explorer"
-        title="Explorer"
+        aria-label={t("shell:activityRail.explorer")}
+        title={t("shell:activityRail.explorer")}
         aria-pressed={activeView === "explorer"}
       >
         <Files size={20} />
@@ -22,8 +24,8 @@ export function ActivityRail({ activeView, onSelectView }: ActivityRailProps) {
       <button
         className={`icon-btn ${styles.btn}${activeView === "search" ? ` ${styles.btnActive}` : ""}`}
         onClick={() => onSelectView("search")}
-        aria-label="Search"
-        title="Search"
+        aria-label={t("shell:activityRail.search")}
+        title={t("shell:activityRail.search")}
         aria-pressed={activeView === "search"}
       >
         <Search size={20} />
@@ -32,8 +34,8 @@ export function ActivityRail({ activeView, onSelectView }: ActivityRailProps) {
       <button
         className={`icon-btn ${styles.btn}${activeView === "settings" ? ` ${styles.btnActive}` : ""}`}
         onClick={() => onSelectView("settings")}
-        aria-label="Settings"
-        title="Settings"
+        aria-label={t("shell:activityRail.settings")}
+        title={t("shell:activityRail.settings")}
         aria-pressed={activeView === "settings"}
       >
         <Settings size={20} />

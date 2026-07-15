@@ -29,6 +29,13 @@ import {
   buildKeyedObjectListItemValue,
   buildKeyedObjectMapItemValue,
 } from "./objectDescriptors";
+import { initI18n } from "../../../i18n";
+
+/** This module's readonly-value/reason strings below are built by plain module functions, not
+ * React components, so there is no `useTranslation()` hook to call -- resolves translated text
+ * from the app-wide i18next singleton instead, same as `objectDescriptors.ts` (see that module's
+ * top-of-file doc comment for the full rationale, including why `initI18n().t(...)` is called
+ * directly at each site rather than through a same-signature local wrapper). */
 
 export function findFieldSchema(
   fieldName: string,
@@ -344,7 +351,10 @@ function buildNestedObjectDescriptors(args: {
         nodeId: nestedChild?.nodeId ?? null,
         dirty: false,
         readonly: true,
-        readOnlyReason: "Circular schema reference.",
+        readOnlyReason: initI18n().t(
+          "editor:formFieldControl.circularSchemaReferenceReason",
+          "Circular schema reference.",
+        ),
         diagnostics: [],
         sectionDefaults: sectionChain,
         xmlElementName:
@@ -722,7 +732,11 @@ export function buildFormDescriptors(
 }
 
 function objectListSummary(count: number): string {
-  return `(object list: ${count} item${count === 1 ? "" : "s"})`;
+  return initI18n().t(
+    "editor:objectListEditor.objectListItemCountSummary",
+    `(object list: ${count} item${count === 1 ? "" : "s"})`,
+    { count },
+  );
 }
 
 function displayValueForUnsupportedChild(
@@ -730,9 +744,18 @@ function displayValueForUnsupportedChild(
 ): string {
   if (!child) return "";
   if (child.listItems.length > 0) {
-    return `(${child.xmlShape}, ${child.listItems.length} item${child.listItems.length === 1 ? "" : "s"})`;
+    const count = child.listItems.length;
+    return initI18n().t(
+      "editor:objectListEditor.unsupportedChildSummaryWithCount",
+      `(${child.xmlShape}, ${count} item${count === 1 ? "" : "s"})`,
+      { xmlShape: child.xmlShape, count },
+    );
   }
-  return `(${child.xmlShape})`;
+  return initI18n().t(
+    "editor:objectListEditor.unsupportedChildSummary",
+    `(${child.xmlShape})`,
+    { xmlShape: child.xmlShape },
+  );
 }
 
 export function buildFormFieldModels(
@@ -843,9 +866,15 @@ export function buildFormFieldModels(
       const readOnlyReason =
         descriptor.readOnlyReason ??
         (descriptor.control === "object" || isUnsupportedStructured
-          ? "Use Raw XML mode to edit this structured field."
+          ? initI18n().t(
+              "editor:formFieldControl.structuredFieldReadOnlyReason",
+              "Use Raw XML mode to edit this structured field.",
+            )
           : descriptor.readonly
-            ? "This field is not described by the active schema pack."
+            ? initI18n().t(
+                "editor:formFieldControl.noSchemaReadOnlyReason",
+                "This field is not described by the active schema pack.",
+              )
             : undefined);
 
       return {

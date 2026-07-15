@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { useGraphicDataPreview } from "../../hooks/useGraphicDataPreview";
 import type { GraphicPreviewVariant } from "../../types/graphicPreview";
+import { renderDiagnostic } from "../../../../i18n/diagnostics";
+import { renderGraphicPreviewLabel } from "../../lib/graphicPreviewLabels";
 import styles from "./GraphicDataPreview.module.css";
 
 interface GraphicDataPreviewProps {
@@ -32,6 +35,7 @@ export function GraphicDataPreview({
   graphicClass,
   maskPath,
 }: GraphicDataPreviewProps) {
+  const { t, i18n } = useTranslation("editor");
   const preview = useGraphicDataPreview(projectId, texPath, graphicClass, maskPath);
   const [imgError, setImgError] = useState(false);
 
@@ -51,7 +55,7 @@ export function GraphicDataPreview({
     if (status === "idle" || status === "loading") {
       return (
         <div className={styles.placeholder}>
-          <span className={styles.statusText}>{status === "loading" ? "Loading..." : ""}</span>
+          <span className={styles.statusText}>{status === "loading" ? t("graphicPreview.loading") : ""}</span>
         </div>
       );
     }
@@ -65,14 +69,14 @@ export function GraphicDataPreview({
     if (!selectedVariant) {
       return (
         <div className={styles.placeholder}>
-          <span className={styles.statusText}>No variant available</span>
+          <span className={styles.statusText}>{t("graphicPreview.noVariantAvailable")}</span>
         </div>
       );
     }
     if (selectedVariant.missing) {
       return (
         <div className={styles.placeholder}>
-          <span className={styles.statusText}>Texture not found</span>
+          <span className={styles.statusText}>{t("graphicPreview.textureNotFound")}</span>
           <span className={styles.pathHint}>{selectedVariant.relativeTexturePath}</span>
         </div>
       );
@@ -81,16 +85,21 @@ export function GraphicDataPreview({
     if (ext === "dds") {
       return (
         <div className={styles.placeholder}>
-          <span className={styles.statusText}>DDS format not supported for preview</span>
+          <span className={styles.statusText}>{t("graphicPreview.ddsUnsupported")}</span>
         </div>
       );
     }
     if (imgError) {
       return (
         <div className={styles.placeholder}>
-          <span className={styles.statusText}>Found texture but failed to load preview</span>
+          <span className={styles.statusText}>{t("graphicPreview.failedToLoad")}</span>
           <span className={styles.pathHint}>
-            Source: {selectedVariant.sourceLocationName || selectedVariant.sourceLocationId || "unknown"}
+            {t("graphicPreview.sourceLabel", {
+              source:
+                selectedVariant.sourceLocationName ||
+                selectedVariant.sourceLocationId ||
+                t("graphicPreview.unknownSource"),
+            })}
           </span>
           <span className={styles.pathHint}>{selectedVariant.relativeTexturePath}</span>
         </div>
@@ -101,7 +110,10 @@ export function GraphicDataPreview({
       <img
         className={styles.image}
         src={imgSrc}
-        alt={`${graphicClass} ${selectedVariant.label} preview`}
+        alt={t("graphicPreview.alt", {
+          graphicClass,
+          label: renderGraphicPreviewLabel(selectedVariant.label, i18n),
+        })}
         draggable={false}
         onError={() => setImgError(true)}
       />
@@ -116,18 +128,19 @@ export function GraphicDataPreview({
           <div className={styles.carousel}>
             <button
               className={styles.carouselButton}
-              aria-label="Previous texture variant"
+              aria-label={t("graphicPreview.previousVariant")}
               onClick={preview.goPrevious}
               disabled={!preview.canGoPrevious}
             >
               <ChevronLeft size={14} />
             </button>
             <span className={styles.carouselLabel}>
-              {selectedVariant?.label ?? ""} {selectedIndex + 1}/{variants.length}
+              {selectedVariant ? renderGraphicPreviewLabel(selectedVariant.label, i18n) : ""}{" "}
+              {selectedIndex + 1}/{variants.length}
             </span>
             <button
               className={styles.carouselButton}
-              aria-label="Next texture variant"
+              aria-label={t("graphicPreview.nextVariant")}
               onClick={preview.goNext}
               disabled={!preview.canGoNext}
             >
@@ -145,7 +158,7 @@ export function GraphicDataPreview({
               role="tab"
               aria-selected={i === selectedIndex}
               className={`${styles.dot} ${i === selectedIndex ? styles.dotActive : ""}`}
-              aria-label={`Show texture variant ${v.label}`}
+              aria-label={t("graphicPreview.showVariant", { label: renderGraphicPreviewLabel(v.label, i18n) })}
               onClick={() => preview.selectVariant(i)}
             />
           ))}
@@ -156,7 +169,7 @@ export function GraphicDataPreview({
         <div className={styles.warnings}>
           {warnings.map((w, i) => (
             <p key={i} className={styles.warning}>
-              {w}
+              {renderDiagnostic(w, i18n)}
             </p>
           ))}
         </div>

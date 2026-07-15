@@ -717,6 +717,16 @@ fn find_mod_dependency_not_registered_surfaces_status_message_on_the_row() {
         result.visible_operations[0].status_message.as_deref(),
         Some("Requires mod \"Power++\" to be active")
     );
+    assert_eq!(
+        result.visible_operations[0].status_code.as_deref(),
+        Some("patch_find_mod_dependency_not_active")
+    );
+    assert_eq!(
+        result.visible_operations[0].status_args.get("mods"),
+        Some(&crate::diagnostics::DiagnosticArgValue::List(vec![
+            "Power++".to_string()
+        ]))
+    );
     assert!(result
         .apply_diagnostics
         .iter()
@@ -754,6 +764,8 @@ fn find_mod_dependency_not_registered_surfaces_status_message_on_the_row() {
         Some(OperationTraceStatus::Applied)
     );
     assert_eq!(result2.visible_operations[0].status_message, None);
+    assert_eq!(result2.visible_operations[0].status_code, None);
+    assert!(result2.visible_operations[0].status_args.is_empty());
 
     std::fs::remove_dir_all(&root).ok();
 }

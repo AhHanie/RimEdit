@@ -17,8 +17,9 @@ fn cache_roundtrip_preserves_defs() {
     )
     .unwrap();
     let settings = ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations: vec![location(&project_dir, "project", LocationKind::Project)],
         active_project_id: Some("project".to_string()),
     };

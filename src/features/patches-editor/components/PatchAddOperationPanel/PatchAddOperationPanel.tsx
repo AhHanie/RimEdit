@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import { parsePatchOperations } from "../../api/patchDocument";
@@ -23,7 +24,8 @@ interface Props {
   /** Where the new operation will be inserted -- determines the wrapper element name (`Operation`
    * / `li` / `match` / `nomatch`) a custom operation's raw XML must use. Defaults to `"top"`. */
   slot?: NestedOperationSlot;
-  /** Label for the trigger button, e.g. "Add operation" or "Add sequence item". */
+  /** Label for the trigger button, e.g. "Add operation" or "Add sequence item". Defaults to the
+   * translated "Add operation" when omitted. */
   triggerLabel?: string;
 }
 
@@ -38,8 +40,12 @@ export function PatchAddOperationPanel({
   generateId,
   onAdd,
   slot = "top",
-  triggerLabel = "Add operation",
+  triggerLabel,
 }: Props) {
+  // Two separate single-namespace hooks, not `useTranslation(["patches", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("patches");
+  const { t: tCommon } = useTranslation("common");
   const [open, setOpen] = useState(false);
   const [customClassName, setCustomClassName] = useState<string | null>(null);
   const [values, setValues] = useState<Record<string, CustomFieldValue>>({});
@@ -76,7 +82,7 @@ export function PatchAddOperationPanel({
       const file = await parsePatchOperations("", wrapped);
       const parsed = extractOperationForSlot(file, slot);
       if (!parsed) {
-        setError("Could not parse the built operation XML.");
+        setError(t("addOperationPanel.couldNotParse"));
         return;
       }
       const node: PatchOperationNode = { ...parsed, id: generateId() };
@@ -92,7 +98,7 @@ export function PatchAddOperationPanel({
   if (!open) {
     return (
       <button type="button" className={styles.trigger} onClick={() => setOpen(true)}>
-        <Plus size={12} /> {triggerLabel}
+        <Plus size={12} /> {triggerLabel ?? t("addOperationPanel.defaultTrigger")}
       </button>
     );
   }
@@ -147,21 +153,21 @@ export function PatchAddOperationPanel({
         );
       })}
       <label className={styles.customField}>
-        <span>Success</span>
+        <span>{t("addOperationPanel.success")}</span>
         <select value={success} onChange={(e) => setSuccess(e.target.value as PatchSuccessMode)}>
-          <option value="normal">Normal</option>
-          <option value="invert">Invert</option>
-          <option value="always">Always</option>
-          <option value="never">Never</option>
+          <option value="normal">{t("addOperationPanel.successNormal")}</option>
+          <option value="invert">{t("addOperationPanel.successInvert")}</option>
+          <option value="always">{t("addOperationPanel.successAlways")}</option>
+          <option value="never">{t("addOperationPanel.successNever")}</option>
         </select>
       </label>
       {error && <div className={styles.error}>{error}</div>}
       <div className={styles.customActions}>
         <button type="button" onClick={handleCreateCustom} disabled={busy}>
-          Create
+          {t("addOperationPanel.create")}
         </button>
         <button type="button" onClick={reset} disabled={busy}>
-          Cancel
+          {tCommon("actions.cancel")}
         </button>
       </div>
     </div>

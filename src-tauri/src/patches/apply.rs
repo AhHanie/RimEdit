@@ -76,7 +76,20 @@ pub struct OperationTraceEntry {
     pub key: PatchOperationKey,
     pub class_name: String,
     pub status: OperationTraceStatus,
+    /// Compatibility English text mirroring `code`/`args` below (see `AppError`/`ApplyDiagnostic`
+    /// for the same pattern). Prefer rendering `code`/`args` through the frontend's shared
+    /// diagnostic renderer; this remains only as a fallback for the migration window.
     pub message: Option<String>,
+    /// Stable diagnostic code explaining `status`, when the apply engine has something more
+    /// specific to say than the status alone (e.g. `patch_find_mod_dependency_not_active`).
+    /// `None` when `status` is self-explanatory (e.g. a plain `Applied`/`Failed`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub code: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -93,6 +106,47 @@ pub struct ApplyDiagnostic {
     pub code: String,
     pub message: String,
     pub key: Option<PatchOperationKey>,
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
+}
+
+impl ApplyDiagnostic {
+    pub fn error(
+        code: impl Into<String>,
+        message: impl Into<String>,
+        key: Option<PatchOperationKey>,
+    ) -> Self {
+        Self {
+            severity: ApplyDiagnosticSeverity::Error,
+            code: code.into(),
+            message: message.into(),
+            key,
+            args: crate::diagnostics::DiagnosticArgs::new(),
+        }
+    }
+
+    pub fn warning(
+        code: impl Into<String>,
+        message: impl Into<String>,
+        key: Option<PatchOperationKey>,
+    ) -> Self {
+        Self {
+            severity: ApplyDiagnosticSeverity::Warning,
+            code: code.into(),
+            message: message.into(),
+            key,
+            args: crate::diagnostics::DiagnosticArgs::new(),
+        }
+    }
+
+    /// Attaches typed args for `code`. Additive on top of the still-English `message`.
+    pub fn with_args(mut self, args: crate::diagnostics::DiagnosticArgs) -> Self {
+        self.args.extend(args);
+        self
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -105,4 +159,30 @@ pub struct PatchApplyResult {
     /// encountered -- the final document is a best-effort approximation, not a guaranteed-exact
     /// result, whenever this is true.
     pub is_partial: bool,
+}
+
+#[cfg(test)]
+mod diagnostic_ref_wire_tests {
+    use super::*;
+    use crate::diagnostics::diagnostic_args;
+
+    #[test]
+    fn apply_diagnostic_wire_shape_carries_code_and_args() {
+        let diag = ApplyDiagnostic::error(
+            "patch_apply_missing_field",
+            "Operation is missing its required 'xpath' field",
+            None,
+        )
+        .with_args(diagnostic_args([("fieldName", "xpath".into())]));
+        let json = serde_json::to_value(&diag).unwrap();
+        assert_eq!(json["code"], "patch_apply_missing_field");
+        assert_eq!(json["args"]["fieldName"], "xpath");
+    }
+
+    #[test]
+    fn apply_diagnostic_without_args_omits_the_field() {
+        let diag = ApplyDiagnostic::warning("patch_apply_xpath_no_match", "no match", None);
+        let json = serde_json::to_value(&diag).unwrap();
+        assert!(json.get("args").is_none());
+    }
 }

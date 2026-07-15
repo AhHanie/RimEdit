@@ -4,6 +4,7 @@ use super::references::validate_field_references;
 use super::scalar::{check_numeric_bounds, is_valid_scalar_value, valid_color, valid_vector};
 use super::shapes;
 use super::xml::{element_child_names, scalar_text};
+use crate::diagnostics::diagnostic_args;
 use crate::schema_pack::{
     collect_all_object_inherited_fields, lookup_object_field_inherited, FieldSchema, FieldType,
     FieldTypeKind, XmlFieldShape,
@@ -91,7 +92,8 @@ fn validate_field_shape(
                 "validation_field_shape_mismatch",
                 message,
             )
-            .with_field_path(field_name),
+            .with_field_path(field_name)
+            .with_args(diagnostic_args([("fieldName", field_name.into())])),
         );
     }
 }
@@ -221,7 +223,14 @@ fn validate_field_type(
                     field_name, field_schema.field_type.kind
                 ),
             )
-            .with_field_path(field_name),
+            .with_field_path(field_name)
+            .with_args(diagnostic_args([
+                ("fieldName", field_name.into()),
+                (
+                    "expectedType",
+                    format!("{:?}", field_schema.field_type.kind).into(),
+                ),
+            ])),
         );
         return;
     }
@@ -239,7 +248,11 @@ fn validate_field_type(
                     "validation_field_out_of_range",
                     format!("Field '{field_name}': {range_msg}."),
                 )
-                .with_field_path(field_name),
+                .with_field_path(field_name)
+                .with_args(diagnostic_args([
+                    ("fieldName", field_name.into()),
+                    ("detail", range_msg.into()),
+                ])),
             );
         }
     }
@@ -280,7 +293,14 @@ fn validate_keyed_value_list_items(
                     field_name, field_schema.field_type.kind
                 ),
             )
-            .with_field_path(field_name),
+            .with_field_path(field_name)
+            .with_args(diagnostic_args([
+                ("fieldName", field_name.into()),
+                (
+                    "expectedType",
+                    format!("{:?}", field_schema.field_type.kind).into(),
+                ),
+            ])),
         );
         return;
     }
@@ -334,7 +354,17 @@ fn validate_keyed_value_list_items(
                         field_name, child_el.name, value_field_schema.field_type.kind
                     ),
                 )
-                .with_field_path(format!("{field_name}.{}", child_el.name)),
+                .with_field_path(format!("{field_name}.{}", child_el.name))
+                .with_args(diagnostic_args([
+                    (
+                        "fieldName",
+                        format!("{field_name}.{}", child_el.name).into(),
+                    ),
+                    (
+                        "expectedType",
+                        format!("{:?}", value_field_schema.field_type.kind).into(),
+                    ),
+                ])),
             );
         }
     }
@@ -397,7 +427,15 @@ fn validate_keyed_object_list_items(
                                     dvf_schema.field_type.kind
                                 ),
                             )
-                            .with_field_path(format!("{field_name}.{key_name}")),
+                            .with_field_path(format!("{field_name}.{key_name}"))
+                            .with_args(diagnostic_args([
+                                ("fieldName", format!("{field_name}[{key_name}]").into()),
+                                ("valueField", dvf.into()),
+                                (
+                                    "expectedType",
+                                    format!("{:?}", dvf_schema.field_type.kind).into(),
+                                ),
+                            ])),
                         );
                     }
                 }
@@ -431,7 +469,11 @@ fn validate_keyed_object_list_items(
                         "validation_unknown_object_field",
                         format!("Unknown field '{child_name}' in {field_name}[{key_name}]."),
                     )
-                    .with_field_path(format!("{field_name}.{key_name}.{child_name}")),
+                    .with_field_path(format!("{field_name}.{key_name}.{child_name}"))
+                    .with_args(diagnostic_args([
+                        ("fieldName", child_name.into()),
+                        ("containerPath", format!("{field_name}[{key_name}]").into()),
+                    ])),
                 );
                 continue;
             }
@@ -517,7 +559,8 @@ fn validate_keyed_object_map_items(
                     "validation_keyed_object_map_missing_key",
                     format!("Field '{field_name}' map entry is missing a <key> child."),
                 )
-                .with_field_path(field_name),
+                .with_field_path(field_name)
+                .with_args(diagnostic_args([("fieldName", field_name.into())])),
             );
             if value_id.is_none() {
                 diagnostics.push(
@@ -529,7 +572,8 @@ fn validate_keyed_object_map_items(
                         "validation_keyed_object_map_missing_value",
                         format!("Field '{field_name}' map entry is missing a <value> child."),
                     )
-                    .with_field_path(field_name),
+                    .with_field_path(field_name)
+                    .with_args(diagnostic_args([("fieldName", field_name.into())])),
                 );
             }
             continue;
@@ -545,7 +589,8 @@ fn validate_keyed_object_map_items(
                     "validation_keyed_object_map_missing_value",
                     format!("Field '{field_name}' map entry is missing a <value> child."),
                 )
-                .with_field_path(field_name),
+                .with_field_path(field_name)
+                .with_args(diagnostic_args([("fieldName", field_name.into())])),
             );
         }
 
@@ -563,7 +608,11 @@ fn validate_keyed_object_map_items(
                         "validation_keyed_object_map_duplicate_key",
                         format!("Field '{field_name}' has duplicate key '{key_trimmed}'."),
                     )
-                    .with_field_path(format!("{field_name}.{key_trimmed}")),
+                    .with_field_path(format!("{field_name}.{key_trimmed}"))
+                    .with_args(diagnostic_args([
+                        ("fieldName", field_name.into()),
+                        ("key", key_trimmed.as_str().into()),
+                    ])),
                 );
             } else {
                 seen_keys.push(key_trimmed.clone());
@@ -594,7 +643,14 @@ fn validate_keyed_object_map_items(
                         "validation_unknown_object_field",
                         format!("Unknown field '{child_name}' in {field_name}[{key_trimmed}]."),
                     )
-                    .with_field_path(&child_field_path),
+                    .with_field_path(&child_field_path)
+                    .with_args(diagnostic_args([
+                        ("fieldName", child_name.into()),
+                        (
+                            "containerPath",
+                            format!("{field_name}[{key_trimmed}]").into(),
+                        ),
+                    ])),
                 );
                 continue;
             }
@@ -671,7 +727,12 @@ fn validate_flags_text_values(
                         allowed.join(", ")
                     ),
                 )
-                .with_field_path(field_name),
+                .with_field_path(field_name)
+                .with_args(diagnostic_args([
+                    ("fieldName", field_name.into()),
+                    ("flagValue", flag.into()),
+                    ("allowedValues", allowed.clone().into()),
+                ])),
             );
         }
     }
@@ -753,7 +814,12 @@ pub(super) fn validate_object_children(
                     "validation_unknown_object_field",
                     format!("Unknown field '{child_name}' in {field_path_prefix} ({schema_ref})."),
                 )
-                .with_field_path(&child_field_path),
+                .with_field_path(&child_field_path)
+                .with_args(diagnostic_args([
+                    ("fieldName", child_name.into()),
+                    ("containerPath", field_path_prefix.into()),
+                    ("schemaRef", schema_ref.into()),
+                ])),
             );
             continue;
         };
@@ -842,7 +908,11 @@ fn resolve_single_object_discriminator(
                             disc.attribute
                         ),
                     )
-                    .with_field_path(field_path),
+                    .with_field_path(field_path)
+                    .with_args(diagnostic_args([
+                        ("fieldName", field_path.into()),
+                        ("attribute", disc.attribute.as_str().into()),
+                    ])),
                 );
                 Some(base_schema_ref.to_string())
             }
@@ -885,7 +955,11 @@ fn validate_scalar_list_items(
                         field_name, index, items.kind
                     ),
                 )
-                .with_field_path(format!("{field_name}[{index}]")),
+                .with_field_path(format!("{field_name}[{index}]"))
+                .with_args(diagnostic_args([
+                    ("fieldName", format!("{field_name}[{index}]").into()),
+                    ("expectedType", format!("{:?}", items.kind).into()),
+                ])),
             );
         }
     }
@@ -958,7 +1032,11 @@ fn validate_object_list_items(
                                  Add a schema pack that provides a schema for this class.",
                             ),
                         )
-                        .with_field_path(field_name),
+                        .with_field_path(field_name)
+                        .with_args(diagnostic_args([
+                            ("fieldName", field_name.into()),
+                            ("classValue", class_val.into()),
+                        ])),
                     );
                     // Still validate against base fields.
                     Some(base_schema_ref.clone())
@@ -979,7 +1057,8 @@ fn validate_object_list_items(
                         "validation_missing_required_class",
                         format!("{field_name} list item is missing the required Class attribute.",),
                     )
-                    .with_field_path(field_name),
+                    .with_field_path(field_name)
+                    .with_args(diagnostic_args([("fieldName", field_name.into())])),
                 );
                 Some(base_schema_ref.clone())
             }
@@ -1049,7 +1128,11 @@ fn validate_object_list_items(
                         "validation_unknown_object_field",
                         format!("Unknown field '{child_name}' in {field_name} list item."),
                     )
-                    .with_field_path(format!("{field_name}[li].{child_name}")),
+                    .with_field_path(format!("{field_name}[li].{child_name}"))
+                    .with_args(diagnostic_args([
+                        ("fieldName", child_name.into()),
+                        ("containerPath", field_name.into()),
+                    ])),
                 );
             }
         }

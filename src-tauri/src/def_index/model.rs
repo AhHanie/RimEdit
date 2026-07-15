@@ -89,6 +89,13 @@ pub struct DefIndexError {
     pub message: String,
     pub line: Option<usize>,
     pub column: Option<usize>,
+    /// Typed, literal interpolation arguments for `code` (see `crate::diagnostics` module docs).
+    /// Additive alongside the still-English `message`; omitted from JSON when empty.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
 }
 
 #[derive(Clone, Debug, Default)]

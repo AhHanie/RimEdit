@@ -120,6 +120,19 @@ fn unsupported_custom_operation_marks_partial() {
     let result = apply_one(doc, node);
     assert!(result.is_partial);
     assert_eq!(result.trace[0].status, OperationTraceStatus::Unsupported);
+    // The trace entry carries the same stable code + typed args as the accompanying diagnostic
+    // (not just a raw English `message`), so the frontend can render it through the shared
+    // diagnostic translator instead of showing raw backend text.
+    assert_eq!(
+        result.trace[0].code.as_deref(),
+        Some("patch_apply_unsupported_operation")
+    );
+    assert_eq!(
+        result.trace[0].args.get("className"),
+        Some(&crate::diagnostics::DiagnosticArgValue::Text(
+            "MyMod.PatchOperationFoo".to_string()
+        ))
+    );
 }
 
 #[test]

@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../i18n/testing/renderWithI18n";
 import { AppTitleBar } from "./AppTitleBar";
 
 function defaultProps(overrides: Partial<Parameters<typeof AppTitleBar>[0]> = {}) {

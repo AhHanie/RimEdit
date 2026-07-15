@@ -1,5 +1,6 @@
 import { createRef } from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { XmlRawEditor, type XmlRawEditorHandle } from "./XmlRawEditor";
 
 // CodeMirror uses ResizeObserver for viewport tracking; polyfill for JSDOM.
@@ -36,6 +37,14 @@ describe("XmlRawEditor", () => {
         "<NewDefs/>",
       );
     });
+  });
+
+  it("forces dir=ltr on the editable content region regardless of app locale direction", () => {
+    // XML is machine-readable syntax, not natural-language prose -- this must stay LTR even once
+    // a future RTL locale flips `dir` on `<html>` (docs/i18n/issues/08-editor-and-patch-ui-
+    // migration.md's "keep code editor/XML/XPath controls dir=ltr by semantic policy").
+    render(<XmlRawEditor value="<Defs/>" onChange={vi.fn()} />);
+    expect(screen.getByLabelText("Raw XML editor").getAttribute("dir")).toBe("ltr");
   });
 
   it("sets contenteditable=false when readOnly", () => {

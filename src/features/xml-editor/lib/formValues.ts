@@ -1,6 +1,7 @@
 import type { FormFieldModel, FormValue, ObjectFieldValue, ObjectListItemValue } from "../types/editorForm";
 import type { XmlEdit, XmlInitialElement } from "../types/xmlDocument";
 import type { FieldSchema } from "../../schema-catalog";
+import { initI18n } from "../../../i18n";
 
 /**
  * Pure form-value helpers and per-field validation/edit derivation.
@@ -9,6 +10,13 @@ import type { FieldSchema } from "../../schema-catalog";
  * subscribable form-field store can depend on them without creating an import cycle
  * with the controller. `useXmlFormController` re-exports the public factory helpers
  * for backwards compatibility with existing component imports.
+ *
+ * `validateFieldValue`/`formValueToString`'s user-facing strings below are built by plain module
+ * functions, not React components, so there is no `useTranslation()` hook to call -- resolves
+ * translated text from the app-wide i18next singleton instead, same as
+ * `src/features/xml-editor/lib/objectDescriptors.ts` (see that module's top-of-file doc comment
+ * for the full rationale, including why `initI18n().t(...)` is called directly at each site
+ * rather than through a same-signature local wrapper).
  */
 
 /** The minimal field shape `fieldToXmlEdit` needs (a structural subset of the store's StoredFieldState). */
@@ -85,8 +93,14 @@ export function formValueToString(value: FormValue): string {
       return value.entries.map((e) => `${e.key}=${e.value}`).join("\n");
     case "typedReferenceList":
       return value.items.map((i) => `${i.defType}:${i.defName}`).join("\n");
-    case "objectList":
-      return `(${value.items.length} item${value.items.length === 1 ? "" : "s"})`;
+    case "objectList": {
+      const count = value.items.length;
+      return initI18n().t(
+        "editor:objectListEditor.itemCountParens",
+        `(${count} item${count === 1 ? "" : "s"})`,
+        { count },
+      );
+    }
   }
 }
 
@@ -169,6 +183,7 @@ export function emptyFormValueForModel(model: FormFieldModel): FormValue {
 export function validateFieldValue(model: FormFieldModel, value: FormValue): string[] {
   if (model.readonly) return [];
   const errors: string[] = [];
+  const label = model.label;
   if (model.required) {
     if (
       (value.kind === "list" && value.items.length === 0) ||
@@ -176,7 +191,9 @@ export function validateFieldValue(model: FormFieldModel, value: FormValue): str
       (value.kind === "namedMap" && value.entries.length === 0) ||
       (value.kind === "typedReferenceList" && value.items.length === 0)
     ) {
-      errors.push(`${model.label} is required.`);
+      errors.push(
+        initI18n().t("editor:formValidation.required", `${label} is required.`, { label }),
+      );
     } else if (
       value.kind !== "list" &&
       value.kind !== "flags" &&
@@ -184,21 +201,41 @@ export function validateFieldValue(model: FormFieldModel, value: FormValue): str
       value.kind !== "typedReferenceList" &&
       formValueToString(value).trim() === ""
     ) {
-      errors.push(`${model.label} is required.`);
+      errors.push(
+        initI18n().t("editor:formValidation.required", `${label} is required.`, { label }),
+      );
     }
   }
   if (value.kind === "typedReferenceList") {
     for (const item of value.items) {
       if (!item.defType.trim()) {
-        errors.push(`${model.label}: def type cannot be empty.`);
+        errors.push(
+          initI18n().t(
+            "editor:formValidation.typedRefDefTypeEmpty",
+            `${label}: def type cannot be empty.`,
+            { label },
+          ),
+        );
         break;
       }
       if (!isValidXmlName(item.defType)) {
-        errors.push(`${model.label}: "${item.defType}" is not a valid XML element name.`);
+        errors.push(
+          initI18n().t(
+            "editor:formValidation.invalidXmlElementName",
+            `${label}: "${item.defType}" is not a valid XML element name.`,
+            { label, value: item.defType },
+          ),
+        );
         break;
       }
       if (!item.defName.trim()) {
-        errors.push(`${model.label}: def name cannot be empty.`);
+        errors.push(
+          initI18n().t(
+            "editor:formValidation.typedRefDefNameEmpty",
+            `${label}: def name cannot be empty.`,
+            { label },
+          ),
+        );
         break;
       }
     }
@@ -207,30 +244,60 @@ export function validateFieldValue(model: FormFieldModel, value: FormValue): str
     const keys = value.entries.map((e) => e.key);
     const emptyKey = keys.find((k) => k.trim() === "");
     if (emptyKey !== undefined) {
-      errors.push(`${model.label}: all keys must be non-empty.`);
+      errors.push(
+        initI18n().t(
+          "editor:formValidation.namedMapKeysRequired",
+          `${label}: all keys must be non-empty.`,
+          { label },
+        ),
+      );
     }
     if (!model.repeatable) {
       const seen = new Set<string>();
       const duplicateKey = keys.find((k) => { if (seen.has(k)) return true; seen.add(k); return false; });
       if (duplicateKey !== undefined) {
-        errors.push(`${model.label}: duplicate key "${duplicateKey}".`);
+        errors.push(
+          initI18n().t(
+            "editor:formValidation.namedMapDuplicateKey",
+            `${label}: duplicate key "${duplicateKey}".`,
+            { label, key: duplicateKey },
+          ),
+        );
       }
     }
     const invalidKey = keys.find((k) => k.trim() !== "" && !isValidXmlName(k));
     if (invalidKey !== undefined) {
-      errors.push(`${model.label}: "${invalidKey}" is not a valid XML element name.`);
+      errors.push(
+        initI18n().t(
+          "editor:formValidation.invalidXmlElementName",
+          `${label}: "${invalidKey}" is not a valid XML element name.`,
+          { label, value: invalidKey },
+        ),
+      );
     }
   }
   if (model.allowedValues?.length && value.kind === "enum" && value.value) {
     if (!model.allowedValues.includes(value.value)) {
-      errors.push(`${model.label} must be one of the allowed values.`);
+      errors.push(
+        initI18n().t(
+          "editor:formValidation.mustBeAllowedValue",
+          `${label} must be one of the allowed values.`,
+          { label },
+        ),
+      );
     }
   }
   const textValue = formValueToString(value);
   if (model.validationHints?.pattern && textValue) {
     try {
       if (!new RegExp(model.validationHints.pattern).test(textValue)) {
-        errors.push(`${model.label} does not match the expected format.`);
+        errors.push(
+          initI18n().t(
+            "editor:formValidation.patternMismatch",
+            `${label} does not match the expected format.`,
+            { label },
+          ),
+        );
       }
     } catch {
       // Ignore invalid schema-provided patterns; schema diagnostics should cover them.
@@ -242,11 +309,23 @@ export function validateFieldValue(model: FormFieldModel, value: FormValue): str
   ) {
     const numericValue = Number(textValue);
     if (!Number.isNaN(numericValue)) {
-      if (model.validationHints.min !== undefined && numericValue < model.validationHints.min) {
-        errors.push(`${model.label} must be at least ${model.validationHints.min}.`);
+      const min = model.validationHints.min;
+      const max = model.validationHints.max;
+      if (min !== undefined && numericValue < min) {
+        errors.push(
+          initI18n().t("editor:formValidation.minValue", `${label} must be at least ${min}.`, {
+            label,
+            min,
+          }),
+        );
       }
-      if (model.validationHints.max !== undefined && numericValue > model.validationHints.max) {
-        errors.push(`${model.label} must be at most ${model.validationHints.max}.`);
+      if (max !== undefined && numericValue > max) {
+        errors.push(
+          initI18n().t("editor:formValidation.maxValue", `${label} must be at most ${max}.`, {
+            label,
+            max,
+          }),
+        );
       }
     }
   }

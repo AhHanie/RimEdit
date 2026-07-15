@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Command } from "lucide-react";
 import type { CommandAction } from "../commandTypes";
 import styles from "./CommandPalette.module.css";
@@ -9,7 +10,16 @@ interface CommandPaletteProps {
   commands: CommandAction[];
 }
 
+interface RenderedCommand extends CommandAction {
+  label: string;
+  keywords: string[];
+}
+
 export function CommandPalette({ open, onClose, commands }: CommandPaletteProps) {
+  // Requesting two namespaces (even though this component only reads "shell" keys) keeps the
+  // generated `t` type permissive for the dynamic `labelKey`/`keywordsKey` lookups below -- see
+  // the analogous multi-namespace calls elsewhere in this codebase.
+  const { t, i18n } = useTranslation(["shell", "common"]);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -26,14 +36,33 @@ export function CommandPalette({ open, onClose, commands }: CommandPaletteProps)
     setSelectedIndex(0);
   }, [query]);
 
+  // Re-derived from `labelKey`/`keywordsKey` whenever the active locale changes -- `i18n.language`
+  // is an explicit dependency (not just `t`, whose reference can stay stable across a locale
+  // switch) so a switch always recomputes rendered text instead of reusing a cached label.
+  const rendered = useMemo<RenderedCommand[]>(
+    () =>
+      commands.map((c) => ({
+        ...c,
+        // `labelKey`/`keywordsKey` are runtime data (not literal types), so this uses the
+        // "key, defaultValue" overload -- the default is never actually shown since every
+        // command descriptor references a key that exists in `shell:commands`.
+        label: t(c.labelKey, c.labelKey),
+        keywords: t(c.keywordsKey, c.keywordsKey)
+          .split(",")
+          .map((k: string) => k.trim())
+          .filter(Boolean),
+      })),
+    [commands, t, i18n.language],
+  );
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return commands;
-    return commands.filter(
+    if (!q) return rendered;
+    return rendered.filter(
       (c) =>
         c.label.toLowerCase().includes(q) || c.keywords.some((k) => k.toLowerCase().includes(q)),
     );
-  }, [query, commands]);
+  }, [query, rendered]);
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Escape") {
@@ -68,7 +97,7 @@ export function CommandPalette({ open, onClose, commands }: CommandPaletteProps)
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Command Palette"
+      aria-label={t("shell:commandPalette.ariaLabel")}
     >
       <div
         className={styles.modal}
@@ -81,10 +110,10 @@ export function CommandPalette({ open, onClose, commands }: CommandPaletteProps)
             ref={inputRef}
             className={styles.searchInput}
             type="text"
-            placeholder="Type a command…"
+            placeholder={t("shell:commandPalette.searchPlaceholder")}
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
-            aria-label="Search commands"
+            aria-label={t("shell:commandPalette.searchAriaLabel")}
             aria-autocomplete="list"
             aria-controls="cp-results"
           />
@@ -111,7 +140,9 @@ export function CommandPalette({ open, onClose, commands }: CommandPaletteProps)
               </li>
             );
           })}
-          {filtered.length === 0 && <li className={styles.empty}>No matching commands</li>}
+          {filtered.length === 0 && (
+            <li className={styles.empty}>{t("shell:commandPalette.empty")}</li>
+          )}
         </ul>
       </div>
     </div>

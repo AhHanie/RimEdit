@@ -6,6 +6,7 @@ import React, {
   useState,
   useSyncExternalStore,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { EyeOff } from "lucide-react";
 import type { DefEditorView } from "../../types/xmlDocument";
 import type { XmlEditorSnapshot } from "../../types/editorSession";
@@ -31,8 +32,12 @@ import {
 } from "../../../form-views/components/FormViewManagerDialog/FormViewManagerDialog";
 import { toggleHiddenFieldId } from "../../../form-views/lib/resolveFormViews";
 import { computeHiddenFieldDiagnosticsSummary } from "../../../form-views/lib/hiddenFieldDiagnostics";
+import { initI18n } from "../../../../i18n";
 import styles from "./XmlFormEditor.module.css";
 
+// Plain module function, not a React component -- resolves translated text from the app-wide
+// i18next singleton (`initI18n().t(...)`, same as `src/features/xml-editor/lib/objectDescriptors.ts`)
+// rather than a `useTranslation()` hook, which is unavailable here.
 function formValueText(value: FormValue): string {
   switch (value.kind) {
     case "boolean":
@@ -49,8 +54,14 @@ function formValueText(value: FormValue): string {
       return value.entries.map((e) => `${e.key}=${e.value}`).join("\n");
     case "typedReferenceList":
       return value.items.map((i) => `${i.defType}:${i.defName}`).join("\n");
-    case "objectList":
-      return `(${value.items.length} item${value.items.length === 1 ? "" : "s"})`;
+    case "objectList": {
+      const count = value.items.length;
+      return initI18n().t(
+        "editor:objectListEditor.itemCountParens",
+        `(${count} item${count === 1 ? "" : "s"})`,
+        { count },
+      );
+    }
   }
 }
 
@@ -229,6 +240,7 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
   formApi,
   formViews,
 }: Props) {
+  const { t } = useTranslation("editor");
   const { projectId, catalog } = useXmlEditorContext();
   const { parsed } = snapshot;
   const store = formApi.store;
@@ -406,7 +418,7 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
   if (!parsed || !selectedDef) {
     return (
       <div className={styles.empty}>
-        <p>No Def found in this file.</p>
+        <p>{t("formEditor.noDefFound")}</p>
       </div>
     );
   }
@@ -487,8 +499,8 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
                 type="button"
                 className={styles.hideFieldBtn}
                 onClick={() => toggleFieldHidden(topLevelFieldId)}
-                aria-label={`Hide ${model.label}`}
-                title="Hide this field (Customize view)"
+                aria-label={t("formEditor.hideField", { label: model.label })}
+                title={t("formEditor.hideFieldTitle")}
               >
                 <EyeOff size={12} />
               </button>
@@ -555,8 +567,8 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
                 type="button"
                 className={styles.hideFieldBtn}
                 onClick={() => toggleFieldHidden(topLevelSectionFieldId)}
-                aria-label={`Hide ${formatSectionLabel(subPath)}`}
-                title="Hide this section (Customize view)"
+                aria-label={t("formEditor.hideField", { label: formatSectionLabel(subPath) })}
+                title={t("formEditor.hideSectionTitle")}
               >
                 <EyeOff size={12} />
               </button>
@@ -595,7 +607,7 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
       {parsed.defs.length > 1 && (
         <div className={styles.defSelector}>
           <label htmlFor="def-selector" className={styles.defSelectorLabel}>
-            Def
+            {t("formEditor.defLabel")}
           </label>
           <select
             id="def-selector"
@@ -628,7 +640,7 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
 
         {knownModels.length === 0 && unknownModels.length === 0 && (
           <p className={styles.noFields}>
-            No schema available for <strong>{selectedDef.defType}</strong>.
+            {t("formEditor.noSchemaAvailable", { defType: selectedDef.defType })}
           </p>
         )}
 

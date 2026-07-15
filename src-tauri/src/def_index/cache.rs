@@ -32,6 +32,7 @@ impl From<DefIndexCacheError> for AppError {
             code: code.to_string(),
             message: value.to_string(),
             details: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         }
     }
 }

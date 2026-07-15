@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import type { ParseDiagnostic } from "../../../xml-editor/types/xmlDocument";
@@ -30,6 +31,8 @@ function toParseDiagnostics(diagnostics: PatchDiagnostic[], relativePath: string
     column: d.column,
     byteOffset: null,
     message: d.message,
+    code: d.code ?? "patch_diagnostic",
+    args: d.args,
   }));
 }
 
@@ -51,6 +54,7 @@ function toParseDiagnostics(diagnostics: PatchDiagnostic[], relativePath: string
  * schema-pack metadata, e.g. a hypothetical `patchOperationFormViews`) is deferred; do not wire
  * `useFormViews`/`FormViewSelector` into this pane until that design exists. */
 export function PatchEditorPane({ relativePath, rawXml, readOnly, catalog, projectId, onChangeRawXml, registerFlush }: Props) {
+  const { t } = useTranslation("patches");
   const { patchFile, loading, error, setOperations, generateId, flush } = usePatchOperationTree({
     relativePath,
     rawXml,
@@ -67,7 +71,7 @@ export function PatchEditorPane({ relativePath, rawXml, readOnly, catalog, proje
       <div className={styles.root}>
         <div className="state-loading">
           <Loader2 size={14} className="spin" />
-          <span>Parsing patch file…</span>
+          <span>{t("editorPane.parsing")}</span>
         </div>
       </div>
     );

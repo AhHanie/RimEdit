@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, Trash2 } from "lucide-react";
 import type { TypedReferenceMetadata } from "../../../schema-catalog";
 import type { TypedReferenceItem } from "../../types/editorForm";
@@ -30,6 +31,7 @@ export function TypedReferenceListEditor({
   readOnly,
   onNavigateDef,
 }: Props) {
+  const { t } = useTranslation("editor");
   const [availableDefTypes, setAvailableDefTypes] = useState<string[]>([]);
 
   useEffect(() => {
@@ -109,7 +111,7 @@ export function TypedReferenceListEditor({
             onFocus={onFocus}
             onBlur={onBlur}
             disabled={readOnly}
-            aria-label={`Def type for row ${index + 1}`}
+            aria-label={t("typedReferenceListEditor.defTypeForRow", { index: index + 1 })}
           >
             {/* Preserve current value even if absent from the index (e.g. unknown mod type). */}
             {item.defType && !defTypeOptions.includes(item.defType) && (
@@ -157,7 +159,7 @@ export function TypedReferenceListEditor({
             <button
               className={listStyles.listRemove}
               onClick={() => removeItem(index)}
-              aria-label={`Remove hyperlink ${index + 1}`}
+              aria-label={t("typedReferenceListEditor.removeHyperlink", { index: index + 1 })}
               type="button"
             >
               <Trash2 size={12} />
@@ -168,7 +170,7 @@ export function TypedReferenceListEditor({
       {!readOnly && (
         <button className={listStyles.listAdd} onClick={addItem} type="button">
           <Plus size={12} />
-          Add hyperlink
+          {t("typedReferenceListEditor.addHyperlink")}
         </button>
       )}
     </div>

@@ -13,14 +13,18 @@ fn app_error(code: &str, message: impl Into<String>) -> AppError {
         code: code.to_string(),
         message: message.into(),
         details: None,
+        args: crate::diagnostics::DiagnosticArgs::new(),
     }
 }
 
 /// Verify `project_id` refers to a registered, writable project location. Mirrors
-/// `commands::def_templates::require_writable_project` exactly: every mutating Form View
-/// command is scoped to (and can mutate) a project's custom-view store, so each one must
-/// reject unknown/read-only/non-project ids rather than trusting whatever id the caller
-/// passes through to the store.
+/// `commands::def_templates::require_writable_project` / `commands::create_def::require_writable_project`
+/// exactly: every mutating Form View command is scoped to (and can mutate) a project's
+/// custom-view store, so each one must reject unknown/read-only/non-project ids rather than
+/// trusting whatever id the caller passes through to the store. Uses two distinct codes --
+/// `form_view_invalid_target` (no such id) vs. `form_view_target_not_editable` (a real id that is
+/// read-only or not a project) -- since the two conditions have different causes and only the
+/// former can be caused by an arbitrary caller-supplied id.
 fn require_writable_project(settings: &ProjectSettings, project_id: &str) -> Result<(), AppError> {
     let location = settings
         .locations
@@ -31,12 +35,20 @@ fn require_writable_project(settings: &ProjectSettings, project_id: &str) -> Res
                 "form_view_invalid_target",
                 format!("No project with id '{}'.", project_id),
             )
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "projectId",
+                project_id.into(),
+            )]))
         })?;
     if location.read_only || location.kind != LocationKind::Project {
         return Err(app_error(
-            "form_view_invalid_target",
-            "Target location is read-only or is not a project.",
-        ));
+            "form_view_target_not_editable",
+            format!("The project '{}' is not editable.", project_id),
+        )
+        .with_args(crate::diagnostics::diagnostic_args([(
+            "projectId",
+            project_id.into(),
+        )])));
     }
     Ok(())
 }
@@ -58,7 +70,11 @@ fn require_registered_project(
         return Err(app_error(
             "form_view_invalid_target",
             format!("No registered project with id '{}'.", project_id),
-        ));
+        )
+        .with_args(crate::diagnostics::diagnostic_args([(
+            "projectId",
+            project_id.into(),
+        )])));
     }
     Ok(())
 }
@@ -71,7 +87,11 @@ fn parse_origin(origin: &str) -> Result<FormViewOrigin, AppError> {
         other => Err(app_error(
             "form_view_invalid_origin",
             format!("Unknown Form View origin '{}'.", other),
-        )),
+        )
+        .with_args(crate::diagnostics::diagnostic_args([(
+            "origin",
+            other.into(),
+        )]))),
     }
 }
 
@@ -305,8 +325,9 @@ mod project_validation_tests {
 
     fn make_settings(locations: Vec<RegisteredLocation>) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations,
             active_project_id: None,
         }
@@ -329,14 +350,20 @@ mod project_validation_tests {
     fn rejects_source_locations() {
         let settings = make_settings(vec![make_location("src1", LocationKind::Source, true)]);
         let err = require_writable_project(&settings, "src1").unwrap_err();
-        assert_eq!(err.code, "form_view_invalid_target");
+        assert_eq!(err.code, "form_view_target_not_editable");
+        assert_eq!(
+            err.args.get("projectId"),
+            Some(&crate::diagnostics::DiagnosticArgValue::Text(
+                "src1".to_string()
+            ))
+        );
     }
 
     #[test]
     fn rejects_read_only_project_locations() {
         let settings = make_settings(vec![make_location("proj1", LocationKind::Project, true)]);
         let err = require_writable_project(&settings, "proj1").unwrap_err();
-        assert_eq!(err.code, "form_view_invalid_target");
+        assert_eq!(err.code, "form_view_target_not_editable");
     }
 
     #[test]

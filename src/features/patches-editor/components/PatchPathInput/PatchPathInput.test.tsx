@@ -1,11 +1,22 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { invoke } from "@tauri-apps/api/core";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
+import { useLocale } from "../../../../i18n/LocaleProvider";
 import { PatchPathInput } from "./PatchPathInput";
 import type { XPathCompletionResult } from "../../types/xpathCompletion";
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
 
+// Mocks only `useLocale` (keeping the real `LocaleProvider`/`I18nextProvider` tree the other
+// hooks in this component rely on) so tests can drive an app-wide locale switch without depending
+// on `SUPPORTED_LOCALES` actually listing a second locale yet.
+vi.mock("../../../../i18n/LocaleProvider", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../../../i18n/LocaleProvider")>();
+  return { ...actual, useLocale: vi.fn() };
+});
+
 const invokeMock = vi.mocked(invoke);
+const mockUseLocale = vi.mocked(useLocale);
 
 function completionResult(overrides: Partial<XPathCompletionResult> = {}): XPathCompletionResult {
   return {
@@ -20,6 +31,7 @@ function completionResult(overrides: Partial<XPathCompletionResult> = {}): XPath
 
 beforeEach(() => {
   invokeMock.mockReset();
+  mockUseLocale.mockReturnValue({ locale: "en", direction: "ltr", changeLocale: vi.fn() });
 });
 
 describe("PatchPathInput", () => {
@@ -42,6 +54,7 @@ describe("PatchPathInput", () => {
       expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", {
         projectId: "proj1",
         xpath: "Defs/",
+        locale: "en",
       });
     });
 
@@ -69,6 +82,7 @@ describe("PatchPathInput", () => {
     expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", {
       projectId: "proj1",
       xpath: "Def",
+      locale: "en",
     });
   });
 
@@ -155,7 +169,11 @@ describe("PatchPathInput", () => {
     invokeMock.mockResolvedValue(
       completionResult({
         diagnostics: [
-          { severity: "warning", code: "xpath_autocomplete_inherited_field", message: "inherited field warning" },
+          // Uses a code with no catalog entry so this test exercises the generic
+          // "render whatever diagnostics come back" path without coupling to
+          // diagnostics.json's translated text for a real code (see renderDiagnostic's
+          // message-fallback priority in src/i18n/diagnostics.ts).
+          { severity: "warning", code: "xpath_autocomplete_test_only_code", message: "inherited field warning" },
         ],
       }),
     );
@@ -169,6 +187,45 @@ describe("PatchPathInput", () => {
     expect(await screen.findByText("inherited field warning")).toBeTruthy();
   });
 
+  it("refetches completions on refocus after a locale switch, even with unchanged xpath text", async () => {
+    invokeMock.mockResolvedValue(completionResult());
+
+    const { rerender } = render(
+      <PatchPathInput value="Defs/" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />,
+    );
+
+    fireEvent.focus(screen.getByRole("textbox"));
+    await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
+    expect(invokeMock).toHaveBeenLastCalledWith("complete_patch_operation_xpath", {
+      projectId: "proj1",
+      xpath: "Defs/",
+      locale: "en",
+    });
+
+    fireEvent.blur(screen.getByRole("textbox"));
+
+    // Refocusing with unchanged text but no locale change must not refetch (existing dedup
+    // behavior).
+    fireEvent.focus(screen.getByRole("textbox"));
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    expect(invokeMock).toHaveBeenCalledTimes(1);
+
+    fireEvent.blur(screen.getByRole("textbox"));
+
+    // Simulate an app-wide locale switch (e.g. via the settings panel) while this input is not
+    // focused -- the xpath text itself never changes.
+    mockUseLocale.mockReturnValue({ locale: "fr", direction: "ltr", changeLocale: vi.fn() });
+    rerender(<PatchPathInput value="Defs/" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />);
+
+    fireEvent.focus(screen.getByRole("textbox"));
+    await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(2));
+    expect(invokeMock).toHaveBeenLastCalledWith("complete_patch_operation_xpath", {
+      projectId: "proj1",
+      xpath: "Defs/",
+      locale: "fr",
+    });
+  });
+
   it("does not fetch completions when readOnly", () => {
     invokeMock.mockResolvedValue(completionResult());
 
@@ -177,6 +234,14 @@ describe("PatchPathInput", () => {
     const input = screen.getByRole("textbox") as HTMLInputElement;
     expect(input.disabled).toBe(true);
     expect(invokeMock).not.toHaveBeenCalled();
+  });
+
+  it("forces dir=ltr on the input regardless of app locale direction", () => {
+    // XPath is machine-readable syntax, not natural-language prose -- this must stay LTR even
+    // once a future RTL locale flips `dir` on `<html>` (docs/i18n/issues/08-editor-and-patch-ui-
+    // migration.md's "keep code editor/XML/XPath controls dir=ltr by semantic policy").
+    render(<PatchPathInput value="Defs/" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />);
+    expect(screen.getByRole("textbox").getAttribute("dir")).toBe("ltr");
   });
 
   it("does not fetch completions when projectId is absent", async () => {

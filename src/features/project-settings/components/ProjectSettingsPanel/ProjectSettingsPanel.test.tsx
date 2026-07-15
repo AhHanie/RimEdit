@@ -1,5 +1,6 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { confirm } from "@tauri-apps/plugin-dialog";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { ProjectSettingsPanel } from "./ProjectSettingsPanel";
 import type { ProjectSettings } from "../../types";
 
@@ -16,8 +17,9 @@ const confirmMock = vi.mocked(confirm);
 
 function makeSettings(overrides: Partial<ProjectSettings> = {}): ProjectSettings {
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     gameVersion: "1.6",
+    locale: "en",
     locations: [
       {
         id: "p1",
@@ -55,9 +57,11 @@ function defaultProps(
     loadError: null,
     hasDirtyTabs: false,
     installedSchemaVersions: ["1.5", "1.6"],
+    locale: "en",
     onEditLocation: vi.fn().mockResolvedValue(undefined),
     onRemoveLocation: vi.fn().mockResolvedValue(undefined),
     onUpdateGameVersion: vi.fn().mockResolvedValue(undefined),
+    onChangeLocale: vi.fn().mockResolvedValue(undefined),
     onOpenProject: vi.fn(),
     onAddSourceFolder: vi.fn(),
     ...overrides,
@@ -111,7 +115,7 @@ describe("ProjectSettingsPanel empty state", () => {
   it("shows Open Project and Add Source Folder buttons when no locations", () => {
     render(
       <ProjectSettingsPanel
-        {...defaultProps({ settings: { schemaVersion: 2, gameVersion: "1.6", locations: [], activeProjectId: undefined } })}
+        {...defaultProps({ settings: { schemaVersion: 3, gameVersion: "1.6", locale: "en", locations: [], activeProjectId: undefined } })}
       />,
     );
     expect(screen.getAllByRole("button", { name: "Open Project" }).length).toBeGreaterThan(0);
@@ -123,7 +127,7 @@ describe("ProjectSettingsPanel empty state", () => {
     render(
       <ProjectSettingsPanel
         {...defaultProps({
-          settings: { schemaVersion: 2, gameVersion: "1.6", locations: [], activeProjectId: undefined },
+          settings: { schemaVersion: 3, gameVersion: "1.6", locale: "en", locations: [], activeProjectId: undefined },
           onOpenProject,
         })}
       />,
@@ -137,7 +141,7 @@ describe("ProjectSettingsPanel empty state", () => {
     render(
       <ProjectSettingsPanel
         {...defaultProps({
-          settings: { schemaVersion: 2, gameVersion: "1.6", locations: [], activeProjectId: undefined },
+          settings: { schemaVersion: 3, gameVersion: "1.6", locale: "en", locations: [], activeProjectId: undefined },
           onAddSourceFolder,
         })}
       />,
@@ -214,6 +218,47 @@ describe("ProjectSettingsPanel error states", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toBeDefined());
     fireEvent.click(screen.getByRole("button", { name: "Dismiss error" }));
     expect(screen.queryByRole("alert")).toBeNull();
+  });
+});
+
+describe("ProjectSettingsPanel language", () => {
+  it("shows a Language selector with only English, no System option", () => {
+    render(<ProjectSettingsPanel {...defaultProps()} />);
+    const select = screen.getByRole("combobox", { name: "Language" });
+    expect(select).toBeDefined();
+    expect(screen.getByRole("option", { name: "English" })).toBeDefined();
+    expect(screen.queryByRole("option", { name: "System" })).toBeNull();
+  });
+
+  it("calls onChangeLocale when a different locale is selected", async () => {
+    const onChangeLocale = vi.fn().mockResolvedValue(undefined);
+    render(<ProjectSettingsPanel {...defaultProps({ onChangeLocale })} />);
+    const select = screen.getByRole("combobox", { name: "Language" });
+    fireEvent.change(select, { target: { value: "en" } });
+    // Selecting the already-active locale is a no-op; nothing to persist.
+    expect(onChangeLocale).not.toHaveBeenCalled();
+  });
+
+  // `onChangeLocale` (`LocaleProvider.changeLocale`) is itself responsible for reverting
+  // i18next/document/state to the prior locale on a persistence failure -- see
+  // `src/i18n/LocaleProvider.tsx` and its test coverage -- so `ProjectSettingsPanel` no longer
+  // makes its own caller-side rollback call; it only surfaces the translated error.
+  it("shows a panel error when persistence fails, without a caller-side rollback call", async () => {
+    const onChangeLocale = vi.fn().mockRejectedValueOnce({ message: "locale save failed" });
+    // `locale` starts as a value with no matching <option> (simulating a settings
+    // value that doesn't match the currently offered locale list) so that
+    // selecting the one real "English" option below is an actual value change.
+    render(
+      <ProjectSettingsPanel
+        {...defaultProps({ locale: "de", onChangeLocale })}
+      />,
+    );
+    const select = screen.getByRole("combobox", { name: "Language" }) as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: "en" } });
+    await waitFor(() => expect(screen.getByRole("alert")).toBeDefined());
+    expect(screen.getByText("locale save failed")).toBeDefined();
+    expect(onChangeLocale).toHaveBeenCalledTimes(1);
+    expect(onChangeLocale).toHaveBeenCalledWith("en");
   });
 });
 

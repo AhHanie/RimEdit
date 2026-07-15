@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { i18n as I18nInstance, TFunction } from "i18next";
 import { X, ChevronUp, ChevronDown, RotateCcw, Loader2 } from "lucide-react";
 import { formatError } from "../../../../lib/formatError";
+import { renderDiagnostic, renderDiagnosticSectionHeading } from "../../../../i18n/diagnostics";
 import { previewDefPatches } from "../../api/patchPreview";
 import type {
   ApplyDiagnostic,
@@ -23,6 +26,13 @@ interface Props {
 }
 
 export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
+  // Three separate single-namespace hooks, not `useTranslation(["diagnostics", "patches", "common"])`
+  // with `"patches:key"`/`"common:key"`-prefixed lookups -- see `AboutDependencySection`'s
+  // `DependencyRow` doc comment (same TypeScript cross-namespace union-size issue, here for
+  // `patches.json`).
+  const { i18n } = useTranslation("diagnostics");
+  const { t } = useTranslation("patches");
+  const { t: tCommon } = useTranslation("common");
   const [disabledKeys, setDisabledKeys] = useState<PatchOperationKey[]>([]);
   const [orderKeys, setOrderKeys] = useState<PatchOperationKey[] | null>(null);
   const [result, setResult] = useState<PatchPreviewResult | null>(null);
@@ -93,13 +103,18 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
   const orderedNormalOperations = applyLocalReorder(normalOperations, orderKeys);
 
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Patch preview">
+    <div
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-label={t("previewDialog.dialogAriaLabel")}
+    >
       <div className={styles.panel}>
         <div className={styles.header}>
           <span className={styles.title}>
-            Patch preview - {target.defType}:{target.identity}
+            {t("previewDialog.title", { defType: target.defType, identity: target.identity })}
           </span>
-          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+          <button className={styles.closeBtn} onClick={onClose} aria-label={tCommon("actions.close")}>
             <X size={14} />
           </button>
         </div>
@@ -107,7 +122,7 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
         {loading && (
           <div className={styles.statusBanner}>
             <Loader2 size={13} className="spin" />
-            Loading preview…
+            {t("previewDialog.loadingPreview")}
           </div>
         )}
 
@@ -121,20 +136,27 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
               }`}
             >
               {!result.defFound
-                ? (result.applyDiagnostics.find(
-                    (d) =>
-                      d.code === "patch_preview_target_not_found" ||
-                      d.code === "patch_preview_target_removed",
-                  )?.message ?? "Def not found in the combined document.")
+                ? (() => {
+                    const notFoundDiagnostic = result.applyDiagnostics.find(
+                      (d) =>
+                        d.code === "patch_preview_target_not_found" ||
+                        d.code === "patch_preview_target_removed",
+                    );
+                    return notFoundDiagnostic
+                      ? renderDiagnostic(notFoundDiagnostic, i18n)
+                      : t("previewDialog.defNotFound");
+                  })()
                 : result.isPartial
-                  ? "Partial preview - some operations could not be fully previewed."
-                  : "Complete preview."}
+                  ? t("previewDialog.partialPreview")
+                  : t("previewDialog.completePreview")}
             </div>
 
             <div className={styles.body}>
               <div className={styles.opsColumn}>
                 <div className={styles.opsHeader}>
-                  <span>Patch operations ({orderedNormalOperations.length})</span>
+                  <span>
+                    {t("previewDialog.patchOperations", { count: orderedNormalOperations.length })}
+                  </span>
                   <button
                     className={styles.resetBtn}
                     onClick={resetOrder}
@@ -142,11 +164,11 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
                     type="button"
                   >
                     <RotateCcw size={11} />
-                    Reset order
+                    {t("previewDialog.resetOrder")}
                   </button>
                 </div>
                 {orderedNormalOperations.length === 0 ? (
-                  <p className={styles.emptyOps}>No patches affect this Def.</p>
+                  <p className={styles.emptyOps}>{t("previewDialog.noPatchesAffect")}</p>
                 ) : (
                   <ul className={styles.opsList} role="list">
                     {orderedNormalOperations.map((op) => (
@@ -156,6 +178,8 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
                         disabled={disabledKeys.some((k) => samePatchOperationKey(k, op.key))}
                         onToggleDisabled={() => toggleDisabled(op.key)}
                         onMove={(direction) => moveReorderable(op.key, direction)}
+                        t={t}
+                        i18n={i18n}
                       />
                     ))}
                   </ul>
@@ -164,12 +188,12 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
                 {unknownImpactOperations.length > 0 && (
                   <>
                     <div className={styles.opsHeader}>
-                      <span>Unknown impact ({unknownImpactOperations.length})</span>
+                      <span>
+                        {t("previewDialog.unknownImpact", { count: unknownImpactOperations.length })}
+                      </span>
                     </div>
                     <p className={styles.unknownImpactHint}>
-                      These operations' XPath could not be statically resolved. They are included
-                      here only because a runtime trace matched them against this Def's
-                      pre-patch ancestor chain.
+                      {t("previewDialog.unknownImpactHint")}
                     </p>
                     <ul className={styles.opsList} role="list">
                       {unknownImpactOperations.map((op) => (
@@ -179,6 +203,8 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
                           disabled={disabledKeys.some((k) => samePatchOperationKey(k, op.key))}
                           onToggleDisabled={() => toggleDisabled(op.key)}
                           onMove={() => undefined}
+                          t={t}
+                          i18n={i18n}
                         />
                       ))}
                     </ul>
@@ -187,8 +213,8 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
               </div>
 
               <div className={styles.xmlColumn}>
-                <div className={styles.xmlHeader}>Final XML</div>
-                <pre className={styles.xmlView}>{result.xml ?? "(Def not found)"}</pre>
+                <div className={styles.xmlHeader}>{t("previewDialog.finalXml")}</div>
+                <pre className={styles.xmlView}>{result.xml ?? t("previewDialog.defNotFoundXml")}</pre>
               </div>
             </div>
 
@@ -196,13 +222,14 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
               applyDiagnostics={result.applyDiagnostics}
               inheritanceDiagnostics={result.inheritanceDiagnostics}
               conflictDiagnostics={result.conflictDiagnostics}
+              i18n={i18n}
             />
           </>
         )}
 
         <div className={styles.footer}>
           <button className={styles.closeFooterBtn} onClick={onClose}>
-            Close
+            {tCommon("actions.close")}
           </button>
         </div>
       </div>
@@ -210,17 +237,20 @@ export function PatchPreviewDialog({ projectId, target, onClose }: Props) {
   );
 }
 
-function operationReason(op: PatchPreviewOperationSummary): string {
+function operationReason(op: PatchPreviewOperationSummary, t: TFunction<"patches">): string {
   if (op.target.kind === "def") {
-    return `Targets ${op.target.defType}:${op.target.defName} directly`;
+    return t("previewDialog.reasonTargetsDefDirectly", {
+      defType: op.target.defType,
+      defName: op.target.defName,
+    });
   }
   if (op.target.kind === "defType") {
-    return `Targets every ${op.target.defType}`;
+    return t("previewDialog.reasonTargetsEveryDefType", { defType: op.target.defType });
   }
   if (op.target.kind === "defs") {
-    return `Targets ${op.target.defNames.length} Defs directly by defName`;
+    return t("previewDialog.reasonTargetsDefsByName", { count: op.target.defNames.length });
   }
-  return "Unknown static impact - matched via runtime trace";
+  return t("previewDialog.reasonUnknownStaticImpact");
 }
 
 function statusClass(status: OperationTraceStatus | null): string {
@@ -243,40 +273,51 @@ interface OperationRowProps {
   disabled: boolean;
   onToggleDisabled: () => void;
   onMove: (direction: -1 | 1) => void;
+  t: TFunction<"patches">;
+  i18n: I18nInstance;
 }
 
-function OperationRow({ op, disabled, onToggleDisabled, onMove }: OperationRowProps) {
+function OperationRow({ op, disabled, onToggleDisabled, onMove, t, i18n }: OperationRowProps) {
   return (
     <li className={styles.opRow}>
       <input
         type="checkbox"
         checked={!disabled}
         onChange={onToggleDisabled}
-        aria-label={`Enable ${op.className}`}
+        aria-label={t("previewDialog.enableOperation", { className: op.className })}
       />
       <div className={styles.opMain}>
         <div className={styles.opTopLine}>
           <span className={styles.opClassName}>{op.className}</span>
           <span className={`${styles.opStatus} ${statusClass(op.status)}`}>
-            {op.status ?? "n/a"}
+            {op.status ?? t("previewDialog.statusNotAvailable")}
           </span>
         </div>
         <div className={styles.opMeta}>
           {op.locationName} · {op.relativePath}
         </div>
         {op.xpath && <div className={styles.opXpath}>{op.xpath}</div>}
-        <div className={styles.opReason}>{operationReason(op)}</div>
+        <div className={styles.opReason}>{operationReason(op, t)}</div>
         {op.previewSupport.kind === "unsupported" && (
-          <div className={styles.opUnsupported}>Preview unsupported: {op.previewSupport.reason}</div>
+          <div className={styles.opUnsupported}>
+            {t("previewDialog.previewUnsupported", { reason: op.previewSupport.reason })}
+          </div>
         )}
-        {op.statusMessage && <div className={styles.opUnsupported}>{op.statusMessage}</div>}
+        {op.statusMessage && (
+          <div className={styles.opUnsupported}>
+            {renderDiagnostic(
+              { code: op.statusCode, args: op.statusArgs, message: op.statusMessage },
+              i18n,
+            )}
+          </div>
+        )}
       </div>
       {op.canReorder && (
         <div className={styles.opReorderBtns}>
           <button
             className={styles.reorderBtn}
             onClick={() => onMove(-1)}
-            aria-label={`Move ${op.className} up`}
+            aria-label={t("previewDialog.moveUp", { className: op.className })}
             type="button"
           >
             <ChevronUp size={12} />
@@ -284,7 +325,7 @@ function OperationRow({ op, disabled, onToggleDisabled, onMove }: OperationRowPr
           <button
             className={styles.reorderBtn}
             onClick={() => onMove(1)}
-            aria-label={`Move ${op.className} down`}
+            aria-label={t("previewDialog.moveDown", { className: op.className })}
             type="button"
           >
             <ChevronDown size={12} />
@@ -299,12 +340,14 @@ interface DiagnosticsSectionProps {
   applyDiagnostics: ApplyDiagnostic[];
   inheritanceDiagnostics: InheritanceDiagnostic[];
   conflictDiagnostics: PatchPreviewConflictDiagnostic[];
+  i18n: I18nInstance;
 }
 
 function DiagnosticsSection({
   applyDiagnostics,
   inheritanceDiagnostics,
   conflictDiagnostics,
+  i18n,
 }: DiagnosticsSectionProps) {
   const total =
     applyDiagnostics.length + inheritanceDiagnostics.length + conflictDiagnostics.length;
@@ -312,12 +355,12 @@ function DiagnosticsSection({
 
   return (
     <div className={styles.diagnostics}>
-      <div className={styles.diagnosticsHeader}>Diagnostics ({total})</div>
+      <div className={styles.diagnosticsHeader}>{renderDiagnosticSectionHeading(total, i18n)}</div>
       <ul className={styles.diagnosticsList} role="list">
         {conflictDiagnostics.map((d, i) => (
           <li key={`conflict-${i}`} className={`${styles.diagnosticItem} ${styles.severityWarning}`}>
             <span className={styles.diagnosticBadge}>{d.code}</span>
-            {d.message}
+            {renderDiagnostic(d, i18n)}
           </li>
         ))}
         {applyDiagnostics.map((d, i) => (
@@ -328,7 +371,7 @@ function DiagnosticsSection({
             }`}
           >
             <span className={styles.diagnosticBadge}>{d.code}</span>
-            {d.message}
+            {renderDiagnostic(d, i18n)}
           </li>
         ))}
         {inheritanceDiagnostics.map((d, i) => (
@@ -339,7 +382,7 @@ function DiagnosticsSection({
             }`}
           >
             <span className={styles.diagnosticBadge}>{d.code}</span>
-            {d.message}
+            {renderDiagnostic(d, i18n)}
           </li>
         ))}
       </ul>

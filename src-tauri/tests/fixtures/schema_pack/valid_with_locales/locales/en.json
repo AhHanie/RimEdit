@@ -1,0 +1,5 @@
+{
+  "defTypes.ThingDef.label": "Thing (localized)",
+  "defTypes.ThingDef.fields.defName.description": "The unique identifier (localized).",
+  "defTypes.ThingDef.unknownShape": "should be ignored"
+}

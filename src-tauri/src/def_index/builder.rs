@@ -134,6 +134,7 @@ pub(crate) fn add_document_defs(
             message: diagnostic.message.clone(),
             line: diagnostic.line,
             column: diagnostic.column,
+            args: diagnostic.args.clone(),
         });
     }
     if doc.had_fatal_parse_error {
@@ -238,6 +239,7 @@ fn index_error_for_location(
         message,
         line,
         column,
+        args: crate::diagnostics::DiagnosticArgs::new(),
     }
 }
 

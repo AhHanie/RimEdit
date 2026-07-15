@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { SchemaCatalog } from "../../../schema-catalog";
+import { useLocale } from "../../../../i18n/LocaleProvider";
 import { formatError } from "../../../../lib/formatError";
 import { emptyToNull, nullToEmpty } from "../../lib/arrayUtils";
 import { dedentXmlFragment } from "../../lib/xmlDedent";
@@ -56,6 +58,8 @@ export function PatchValueEditor({
   operationType,
   onChange,
 }: Props) {
+  const { t } = useTranslation("patches");
+  const { locale } = useLocale();
   const [target, setTarget] = useState<XPathTarget | null>(null);
   const [resolvedField, setResolvedField] = useState<XPathResolvedField | null>(null);
   const [pickedFieldName, setPickedFieldName] = useState<string | null>(null);
@@ -91,7 +95,7 @@ export function PatchValueEditor({
     if (debounceRef.current) clearTimeout(debounceRef.current);
     const requestId = ++requestIdRef.current;
     debounceRef.current = setTimeout(() => {
-      completePatchOperationXPath(projectId, xpath)
+      completePatchOperationXPath(projectId, xpath, locale)
         .then((result) => {
           if (requestIdRef.current !== requestId) return;
           setTarget(result.target);
@@ -106,7 +110,7 @@ export function PatchValueEditor({
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [projectId, xpath]);
+  }, [projectId, xpath, locale]);
 
   const directDefType = targetDefType(target);
   const showFieldPicker =
@@ -183,7 +187,10 @@ export function PatchValueEditor({
         } else if (result.kind === "mismatch") {
           setMode("raw");
           setStructureError(
-            `Existing value is <${result.actualName}>, which doesn't match the target field <${editTarget.fieldName}>. Edit as raw XML, or clear the value to start structured editing fresh.`,
+            t("valueEditor.mismatch", {
+              actualName: result.actualName,
+              fieldName: editTarget.fieldName,
+            }),
           );
         } else {
           setMode("raw");
@@ -233,30 +240,34 @@ export function PatchValueEditor({
             className={styles.modeBtn}
             onClick={() => setMode("raw")}
           >
-            Raw XML
+            {t("valueEditor.rawXml")}
           </button>
           <button
             type="button"
             data-active={mode === "structured"}
             className={styles.modeBtn}
             disabled={!structurallySupported}
-            title={structurallySupported ? undefined : "No structured editor for this target"}
+            title={structurallySupported ? undefined : t("valueEditor.noStructuredEditor")}
             onClick={() => setMode("structured")}
           >
-            Structured
+            {t("valueEditor.structured")}
           </button>
         </div>
       </div>
 
       {showFieldPicker && (
         <label className={styles.field}>
-          <span className={styles.subLabel}>Field to {operationType === "insert" ? "insert" : "add"}</span>
+          <span className={styles.subLabel}>
+            {operationType === "insert"
+              ? t("valueEditor.fieldToInsert")
+              : t("valueEditor.fieldToAdd")}
+          </span>
           <select
             value={pickedFieldName ?? ""}
             disabled={readOnly}
             onChange={(e) => setPickedFieldName(e.target.value || null)}
           >
-            <option value="">(choose a field)</option>
+            <option value="">{t("valueEditor.chooseAField")}</option>
             {fieldOptions.map(([name, schema]) => (
               <option key={name} value={name}>
                 {schema.label || name}
@@ -282,6 +293,11 @@ export function PatchValueEditor({
           className={styles.rawXml}
           rows={4}
           spellCheck={false}
+          // XML is machine-readable syntax, not natural-language prose -- keep it forced LTR even
+          // once a future RTL locale flips `dir` on `<html>` (see
+          // docs/i18n/issues/08-editor-and-patch-ui-migration.md's "keep code editor/XML/XPath
+          // controls dir=ltr by semantic policy" carve-out).
+          dir="ltr"
           value={rawDraft}
           disabled={readOnly}
           onChange={(e) => {

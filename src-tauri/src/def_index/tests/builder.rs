@@ -18,8 +18,9 @@ fn settings_with_project(
         locations.push(location(src, "source", LocationKind::Source));
     }
     ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations,
         active_project_id: Some("project".to_string()),
     }
@@ -34,8 +35,9 @@ fn settings_with_base_game_source(
     base_game.source_type = SourceType::BaseGame;
     base_game.mod_id = None;
     ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations: vec![
             location(project_dir, "project", LocationKind::Project),
             base_game,
@@ -197,8 +199,9 @@ fn replacement_overlay_does_not_mutate_base_index() {
 fn settings_fingerprint_changes_when_location_display_name_changes() {
     let project_dir = temp_dir();
     let mut settings = ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations: vec![location(&project_dir, "project", LocationKind::Project)],
         active_project_id: Some("project".to_string()),
     };
@@ -216,8 +219,9 @@ fn settings_fingerprint_changes_when_location_display_name_changes() {
 fn settings_fingerprint_changes_when_game_version_changes() {
     let project_dir = temp_dir();
     let mut settings = ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations: vec![location(&project_dir, "project", LocationKind::Project)],
         active_project_id: Some("project".to_string()),
     };
@@ -363,7 +367,10 @@ fn invalid_xml_records_error_and_indexes_valid_files() {
     .unwrap();
     fs::write(
         project_dir.join("Defs").join("bad.xml"),
-        "<Defs><ThingDef></Defs>",
+        // Unclosed elements at EOF trigger `parse_unexpected_eof`, which (unlike a raw
+        // quick-xml syntax error) carries a typed `unclosedCount` arg -- see
+        // `xml_document::parser` -- so this fixture also exercises `args` propagation below.
+        "<Defs><ThingDef><defName>Bad</defName>",
     )
     .unwrap();
     let settings = settings_with_project(&project_dir, None);
@@ -372,5 +379,15 @@ fn invalid_xml_records_error_and_indexes_valid_files() {
 
     assert_eq!(index.defs.len(), 1);
     assert!(!index.errors.is_empty());
+    // The underlying `ParseDiagnostic`'s typed args (see `xml_document::diagnostics`) are
+    // propagated onto `DefIndexError.args`, not just its English `message`.
+    assert!(
+        index
+            .errors
+            .iter()
+            .any(|e| e.args.get("unclosedCount").is_some()),
+        "expected the underlying ParseDiagnostic's typed args to propagate onto DefIndexError: {:?}",
+        index.errors
+    );
     fs::remove_dir_all(&project_dir).ok();
 }

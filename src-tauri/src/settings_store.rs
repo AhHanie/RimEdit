@@ -1,3 +1,4 @@
+use crate::locale::resolve_locale;
 use crate::project_model::{AppError, ProjectSettings, StoreError};
 use crate::services::app_paths;
 use std::path::PathBuf;
@@ -16,6 +17,7 @@ fn settings_path(
 ///
 /// - v1 → v2: adds `gameVersion: "1.6"` if absent; converts `expansion` source
 ///   types to `folder` and removes `expansionName`.
+/// - v2 → v3: adds `locale: "en"` if absent.
 fn migrate_settings_json(raw: &str) -> Result<String, serde_json::Error> {
     let mut value: serde_json::Value = serde_json::from_str(raw)?;
 
@@ -25,14 +27,20 @@ fn migrate_settings_json(raw: &str) -> Result<String, serde_json::Error> {
             .and_then(|v| v.as_u64())
             .unwrap_or(0);
 
-        if schema_version < 2 {
-            obj.insert("schemaVersion".into(), serde_json::json!(2));
+        if schema_version < 3 {
+            obj.insert("schemaVersion".into(), serde_json::json!(3));
         }
         // Always insert a default gameVersion if it is absent, regardless of schemaVersion,
         // so partially-written or externally-edited files don't fail deserialization.
         if !obj.contains_key("gameVersion") {
             obj.insert("gameVersion".into(), serde_json::json!("1.6"));
         }
+        // Always normalize locale, regardless of schemaVersion: absent (legacy/partial
+        // files) becomes the fallback locale, and any unsupported/unknown persisted
+        // value (e.g. a downgrade from a future build, or hand-edited settings.json)
+        // is normalized rather than rejected.
+        let locale = obj.get("locale").and_then(|v| v.as_str()).unwrap_or("");
+        obj.insert("locale".into(), serde_json::json!(resolve_locale(locale)));
 
         // Migrate expansion → folder source type records.
         if let Some(locations) = obj.get_mut("locations").and_then(|v| v.as_array_mut()) {
@@ -105,8 +113,9 @@ mod tests {
         let v1 = r#"{"schemaVersion":1,"locations":[],"activeProjectId":null}"#;
         let migrated: serde_json::Value =
             serde_json::from_str(&migrate_settings_json(v1).unwrap()).unwrap();
-        assert_eq!(migrated["schemaVersion"], 2);
+        assert_eq!(migrated["schemaVersion"], 3);
         assert_eq!(migrated["gameVersion"], "1.6");
+        assert_eq!(migrated["locale"], "en");
     }
 
     #[test]
@@ -133,7 +142,32 @@ mod tests {
         let migrated: serde_json::Value =
             serde_json::from_str(&migrate_settings_json(v2_no_version).unwrap()).unwrap();
         assert_eq!(migrated["gameVersion"], "1.6");
-        assert_eq!(migrated["schemaVersion"], 2);
+        assert_eq!(migrated["schemaVersion"], 3);
+    }
+
+    #[test]
+    fn migration_adds_locale_to_v2_settings() {
+        let v2 = r#"{"schemaVersion":2,"gameVersion":"1.6","locations":[]}"#;
+        let migrated: serde_json::Value =
+            serde_json::from_str(&migrate_settings_json(v2).unwrap()).unwrap();
+        assert_eq!(migrated["schemaVersion"], 3);
+        assert_eq!(migrated["locale"], "en");
+    }
+
+    #[test]
+    fn migration_preserves_supported_locale() {
+        let v3 = r#"{"schemaVersion":3,"gameVersion":"1.6","locale":"en","locations":[]}"#;
+        let migrated: serde_json::Value =
+            serde_json::from_str(&migrate_settings_json(v3).unwrap()).unwrap();
+        assert_eq!(migrated["locale"], "en");
+    }
+
+    #[test]
+    fn migration_normalizes_unsupported_persisted_locale_to_fallback() {
+        let v3 = r#"{"schemaVersion":3,"gameVersion":"1.6","locale":"fr","locations":[]}"#;
+        let migrated: serde_json::Value =
+            serde_json::from_str(&migrate_settings_json(v3).unwrap()).unwrap();
+        assert_eq!(migrated["locale"], "en");
     }
 
     #[test]

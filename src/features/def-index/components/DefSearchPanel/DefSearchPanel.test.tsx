@@ -1,6 +1,7 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { invoke } from "@tauri-apps/api/core";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { DefSearchPanel } from "./DefSearchPanel";
 import type { DefIndexFacetSummary, IndexedDefSearchResult } from "../../types";
 

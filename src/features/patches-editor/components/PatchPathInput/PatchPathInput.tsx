@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { completePatchOperationXPath } from "../../api/xpathCompletion";
 import { emptyToNull, nullToEmpty } from "../../lib/arrayUtils";
+import { renderDiagnostic } from "../../../../i18n/diagnostics";
+import { useLocale } from "../../../../i18n/LocaleProvider";
 import type { XPathCompletionItem, XPathDiagnostic } from "../../types/xpathCompletion";
 import styles from "./PatchPathInput.module.css";
 
@@ -34,6 +37,8 @@ function byteOffsetToStringIndex(text: string, byteOffset: number): number {
  * only the current segment -- from the completion result's `replaceFrom` offset onward -- since an
  * XPath is composed of many segments typed one after another. */
 export function PatchPathInput({ value, readOnly, label, placeholder, projectId, onChange }: Props) {
+  const { i18n } = useTranslation("diagnostics");
+  const { locale } = useLocale();
   const [draftValue, setDraftValue] = useState(nullToEmpty(value));
   const [items, setItems] = useState<XPathCompletionItem[]>([]);
   const [diagnostics, setDiagnostics] = useState<XPathDiagnostic[]>([]);
@@ -48,7 +53,12 @@ export function PatchPathInput({ value, readOnly, label, placeholder, projectId,
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const requestIdRef = useRef(0);
-  const lastFetchedRef = useRef<string | null>(null);
+  // Gates the "refocus without an edit shouldn't refetch" skip in `handleInputFocus` -- keyed on
+  // both the xpath text and the locale it was fetched under, so a locale switch (which changes
+  // the completion command's localized labels/details) always triggers a refetch even when the
+  // xpath text itself is unchanged. Keying on xpath alone would let a stale locale's completion
+  // labels survive a focus/reopen after switching the app locale.
+  const lastFetchedRef = useRef<{ xpath: string; locale: string } | null>(null);
 
   const fetchCompletions = useCallback(
     (xpath: string) => {
@@ -61,10 +71,10 @@ export function PatchPathInput({ value, readOnly, label, placeholder, projectId,
       // request's own response arrives.
       const requestId = ++requestIdRef.current;
       debounceRef.current = setTimeout(() => {
-        completePatchOperationXPath(projectId, xpath)
+        completePatchOperationXPath(projectId, xpath, locale)
           .then((result) => {
             if (requestIdRef.current !== requestId) return;
-            lastFetchedRef.current = xpath;
+            lastFetchedRef.current = { xpath, locale };
             setItems(result.items);
             setDiagnostics(result.diagnostics);
             setReplaceFrom(result.replaceFrom);
@@ -77,7 +87,7 @@ export function PatchPathInput({ value, readOnly, label, placeholder, projectId,
           });
       }, DEBOUNCE_MS);
     },
-    [projectId],
+    [projectId, locale],
   );
 
   useEffect(() => {
@@ -112,8 +122,9 @@ export function PatchPathInput({ value, readOnly, label, placeholder, projectId,
   function handleInputFocus() {
     setOpen(true);
     // Refocusing without an edit (e.g. tabbing away and back) shouldn't re-fetch -- the last
-    // result is still valid for the same text.
-    if (draftValue !== lastFetchedRef.current) {
+    // result is still valid for the same text under the same locale. A locale switch since the
+    // last fetch always forces a refetch so stale localized labels don't linger.
+    if (draftValue !== lastFetchedRef.current?.xpath || locale !== lastFetchedRef.current?.locale) {
       fetchCompletions(draftValue);
     }
   }
@@ -153,6 +164,11 @@ export function PatchPathInput({ value, readOnly, label, placeholder, projectId,
         <input
           type="text"
           className={styles.input}
+          // XPath is machine-readable syntax, not natural-language prose -- keep it forced LTR
+          // even once a future RTL locale flips `dir` on `<html>` (see
+          // docs/i18n/issues/08-editor-and-patch-ui-migration.md's "keep code editor/XML/XPath
+          // controls dir=ltr by semantic policy" carve-out).
+          dir="ltr"
           value={draftValue}
           disabled={readOnly}
           placeholder={placeholder ?? 'Defs/ThingDef[defName="Wall"]'}
@@ -185,7 +201,7 @@ export function PatchPathInput({ value, readOnly, label, placeholder, projectId,
         <ul className={styles.diagnostics}>
           {diagnostics.map((d, i) => (
             <li key={i} className={styles.diagnostic} data-severity={d.severity}>
-              {d.message}
+              {renderDiagnostic(d, i18n)}
             </li>
           ))}
         </ul>

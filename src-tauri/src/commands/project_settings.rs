@@ -75,6 +75,14 @@ pub fn update_location(
 }
 
 #[tauri::command]
+pub fn update_app_locale(app: AppHandle, locale: String) -> Result<ProjectSettings, AppError> {
+    let mut settings = load_settings(&app)?;
+    ps_service::update_app_locale(&mut settings, locale)?;
+    save_settings(&app, &settings)?;
+    Ok(settings)
+}
+
+#[tauri::command]
 pub fn update_project_game_version(
     app: AppHandle,
     game_version: String,

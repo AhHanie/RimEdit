@@ -1,3 +1,4 @@
+use super::locale::{is_plausible_locale_tag, parse_schema_pack_locale_file, SchemaLocaleOverlay};
 use super::model::{
     DefTypeSchemaFile, FieldTypeKind, FormViewDef, ObjectTypeSchemaFile,
     PatchOperationMetadataFile, SchemaLoadDiagnostic, SchemaPackManifest, SchemaPackManifestFile,
@@ -10,18 +11,25 @@ include!(concat!(env!("OUT_DIR"), "/built_in_schema_packs.rs"));
 const MAX_MANIFEST_BYTES: u64 = 256 * 1024;
 const MAX_DEF_FILE_BYTES: u64 = 1024 * 1024;
 const MAX_DEF_FILES_PER_PACK: usize = 5000;
+const MAX_LOCALE_FILE_BYTES: u64 = 256 * 1024;
 
 pub struct LoadedPack {
     pub manifest: SchemaPackManifest,
     pub is_builtin: bool,
     pub source_path: Option<String>,
+    /// This pack's own parsed locale sidecars, keyed by locale tag (e.g. `"en"`), each holding a
+    /// flat `{resourceId -> override text}` map. Empty when the pack declares no
+    /// `localesDirectory` or ships no sidecar files. See `schema_pack::locale`.
+    pub locales: BTreeMap<String, SchemaLocaleOverlay>,
 }
 
 pub fn load_built_in_packs() -> (Vec<LoadedPack>, Vec<SchemaLoadDiagnostic>) {
     let mut diags = Vec::new();
     let mut packs = Vec::new();
 
-    for (path_label, manifest_raw, def_files, obj_files, patch_op_files) in BUILT_IN_SCHEMA_PACKS {
+    for (path_label, manifest_raw, def_files, obj_files, patch_op_files, locale_files) in
+        BUILT_IN_SCHEMA_PACKS
+    {
         let (manifest_file_opt, mdiags) = parse_schema_pack_manifest(path_label, manifest_raw);
         diags.extend(mdiags);
 
@@ -67,16 +75,79 @@ pub fn load_built_in_packs() -> (Vec<LoadedPack>, Vec<SchemaLoadDiagnostic>) {
             );
             diags.extend(adiags);
             if let Some(manifest) = pack_opt {
+                let locales = parse_locale_bundle(&pack_id, locale_files, &mut diags);
                 packs.push(LoadedPack {
                     manifest,
                     is_builtin: true,
                     source_path: None,
+                    locales,
                 });
             }
         }
     }
 
     (packs, diags)
+}
+
+/// Parse an already-embedded (built-in) or already-read (external) set of `(label, raw_json)`
+/// locale sidecar files into a `{localeTag -> overlay}` map. `label` for a built-in file is its
+/// embedded relative path (e.g. `"locales/en.json"`); for an external file it is the full
+/// filesystem path. Either way, the locale tag is derived from the file stem (name without the
+/// `.json` extension), lower-cased for map-key consistency.
+pub(crate) fn parse_locale_bundle(
+    pack_id: &str,
+    files: &[(&str, &str)],
+    diags: &mut Vec<SchemaLoadDiagnostic>,
+) -> BTreeMap<String, SchemaLocaleOverlay> {
+    let mut bundle: BTreeMap<String, SchemaLocaleOverlay> = BTreeMap::new();
+    for (label, raw) in files {
+        let tag = Path::new(label)
+            .file_stem()
+            .map(|s| s.to_string_lossy().to_ascii_lowercase())
+            .unwrap_or_default();
+
+        if !is_plausible_locale_tag(&tag) {
+            diags.push(
+                SchemaLoadDiagnostic::error(
+                    "schema_pack_locale_invalid_tag",
+                    format!("Locale file name '{}' is not a valid locale tag.", label),
+                )
+                .with_pack_id(pack_id)
+                .with_path(*label)
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "fileName",
+                    (*label).into(),
+                )])),
+            );
+            continue;
+        }
+
+        if bundle.contains_key(&tag) {
+            diags.push(
+                SchemaLoadDiagnostic::warning(
+                    "schema_pack_locale_duplicate_tag",
+                    format!(
+                        "Locale tag '{}' is declared more than once in pack '{}'; the later file is ignored.",
+                        tag, pack_id
+                    ),
+                )
+                .with_pack_id(pack_id)
+                .with_path(*label)
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("locale", tag.as_str().into()),
+                    ("packId", pack_id.into()),
+                ])),
+            );
+            continue;
+        }
+
+        let (overlay_opt, file_diags) = parse_schema_pack_locale_file(label, pack_id, &tag, raw);
+        diags.extend(file_diags);
+        if let Some(overlay) = overlay_opt {
+            bundle.insert(tag, overlay);
+        }
+    }
+    bundle
 }
 
 pub fn load_external_packs(roots: &[PathBuf]) -> (Vec<LoadedPack>, Vec<SchemaLoadDiagnostic>) {
@@ -90,7 +161,11 @@ pub fn load_external_packs(roots: &[PathBuf]) -> (Vec<LoadedPack>, Vec<SchemaLoa
                     "schema_pack_root_missing",
                     format!("Schema pack root does not exist: {}", root.display()),
                 )
-                .with_path(root.to_string_lossy()),
+                .with_path(root.to_string_lossy())
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "rootPath",
+                    root.to_string_lossy().into_owned().into(),
+                )])),
             );
             continue;
         }
@@ -166,12 +241,16 @@ pub fn load_pack_from_directory(
                     SchemaLoadDiagnostic::error(
                         "schema_pack_def_type_directory_escape",
                         format!(
-                            "defTypeDirectories entry '{}' escapes the pack root via '..' - skipping.",
+                            "defTypeDirectories entry '{}' escapes the pack root - skipping.",
                             dir_entry
                         ),
                     )
                     .with_pack_id(&pack_id)
-                    .with_path(&path_label),
+                    .with_path(&path_label)
+                    .with_args(crate::diagnostics::diagnostic_args([(
+                        "directoryEntry",
+                        dir_entry.as_str().into(),
+                    )])),
                 );
                 continue;
             }
@@ -188,7 +267,11 @@ pub fn load_pack_from_directory(
                     format!("def type directory does not exist: {}", resolved.display()),
                 )
                 .with_pack_id(&pack_id)
-                .with_path(resolved.to_string_lossy()),
+                .with_path(resolved.to_string_lossy())
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "directory",
+                    resolved.to_string_lossy().into_owned().into(),
+                )])),
             );
             continue;
         }
@@ -206,7 +289,11 @@ pub fn load_pack_from_directory(
                             pack_id, MAX_DEF_FILES_PER_PACK
                         ),
                     )
-                    .with_pack_id(&pack_id),
+                    .with_pack_id(&pack_id)
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("packId", pack_id.as_str().into()),
+                        ("maxFiles", MAX_DEF_FILES_PER_PACK.into()),
+                    ])),
                 );
                 break;
             }
@@ -267,12 +354,16 @@ pub fn load_pack_from_directory(
                     SchemaLoadDiagnostic::error(
                         "schema_pack_object_type_directory_escape",
                         format!(
-                            "objectTypeDirectories entry '{}' escapes the pack root via '..' - skipping.",
+                            "objectTypeDirectories entry '{}' escapes the pack root - skipping.",
                             dir_entry
                         ),
                     )
                     .with_pack_id(&pack_id)
-                    .with_path(&path_label),
+                    .with_path(&path_label)
+                    .with_args(crate::diagnostics::diagnostic_args([(
+                        "directoryEntry",
+                        dir_entry.as_str().into(),
+                    )])),
                 );
                 continue;
             }
@@ -292,7 +383,11 @@ pub fn load_pack_from_directory(
                     ),
                 )
                 .with_pack_id(&pack_id)
-                .with_path(resolved.to_string_lossy()),
+                .with_path(resolved.to_string_lossy())
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "directory",
+                    resolved.to_string_lossy().into_owned().into(),
+                )])),
             );
             continue;
         }
@@ -310,7 +405,11 @@ pub fn load_pack_from_directory(
                             pack_id, MAX_DEF_FILES_PER_PACK
                         ),
                     )
-                    .with_pack_id(&pack_id),
+                    .with_pack_id(&pack_id)
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("packId", pack_id.as_str().into()),
+                        ("maxFiles", MAX_DEF_FILES_PER_PACK.into()),
+                    ])),
                 );
                 break;
             }
@@ -366,12 +465,16 @@ pub fn load_pack_from_directory(
                     SchemaLoadDiagnostic::error(
                         "schema_pack_patch_operation_directory_escape",
                         format!(
-                            "patchOperationDirectories entry '{}' escapes the pack root via '..' - skipping.",
+                            "patchOperationDirectories entry '{}' escapes the pack root - skipping.",
                             dir_entry
                         ),
                     )
                     .with_pack_id(&pack_id)
-                    .with_path(&path_label),
+                    .with_path(&path_label)
+                    .with_args(crate::diagnostics::diagnostic_args([(
+                        "directoryEntry",
+                        dir_entry.as_str().into(),
+                    )])),
                 );
                 continue;
             }
@@ -391,7 +494,11 @@ pub fn load_pack_from_directory(
                     ),
                 )
                 .with_pack_id(&pack_id)
-                .with_path(resolved.to_string_lossy()),
+                .with_path(resolved.to_string_lossy())
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "directory",
+                    resolved.to_string_lossy().into_owned().into(),
+                )])),
             );
             continue;
         }
@@ -409,7 +516,11 @@ pub fn load_pack_from_directory(
                             pack_id, MAX_DEF_FILES_PER_PACK
                         ),
                     )
-                    .with_pack_id(&pack_id),
+                    .with_pack_id(&pack_id)
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("packId", pack_id.as_str().into()),
+                        ("maxFiles", MAX_DEF_FILES_PER_PACK.into()),
+                    ])),
                 );
                 break;
             }
@@ -457,6 +568,19 @@ pub fn load_pack_from_directory(
         }
     }
 
+    let locale_file_contents = read_locale_directory_files(
+        &manifest_dir,
+        &pack_id,
+        &path_label,
+        manifest_file.locales_directory.as_deref(),
+        &mut diags,
+    );
+    let locale_refs: Vec<(&str, &str)> = locale_file_contents
+        .iter()
+        .map(|(l, r)| (l.as_str(), r.as_str()))
+        .collect();
+    let locales = parse_locale_bundle(&pack_id, &locale_refs, &mut diags);
+
     let def_refs: Vec<(&str, &DefTypeSchemaFile)> = def_file_pairs
         .iter()
         .map(|(l, d)| (l.as_str(), d))
@@ -482,9 +606,127 @@ pub fn load_pack_from_directory(
         source_path: Some(path_label),
         manifest,
         is_builtin: false,
+        locales,
     });
 
     (pack, diags)
+}
+
+/// Read every `<tag>.json` file directly inside a pack's declared `localesDirectory` (not
+/// recursive -- locale sidecars are a flat `locales/<bcp47>.json` layout per `Plan.md`) into
+/// `(path_label, raw_content)` pairs, applying the same path-escape/symlink/size safety limits
+/// used for def/object/patch-operation directories. A declared-but-missing/non-directory
+/// `localesDirectory`, or an absent one entirely, silently yields no files and no diagnostic --
+/// unlike `defTypeDirectories`/`objectTypeDirectories`, this directory is optional and
+/// forward-looking: a pack may legitimately ship zero translations today.
+fn read_locale_directory_files(
+    manifest_dir: &Path,
+    pack_id: &str,
+    path_label: &str,
+    locales_directory: Option<&str>,
+    diags: &mut Vec<SchemaLoadDiagnostic>,
+) -> Vec<(String, String)> {
+    let mut files = Vec::new();
+
+    let Some(dir_entry) = locales_directory else {
+        return files;
+    };
+
+    let resolved = match resolve_manifest_relative_dir(manifest_dir, dir_entry) {
+        Some(p) => p,
+        None => {
+            diags.push(
+                SchemaLoadDiagnostic::error(
+                    "schema_pack_locale_directory_escape",
+                    format!(
+                        "localesDirectory entry '{}' escapes the pack root - skipping.",
+                        dir_entry
+                    ),
+                )
+                .with_pack_id(pack_id)
+                .with_path(path_label)
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "directoryEntry",
+                    dir_entry.into(),
+                )])),
+            );
+            return files;
+        }
+    };
+
+    if is_symlink(&resolved) {
+        diags.push(
+            SchemaLoadDiagnostic::warning(
+                "schema_pack_locale_directory_symlink_rejected",
+                format!(
+                    "localesDirectory '{}' is a symlink and was skipped.",
+                    resolved.display()
+                ),
+            )
+            .with_pack_id(pack_id)
+            .with_path(resolved.to_string_lossy())
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "directory",
+                resolved.to_string_lossy().into_owned().into(),
+            )])),
+        );
+        return files;
+    }
+
+    if !resolved.is_dir() {
+        return files;
+    }
+
+    let mut json_paths: Vec<PathBuf> = match std::fs::read_dir(&resolved) {
+        Ok(entries) => entries
+            .flatten()
+            .map(|e| e.path())
+            .filter(|p| {
+                p.is_file()
+                    && !is_symlink(p)
+                    && p.extension().and_then(|x| x.to_str()) == Some("json")
+            })
+            .collect(),
+        Err(_) => Vec::new(),
+    };
+    json_paths.sort();
+
+    for json_path in json_paths {
+        let file_label = json_path.to_string_lossy().to_string();
+
+        if let Ok(meta) = std::fs::metadata(&json_path) {
+            if meta.len() > MAX_LOCALE_FILE_BYTES {
+                diags.push(
+                    SchemaLoadDiagnostic::warning(
+                        "schema_pack_locale_file_too_large",
+                        format!(
+                            "Locale file exceeds 256 KiB limit, skipping: {}",
+                            file_label
+                        ),
+                    )
+                    .with_pack_id(pack_id)
+                    .with_path(&file_label),
+                );
+                continue;
+            }
+        }
+
+        match std::fs::read_to_string(&json_path) {
+            Ok(raw) => files.push((file_label, raw)),
+            Err(e) => {
+                diags.push(
+                    SchemaLoadDiagnostic::error(
+                        "schema_pack_locale_file_read_failed",
+                        format!("Cannot read locale file: {}", e),
+                    )
+                    .with_pack_id(pack_id)
+                    .with_path(&file_label),
+                );
+            }
+        }
+    }
+
+    files
 }
 
 /// Parse the manifest-only JSON file. Does not load def type files.
@@ -525,7 +767,11 @@ pub fn parse_schema_pack_manifest(
                     format_version
                 ),
             )
-            .with_path(path_label),
+            .with_path(path_label)
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "formatVersion",
+                (format_version as i64).into(),
+            )])),
         );
         return (None, diags);
     }
@@ -642,7 +888,11 @@ pub fn parse_def_type_schema(
             )
             .with_pack_id(pack_id)
             .with_path(path_label)
-            .with_field_path(format!("{}.formViews", def_type)),
+            .with_field_path(format!("{}.formViews", def_type))
+            .with_args(crate::diagnostics::diagnostic_args([
+                ("defType", def_type.as_str().into()),
+                ("formatVersion", (manifest_format_version as i64).into()),
+            ])),
         );
         if let Some(obj) = value.as_object_mut() {
             obj.remove("formViews");
@@ -717,7 +967,11 @@ pub fn parse_def_type_schema(
                 )
                 .with_pack_id(pack_id)
                 .with_path(path_label)
-                .with_field_path(format!("{}.fields.{}", def_file.def_type, field_name)),
+                .with_field_path(format!("{}.fields.{}", def_file.def_type, field_name))
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("defType", def_file.def_type.as_str().into()),
+                    ("fieldName", field_name.as_str().into()),
+                ])),
             );
             field.field_type.kind = FieldTypeKind::Unknown;
         }
@@ -831,7 +1085,11 @@ pub fn parse_object_type_schema(
                 )
                 .with_pack_id(pack_id)
                 .with_path(path_label)
-                .with_field_path(format!("{}.fields.{}", obj_file.object_type, field_name)),
+                .with_field_path(format!("{}.fields.{}", obj_file.object_type, field_name))
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("objectType", obj_file.object_type.as_str().into()),
+                    ("fieldName", field_name.as_str().into()),
+                ])),
             );
             field.field_type.kind = FieldTypeKind::Unknown;
         }
@@ -884,7 +1142,11 @@ pub fn parse_patch_operation_metadata(
                 ),
             )
             .with_pack_id(pack_id)
-            .with_path(path_label),
+            .with_path(path_label)
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "formatVersion",
+                (format_version as i64).into(),
+            )])),
         );
         return (None, diags);
     }
@@ -934,7 +1196,11 @@ pub fn parse_patch_operation_metadata(
                 )
                 .with_pack_id(pack_id)
                 .with_path(path_label)
-                .with_field_path(format!("{}.fields.{}", file.class_name, field_name)),
+                .with_field_path(format!("{}.fields.{}", file.class_name, field_name))
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("className", file.class_name.as_str().into()),
+                    ("fieldName", field_name.as_str().into()),
+                ])),
             );
             field.field_type.kind = FieldTypeKind::Unknown;
         }
@@ -968,7 +1234,11 @@ pub fn assemble_schema_pack(
                     ),
                 )
                 .with_pack_id(pack_id)
-                .with_path(*file_path),
+                .with_path(*file_path)
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "defType",
+                    def_type.as_str().into(),
+                )])),
             );
             continue;
         }
@@ -996,7 +1266,11 @@ pub fn assemble_schema_pack(
                     ),
                 )
                 .with_pack_id(pack_id)
-                .with_path(*file_path),
+                .with_path(*file_path)
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "objectType",
+                    object_type.as_str().into(),
+                )])),
             );
             continue;
         }
@@ -1016,7 +1290,11 @@ pub fn assemble_schema_pack(
                     ),
                 )
                 .with_pack_id(pack_id)
-                .with_path(*file_path),
+                .with_path(*file_path)
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "className",
+                    class_name.as_str().into(),
+                )])),
             );
             continue;
         }
@@ -1094,7 +1372,11 @@ fn validate_form_view_declarations(
                 )
                 .with_pack_id(pack_id)
                 .with_path(file_path)
-                .with_field_path(field_path),
+                .with_field_path(field_path)
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "defType",
+                    def_type.into(),
+                )])),
             );
             continue;
         }
@@ -1110,7 +1392,11 @@ fn validate_form_view_declarations(
                 )
                 .with_pack_id(pack_id)
                 .with_path(file_path)
-                .with_field_path(field_path),
+                .with_field_path(field_path)
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("defType", def_type.into()),
+                    ("viewId", id.as_str().into()),
+                ])),
             );
             continue;
         }
@@ -1150,7 +1436,11 @@ fn validate_form_view_declarations(
                     )
                     .with_pack_id(pack_id)
                     .with_path(file_path)
-                    .with_field_path(field_path),
+                    .with_field_path(field_path)
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("defType", def_type.into()),
+                        ("viewId", id.as_str().into()),
+                    ])),
                 );
                 continue;
             }
@@ -1167,7 +1457,11 @@ fn validate_form_view_declarations(
                 )
                 .with_pack_id(pack_id)
                 .with_path(file_path)
-                .with_field_path(field_path),
+                .with_field_path(field_path)
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("defType", def_type.into()),
+                    ("viewId", id.as_str().into()),
+                ])),
             );
             continue;
         }
@@ -1184,7 +1478,11 @@ fn validate_form_view_declarations(
                     )
                     .with_pack_id(pack_id)
                     .with_path(file_path)
-                    .with_field_path(field_path),
+                    .with_field_path(field_path)
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("defType", def_type.into()),
+                        ("viewId", id.as_str().into()),
+                    ])),
                 );
                 continue;
             }
@@ -1199,7 +1497,11 @@ fn validate_form_view_declarations(
                 )
                 .with_pack_id(pack_id)
                 .with_path(file_path)
-                .with_field_path(field_path),
+                .with_field_path(field_path)
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("defType", def_type.into()),
+                    ("viewId", id.as_str().into()),
+                ])),
             );
             continue;
         }
@@ -1216,7 +1518,12 @@ fn validate_form_view_declarations(
                     )
                     .with_pack_id(pack_id)
                     .with_path(file_path)
-                    .with_field_path(field_path),
+                    .with_field_path(field_path)
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("defType", def_type.into()),
+                        ("viewId", id.as_str().into()),
+                        ("fieldName", dup.into()),
+                    ])),
                 );
                 continue;
             }
@@ -1234,7 +1541,12 @@ fn validate_form_view_declarations(
                     )
                     .with_pack_id(pack_id)
                     .with_path(file_path)
-                    .with_field_path(field_path),
+                    .with_field_path(field_path)
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("defType", def_type.into()),
+                        ("viewId", id.as_str().into()),
+                        ("fieldName", dup.into()),
+                    ])),
                 );
                 continue;
             }
@@ -1259,7 +1571,19 @@ fn validate_form_view_declarations(
                     )
                     .with_pack_id(pack_id)
                     .with_path(file_path)
-                    .with_field_path(field_path),
+                    .with_field_path(field_path)
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("defType", def_type.into()),
+                        ("viewId", id.as_str().into()),
+                        (
+                            "fieldNames",
+                            conflicting
+                                .iter()
+                                .map(|s| s.to_string())
+                                .collect::<Vec<_>>()
+                                .into(),
+                        ),
+                    ])),
                 );
                 continue;
             }
@@ -1312,6 +1636,26 @@ fn resolve_manifest_relative_dir(manifest_dir: &Path, entry: &str) -> Option<Pat
     // Reject paths that contain '..' after joining - they might escape the pack root.
     for component in candidate.components() {
         if component == Component::ParentDir {
+            return None;
+        }
+    }
+    // The lexical checks above only catch a literal '..' segment or an absolute entry. A path
+    // component that is itself a symlink pointing outside `manifest_dir` (e.g. a manifest
+    // declaring `"localesDirectory": "link/locales"` where `link` is a symlink to somewhere
+    // outside the pack and `locales` is a real, non-symlink subdirectory reached through it)
+    // passes both of those checks yet still reaches outside the pack root once the OS resolves
+    // it -- and the caller's separate `is_symlink(&resolved)` check only inspects the *final*
+    // path component, not this intermediate one. `std::fs::canonicalize` resolves every
+    // component, including intermediate symlinks, so canonicalize both sides here and require
+    // containment. Canonicalization failure (most commonly: the directory doesn't exist yet, the
+    // common case for the optional `localesDirectory`) is not itself treated as an escape --
+    // every caller already reports a dedicated "directory missing" diagnostic (or, for locales,
+    // silently yields no files) once it finds `!resolved.is_dir()`, and no file is ever read from
+    // a path that fails to canonicalize in the first place.
+    if let (Ok(canonical_root), Ok(canonical_candidate)) =
+        (manifest_dir.canonicalize(), candidate.canonicalize())
+    {
+        if !canonical_candidate.starts_with(&canonical_root) {
             return None;
         }
     }

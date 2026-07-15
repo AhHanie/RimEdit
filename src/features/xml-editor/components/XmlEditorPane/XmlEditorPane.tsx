@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { measureAsync, generateTraceId } from "../../../../instrumentation";
 import type { InstrumentationTags } from "../../../../instrumentation";
 import { ChevronRight, FileCode2, Loader2 } from "lucide-react";
@@ -58,6 +59,7 @@ export function XmlEditorPane({
   onCloseActiveTab,
   onActiveCommandsChange,
 }: Props) {
+  const { t } = useTranslation("editor");
   const [wizardOpen, setWizardOpen] = useState(false);
   const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -253,7 +255,9 @@ export function XmlEditorPane({
         <div className="state-empty">
           {!hasOpenTabs && <FileCode2 size={32} className="state-empty-icon" />}
           <p className="state-empty-text">
-            {hasOpenTabs ? "Select a file to view its contents." : "Open a file from the explorer."}
+            {hasOpenTabs
+              ? t("editorPane.selectFilePrompt")
+              : t("editorPane.openFilePrompt")}
           </p>
         </div>
       </div>
@@ -346,7 +350,7 @@ export function XmlEditorPane({
       <div className={`${styles.root} ${styles.rootEmpty}`}>
         <div className="state-loading">
           <Loader2 size={14} className="spin" />
-          <span>Loading…</span>
+          <span>{t("editorPane.loading")}</span>
         </div>
       </div>
     );
@@ -382,8 +386,8 @@ export function XmlEditorPane({
   const defaultTemplateName = selectedDefForTemplate
     ? selectedDefForTemplate.label ||
       selectedDefForTemplate.defName ||
-      `${selectedDefForTemplate.defType} template`
-    : "New template";
+      t("editorPane.defaultTemplateNameSuffix", { defType: selectedDefForTemplate.defType })
+    : t("editorPane.newTemplate");
 
   // Abstract/template Defs (e.g. `<ThingDef Name="BaseThing" Abstract="True">`) have no
   // `defName` -- the preview engine verifies this identity against the resolved element as
@@ -424,8 +428,8 @@ export function XmlEditorPane({
           </span>
         ))}
         {file.readOnly && file.locationName && (
-          <span className={styles.breadcrumbSegment} style={{ marginLeft: "auto", opacity: 0.6, fontSize: "0.8em" }}>
-            Read-only · {file.locationName}
+          <span className={styles.breadcrumbSegment} style={{ marginInlineStart: "auto", opacity: 0.6, fontSize: "0.8em" }}>
+            {t("editorPane.readOnlyBadge", { locationName: file.locationName })}
           </span>
         )}
       </div>
@@ -471,9 +475,7 @@ export function XmlEditorPane({
             />
           ) : (
             <div className="state-empty">
-              <p className="state-empty-text">
-                About.xml root element must be &lt;ModMetaData&gt;. Switch to XML to fix it.
-              </p>
+              <p className="state-empty-text">{t("editorPane.aboutRootInvalid")}</p>
             </div>
           )
         ) : activeSession.mode === "form" ? (

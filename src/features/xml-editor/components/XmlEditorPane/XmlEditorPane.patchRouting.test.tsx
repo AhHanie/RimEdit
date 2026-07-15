@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { XmlEditorPane } from "./XmlEditorPane";
 import { useXmlEditorSession } from "../../hooks/useXmlEditorSession";
 import type { UseXmlEditorSessionReturn, XmlEditorFileRef } from "../../hooks/useXmlEditorSession";

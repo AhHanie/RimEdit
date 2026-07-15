@@ -21,7 +21,7 @@
   font-family: var(--font-ui);
   font-size: 13px;
   color: var(--text-primary);
-  text-align: left;
+  text-align: start;
 }
 
 .menuItem:hover {

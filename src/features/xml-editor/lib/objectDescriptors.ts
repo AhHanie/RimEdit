@@ -1,6 +1,15 @@
 import type { XmlListItemView, XmlNestedChildView } from "../types/xmlDocument";
 import type { FieldSchema, ObjectTypeSchema, SchemaCatalog } from "../../schema-catalog";
 import type { FormControlKind, ObjectFieldValue, ObjectListItemValue } from "../types/editorForm";
+import { initI18n } from "../../../i18n";
+
+/** `ObjectFieldValue`'s "readonly" fallbacks below are plain module functions, not React
+ * components, so there is no `useTranslation()` hook to call -- resolves translated text from the
+ * app-wide i18next singleton instead, same as `src/lib/confirmDiscardChanges.ts`. Calls
+ * `initI18n().t(...)` directly at each site (rather than through a same-signature local wrapper)
+ * so every call keeps i18next's own generated per-key literal/interpolation-argument typing --
+ * see `src/i18n/generated/translation-keys.ts`'s `CustomTypeOptions` augmentation. A wrapper typed
+ * as plain `(key: string, ...)` would silently accept a typo'd key or a wrong `options` shape. */
 
 type FieldContainerSchema = { fieldOrder: string[]; fields: Record<string, FieldSchema> };
 
@@ -152,12 +161,26 @@ export function buildObjectFieldValue(
     if (!itemSchemaRef) {
       const count =
         child?.liItems?.length ?? child?.liObjectItems?.length ?? (child?.children?.length ?? 0);
-      return { kind: "readonly", reason: `object list: ${count} item${count !== 1 ? "s" : ""}` };
+      return {
+        kind: "readonly",
+        reason: initI18n().t(
+          "editor:objectListEditor.objectListItemCount",
+          `object list: ${count} item${count !== 1 ? "s" : ""}`,
+          { count },
+        ),
+      };
     }
     if (depth >= MAX_OBJECT_DEPTH) {
       const count =
         child?.liItems?.length ?? child?.liObjectItems?.length ?? (child?.children?.length ?? 0);
-      return { kind: "readonly", reason: `object list: ${count} item${count !== 1 ? "s" : ""} (max depth)` };
+      return {
+        kind: "readonly",
+        reason: initI18n().t(
+          "editor:objectListEditor.objectListItemCountMaxDepth",
+          `object list: ${count} item${count !== 1 ? "s" : ""} (max depth)`,
+          { count },
+        ),
+      };
     }
     if (fieldSchema.xml === "keyedObjectMap") {
       return {
@@ -191,9 +214,19 @@ export function buildObjectFieldValue(
     (fieldSchema.xml === "object" || fieldSchema.xml === "element")
   ) {
     const baseRef = fieldSchema.type.schemaRef ?? null;
-    if (!baseRef) return { kind: "readonly", reason: "structured object" };
+    if (!baseRef) {
+      return {
+        kind: "readonly",
+        reason: initI18n().t("editor:objectListEditor.structuredObject", "structured object"),
+      };
+    }
     const baseSchema = catalog.objectTypes[baseRef];
-    if (!baseSchema) return { kind: "readonly", reason: "structured object" };
+    if (!baseSchema) {
+      return {
+        kind: "readonly",
+        reason: initI18n().t("editor:objectListEditor.structuredObject", "structured object"),
+      };
+    }
 
     let resolvedRef = baseRef;
     if (baseSchema.discriminator && child?.attributes) {
@@ -207,7 +240,15 @@ export function buildObjectFieldValue(
       }
     }
 
-    if (depth >= MAX_OBJECT_DEPTH) return { kind: "readonly", reason: "structured object (max depth)" };
+    if (depth >= MAX_OBJECT_DEPTH) {
+      return {
+        kind: "readonly",
+        reason: initI18n().t(
+          "editor:objectListEditor.structuredObjectMaxDepth",
+          "structured object (max depth)",
+        ),
+      };
+    }
     return buildObjectValueFromNestedChild(child, resolvedRef, catalog, depth + 1);
   }
 

@@ -18,7 +18,7 @@ function makeVariant(
 ): GraphicPreviewVariant {
   return {
     id: "v1",
-    label: "Single",
+    label: { kind: "single" },
     role: "single",
     sourceLocationId: "loc1",
     sourceLocationName: "Project",
@@ -155,11 +155,11 @@ describe("useGraphicDataPreview", () => {
         variants: [
           makeVariant({
             id: "n",
-            label: "North",
+            label: { kind: "direction", direction: "north" },
             role: "north",
             missing: true,
           }),
-          makeVariant({ id: "e", label: "East", role: "east" }),
+          makeVariant({ id: "e", label: { kind: "direction", direction: "east" }, role: "east" }),
         ],
       }),
     );
@@ -173,12 +173,14 @@ describe("useGraphicDataPreview", () => {
     });
 
     expect(result.current.selectedIndex).toBe(1);
-    expect(result.current.selectedVariant?.label).toBe("East");
+    expect(result.current.selectedVariant?.label).toEqual({ kind: "direction", direction: "east" });
   });
 
   it("exposes resolver warnings without throwing", async () => {
     mockResolve.mockResolvedValue(
-      makeResult({ warnings: ["Missing south texture"] }),
+      makeResult({
+        warnings: [{ code: "test_missing_south_texture", message: "Missing south texture" }],
+      }),
     );
 
     const { result } = renderHook(() =>
@@ -190,7 +192,9 @@ describe("useGraphicDataPreview", () => {
     });
 
     expect(result.current.status).toBe("ready");
-    expect(result.current.warnings).toEqual(["Missing south texture"]);
+    expect(result.current.warnings).toEqual([
+      { code: "test_missing_south_texture", message: "Missing south texture" },
+    ]);
   });
 
   it("exposes error as preview-only state without throwing", async () => {

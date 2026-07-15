@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import type { OpenFileTab } from "../../types";
 import styles from "./EditorTabs.module.css";
@@ -10,14 +11,18 @@ interface EditorTabsProps {
 }
 
 export function EditorTabs({ tabs, activeTabKey, onActivate, onClose }: EditorTabsProps) {
+  const { t } = useTranslation("editor");
   if (tabs.length === 0) return null;
 
   return (
-    <div className={styles.root} role="tablist" aria-label="Open files">
+    <div className={styles.root} role="tablist" aria-label={t("workspace.tabs.ariaLabel")}>
       {tabs.map((tab) => {
         const isActive = tab.tabKey === activeTabKey;
         const label = tab.readOnly && tab.locationName
-          ? `${tab.fileName} · ${tab.locationName}`
+          ? t("workspace.tabs.tabLabelWithLocation", {
+              fileName: tab.fileName,
+              locationName: tab.locationName,
+            })
           : tab.fileName;
         return (
           <div
@@ -36,8 +41,8 @@ export function EditorTabs({ tabs, activeTabKey, onActivate, onClose }: EditorTa
             {tab.dirty && (
               <span
                 className={styles.dirtyDot}
-                title="Unsaved changes"
-                aria-label="Unsaved changes"
+                title={t("workspace.tabs.unsavedChanges")}
+                aria-label={t("workspace.tabs.unsavedChanges")}
               />
             )}
             <button
@@ -51,8 +56,8 @@ export function EditorTabs({ tabs, activeTabKey, onActivate, onClose }: EditorTa
                 e.stopPropagation();
                 void onClose(tab.tabKey);
               }}
-              aria-label={`Close ${tab.fileName}`}
-              title={`Close ${tab.fileName}`}
+              aria-label={t("workspace.tabs.closeTab", { fileName: tab.fileName })}
+              title={t("workspace.tabs.closeTab", { fileName: tab.fileName })}
             >
               <X size={11} />
             </button>

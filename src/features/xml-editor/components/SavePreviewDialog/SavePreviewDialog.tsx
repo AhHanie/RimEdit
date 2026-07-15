@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import type { UseXmlEditorSessionReturn } from "../../hooks/useXmlEditorSession";
 import { markTiming } from "../../../../instrumentation";
@@ -9,6 +10,10 @@ interface Props {
 }
 
 export function SavePreviewDialog({ session }: Props) {
+  // Two separate single-namespace hooks, not `useTranslation(["editor", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   const {
     savePreview,
     saveError,
@@ -49,22 +54,24 @@ export function SavePreviewDialog({ session }: Props) {
       className={styles.overlay}
       role="dialog"
       aria-modal="true"
-      aria-label="Save preview"
+      aria-label={t("savePreviewDialog.dialogAriaLabel")}
     >
       <div className={styles.panel}>
         <div className={styles.header}>
-          <span className={styles.title}>Preview Save - {relativePath}</span>
+          <span className={styles.title}>
+            {t("savePreviewDialog.title", { relativePath })}
+          </span>
           <button
             className={styles.closeBtn}
             onClick={clearSavePreview}
-            aria-label="Close preview"
+            aria-label={t("savePreviewDialog.closePreview")}
           >
             <X size={14} />
           </button>
         </div>
 
         {!savePreview.changed && (
-          <p className={styles.unchanged}>No changes from the saved file.</p>
+          <p className={styles.unchanged}>{t("savePreviewDialog.noChanges")}</p>
         )}
 
         {hasCollapsedRegions && (
@@ -75,7 +82,7 @@ export function SavePreviewDialog({ session }: Props) {
               disabled={saveBusy}
               type="button"
             >
-              Show full file
+              {t("savePreviewDialog.showFullFile")}
             </button>
           </div>
         )}
@@ -86,7 +93,7 @@ export function SavePreviewDialog({ session }: Props) {
             if (line.kind === "gap") {
               return (
                 <div key={i} className={`${styles.diffLine} ${styles.gap}`}>
-                  ⋯ {line.text} ⋯
+                  ⋯ {t("savePreviewDialog.unchangedLinesCount", { count: line.count ?? 0 })} ⋯
                 </div>
               );
             }
@@ -121,14 +128,14 @@ export function SavePreviewDialog({ session }: Props) {
 
         <div className={styles.actions}>
           <button className={styles.cancelBtn} onClick={clearSavePreview}>
-            Cancel
+            {tCommon("actions.cancel")}
           </button>
           <button
             className={styles.saveBtn}
             onClick={() => void confirmSave(undefined, "dialog")}
             disabled={saveBusy || !savePreview.changed}
           >
-            {saveBusy ? "Saving..." : "Save"}
+            {saveBusy ? t("savePreviewDialog.saving") : tCommon("actions.save")}
           </button>
         </div>
       </div>

@@ -1,6 +1,14 @@
 import { isBuiltInOperationClass } from "../types/patchFile";
 import type { SchemaCatalog } from "../../schema-catalog/types";
 import type { PatchDiagnostic, PatchOperationNode } from "../types/patchFile";
+import { initI18n } from "../../../i18n";
+
+/** Plain module functions, not React components, so there is no `useTranslation()` hook to call --
+ * resolves translated text from the app-wide i18next singleton instead, same as
+ * `src/lib/confirmDiscardChanges.ts` and `xml-editor/lib/objectDescriptors.ts`. Calls
+ * `initI18n().t(...)` directly at the one call site that needs it, rather than through a
+ * same-signature local wrapper, so it keeps i18next's own generated per-key literal/interpolation
+ * typing -- see `src/i18n/generated/translation-keys.ts`'s `CustomTypeOptions` augmentation. */
 
 /** Client-side companion to the backend's `PatchOperationClassification`
  * (`patches::index::PatchOperationClassification`): flags `unknown`-kind operations (a `Class`
@@ -28,18 +36,26 @@ export function classificationDiagnostics(
     // preview cannot execute it".
     if (node.kind.type === "unknown" && node.className !== "" && !isBuiltInOperationClass(node.className)) {
       const metadata = catalog?.patchOperations?.[node.className];
+      const previewMessage =
+        metadata?.preview.message ||
+        initI18n().t(
+          "patches:classificationDiagnostics.previewMessageUnavailable",
+          "unsupported",
+        );
       diagnostics.push(
         metadata
           ? {
               line: null,
               column: null,
-              message: `'${node.className}' is a custom operation defined by schema-pack metadata; preview cannot execute it: ${
-                metadata.preview.message || "unsupported"
-              }`,
+              code: "patch_custom_operation_unexecutable",
+              args: { className: node.className, previewMessage },
+              message: `'${node.className}' is a custom operation defined by schema-pack metadata; preview cannot execute it: ${previewMessage}`,
             }
           : {
               line: null,
               column: null,
+              code: "patch_operation_class_unrecognized",
+              args: { className: node.className },
               message: `'${node.className}' is not a recognized built-in patch operation class and has no schema-pack metadata describing it; it will be preserved as raw XML but cannot be validated or previewed`,
             },
       );

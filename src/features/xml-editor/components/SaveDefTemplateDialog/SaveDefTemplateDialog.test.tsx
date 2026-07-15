@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import userEvent from "@testing-library/user-event";
 import { SaveDefTemplateDialog } from "./SaveDefTemplateDialog";
 import type { UserDefTemplate } from "../../types/defTemplates";

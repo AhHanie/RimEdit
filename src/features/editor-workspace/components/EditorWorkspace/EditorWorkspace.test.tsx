@@ -2,13 +2,13 @@ import { useState } from "react";
 import {
   act,
   fireEvent,
-  render,
   screen,
   waitFor,
   within,
 } from "@testing-library/react";
 import { invoke } from "@tauri-apps/api/core";
 import { confirm } from "@tauri-apps/plugin-dialog";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import type { ActiveEditorCommands, OpenFileTab } from "../../types";
 import { EditorWorkspace } from "./EditorWorkspace";
 

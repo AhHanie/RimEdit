@@ -5,6 +5,7 @@ import {
   useMemo,
   useRef,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { basicSetup } from "codemirror";
 import { Annotation, Compartment, EditorState, Prec } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
@@ -37,6 +38,7 @@ export const XmlRawEditor = forwardRef<XmlRawEditorHandle, Props>(
     { value, onChange, readOnly = false, onShortcut },
     ref,
   ) {
+    const { t } = useTranslation("editor");
     const hostRef = useRef<HTMLDivElement | null>(null);
     const viewRef = useRef<EditorView | null>(null);
     const onChangeRef = useRef(onChange);
@@ -103,11 +105,22 @@ export const XmlRawEditor = forwardRef<XmlRawEditorHandle, Props>(
           onChangeRef.current(nextValue);
         }),
         EditorView.contentAttributes.of({
-          "aria-label": "Raw XML editor",
+          "aria-label": t("rawEditor.ariaLabel"),
           spellcheck: "false",
+          // XML is machine-readable syntax, not natural-language prose -- keep the editable
+          // content region forced LTR even once a future RTL locale flips `dir` on `<html>`
+          // (see docs/i18n/issues/08-editor-and-patch-ui-migration.md's "keep code editor/XML/
+          // XPath controls dir=ltr by semantic policy" carve-out). Setting this on the
+          // contenteditable region itself (not just an ancestor wrapper) matters because browsers
+          // use the contenteditable element's own `dir` for caret movement and bidi auto-detection.
+          dir: "ltr",
         }),
       ],
-      // extensions are stable by design; readOnly changes go through the compartment
+      // extensions are stable by design; readOnly changes go through the compartment. The
+      // aria-label is captured once at mount (English-only in this release, per Plan.md); a
+      // future non-English locale would need this compartmentalized like `readOnlyCompartment`
+      // to update live, matching this file's existing "keep code editor controls dir=ltr by
+      // semantic policy" carve-out from full runtime-locale reactivity (issue 08 scope).
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [],
     );
@@ -154,6 +167,8 @@ export const XmlRawEditor = forwardRef<XmlRawEditorHandle, Props>(
       });
     }, [readOnly]);
 
-    return <div ref={hostRef} className={styles.editor} />;
+    // dir="ltr" here too (belt-and-suspenders with the contentAttributes dir above): this covers
+    // the gutters/scroller chrome that sits alongside cm-content, not just the editable region.
+    return <div ref={hostRef} className={styles.editor} dir="ltr" />;
   },
 );

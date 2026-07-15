@@ -39,7 +39,7 @@
   color: var(--text-muted);
   font-family: var(--font-ui);
   font-size: 12px;
-  text-align: left;
+  text-align: start;
   min-width: 0;
   transition: border-color 0.12s, background 0.12s;
 }
@@ -67,7 +67,7 @@
   align-items: center;
   gap: 2px;
   flex-shrink: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .btnActive {

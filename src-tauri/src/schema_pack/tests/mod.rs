@@ -13,7 +13,11 @@ use crate::def_index::DefIndex;
 use crate::xml_document::{parse_to_document, validate_document, ValidationContext};
 use std::path::Path;
 
+mod build_file_collection;
+mod build_path_safety;
 mod form_views;
+mod locale;
+mod locale_catalog_sync;
 mod patch_operations;
 mod schema_mechanics;
 
@@ -52,6 +56,7 @@ fn inline_pack_with_patch_operations(manifest_json: &str, patch_op_jsons: &[&str
         manifest: pack_opt.expect("assemble must succeed"),
         is_builtin: false,
         source_path: None,
+        locales: Default::default(),
     }
 }
 
@@ -98,6 +103,7 @@ fn inline_pack(manifest_json: &str, def_json: &str) -> LoadedPack {
         manifest: pack_opt.expect("assemble must succeed"),
         is_builtin: false,
         source_path: None,
+        locales: Default::default(),
     }
 }
 
@@ -135,6 +141,7 @@ fn inline_pack_with_objects(manifest_json: &str, def_json: &str, obj_jsons: &[&s
         manifest: pack_opt.expect("assemble must succeed"),
         is_builtin: false,
         source_path: None,
+        locales: Default::default(),
     }
 }
 
@@ -443,6 +450,7 @@ fn lookup_field_walks_inherits_to_parent() {
             manifest: pack_opt.unwrap(),
             is_builtin: false,
             source_path: None,
+            locales: Default::default(),
         }],
         &mut diags,
     );
@@ -1121,9 +1129,9 @@ fn built_in_pack_nested_objects_are_present() {
     }
 }
 
-// --- 23. Unresolvable game version falls back to the full catalog (issue 09 review round 2) ---
+// --- 23. Unresolvable game version falls back to the full catalog ---
 //
-// Reviewer finding: the version filter always keeps "universal" (no-`gameVersion`) packs
+// The version filter always keeps "universal" (no-`gameVersion`) packs
 // regardless of the selected version. Before this fix, an unresolvable selected version (one no
 // installed pack actually declares) would silently narrow the catalog down to ONLY those
 // universal packs instead of behaving like "no filter" -- if a universal pack happens to define

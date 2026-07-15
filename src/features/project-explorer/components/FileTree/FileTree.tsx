@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import type { FileTreeFolderNode } from "../../types";
 import { FileTreeNode, type EditingNode, type ContextMenuTarget } from "../FileTreeNode/FileTreeNode";
@@ -9,17 +10,23 @@ import {
   ensureXmlExtension,
   nextAvailableFileName,
 } from "../../utils/newFileTemplates";
+import { formatError } from "../../../../lib/formatError";
 import styles from "./FileTree.module.css";
 
-function validateName(name: string, siblings: string[]): string | null {
-  if (!name) return "Name cannot be empty";
-  if (name === "." || name === "..") return `'${name}' is not a valid name`;
-  if (name.includes("/") || name.includes("\\")) return "Name cannot contain path separators";
-  if (/[<>:"|?*]/.test(name)) return "Name contains an invalid character";
+/** Minimal duck-typed translate signature so this standalone helper isn't pinned to the exact
+ * `TFunction<...>` generic instantiation of whichever namespace tuple the caller's
+ * `useTranslation()` call happened to request. */
+type Translate = (key: string, options?: Record<string, unknown>) => string;
+
+function validateName(name: string, siblings: string[], t: Translate): string | null {
+  if (!name) return t("shell:explorer.nameEmpty");
+  if (name === "." || name === "..") return t("shell:explorer.nameReserved", { name });
+  if (name.includes("/") || name.includes("\\")) return t("shell:explorer.nameHasSeparator");
+  if (/[<>:"|?*]/.test(name)) return t("shell:explorer.nameInvalidChar");
   // eslint-disable-next-line no-control-regex
-  if (/[\x00-\x1f\x7f]/.test(name)) return "Name contains control characters";
+  if (/[\x00-\x1f\x7f]/.test(name)) return t("shell:explorer.nameControlChar");
   if (siblings.some((s) => s.toLowerCase() === name.toLowerCase()))
-    return "A file or folder with this name already exists";
+    return t("shell:explorer.nameCollides");
   return null;
 }
 
@@ -98,6 +105,7 @@ export function FileTree({
   onRename,
   onDelete,
 }: FileTreeProps) {
+  const { t } = useTranslation(["shell", "common"]);
   const [editingNode, setEditingNode] = useState<EditingNode>(null);
   const [contextMenu, setContextMenu] = useState<{
     target: ContextMenuTarget;
@@ -149,7 +157,7 @@ export function FileTree({
         trimmed !== "..";
       const name = needsXmlExtension ? ensureXmlExtension(trimmed) : trimmed;
 
-      const err = validateName(name, siblings);
+      const err = validateName(name, siblings, t as Translate);
       if (err) {
         setEditingNode({ ...editing, error: err });
         return;
@@ -169,37 +177,44 @@ export function FileTree({
         }
         setEditingNode(null);
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Operation failed";
-        setEditingNode({ ...editing, error: msg });
+        setEditingNode({ ...editing, error: formatError(e) });
       }
     },
-    [root, onCreateFile, onCreateAndOpenFile, onCreateFolder, onRename],
+    [root, onCreateFile, onCreateAndOpenFile, onCreateFolder, onRename, t],
   );
 
   const handleDeleteNode = useCallback(
     async (relativePath: string, kind: "file" | "folder") => {
-      const title = kind === "file" ? "Delete file?" : "Delete folder?";
+      const title =
+        kind === "file" ? t("shell:explorer.deleteFileTitle") : t("shell:explorer.deleteFolderTitle");
       let message: string;
       if (kind === "folder") {
         const node = findFolderNode(root, relativePath);
         if (node) {
           const { files, folders } = countDescendants(node);
           const parts: string[] = [];
-          if (files > 0) parts.push(`${files} file${files !== 1 ? "s" : ""}`);
-          if (folders > 0) parts.push(`${folders} subfolder${folders !== 1 ? "s" : ""}`);
-          const desc = parts.length > 0 ? ` and its contents (${parts.join(", ")})` : "";
-          message = `Delete folder "${relativePath}"${desc}? This cannot be undone.`;
+          if (files > 0) parts.push(t("shell:explorer.deleteFolderDetailFiles", { count: files }));
+          if (folders > 0) parts.push(t("shell:explorer.deleteFolderDetailFolders", { count: folders }));
+          message =
+            parts.length > 0
+              ? t("shell:explorer.deleteFolderConfirmDetailed", { relativePath, details: parts.join(", ") })
+              : t("shell:explorer.deleteFolderConfirmSimple", { relativePath });
         } else {
-          message = `Delete folder "${relativePath}" and all its contents? This cannot be undone.`;
+          message = t("shell:explorer.deleteFolderConfirmSimple", { relativePath });
         }
       } else {
-        message = `Delete file "${relativePath}"? This cannot be undone.`;
+        message = t("shell:explorer.deleteFileConfirm", { relativePath });
       }
-      const ok = await confirm(message, { title, kind: "warning", okLabel: "Delete", cancelLabel: "Cancel" });
+      const ok = await confirm(message, {
+        title,
+        kind: "warning",
+        okLabel: t("common:actions.delete"),
+        cancelLabel: t("common:actions.cancel"),
+      });
       if (!ok) return;
       void onDelete(relativePath, kind);
     },
-    [root, onDelete],
+    [root, onDelete, t],
   );
 
   const handleOpenContextMenu = useCallback(
@@ -314,7 +329,7 @@ export function FileTree({
     <div
       className={styles.root}
       role="tree"
-      aria-label="Project files"
+      aria-label={t("shell:explorer.projectTreeAriaLabel")}
       onContextMenu={handleRootContextMenu}
     >
       <FileTreeNode

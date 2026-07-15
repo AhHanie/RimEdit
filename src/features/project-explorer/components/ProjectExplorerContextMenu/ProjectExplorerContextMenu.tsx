@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import type { ContextMenuTarget } from "../FileTreeNode/FileTreeNode";
 import styles from "./ProjectExplorerContextMenu.module.css";
 
@@ -27,6 +28,7 @@ export function ProjectExplorerContextMenu({
   onDelete,
   onClose,
 }: ProjectExplorerContextMenuProps) {
+  const { t } = useTranslation(["shell", "common"]);
   const menuRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x, y });
 
@@ -80,16 +82,16 @@ export function ProjectExplorerContextMenu({
       {showFolderActions && (
         <>
           <button role="menuitem" className={styles.menuItem} onClick={onNewFile}>
-            New File
+            {t("shell:explorer.contextMenu.newFile")}
           </button>
           <button role="menuitem" className={styles.menuItem} onClick={onNewFolder}>
-            New Folder
+            {t("shell:explorer.contextMenu.newFolder")}
           </button>
           <button role="menuitem" className={styles.menuItem} onClick={onNewDefsFile}>
-            New Defs File
+            {t("shell:explorer.contextMenu.newDefsFile")}
           </button>
           <button role="menuitem" className={styles.menuItem} onClick={onNewPatchesFile}>
-            New Patches File
+            {t("shell:explorer.contextMenu.newPatchesFile")}
           </button>
         </>
       )}
@@ -97,14 +99,14 @@ export function ProjectExplorerContextMenu({
       {showMutateActions && (
         <>
           <button role="menuitem" className={styles.menuItem} onClick={onRename}>
-            Rename
+            {t("shell:explorer.contextMenu.rename")}
           </button>
           <button
             role="menuitem"
             className={`${styles.menuItem} ${styles.menuItemDestructive}`}
             onClick={onDelete}
           >
-            Delete
+            {t("shell:explorer.contextMenu.delete")}
           </button>
         </>
       )}

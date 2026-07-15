@@ -83,7 +83,7 @@
   height: 7px;
   border-radius: 50%;
   background: var(--accent);
-  margin-right: 4px;
+  margin-inline-end: 4px;
   flex-shrink: 0;
 }
 

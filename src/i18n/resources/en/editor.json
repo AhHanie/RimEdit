@@ -1,0 +1,380 @@
+{
+  "about": {
+    "dependencies": {
+      "heading": "Dependencies",
+      "addDependency": "Add dependency",
+      "empty": "No dependencies.",
+      "removeDependency": "Remove dependency",
+      "alternativePackageIds": "Alternative package IDs"
+    },
+    "identity": {
+      "heading": "Identity",
+      "packageId": "Package ID",
+      "name": "Name",
+      "shortName": "Short Name",
+      "author": "Author",
+      "authors": "Authors",
+      "addAuthor": "Add author",
+      "modVersion": "Mod Version",
+      "url": "URL",
+      "modIconPath": "Mod Icon Path",
+      "description": "Description"
+    },
+    "loadOrder": {
+      "heading": "Load Order",
+      "loadBefore": "Load Before",
+      "loadAfter": "Load After",
+      "forceLoadBefore": "Force Load Before",
+      "forceLoadAfter": "Force Load After",
+      "incompatibleWith": "Incompatible With"
+    },
+    "versionedOverrides": {
+      "heading": "Versioned Overrides",
+      "readOnlyBadge": "Read-only -- edit via XML",
+      "empty": "(empty)",
+      "descriptionLabel": "description ({{version}})",
+      "loadBeforeLabel": "loadBefore ({{version}})",
+      "loadAfterLabel": "loadAfter ({{version}})",
+      "incompatibleWithLabel": "incompatibleWith ({{version}})",
+      "modDependenciesLabel": "modDependencies ({{version}})"
+    },
+    "compatibility": {
+      "heading": "Compatibility",
+      "supportedVersions": "Supported Versions",
+      "steamAppId": "Steam App ID",
+      "obsoleteTargetVersion": "Obsolete targetVersion: {{version}}"
+    },
+    "stringListField": {
+      "removeItem": "Remove {{item}}",
+      "addToList": "Add to {{label}}"
+    },
+    "pane": {
+      "unnamedMod": "(unnamed mod)",
+      "noPackageId": "(no packageId)",
+      "supportedVersionCount_one": "{{count}} supported version",
+      "supportedVersionCount_other": "{{count}} supported versions",
+      "noSupportedVersions": "No supported versions",
+      "readOnlyBadge": "Read-only",
+      "readOnlyBadgeWithLocation": "Read-only · {{locationName}}",
+      "unknownElements": "Unknown top-level elements ({{count}})",
+      "unknownElementLine": " (line {{line}})"
+    }
+  },
+  "workspace": {
+    "tabs": {
+      "ariaLabel": "Open files",
+      "tabLabelWithLocation": "{{fileName}} · {{locationName}}",
+      "unsavedChanges": "Unsaved changes",
+      "closeTab": "Close {{fileName}}"
+    },
+    "confirmCloseDiscard": "Close this file and discard unsaved changes?",
+    "unsupportedFile": {
+      "message": "Only XML files can be edited. Open this file in an external editor."
+    }
+  },
+  "formViews": {
+    "defaultViewLabel": "Default View",
+    "checklist": {
+      "badge": {
+        "section": "Section",
+        "boolean": "Boolean",
+        "number": "Number",
+        "enum": "Enum",
+        "reference": "Reference",
+        "list": "List",
+        "map": "Map",
+        "flags": "Flags",
+        "referenceList": "Reference list",
+        "color": "Color",
+        "object": "Object",
+        "unknown": "Unknown",
+        "text": "Text"
+      },
+      "filterPlaceholder": "Filter fields...",
+      "filterAriaLabel": "Filter fields",
+      "showAll": "Show all",
+      "hideAll": "Hide all",
+      "resetToSelected": "Reset to selected view",
+      "hiddenSummary": "{{hiddenCount}} of {{total}} hidden",
+      "allHiddenWarning": "All fields are hidden. Default View and unknown XML fields remain available.",
+      "hasValue": "Has value",
+      "noMatch": "No fields match \"{{filter}}\".",
+      "unknownNote": "XML content not described by the active schema is always shown separately below, and is never affected by Form Views.",
+      "saving": "Saving…",
+      "saveChanges": "Save changes",
+      "saveAsPlaceholder": "Custom view name",
+      "saveAsAriaLabel": "Custom view name",
+      "saveAsCustomView": "Save as custom view"
+    },
+    "manager": {
+      "sourceAlwaysAvailable": "Always available · read-only",
+      "sourceSchemaPackWithVersion": "Schema pack · {{packId}} {{packVersion}} · read-only",
+      "sourceSchemaPack": "Schema pack · read-only",
+      "sourceCustom": "Custom view",
+      "dialogAriaLabel": "Manage Form Views",
+      "title": "Manage Form Views",
+      "renameAriaLabel": "Rename {{label}}",
+      "confirmRename": "Confirm rename",
+      "cancelRename": "Cancel rename",
+      "recommendedBadge": "Recommended",
+      "selectedBadge": "Selected",
+      "baseUnavailable": "Derived from a view that's no longer available -- this custom view is unaffected and remains fully usable.",
+      "useThisView": "Use this view",
+      "duplicate": "Duplicate",
+      "storeErrorMessage": "Couldn't load your custom Form Views: {{error}}. Your current view selection has been left untouched.",
+      "retrying": "Retrying…",
+      "retry": "Retry",
+      "resetStore": "Reset store",
+      "createPlaceholder": "New custom view name",
+      "createAriaLabel": "New custom view name",
+      "creating": "Creating…",
+      "create": "Create",
+      "availableViewsAriaLabel": "Available form views",
+      "customizePlaceholder": "Field-by-field visibility customization isn't available for the current selection -- use Duplicate/Create above to prepare a custom view instead.",
+      "resetConfirm": {
+        "message": "Reset the custom Form View store? The current (possibly corrupt) store file will be backed up, and you'll start with no custom views. This does not affect Default or schema views.",
+        "title": "Reset Form View store",
+        "confirmLabel": "Reset store"
+      },
+      "storeResetWithBackup": "Store reset. The previous file was backed up to {{backupPath}}.",
+      "storeReset": "Store reset.",
+      "deleteConfirm": {
+        "message": "Delete the custom Form View \"{{label}}\"? This cannot be undone.",
+        "title": "Delete Form View"
+      }
+    },
+    "selector": {
+      "viewLabel": "View",
+      "schemaViewsGroup": "Schema views",
+      "customViewsGroup": "Custom views",
+      "recommendedSuffix": " (recommended)",
+      "customizeView": "Customize view",
+      "showFullForm": "Show full form",
+      "sourceSchemaWithVersion": "Schema view · {{packId}} {{packVersion}}",
+      "sourceSchemaReadOnly": "Schema view · read-only",
+      "hiddenIssueCount_one": "{{count}} hidden field issue",
+      "hiddenIssueCount_other": "{{count}} hidden field issues",
+      "hiddenIssueBlocking": " ({{count}} blocking)",
+      "revealFieldsWithIssues": "Reveal fields with issues",
+      "modifiedHiddenCount": "Modified · {{count}} hidden",
+      "reset": "Reset",
+      "discard": "Discard"
+    },
+    "persistWarning": {
+      "selectionSaveFailed": "Could not save your Form View selection.",
+      "fallbackSaveFailed": "Could not save the fallback Form View selection."
+    },
+    "switchConfirm": {
+      "dialogAriaLabel": "Unsaved view changes",
+      "title": "Unsaved view changes",
+      "message_one": "You have {{count}} hidden field that isn't saved to any view yet. Switching views now will lose this change unless you save it first.",
+      "message_other": "You have {{count}} hidden fields that aren't saved to any view yet. Switching views now will lose this change unless you save it first.",
+      "customViewNameLabel": "Custom view name",
+      "saveAsCustomView": "Save as custom view",
+      "discardAndSwitch": "Discard changes and switch",
+      "back": "Back",
+      "saving": "Saving…",
+      "saveAndSwitch": "Save and switch"
+    }
+  },
+  "createDefWizard": {
+    "stepTitlePickType": "New Def - Pick Type",
+    "stepTitlePickTemplate": "New Def - Pick Template",
+    "stepTitleEnterValues": "New Def - Enter Values",
+    "dialogAriaLabel": "Create Def Wizard",
+    "searchDefTypesPlaceholder": "Search def types…",
+    "noDefTypesMatch": "No def types match \"{{query}}\".",
+    "userTemplatesTab": "User Templates",
+    "builtinTemplatesTab": "Built-in Templates",
+    "indexedDefsTab": "Indexed Defs",
+    "searchIndexedDefsPlaceholder": "Search indexed defs…",
+    "searching": "Searching…",
+    "noIndexedDefsMatch": "No indexed defs match.",
+    "blankTemplateLabel": "Blank",
+    "blankTemplateDescription": "A minimal def with no fields pre-filled.",
+    "deleteTemplateAriaLabel": "Delete template {{name}}",
+    "deleteTemplateTitle": "Delete template",
+    "deleteTemplateConfirm": "Delete template \"{{name}}\"? This cannot be undone.",
+    "cloningFrom": "Cloning {{defName}} from {{relativePath}}",
+    "defNameFallback": "Def Name",
+    "defNamePlaceholder": "e.g. MyThing",
+    "back": "Back",
+    "creating": "Creating…",
+    "create": "Create",
+    "projectSourceLabel": "Project"
+  },
+  "formFieldControl": {
+    "saving": "Saving...",
+    "resetField": "Reset field",
+    "resetFieldAria": "Reset {{label}}",
+    "clearField": "Clear {{label}}",
+    "examplesPrefix": "e.g. {{examples}}",
+    "addItem": "Add item",
+    "removeItem": "Remove item {{index}}",
+    "useRawXmlHint": "Use Raw XML mode to edit this field",
+    "objectListRawOnly": "[object list - edit in Raw XML mode]",
+    "objectRawOnly": "[structured - edit in Raw XML mode]",
+    "unknownValuesPreserved": "Unknown values (preserved):",
+    "removeUnknownFlag": "Remove unknown flag {{value}}",
+    "keyPlaceholder": "key",
+    "valuePlaceholder": "value",
+    "removeEntry": "Remove entry {{key}}",
+    "duplicateKeysError": "Duplicate keys are not allowed.",
+    "addEntry": "Add entry",
+    "structuredFieldReadOnlyReason": "Use Raw XML mode to edit this structured field.",
+    "noSchemaReadOnlyReason": "This field is not described by the active schema pack.",
+    "circularSchemaReferenceReason": "Circular schema reference."
+  },
+  "formValidation": {
+    "required": "{{label}} is required.",
+    "typedRefDefTypeEmpty": "{{label}}: def type cannot be empty.",
+    "typedRefDefNameEmpty": "{{label}}: def name cannot be empty.",
+    "invalidXmlElementName": "{{label}}: \"{{value}}\" is not a valid XML element name.",
+    "namedMapKeysRequired": "{{label}}: all keys must be non-empty.",
+    "namedMapDuplicateKey": "{{label}}: duplicate key \"{{key}}\".",
+    "mustBeAllowedValue": "{{label}} must be one of the allowed values.",
+    "patternMismatch": "{{label}} does not match the expected format.",
+    "minValue": "{{label}} must be at least {{min}}.",
+    "maxValue": "{{label}} must be at most {{max}}."
+  },
+  "graphicPreview": {
+    "loading": "Loading...",
+    "noVariantAvailable": "No variant available",
+    "textureNotFound": "Texture not found",
+    "ddsUnsupported": "DDS format not supported for preview",
+    "failedToLoad": "Found texture but failed to load preview",
+    "sourceLabel": "Source: {{source}}",
+    "unknownSource": "unknown",
+    "previousVariant": "Previous texture variant",
+    "nextVariant": "Next texture variant",
+    "showVariant": "Show texture variant {{label}}",
+    "alt": "{{graphicClass}} {{label}} preview",
+    "label": {
+      "single": "Single",
+      "direction": {
+        "north": "North",
+        "east": "East",
+        "south": "South",
+        "west": "West"
+      },
+      "variant": "Variant {{index}}",
+      "variantDirectional": "Variant {{index}} {{direction}}",
+      "stack": {
+        "single": "Stack 1",
+        "partial": "Stack partial",
+        "full": "Stack full"
+      },
+      "stackDirectional": "{{stack}} {{direction}}",
+      "appearance": "Appearance {{index}}"
+    }
+  },
+  "objectListEditor": {
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "removeItem": "Remove {{name}}",
+    "class": "Class",
+    "classNamePlaceholder": "Class name…",
+    "noClassLabel": "(no class)",
+    "itemFallback": "Item {{index}}",
+    "noSchemaForClass": "No schema for this class. Unknown fields preserved; use Raw XML for details.",
+    "unknownFieldsPreserved_one": "{{count}} unknown field preserved.",
+    "unknownFieldsPreserved_other": "{{count}} unknown fields preserved.",
+    "objectListNoSchema": "object list (no schema)",
+    "itemCount_one": "{{count}} item",
+    "itemCount_other": "{{count}} items",
+    "objectListItemCount_one": "object list: {{count}} item",
+    "objectListItemCount_other": "object list: {{count}} items",
+    "objectListItemCountMaxDepth_one": "object list: {{count}} item (max depth)",
+    "objectListItemCountMaxDepth_other": "object list: {{count}} items (max depth)",
+    "objectListItemCountSummary_one": "(object list: {{count}} item)",
+    "objectListItemCountSummary_other": "(object list: {{count}} items)",
+    "itemCountParens_one": "({{count}} item)",
+    "itemCountParens_other": "({{count}} items)",
+    "unsupportedChildSummaryWithCount_one": "({{xmlShape}}, {{count}} item)",
+    "unsupportedChildSummaryWithCount_other": "({{xmlShape}}, {{count}} items)",
+    "unsupportedChildSummary": "({{xmlShape}})",
+    "structuredObject": "structured object",
+    "structuredObjectMaxDepth": "structured object (max depth)",
+    "nestedObject": "nested object",
+    "unknownSchema": "Unknown schema.",
+    "onePerLinePlaceholder": "One item per line…",
+    "commaSeparatedFlagsPlaceholder": "Comma-separated flags…",
+    "addItem": "Add item",
+    "addKnownType": "Add known type…",
+    "addCustomType": "Add custom type",
+    "keyPlaceholder": "key",
+    "valuePlaceholder": "value",
+    "defTypePlaceholder": "DefType",
+    "defNamePlaceholder": "DefName",
+    "requiredError": "{{label}} is required",
+    "invalidValueError": "\"{{value}}\" is not a valid value"
+  },
+  "referencePicker": {
+    "goTo": "Go to {{defType}}",
+    "readOnlyBadge": "read-only",
+    "removeItem": "Remove item {{index}}",
+    "addItem": "Add item",
+    "peekTitle": "{{defType}}: {{defName}}",
+    "peekSubtitleWithLine": "{{relativePath}} · full file shown, Def at line {{line}}",
+    "peekSubtitle": "{{relativePath}} · full file shown",
+    "loading": "Loading…"
+  },
+  "saveDefTemplateDialog": {
+    "dialogAriaLabel": "Save as Template",
+    "title": "Save as Template",
+    "templateNameLabel": "Template name",
+    "saving": "Saving…"
+  },
+  "savePreviewDialog": {
+    "dialogAriaLabel": "Save preview",
+    "title": "Preview Save - {{relativePath}}",
+    "closePreview": "Close preview",
+    "noChanges": "No changes from the saved file.",
+    "showFullFile": "Show full file",
+    "saving": "Saving...",
+    "unchangedLinesCount_one": "{{count}} unchanged line",
+    "unchangedLinesCount_other": "{{count}} unchanged lines"
+  },
+  "typedReferenceListEditor": {
+    "defTypeForRow": "Def type for row {{index}}",
+    "removeHyperlink": "Remove hyperlink {{index}}",
+    "addHyperlink": "Add hyperlink"
+  },
+  "unknownXmlFields": {
+    "heading": "Unknown fields ({{count}})"
+  },
+  "toolbar": {
+    "ariaLabel": "Editor toolbar",
+    "modeGroupAriaLabel": "Editor mode",
+    "formMode": "Form",
+    "xmlMode": "XML",
+    "newDef": "New Def",
+    "saveAsTemplate": "Save as Template",
+    "previewPatches": "Preview Patches",
+    "undo": "Undo",
+    "redo": "Redo",
+    "unsavedChanges": "Unsaved changes",
+    "previewSave": "Preview Save"
+  },
+  "rawEditor": {
+    "ariaLabel": "Raw XML editor"
+  },
+  "editorPane": {
+    "selectFilePrompt": "Select a file to view its contents.",
+    "openFilePrompt": "Open a file from the explorer.",
+    "loading": "Loading…",
+    "readOnlyBadge": "Read-only · {{locationName}}",
+    "aboutRootInvalid": "About.xml root element must be <ModMetaData>. Switch to XML to fix it.",
+    "defaultTemplateNameSuffix": "{{defType}} template",
+    "newTemplate": "New template"
+  },
+  "formEditor": {
+    "staleFormOnCommit": "Form changed while edits were being applied. Preview again.",
+    "noDefFound": "No Def found in this file.",
+    "hideField": "Hide {{label}}",
+    "hideFieldTitle": "Hide this field (Customize view)",
+    "hideSectionTitle": "Hide this section (Customize view)",
+    "defLabel": "Def",
+    "noSchemaAvailable": "No schema available for {{defType}}."
+  }
+}

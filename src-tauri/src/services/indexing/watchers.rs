@@ -43,6 +43,10 @@ pub(crate) fn restart_watchers_for_settings(
                     code: "watcher_path_invalid".into(),
                     message: format!("Cannot watch '{}': {}", location.root_path, e),
                     details: None,
+                    args: crate::diagnostics::diagnostic_args([(
+                        "path",
+                        location.root_path.as_str().into(),
+                    )]),
                 };
                 // Only fail hard for the active project location
                 let is_active = settings
@@ -80,6 +84,10 @@ pub(crate) fn restart_watchers_for_settings(
                     code: "watcher_setup_failed".into(),
                     message: format!("Failed to create watcher for '{}': {}", root.display(), e),
                     details: None,
+                    args: crate::diagnostics::diagnostic_args([(
+                        "path",
+                        root.to_string_lossy().into_owned().into(),
+                    )]),
                 };
                 let is_active = settings
                     .active_project_id
@@ -98,6 +106,10 @@ pub(crate) fn restart_watchers_for_settings(
                 code: "watcher_watch_failed".into(),
                 message: format!("Failed to watch '{}': {}", root.display(), e),
                 details: None,
+                args: crate::diagnostics::diagnostic_args([(
+                    "path",
+                    root.to_string_lossy().into_owned().into(),
+                )]),
             };
             let is_active = settings
                 .active_project_id

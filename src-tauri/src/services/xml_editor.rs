@@ -42,6 +42,7 @@ pub(crate) fn read_location_editor_document(
             code: "project_not_found".to_string(),
             message: format!("No registered project with id '{}'.", project_id),
             details: None,
+            args: crate::diagnostics::diagnostic_args([("projectId", project_id.into())]),
         });
     }
     let canonical = validate_and_resolve_location(&settings, &location_id, &relative_path)
@@ -50,6 +51,10 @@ pub(crate) fn read_location_editor_document(
         code: "file_read_failed".to_string(),
         message: e.to_string(),
         details: None,
+        args: crate::diagnostics::diagnostic_args([(
+            "path",
+            canonical.to_string_lossy().into_owned().into(),
+        )]),
     })?;
     let mut doc = parse_to_document(&relative_path, &contents);
     if !doc.had_fatal_parse_error {
@@ -108,6 +113,7 @@ pub(crate) fn apply_editor_edits(
             code: "xml_edit_failed".to_string(),
             message: e.to_string(),
             details: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         })?;
     }
     let new_xml = serialize_xml_document(&doc);
@@ -180,6 +186,7 @@ mod tests {
                 code: "xml_edit_failed".to_string(),
                 message: e.to_string(),
                 details: None,
+                args: crate::diagnostics::DiagnosticArgs::new(),
             })?;
         }
         let new_xml = serialize_xml_document(&doc);

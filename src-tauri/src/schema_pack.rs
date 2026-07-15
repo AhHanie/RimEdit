@@ -1,5 +1,6 @@
 mod cache;
 mod loader;
+mod locale;
 mod lookup;
 mod merge;
 mod model;
@@ -15,7 +16,7 @@ pub(crate) use lookup::{
 };
 #[allow(unused_imports)]
 pub(crate) use lookup::{lookup_object_field, lookup_object_field_inherited, lookup_object_type};
-use merge::merge_packs;
+use merge::merge_packs_with_locale;
 pub use model::SchemaCatalogLoadResult;
 pub(crate) use model::{
     DefTemplate, DefTypeSchema, FieldSchema, FieldType, FieldTypeKind, PatchOperationMetadata,
@@ -88,8 +89,8 @@ pub fn list_installed_schema_game_versions(extra_schema_roots: &[PathBuf]) -> Ve
 /// genuinely NEW validation diagnostic -- including a blocking one -- that never existed under
 /// the true unfiltered catalog. This is caught by treating an unresolvable selection as
 /// equivalent to `game_version: None` (return every pack, unfiltered) with an explanatory
-/// diagnostic, rather than only checking whether the *result* happens to be empty (see issue 09
-/// review round 2 and `schema_pack::tests::schema_mechanics`'s `unresolvable_game_version_*`
+/// diagnostic, rather than only checking whether the *result* happens to be empty (see
+/// `schema_pack::tests::schema_mechanics`'s `unresolvable_game_version_*`
 /// tests, which reproduce the conflicting-universal-pack scenario directly).
 fn filter_packs_by_game_version(
     packs: Vec<LoadedPack>,
@@ -145,10 +146,37 @@ fn filter_packs_by_game_version(
 /// Load built-in packs, discover and load external packs, optionally filter by game version,
 /// merge everything, and return the catalog with all diagnostics.
 ///
+/// Locale-neutral: applies locale overlays for `crate::locale::FALLBACK_LOCALE` only (via
+/// `merge_packs`). This is intentional, not an oversight -- per Plan.md's "Locale state and
+/// synchronization" section and issue 06 ("locale-aware catalog synchronization"), indexing,
+/// save/validation, patch computation, and diagnostic creation are structural/code+args consumers
+/// of the catalog, not display consumers, so they stay locale-neutral and keep calling this
+/// function. Only a genuine catalog *display* consumer -- today, the `load_schema_catalog` Tauri
+/// command and the per-keystroke XPath-completion cache (`SchemaCatalogCacheState`) -- needs
+/// [`build_schema_catalog_with_locale`] instead.
+///
 /// See [`filter_packs_by_game_version`] for the exact filtering/fallback policy.
 pub fn build_schema_catalog(
     extra_schema_roots: &[PathBuf],
     game_version: Option<&str>,
+) -> SchemaCatalogLoadResult {
+    build_schema_catalog_with_locale(extra_schema_roots, game_version, None)
+}
+
+/// Same as [`build_schema_catalog`], but resolves `locale` through the application locale
+/// registry (`crate::locale::resolve_locale`, falling back to `crate::locale::FALLBACK_LOCALE`
+/// for `None`/unsupported values -- see issue 06's "validate/fallback according to the
+/// application locale policy") and threads the resolved locale into schema-overlay resolution.
+///
+/// `locale` here is the app's active UI locale (`ProjectSettings.locale`/the frontend's
+/// `useLocale()` value), not a schema pack's own declared sidecar locale tags -- those are a
+/// broader, separately-validated BCP-47 shape (see `schema_pack::locale::is_plausible_locale_tag`)
+/// and are loaded/validated for every locale a pack ships, regardless of which locale the app can
+/// currently select.
+pub fn build_schema_catalog_with_locale(
+    extra_schema_roots: &[PathBuf],
+    game_version: Option<&str>,
+    locale: Option<&str>,
 ) -> SchemaCatalogLoadResult {
     let mut all_diags: Vec<SchemaLoadDiagnostic> = Vec::new();
 
@@ -160,10 +188,22 @@ pub fn build_schema_catalog(
 
     let all_raw: Vec<LoadedPack> = built_in_packs.into_iter().chain(external_packs).collect();
     let filtered = filter_packs_by_game_version(all_raw, game_version, &mut all_diags);
-    let catalog = merge_packs(filtered, &mut all_diags);
+    let resolved_locale = resolve_catalog_locale(locale);
+    let catalog = merge_packs_with_locale(filtered, &mut all_diags, &resolved_locale);
 
     SchemaCatalogLoadResult {
         catalog,
         diagnostics: all_diags,
     }
+}
+
+/// Resolve a caller-supplied locale (e.g. from the `load_schema_catalog` Tauri command's
+/// argument) against the application locale registry, falling back deterministically to
+/// `crate::locale::FALLBACK_LOCALE` for `None` or an unsupported value. Shared by
+/// [`build_schema_catalog_with_locale`] and `SchemaCatalogCacheState` so both compute the exact
+/// same cache-key-worthy value.
+pub(crate) fn resolve_catalog_locale(locale: Option<&str>) -> String {
+    locale
+        .map(crate::locale::resolve_locale)
+        .unwrap_or_else(|| crate::locale::FALLBACK_LOCALE.to_string())
 }

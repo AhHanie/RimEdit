@@ -20,7 +20,7 @@
 //!   `patches::serializer`/`patches::custom_metadata`.
 
 use crate::xml_document::model::{build_child_view, XmlChildView, XmlNodeKind};
-use crate::xml_document::{parse_to_document, InitialElement, NameValuePair};
+use crate::xml_document::{parse_to_document, InitialElement, NameValuePair, ParseDiagnostic};
 
 use super::serializer::{escape_attr, escape_text, indent};
 
@@ -44,17 +44,29 @@ const FRAGMENT_SOURCE_LABEL: &str = "<patch-value-fragment>";
 /// callers must not offer structured editing for a value that isn't well-formed XML in the first
 /// place, since `quick_xml`'s recovery can still emit a partial tree for badly malformed input,
 /// which would otherwise let the frontend silently rewrite (and lose) the original malformed text.
-pub fn parse_value_fragment(value_xml: &str) -> Result<Vec<XmlChildView>, String> {
+///
+/// The `Err` is the underlying [`ParseDiagnostic`] the shared XML parser already produced (same
+/// `parse_xml_syntax_error`/`parse_unexpected_eof`/etc. codes `parse_xml_document` surfaces for a
+/// real file), not a bare `String` -- so the caller can build a translatable, catalog-backed
+/// `AppError` (`code` + `args`) instead of showing raw parser text as the primary message. Its
+/// `relativePath`/`line`/`column` refer to the synthetic wrapper document, not a real file, and are
+/// not meaningful to callers.
+pub fn parse_value_fragment(value_xml: &str) -> Result<Vec<XmlChildView>, Box<ParseDiagnostic>> {
     let wrapped = format!("<{WRAPPER_TAG}>{value_xml}</{WRAPPER_TAG}>");
     let doc = parse_to_document(FRAGMENT_SOURCE_LABEL, &wrapped);
 
     if doc.had_fatal_parse_error {
-        let message = doc
-            .parse_diagnostics
-            .first()
-            .map(|d| d.message.clone())
-            .unwrap_or_else(|| "The value is not well-formed XML.".to_string());
-        return Err(message);
+        let diagnostic = doc.parse_diagnostics.first().cloned().unwrap_or_else(|| {
+            ParseDiagnostic::new(
+                FRAGMENT_SOURCE_LABEL,
+                None,
+                None,
+                None,
+                "parse_xml_syntax_error",
+                "The value is not well-formed XML.",
+            )
+        });
+        return Err(Box::new(diagnostic));
     }
 
     let Some(&root_id) = doc
@@ -198,6 +210,30 @@ mod tests {
         // partial tree the recovery path produced (which would let the frontend rewrite this
         // malformed text as different, "valid" XML without ever surfacing that it was broken).
         assert!(parse_value_fragment("<statBases><MaxHitPoints>300</statBases>").is_err());
+    }
+
+    #[test]
+    fn malformed_fragment_error_carries_a_catalog_backed_code_not_just_raw_parser_text() {
+        // The `Err` must be the shared parser's own structured `ParseDiagnostic` (same
+        // `parse_xml_syntax_error`/`parse_unexpected_eof`/etc. codes a real file's parse failure
+        // gets) -- not a bare, uncatalogued `String` -- so the command layer can build a
+        // translatable `AppError` instead of showing raw English parser text as the primary
+        // message. See `commands::patches::parse_patch_value_xml`.
+        let err = match parse_value_fragment("<statBases><MaxHitPoints>300</statBases>") {
+            Err(e) => e,
+            Ok(_) => panic!("expected a parse error"),
+        };
+        assert!(
+            matches!(
+                err.code.as_str(),
+                "parse_xml_syntax_error" | "parse_unexpected_eof"
+            ),
+            "expected a known catalog-backed parse error code, got: {}",
+            err.code
+        );
+        // The raw parser message is still attached, but only as optional technical detail --
+        // never the sole signal a caller has to render.
+        assert!(!err.message.is_empty());
     }
 
     #[test]

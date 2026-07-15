@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type {
   AboutMetadataView,
@@ -30,6 +31,7 @@ export function AboutEditorPane({
   applyFormEdit,
   registerFlush,
 }: Props) {
+  const { t } = useTranslation("editor");
   const rootRef = useRef<HTMLDivElement>(null);
   const editor = useAboutEditor(
     applyFormEdit,
@@ -43,15 +45,19 @@ export function AboutEditorPane({
   return (
     <div className={styles.root} ref={rootRef}>
       <div className={styles.header}>
-        <span className={styles.modName}>{fields.name.value || "(unnamed mod)"}</span>
-        <span className={styles.packageId}>{fields.packageId.value || "(no packageId)"}</span>
+        <span className={styles.modName}>{fields.name.value || t("about.pane.unnamedMod")}</span>
+        <span className={styles.packageId}>{fields.packageId.value || t("about.pane.noPackageId")}</span>
         <span className={styles.supportBadge}>
           {supportedCount > 0
-            ? `${supportedCount} supported version${supportedCount === 1 ? "" : "s"}`
-            : "No supported versions"}
+            ? t("about.pane.supportedVersionCount", { count: supportedCount })
+            : t("about.pane.noSupportedVersions")}
         </span>
         {readOnly && (
-          <span className={styles.readOnlyBadge}>Read-only{locationName ? ` · ${locationName}` : ""}</span>
+          <span className={styles.readOnlyBadge}>
+            {locationName
+              ? t("about.pane.readOnlyBadgeWithLocation", { locationName })
+              : t("about.pane.readOnlyBadge")}
+          </span>
         )}
       </div>
       <div className={styles.scroll}>
@@ -73,18 +79,23 @@ export function AboutEditorPane({
 
 function UnknownAboutFields({ items }: { items: AboutMetadataView["unknownChildren"] }) {
   const [expanded, setExpanded] = useState(false);
+  const { t } = useTranslation("editor");
   return (
     <div className={styles.unknownSection}>
       <button className={styles.unknownHeader} onClick={() => setExpanded((v) => !v)} aria-expanded={expanded}>
         {expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-        <span>Unknown top-level elements ({items.length})</span>
+        <span>{t("about.pane.unknownElements", { count: items.length })}</span>
       </button>
       {expanded && (
         <ul className={styles.unknownList}>
           {items.map((item) => (
             <li key={item.nodeId} className={styles.unknownItem}>
               {`<${item.name}>`}
-              {item.line != null && <span className={styles.unknownLine}> (line {item.line})</span>}
+              {item.line != null && (
+                <span className={styles.unknownLine}>
+                  {t("about.pane.unknownElementLine", { line: item.line })}
+                </span>
+              )}
             </li>
           ))}
         </ul>

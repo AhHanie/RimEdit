@@ -2,6 +2,7 @@ use super::asset_protocol::{
     content_type_for_texture, extract_asset_token, is_browser_preview_supported, preview_asset_url,
     read_preview_asset, AssetTokenCache,
 };
+use super::model::{Direction, GraphicPreviewLabel, StackSlot};
 use super::paths::normalize_texture_path;
 use super::resolve_graphic_preview_assets;
 use crate::project_model::{LocationKind, ProjectSettings, RegisteredLocation, SourceType};
@@ -127,8 +128,9 @@ fn make_settings(
     active_project_id: Option<&str>,
 ) -> ProjectSettings {
     ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations,
         active_project_id: active_project_id.map(str::to_owned),
     }
@@ -668,7 +670,7 @@ fn graphic_multi_falls_back_to_base_when_all_directions_missing() {
     assert!(result
         .warnings
         .iter()
-        .any(|w| w.contains("fell back to single texture")));
+        .any(|w| w.code == "graphic_preview_directional_fallback_to_single"));
 }
 
 // -- folder collection --
@@ -896,11 +898,29 @@ fn folder_collection_directional_files_are_grouped_with_direction_labels() {
         .iter()
         .find(|v| v.relative_texture_path.contains("B.png"))
         .expect("B variant");
-    assert_eq!(a_north.label, "Variant 1 North");
-    assert_eq!(a_south.label, "Variant 1 South");
+    assert_eq!(
+        a_north.label,
+        GraphicPreviewLabel::Variant {
+            index: 1,
+            direction: Some(Direction::North)
+        }
+    );
+    assert_eq!(
+        a_south.label,
+        GraphicPreviewLabel::Variant {
+            index: 1,
+            direction: Some(Direction::South)
+        }
+    );
     assert_eq!(a_north.role, "north");
     assert_eq!(a_south.role, "south");
-    assert_eq!(b.label, "Variant 2");
+    assert_eq!(
+        b.label,
+        GraphicPreviewLabel::Variant {
+            index: 2,
+            direction: None
+        }
+    );
     assert_eq!(b.role, "variant");
 }
 
@@ -936,7 +956,13 @@ fn folder_collection_excludes_directional_mask_stems() {
         .iter()
         .any(|v| v.relative_texture_path.contains("_northm")));
     assert_eq!(result.variants[0].role, "north");
-    assert_eq!(result.variants[0].label, "Variant 1 North");
+    assert_eq!(
+        result.variants[0].label,
+        GraphicPreviewLabel::Variant {
+            index: 1,
+            direction: Some(Direction::North)
+        }
+    );
 }
 
 #[test]
@@ -967,20 +993,29 @@ fn stack_count_uses_semantic_labels() {
     .unwrap();
 
     assert_eq!(result.variants.len(), 3);
-    let labels: Vec<&str> = result.variants.iter().map(|v| v.label.as_str()).collect();
+    let labels: Vec<&GraphicPreviewLabel> = result.variants.iter().map(|v| &v.label).collect();
     assert!(
-        labels.contains(&"Stack 1"),
-        "expected 'Stack 1', got {:?}",
+        labels.contains(&&GraphicPreviewLabel::Stack {
+            stack: StackSlot::Single,
+            direction: None
+        }),
+        "expected Stack::Single, got {:?}",
         labels
     );
     assert!(
-        labels.contains(&"Stack partial"),
-        "expected 'Stack partial', got {:?}",
+        labels.contains(&&GraphicPreviewLabel::Stack {
+            stack: StackSlot::Partial,
+            direction: None
+        }),
+        "expected Stack::Partial, got {:?}",
         labels
     );
     assert!(
-        labels.contains(&"Stack full"),
-        "expected 'Stack full', got {:?}",
+        labels.contains(&&GraphicPreviewLabel::Stack {
+            stack: StackSlot::Full,
+            direction: None
+        }),
+        "expected Stack::Full, got {:?}",
         labels
     );
 }
@@ -1015,21 +1050,25 @@ fn appearances_returns_candidates_with_suffix_labels() {
 
     assert_eq!(result.variants.len(), 2);
     assert!(result.variants.iter().all(|v| v.role == "appearance"));
-    let labels: Vec<&str> = result.variants.iter().map(|v| v.label.as_str()).collect();
+    let labels: Vec<&GraphicPreviewLabel> = result.variants.iter().map(|v| &v.label).collect();
     assert!(
-        labels.contains(&"Wood"),
-        "expected 'Wood', got {:?}",
+        labels.contains(&&GraphicPreviewLabel::AppearanceNamed {
+            suffix: "Wood".to_string()
+        }),
+        "expected AppearanceNamed('Wood'), got {:?}",
         labels
     );
     assert!(
-        labels.contains(&"Metal"),
-        "expected 'Metal', got {:?}",
+        labels.contains(&&GraphicPreviewLabel::AppearanceNamed {
+            suffix: "Metal".to_string()
+        }),
+        "expected AppearanceNamed('Metal'), got {:?}",
         labels
     );
     assert!(result
         .warnings
         .iter()
-        .any(|w| w.contains("StuffAppearanceDef")));
+        .any(|w| w.code == "graphic_preview_appearances_prefix_unimplemented"));
 }
 
 #[test]
@@ -1058,7 +1097,10 @@ fn appearances_empty_folder_returns_missing_placeholder() {
     assert_eq!(result.variants.len(), 1);
     assert_eq!(result.variants[0].missing, Some(true));
     assert_eq!(result.variants[0].role, "appearance");
-    assert_eq!(result.variants[0].label, "Appearance 1");
+    assert_eq!(
+        result.variants[0].label,
+        GraphicPreviewLabel::Appearance { index: 1 }
+    );
 }
 
 // -- Special wrapper --
@@ -1093,7 +1135,7 @@ fn graphic_linked_returns_base_single_with_warning() {
     assert!(result
         .warnings
         .iter()
-        .any(|w| w.contains("runtime context")));
+        .any(|w| w.code == "graphic_preview_special_wrapper_unsupported"));
 }
 
 #[test]
@@ -1126,7 +1168,7 @@ fn graphic_linked_corner_overlay_returns_base_single_and_warning() {
     assert!(result
         .warnings
         .iter()
-        .any(|w| w.contains("runtime context")));
+        .any(|w| w.code == "graphic_preview_special_wrapper_unsupported"));
 }
 
 #[test]
@@ -1159,7 +1201,7 @@ fn graphic_random_rotated_returns_base_single_with_warning() {
     assert!(result
         .warnings
         .iter()
-        .any(|w| w.contains("runtime context")));
+        .any(|w| w.code == "graphic_preview_special_wrapper_unsupported"));
 }
 
 #[test]
@@ -1222,7 +1264,7 @@ fn unknown_class_warns_and_falls_back_to_single() {
     assert!(result
         .warnings
         .iter()
-        .any(|w| w.contains("Unknown graphic class")));
+        .any(|w| w.code == "graphic_preview_unknown_graphic_class"));
 }
 
 // -- path traversal rejected --
@@ -1247,7 +1289,7 @@ fn invalid_traversal_path_returns_error() {
         None,
     )
     .unwrap_err();
-    assert_eq!(err.code, "invalid_texture_path");
+    assert_eq!(err.code, "texture_path_parent_dir_component");
 }
 
 // -- preview_asset_url --
@@ -1360,7 +1402,7 @@ fn no_textures_dir_emits_warning() {
     assert!(result
         .warnings
         .iter()
-        .any(|w| w.contains("no Textures directory")));
+        .any(|w| w.code == "graphic_preview_missing_textures_directory"));
 }
 
 // -- version-folder root fallback --
@@ -1585,20 +1627,29 @@ fn fixture_stack_count_uses_semantic_labels() {
         3,
         "stack strategy must return three variants"
     );
-    let labels: Vec<&str> = result.variants.iter().map(|v| v.label.as_str()).collect();
+    let labels: Vec<&GraphicPreviewLabel> = result.variants.iter().map(|v| &v.label).collect();
     assert!(
-        labels.contains(&"Stack 1"),
-        "expected 'Stack 1' in {:?}",
+        labels.contains(&&GraphicPreviewLabel::Stack {
+            stack: StackSlot::Single,
+            direction: None
+        }),
+        "expected Stack::Single in {:?}",
         labels
     );
     assert!(
-        labels.contains(&"Stack partial"),
-        "expected 'Stack partial' in {:?}",
+        labels.contains(&&GraphicPreviewLabel::Stack {
+            stack: StackSlot::Partial,
+            direction: None
+        }),
+        "expected Stack::Partial in {:?}",
         labels
     );
     assert!(
-        labels.contains(&"Stack full"),
-        "expected 'Stack full' in {:?}",
+        labels.contains(&&GraphicPreviewLabel::Stack {
+            stack: StackSlot::Full,
+            direction: None
+        }),
+        "expected Stack::Full in {:?}",
         labels
     );
 }
@@ -1655,7 +1706,7 @@ fn fixture_unknown_class_warns_and_falls_back_to_single() {
         result
             .warnings
             .iter()
-            .any(|w| w.contains("Unknown graphic class")),
+            .any(|w| w.code == "graphic_preview_unknown_graphic_class"),
         "unknown class must produce a warning: {:?}",
         result.warnings
     );

@@ -6,6 +6,7 @@ import {
   useCallback,
   type CSSProperties,
 } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FolderOpen,
   FolderPlus,
@@ -24,6 +25,7 @@ import {
   pickSourceFolder,
   useProjectSettings,
   ProjectSettingsPanel,
+  type ProjectSettingsLoadResult,
 } from "../../../features/project-settings";
 import {
   EditorWorkspace,
@@ -35,6 +37,7 @@ import type {
 } from "../../../features/editor-workspace";
 import { useSchemaCatalog } from "../../../features/schema-catalog";
 import { useTheme } from "../../../hooks/useTheme";
+import { useLocale } from "../../../i18n/LocaleProvider";
 import { confirmDiscardChanges } from "../../../lib/confirmDiscardChanges";
 import {
   buildFileTree,
@@ -55,7 +58,16 @@ import { usePersistentLayoutState } from "../layout/usePersistentLayoutState";
 import { LAYOUT_DEFAULTS } from "../layout/layoutState";
 import styles from "./AppShell.module.css";
 
-export function AppShell() {
+export interface AppShellProps {
+  /** Forwarded to `useProjectSettings` -- see that hook's doc comment. Set by `main.tsx`'s
+   * pre-`LocaleProvider` bootstrap fetch so the initial locale sync effect below never has
+   * anything to reconcile (`settings.locale` and the provider's `initialLocale` come from the
+   * same resolved settings) and so `get_project_settings` is only ever called once at startup. */
+  initialProjectSettingsPromise?: Promise<ProjectSettingsLoadResult>;
+}
+
+export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) {
+  const { t } = useTranslation(["shell", "common"]);
   const {
     settings,
     loading,
@@ -68,7 +80,7 @@ export function AppShell() {
     editLocation,
     updateGameVersion,
     installedSchemaVersions,
-  } = useProjectSettings();
+  } = useProjectSettings(initialProjectSettingsPromise);
   const activeProjectId = settings?.activeProjectId;
   const activeLocation = settings?.locations.find(
     (l) => l.id === activeProjectId,
@@ -88,8 +100,38 @@ export function AppShell() {
     () => settings?.locations.map((l) => l.rootPath) ?? [],
     [settings?.locations],
   );
-  const { catalog } = useSchemaCatalog(extraSchemaRoots, settings?.gameVersion);
   const { mode: themeMode, setMode, cycleMode: cycleTheme } = useTheme();
+  const { locale, changeLocale } = useLocale();
+  // Locale is threaded through so catalog labels/descriptions reload for the active locale
+  // (issue 06); `useSchemaCatalog` discards any in-flight response superseded by a newer switch.
+  const { catalog } = useSchemaCatalog(extraSchemaRoots, settings?.gameVersion, locale);
+
+  // Defensive fallback only: `main.tsx` already resolves the persisted locale from the very same
+  // `get_project_settings` call (via `initialProjectSettingsPromise` above) and passes it as
+  // `LocaleProvider`'s `initialLocale` *before* this component -- and its locale-sensitive
+  // `useSchemaCatalog` call above -- ever mounts, so `settings.locale` and `locale` already agree
+  // by the time this effect's condition is evaluated in the normal startup path (Plan.md: "the
+  // settings command returns the saved locale before locale-sensitive catalog loading"). This
+  // only does anything when a caller renders `AppShell` without going through that bootstrap
+  // (e.g. a future test harness that mounts it under a plain `LocaleProvider` default), in which
+  // case it still reconciles the provider to the loaded settings' locale rather than leaving it
+  // English forever. Only runs once per app lifetime (guarded, like `useProjectSettings`' own
+  // load effect, against React StrictMode's double-invoked effects).
+  const hasAppliedPersistedLocaleRef = useRef(false);
+  useEffect(() => {
+    if (hasAppliedPersistedLocaleRef.current) return;
+    if (!settings) return;
+    hasAppliedPersistedLocaleRef.current = true;
+    if (settings.locale !== locale) {
+      // `changeLocale` also persists the (unchanged) resolved value back through
+      // `persistLocale` -- normally a no-op round-trip, but its rejection must not vanish
+      // silently, so surface it the same way every other best-effort startup failure in this
+      // component is surfaced (see `handleAddSourceFolder`/`handleOpenProject` above).
+      changeLocale(settings.locale).catch((e: unknown) => {
+        console.error("Failed to apply persisted locale on startup:", e);
+      });
+    }
+  }, [settings, locale, changeLocale]);
 
   const [activeView, setActiveView] = useState<ActivityView | null>("explorer");
   const [fileFilterQuery, setFileFilterQuery] = useState("");
@@ -137,10 +179,11 @@ export function AppShell() {
       workspace.scan
         ? buildFileTree(
             workspace.scan,
-            activeLocation?.displayName ?? "Project",
+            activeLocation?.displayName ?? t("shell:explorer.projectFallbackName"),
+            locale,
           )
         : null,
-    [workspace.scan, activeLocation?.displayName],
+    [workspace.scan, activeLocation?.displayName, t, locale],
   );
 
   const filteredFiles = useMemo(
@@ -151,7 +194,7 @@ export function AppShell() {
 
   const activeTab = useMemo(
     () =>
-      workspace.tabs.find((t) => t.tabKey === workspace.activeTabKey) ?? null,
+      workspace.tabs.find((tab) => tab.tabKey === workspace.activeTabKey) ?? null,
     [workspace.tabs, workspace.activeTabKey],
   );
   // Only highlight project files in the explorer and status bar; source tabs
@@ -222,9 +265,7 @@ export function AppShell() {
     try {
       if (
         hasDirtyTabs &&
-        !(await confirmDiscardChanges(
-          "Open another project and discard unsaved changes?",
-        ))
+        !(await confirmDiscardChanges(t("shell:confirm.openAnotherProject")))
       ) {
         return;
       }
@@ -234,7 +275,7 @@ export function AppShell() {
     } catch (e: unknown) {
       console.error("Failed to open project:", e);
     }
-  }, [activateProject, hasDirtyTabs]);
+  }, [activateProject, hasDirtyTabs, t]);
 
   function fileEntryToOpenFileRef(file: ProjectFileEntry): OpenFileRef {
     return {
@@ -352,44 +393,44 @@ export function AppShell() {
     () => [
       {
         id: "open-project",
-        label: "Open Project",
-        keywords: ["folder", "open", "browse"],
+        labelKey: "shell:commands.openProject.label",
+        keywordsKey: "shell:commands.openProject.keywords",
         icon: FolderOpen,
         run: handleOpenProject,
       },
       {
         id: "add-source-folder",
-        label: "Add Source Folder",
-        keywords: ["source", "reference", "readonly", "folder", "index"],
+        labelKey: "shell:commands.addSourceFolder.label",
+        keywordsKey: "shell:commands.addSourceFolder.keywords",
         icon: FolderPlus,
         run: handleAddSourceFolder,
       },
       {
         id: "refresh",
-        label: "Refresh Project Files",
-        keywords: ["scan", "reload", "refresh"],
+        labelKey: "shell:commands.refresh.label",
+        keywordsKey: "shell:commands.refresh.keywords",
         icon: RefreshCw,
         run: workspace.refresh,
         disabled: !activeProjectId,
       },
       {
         id: "open-settings",
-        label: "Open Settings",
-        keywords: ["settings", "locations", "sources", "projects", "configure"],
+        labelKey: "shell:commands.openSettings.label",
+        keywordsKey: "shell:commands.openSettings.keywords",
         icon: Settings,
         run: () => setActiveView("settings"),
       },
       {
         id: "toggle-explorer",
-        label: "Toggle Explorer",
-        keywords: ["sidebar", "panel", "files", "toggle"],
+        labelKey: "shell:commands.toggleExplorer.label",
+        keywordsKey: "shell:commands.toggleExplorer.keywords",
         icon: PanelLeft,
         run: () => setActiveView((v) => (v === "explorer" ? null : "explorer")),
       },
       {
         id: "focus-search",
-        label: "Focus Def Search",
-        keywords: ["filter", "find", "search", "def"],
+        labelKey: "shell:commands.focusSearch.label",
+        keywordsKey: "shell:commands.focusSearch.keywords",
         icon: Search,
         run: () => {
           setActiveView("search");
@@ -398,29 +439,29 @@ export function AppShell() {
       },
       {
         id: "theme-light",
-        label: "Theme: Light",
-        keywords: ["color", "appearance", "light"],
+        labelKey: "shell:commands.themeLight.label",
+        keywordsKey: "shell:commands.themeLight.keywords",
         icon: Sun,
         run: () => setMode("light"),
       },
       {
         id: "theme-dark",
-        label: "Theme: Dark",
-        keywords: ["color", "appearance", "dark"],
+        labelKey: "shell:commands.themeDark.label",
+        keywordsKey: "shell:commands.themeDark.keywords",
         icon: Moon,
         run: () => setMode("dark"),
       },
       {
         id: "theme-system",
-        label: "Theme: System",
-        keywords: ["color", "appearance", "system", "auto"],
+        labelKey: "shell:commands.themeSystem.label",
+        keywordsKey: "shell:commands.themeSystem.keywords",
         icon: Monitor,
         run: () => setMode("system"),
       },
       {
         id: "create-def",
-        label: "Create Def from Template",
-        keywords: ["new", "def", "template", "insert", "create", "add"],
+        labelKey: "shell:commands.createDef.label",
+        keywordsKey: "shell:commands.createDef.keywords",
         icon: FilePlus,
         run: () => setCreateDefSignal((s) => s + 1),
         disabled: !activeProjectId || !activeTab || activeTab.readOnly,
@@ -455,15 +496,17 @@ export function AppShell() {
         {startupNotice && (
           <div className={styles.startupNotice}>
             <span className={styles.startupNoticeMessage}>
-              Project folder not found: {startupNotice.displayName} (
-              {startupNotice.rootPath})
+              {t("shell:startupNotice.projectNotFound", {
+                displayName: startupNotice.displayName,
+                rootPath: startupNotice.rootPath,
+              })}
             </span>
             <button
               className="icon-btn"
               style={{ width: 20, height: 20, flexShrink: 0 }}
               onClick={clearStartupNotice}
-              aria-label="Dismiss project notice"
-              title="Dismiss project notice"
+              aria-label={t("shell:startupNotice.dismiss")}
+              title={t("shell:startupNotice.dismiss")}
             >
               <X size={12} />
             </button>
@@ -513,18 +556,16 @@ export function AppShell() {
             }}
             onRename={async (relativePath, newName, kind) => {
               const affectedDirty = workspace.tabs.filter(
-                (t) =>
-                  t.dirty &&
-                  t.sourceKind === "project" &&
-                  (t.relativePath === relativePath ||
-                    t.relativePath.startsWith(relativePath + "/")),
+                (tab) =>
+                  tab.dirty &&
+                  tab.sourceKind === "project" &&
+                  (tab.relativePath === relativePath ||
+                    tab.relativePath.startsWith(relativePath + "/")),
               );
               if (affectedDirty.length > 0) {
-                const noun =
-                  affectedDirty.length === 1 ? "file has" : "files have";
                 if (
                   !(await confirmDiscardChanges(
-                    `${affectedDirty.length} open ${noun} unsaved changes. Rename and discard them?`,
+                    t("shell:confirm.renameDiscard", { count: affectedDirty.length }),
                   ))
                 )
                   return;
@@ -535,31 +576,29 @@ export function AppShell() {
                 kind,
               );
               if (affectedDirty.length > 0) {
-                workspace.forceCloseTabs(affectedDirty.map((t) => t.tabKey));
+                workspace.forceCloseTabs(affectedDirty.map((tab) => tab.tabKey));
               }
               workspace.reconcileRename(result.oldPath, result.newPath);
             }}
             onDelete={async (relativePath, kind) => {
               const affectedDirty = workspace.tabs.filter(
-                (t) =>
-                  t.dirty &&
-                  t.sourceKind === "project" &&
-                  (t.relativePath === relativePath ||
-                    t.relativePath.startsWith(relativePath + "/")),
+                (tab) =>
+                  tab.dirty &&
+                  tab.sourceKind === "project" &&
+                  (tab.relativePath === relativePath ||
+                    tab.relativePath.startsWith(relativePath + "/")),
               );
               if (affectedDirty.length > 0) {
-                const noun =
-                  affectedDirty.length === 1 ? "file has" : "files have";
                 if (
                   !(await confirmDiscardChanges(
-                    `${affectedDirty.length} open ${noun} unsaved changes. Delete and discard them?`,
+                    t("shell:confirm.deleteDiscard", { count: affectedDirty.length }),
                   ))
                 )
                   return;
               }
               await workspace.deletePath(relativePath, kind);
               if (affectedDirty.length > 0) {
-                workspace.forceCloseTabs(affectedDirty.map((t) => t.tabKey));
+                workspace.forceCloseTabs(affectedDirty.map((tab) => tab.tabKey));
               }
               workspace.reconcileDelete(relativePath);
             }}
@@ -599,9 +638,11 @@ export function AppShell() {
             loadError={settingsLoadError}
             hasDirtyTabs={hasDirtyTabs}
             installedSchemaVersions={installedSchemaVersions}
+            locale={locale}
             onEditLocation={editLocation}
             onRemoveLocation={deleteLocation}
             onUpdateGameVersion={updateGameVersion}
+            onChangeLocale={changeLocale}
             onOpenProject={handleOpenProject}
             onAddSourceFolder={handleAddSourceFolder}
           />

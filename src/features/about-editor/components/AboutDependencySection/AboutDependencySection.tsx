@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, Trash2 } from "lucide-react";
 import type { AboutDependency, ValidationDiagnostic } from "../../../xml-editor/types/xmlDocument";
 import type { AboutEditor, NewDependencyFields } from "../../hooks/useAboutEditor";
 import { diagnosticsForNode } from "../../lib/aboutValidationText";
+import { renderDiagnostic } from "../../../../i18n/diagnostics";
 import { AboutStringListField } from "../AboutStringListField/AboutStringListField";
 import styles from "./AboutDependencySection.module.css";
 
@@ -15,18 +17,21 @@ interface Props {
 
 export function AboutDependencySection({ dependencies, diagnostics, readOnly, editor }: Props) {
   const [adding, setAdding] = useState(false);
+  const { t } = useTranslation("editor");
 
   return (
     <section className={styles.section}>
       <div className={styles.headingRow}>
-        <h3 className={styles.heading}>Dependencies</h3>
+        <h3 className={styles.heading}>{t("about.dependencies.heading")}</h3>
         {!readOnly && !adding && (
           <button type="button" className={styles.addButton} onClick={() => setAdding(true)}>
-            <Plus size={12} /> Add dependency
+            <Plus size={12} /> {t("about.dependencies.addDependency")}
           </button>
         )}
       </div>
-      {dependencies.length === 0 && !adding && <p className={styles.empty}>No dependencies.</p>}
+      {dependencies.length === 0 && !adding && (
+        <p className={styles.empty}>{t("about.dependencies.empty")}</p>
+      )}
       {dependencies.map((dep) => (
         <DependencyRow
           key={dep.nodeId}
@@ -57,6 +62,13 @@ interface RowProps {
 }
 
 function DependencyRow({ dependency, readOnly, editor, diagnostics }: RowProps) {
+  // Two separate single-namespace hooks (rather than `useTranslation(["diagnostics", "editor"])`
+  // with `"editor:key"`-prefixed lookups) because TypeScript's cross-namespace `"ns:key"` typed
+  // overload becomes unusable once a namespace's key set grows large (see `editor.json`) -- it
+  // silently fails to type-check even for keys that genuinely exist. Bare keys scoped to their
+  // own single-namespace `t` avoid that entirely.
+  const { i18n } = useTranslation("diagnostics");
+  const { t } = useTranslation("editor");
   const [packageId, setPackageId] = useState(dependency.packageId ?? "");
   const [displayName, setDisplayName] = useState(dependency.displayName ?? "");
   const [downloadUrl, setDownloadUrl] = useState(dependency.downloadUrl ?? "");
@@ -126,14 +138,14 @@ function DependencyRow({ dependency, readOnly, editor, diagnostics }: RowProps) 
             type="button"
             className={styles.removeBtn}
             onClick={() => editor.removeDependency(dependency.nodeId)}
-            aria-label="Remove dependency"
+            aria-label={t("about.dependencies.removeDependency")}
           >
             <Trash2 size={13} />
           </button>
         )}
       </div>
       <AboutStringListField
-        label="Alternative package IDs"
+        label={t("about.dependencies.alternativePackageIds")}
         items={dependency.alternativePackageIds}
         readOnly={readOnly}
         placeholder="old.package.id"
@@ -143,7 +155,7 @@ function DependencyRow({ dependency, readOnly, editor, diagnostics }: RowProps) 
         <ul className={styles.diagnostics}>
           {diagnostics.map((d, i) => (
             <li key={i} className={d.severity === "Error" ? styles.diagError : styles.diagWarning}>
-              {d.message}
+              {renderDiagnostic(d, i18n)}
             </li>
           ))}
         </ul>
@@ -164,6 +176,7 @@ function NewDependencyRow({
   const [downloadUrl, setDownloadUrl] = useState("");
   const [steamWorkshopUrl, setSteamWorkshopUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { t: tCommon } = useTranslation("common");
 
   return (
     <div className={styles.row}>
@@ -208,10 +221,10 @@ function NewDependencyRow({
             });
           }}
         >
-          Add
+          {tCommon("actions.add")}
         </button>
         <button type="button" className={styles.cancelBtn} onClick={onCancel} disabled={submitting}>
-          Cancel
+          {tCommon("actions.cancel")}
         </button>
       </div>
     </div>

@@ -7,17 +7,17 @@
 }
 
 .field[data-dirty] {
-  border-left: 2px solid var(--accent);
-  padding-left: 8px;
+  border-inline-start: 2px solid var(--accent);
+  padding-inline-start: 8px;
 }
 
 .field[data-nested] {
-  padding-left: 16px;
-  border-left: 2px solid var(--border-subtle);
+  padding-inline-start: 16px;
+  border-inline-start: 2px solid var(--border-subtle);
 }
 
 .field[data-nested][data-dirty] {
-  border-left: 2px solid var(--accent);
+  border-inline-start: 2px solid var(--accent);
 }
 
 .field:last-child {

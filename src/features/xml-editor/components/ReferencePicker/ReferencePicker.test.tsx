@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { invoke } from "@tauri-apps/api/core";
 import { ReferencePicker } from "./ReferencePicker";
 import type { DefReferenceSuggestion } from "../../../def-index/types";

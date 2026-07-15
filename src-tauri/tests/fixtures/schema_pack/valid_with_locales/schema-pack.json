@@ -1,0 +1,9 @@
+{
+  "formatVersion": 1,
+  "packId": "test.with_locales",
+  "name": "Test Pack With Locales",
+  "version": "0.1.0",
+  "priority": 0,
+  "defTypeDirectories": ["def-types"],
+  "localesDirectory": "locales"
+}

@@ -1,3 +1,5 @@
+import type { DiagnosticArgs } from "../../lib/diagnostics";
+
 export type SchemaLoadSeverity = "Error" | "Warning" | "Info";
 
 export interface SchemaLoadDiagnostic {
@@ -7,6 +9,8 @@ export interface SchemaLoadDiagnostic {
   packId?: string;
   path?: string;
   fieldPath?: string;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 export type FieldTypeKind =

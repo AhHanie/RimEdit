@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import { filterOperationTypeOptions, listOperationTypeOptions } from "../../lib/operationLabels";
 import styles from "./PatchOperationTypePicker.module.css";
@@ -13,6 +14,10 @@ interface Props {
  * classes from the schema catalog (satisfies the "operation type selector should be searchable"
  * UX note). */
 export function PatchOperationTypePicker({ catalog, onSelect, onCancel }: Props) {
+  // Two separate single-namespace hooks, not `useTranslation(["patches", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("patches");
+  const { t: tCommon } = useTranslation("common");
   const [query, setQuery] = useState("");
   const options = useMemo(() => listOperationTypeOptions(catalog), [catalog]);
   const filtered = useMemo(() => filterOperationTypeOptions(options, query), [options, query]);
@@ -22,7 +27,7 @@ export function PatchOperationTypePicker({ catalog, onSelect, onCancel }: Props)
       <input
         type="text"
         className={styles.search}
-        placeholder="Search operation type…"
+        placeholder={t("typePicker.searchPlaceholder")}
         value={query}
         autoFocus
         onChange={(e) => setQuery(e.target.value)}
@@ -34,15 +39,17 @@ export function PatchOperationTypePicker({ catalog, onSelect, onCancel }: Props)
               <span className={styles.optionLabel}>{option.label}</span>
               <span className={styles.optionClass}>
                 {option.className}
-                {!option.isBuiltIn ? " · custom" : ""}
+                {!option.isBuiltIn ? t("typePicker.customSuffix") : ""}
               </span>
             </button>
           </li>
         ))}
-        {filtered.length === 0 && <li className={styles.empty}>No matching operation type.</li>}
+        {filtered.length === 0 && (
+          <li className={styles.empty}>{t("typePicker.empty")}</li>
+        )}
       </ul>
       <button type="button" className={styles.cancel} onClick={onCancel}>
-        Cancel
+        {tCommon("actions.cancel")}
       </button>
     </div>
   );

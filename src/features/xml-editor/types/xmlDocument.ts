@@ -1,3 +1,5 @@
+import type { DiagnosticArgs } from "../../../lib/diagnostics";
+
 /** Identifies which specialized editor/validation path a parsed document should use. */
 export type XmlDocumentProfile = "defs" | "patch" | "about" | "genericXml";
 
@@ -35,6 +37,9 @@ export interface ParseDiagnostic {
   column: number | null;
   byteOffset: number | null;
   message: string;
+  code: string;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 export type DiagnosticSeverity = "Error" | "Warning" | "Info";
@@ -51,6 +56,8 @@ export interface ValidationDiagnostic {
   defName: string | null;
   fieldPath: string | null;
   blocking: boolean;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 export type XmlEdit =

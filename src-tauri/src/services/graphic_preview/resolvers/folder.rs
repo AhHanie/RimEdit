@@ -5,7 +5,9 @@ use std::path::{Path, PathBuf};
 use crate::project_model::RegisteredLocation;
 use crate::services::graphic_preview::asset_protocol::{preview_asset_url, AssetTokenCache};
 use crate::services::graphic_preview::labels::{detect_direction, is_mask_stem, stack_count_label};
-use crate::services::graphic_preview::model::GraphicPreviewVariant;
+use crate::services::graphic_preview::model::{
+    Direction, GraphicPreviewLabel, GraphicPreviewVariant, GraphicPreviewWarning,
+};
 use crate::services::graphic_preview::paths::{verified_textures_root, TEXTURE_EXTENSIONS};
 
 const FOLDER_VARIANT_CAP: usize = 64;
@@ -15,7 +17,7 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
     tex_path: &str,
     search_locations: &[&RegisteredLocation],
     asset_cache: &AssetTokenCache,
-    warnings: &mut Vec<String>,
+    warnings: &mut Vec<GraphicPreviewWarning>,
 ) -> Vec<GraphicPreviewVariant> {
     // Map relative-to-textures-root path -> (loc_id, loc_name, canonical_path).
     // or_insert keeps the first entry, so higher-precedence locations (project) win.
@@ -78,13 +80,22 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
     }
 
     if found.is_empty() {
-        warnings.push(format!(
-            "No loose textures found in folder for '{}'.",
-            tex_path
-        ));
+        warnings.push(
+            GraphicPreviewWarning::new(
+                "graphic_preview_folder_no_textures",
+                format!("No loose textures found in folder for '{}'.", tex_path),
+            )
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "texPath",
+                tex_path.into(),
+            )])),
+        );
         return vec![GraphicPreviewVariant {
             id: format!("variant:missing:{}", tex_path),
-            label: "Variant 1".to_string(),
+            label: GraphicPreviewLabel::Variant {
+                index: 1,
+                direction: None,
+            },
             role: "variant".to_string(),
             source_location_id: String::new(),
             source_location_name: String::new(),
@@ -99,7 +110,7 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
     struct GroupMember {
         relative: String,
         dir_role: Option<&'static str>,
-        dir_label: Option<&'static str>,
+        dir_direction: Option<Direction>,
         loc_id: String,
         loc_name: String,
         canonical_path: PathBuf,
@@ -112,18 +123,18 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
             .file_stem()
             .and_then(|s| s.to_str())
             .unwrap_or("");
-        let (base_key, dir_role, dir_label) = match detect_direction(stem) {
-            Some((role, label, suffix_len)) => (
+        let (base_key, dir_role, dir_direction) = match detect_direction(stem) {
+            Some((role, direction, suffix_len)) => (
                 stem[..stem.len() - suffix_len].to_lowercase(),
                 Some(role),
-                Some(label),
+                Some(direction),
             ),
             None => (stem.to_lowercase(), None, None),
         };
         groups.entry(base_key).or_default().push(GroupMember {
             relative,
             dir_role,
-            dir_label,
+            dir_direction,
             loc_id,
             loc_name,
             canonical_path,
@@ -134,10 +145,19 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
     let truncated = groups.len() > FOLDER_VARIANT_CAP;
     let groups_to_emit: Vec<_> = groups.into_iter().take(FOLDER_VARIANT_CAP).collect();
     if truncated {
-        warnings.push(format!(
-            "Folder variant results truncated to {} groups.",
-            FOLDER_VARIANT_CAP
-        ));
+        warnings.push(
+            GraphicPreviewWarning::new(
+                "graphic_preview_folder_variants_truncated",
+                format!(
+                    "Folder variant results truncated to {} groups.",
+                    FOLDER_VARIANT_CAP
+                ),
+            )
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "cap",
+                (FOLDER_VARIANT_CAP as i64).into(),
+            )])),
+        );
     }
 
     // --- Phase 4: flatten groups into labelled variants ---
@@ -156,14 +176,17 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
         let group_label_base = if is_stack_count {
             stack_count_label(base_stem, group_index)
         } else {
-            format!("Variant {}", group_index + 1)
+            GraphicPreviewLabel::Variant {
+                index: group_index + 1,
+                direction: None,
+            }
         };
 
         for member in members {
             let GroupMember {
                 relative,
                 dir_role,
-                dir_label,
+                dir_direction,
                 loc_id,
                 loc_name,
                 canonical_path,
@@ -174,15 +197,22 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
                 .unwrap_or("")
                 .to_lowercase();
             if ext == "dds" {
-                warnings.push(format!(
-                    "Resolved DDS texture 'Textures/{}'; browser preview may be unsupported until conversion is added.",
-                    relative
-                ));
+                let relative_path = format!("Textures/{}", relative);
+                warnings.push(
+                    GraphicPreviewWarning::new(
+                        "graphic_preview_dds_unsupported",
+                        format!(
+                            "Resolved DDS texture '{}'; browser preview may be unsupported until conversion is added.",
+                            relative_path
+                        ),
+                    )
+                    .with_args(crate::diagnostics::diagnostic_args([(
+                        "relativePath",
+                        relative_path.as_str().into(),
+                    )])),
+                );
             }
-            let label = match dir_label {
-                Some(dir) => format!("{} {}", group_label_base, dir),
-                None => group_label_base.clone(),
-            };
+            let label = group_label_base.clone().with_direction(dir_direction);
             let role = dir_role.unwrap_or("variant");
             let relative_texture_path = format!("Textures/{}", relative);
             let token = asset_cache.register(canonical_path);

@@ -1,6 +1,7 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { invoke } from "@tauri-apps/api/core";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { PatchPreviewDialog } from "./PatchPreviewDialog";
 import type {
   PatchOperationKey,
@@ -223,7 +224,36 @@ describe("PatchPreviewDialog", () => {
     expect(await screen.findByText("patch_conflict_duplicate_add_child")).toBeTruthy();
   });
 
-  it("shows a status message explaining why an operation was skipped", async () => {
+  it("renders a status code/args pair through the shared diagnostic catalog, not the raw backend message", async () => {
+    invokeMock.mockResolvedValue(
+      previewResult({
+        visibleOperations: [
+          operation({
+            key: key(0),
+            status: "skipped",
+            // The raw compatibility message intentionally differs from the catalog text below --
+            // this proves the row renders the translated `statusCode`/`statusArgs` lookup, not a
+            // pass-through of backend English (see `renderDiagnostic`'s priority order).
+            statusMessage: 'Requires mod "Power++" to be active',
+            statusCode: "patch_find_mod_dependency_not_active",
+            statusArgs: { mods: ["Power++"] },
+          }),
+        ],
+      }),
+    );
+    render(
+      <PatchPreviewDialog projectId="proj1" target={target()} onClose={vi.fn()} />,
+    );
+
+    expect(
+      await screen.findByText(
+        "Requires mod Power++ to be active, which is not registered as a location in this project.",
+      ),
+    ).toBeTruthy();
+    expect(screen.queryByText('Requires mod "Power++" to be active')).toBeFalsy();
+  });
+
+  it("falls back to the raw status message when no status code is present (pre-migration compatibility)", async () => {
     invokeMock.mockResolvedValue(
       previewResult({
         visibleOperations: [

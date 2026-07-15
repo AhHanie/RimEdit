@@ -73,6 +73,10 @@ pub struct RegisteredLocationUpdate {
 pub struct ProjectSettings {
     pub schema_version: u8,
     pub game_version: String,
+    /// Global app UI locale (BCP-47, e.g. `"en"`). Validated against
+    /// `crate::locale::SUPPORTED_LOCALES`. Despite `ProjectSettings`' name this
+    /// field is app-wide, not per-project -- see `docs/i18n/issues/02-global-locale-settings.md`.
+    pub locale: String,
     pub locations: Vec<RegisteredLocation>,
     pub active_project_id: Option<String>,
 }
@@ -80,8 +84,9 @@ pub struct ProjectSettings {
 impl Default for ProjectSettings {
     fn default() -> Self {
         Self {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: crate::locale::FALLBACK_LOCALE.to_string(),
             locations: Vec::new(),
             active_project_id: None,
         }
@@ -115,6 +120,36 @@ pub struct AppError {
     pub code: String,
     pub message: String,
     pub details: Option<HashMap<String, String>>,
+    /// Typed, literal interpolation arguments for `code` (see `crate::diagnostics` module docs).
+    /// Additive alongside the still-English `message`; omitted from JSON when empty.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
+}
+
+impl AppError {
+    /// Builds an `AppError` from a [`crate::diagnostics::DiagnosticRef`] (code + args built
+    /// together, see that type's docs) plus a compatibility `message`.
+    pub fn from_ref(
+        reference: crate::diagnostics::DiagnosticRef,
+        message: impl Into<String>,
+    ) -> Self {
+        Self {
+            code: reference.code,
+            message: message.into(),
+            details: None,
+            args: reference.args,
+        }
+    }
+
+    /// Attaches typed args to an already-built `AppError`, for producers that want to populate
+    /// `args` without repeating the whole struct literal.
+    pub fn with_args(mut self, args: crate::diagnostics::DiagnosticArgs) -> Self {
+        self.args.extend(args);
+        self
+    }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -131,6 +166,8 @@ pub enum StoreError {
     InvalidGameVersion(String),
     #[error("Game version not available in installed schema packs: {0}")]
     GameVersionSchemaUnavailable(String),
+    #[error("Unsupported locale: {0}")]
+    UnsupportedLocale(String),
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
     #[error("JSON error: {0}")]
@@ -146,13 +183,29 @@ impl From<StoreError> for AppError {
             StoreError::NotFound(_) => "location_not_found",
             StoreError::InvalidGameVersion(_) => "invalid_game_version",
             StoreError::GameVersionSchemaUnavailable(_) => "game_version_schema_unavailable",
+            StoreError::UnsupportedLocale(_) => "unsupported_locale",
             StoreError::Io(_) => "io_error",
             StoreError::Json(_) => "json_error",
+        };
+        // Typed args mirror the single literal value each `StoreError` variant already carries in
+        // its `thiserror` message, for producers that only ever have one value to attach.
+        let args = match &e {
+            StoreError::InvalidPath(path) | StoreError::NotFound(path) => {
+                crate::diagnostics::diagnostic_args([("path", path.as_str().into())])
+            }
+            StoreError::InvalidGameVersion(v) | StoreError::GameVersionSchemaUnavailable(v) => {
+                crate::diagnostics::diagnostic_args([("gameVersion", v.as_str().into())])
+            }
+            StoreError::UnsupportedLocale(locale) => {
+                crate::diagnostics::diagnostic_args([("locale", locale.as_str().into())])
+            }
+            _ => crate::diagnostics::DiagnosticArgs::new(),
         };
         AppError {
             code: code.to_string(),
             message: e.to_string(),
             details: None,
+            args,
         }
     }
 }
@@ -195,12 +248,45 @@ mod tests {
     use super::*;
 
     #[test]
+    fn app_error_wire_shape_omits_empty_args() {
+        let err: AppError = StoreError::NotFound("loc-1".to_string()).into();
+        let json = serde_json::to_value(&err).unwrap();
+        assert_eq!(json["code"], "location_not_found");
+        assert_eq!(json["args"]["path"], "loc-1");
+    }
+
+    #[test]
+    fn app_error_from_ref_carries_code_and_args() {
+        let err = AppError::from_ref(
+            crate::diagnostics::DiagnosticRef::code("project_not_found")
+                .with_arg("projectId", "abc"),
+            "No project location found for id 'abc'.",
+        );
+        let json = serde_json::to_value(&err).unwrap();
+        assert_eq!(json["code"], "project_not_found");
+        assert_eq!(json["args"]["projectId"], "abc");
+    }
+
+    #[test]
+    fn app_error_without_args_omits_the_field_entirely() {
+        let err = AppError {
+            code: "io_error".to_string(),
+            message: "boom".to_string(),
+            details: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
+        };
+        let json = serde_json::to_value(&err).unwrap();
+        assert!(json.get("args").is_none());
+    }
+
+    #[test]
     fn default_settings_have_no_locations() {
         let s = ProjectSettings::default();
         assert!(s.locations.is_empty());
-        assert_eq!(s.schema_version, 2);
+        assert_eq!(s.schema_version, 3);
         assert!(s.active_project_id.is_none());
         assert_eq!(s.game_version, "1.6");
+        assert_eq!(s.locale, "en");
     }
 
     #[test]
@@ -224,6 +310,7 @@ mod tests {
         let s2: ProjectSettings = serde_json::from_str(&json).unwrap();
         assert_eq!(s.schema_version, s2.schema_version);
         assert_eq!(s.game_version, s2.game_version);
+        assert_eq!(s.locale, s2.locale);
         assert_eq!(s.locations.len(), s2.locations.len());
         assert!(s2.active_project_id.is_none());
     }

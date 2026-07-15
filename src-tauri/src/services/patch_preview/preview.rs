@@ -6,8 +6,8 @@ use sxd_document::Package;
 
 use crate::patches::dom::serialize_element_pretty;
 use crate::patches::{
-    apply_patch_operations, resolve_inheritance, ApplyDiagnostic, ApplyDiagnosticSeverity,
-    OperationTraceStatus, PatchApplyOptions, PatchImpactGraph, PatchOperationKey, XPathTarget,
+    apply_patch_operations, resolve_inheritance, ApplyDiagnostic, OperationTraceStatus,
+    PatchApplyOptions, PatchImpactGraph, PatchOperationKey, XPathTarget,
 };
 use crate::project_model::{AppError, ProjectSettings};
 use crate::schema_pack::build_schema_catalog;
@@ -189,6 +189,8 @@ pub fn compute_def_preview(
             preview_support: op.preview_support.clone(),
             status: None,
             status_message: None,
+            status_code: None,
+            status_args: crate::diagnostics::DiagnosticArgs::new(),
             can_reorder,
             default_order: file.file_order,
             file_order: file.file_order,
@@ -240,6 +242,8 @@ pub fn compute_def_preview(
                     preview_support: op.preview_support.clone(),
                     status: None,
                     status_message: None,
+                    status_code: None,
+                    status_args: crate::diagnostics::DiagnosticArgs::new(),
                     can_reorder: false,
                     default_order: file.file_order,
                     file_order: file.file_order,
@@ -281,6 +285,8 @@ pub fn compute_def_preview(
         let trace_entry = apply_result.trace.iter().find(|t| t.key == summary.key);
         summary.status = trace_entry.map(|t| t.status);
         summary.status_message = trace_entry.and_then(|t| t.message.clone());
+        summary.status_code = trace_entry.and_then(|t| t.code.clone());
+        summary.status_args = trace_entry.map(|t| t.args.clone()).unwrap_or_default();
     }
 
     let top_level_defs = top_level_def_elements(defs_root);
@@ -300,16 +306,21 @@ pub fn compute_def_preview(
     // live and then removed.
     let mut apply_diagnostics = apply_result.diagnostics;
     if !def_found {
-        apply_diagnostics.push(ApplyDiagnostic {
-            severity: ApplyDiagnosticSeverity::Error,
-            code: "patch_preview_target_removed".to_string(),
-            message: format!(
-                "{} \"{}\" was removed by a patch operation during this preview -- there is no \
-                 final XML to show.",
-                def_type, def_name
-            ),
-            key: None,
-        });
+        apply_diagnostics.push(
+            ApplyDiagnostic::error(
+                "patch_preview_target_removed",
+                format!(
+                    "{} \"{}\" was removed by a patch operation during this preview -- there is no \
+                     final XML to show.",
+                    def_type, def_name
+                ),
+                None,
+            )
+            .with_args(crate::diagnostics::diagnostic_args([
+                ("defType", def_type.into()),
+                ("defName", def_name.into()),
+            ])),
+        );
     }
 
     let conflicting_refs = graph.conflicts_involving_def(def_type, def_name);
@@ -323,19 +334,25 @@ pub fn compute_def_preview(
         .map(|reference| {
             let class_name =
                 operation_class_name(inputs.patch_index, &reference).unwrap_or("This operation");
-            PatchPreviewConflictDiagnostic {
-                code: "patch_conflict_multiple_operations".to_string(),
-                key: PatchOperationKey {
+            PatchPreviewConflictDiagnostic::new(
+                "patch_conflict_multiple_operations",
+                PatchOperationKey {
                     location_id: reference.location_id.clone(),
                     relative_path: reference.relative_path.clone(),
                     operation_id: reference.operation_id,
                 },
-                message: format!(
+                format!(
                     "'{}' is one of {} patch operations that target {} {} -- verify ordering and \
                      success modes",
                     class_name, conflict_count, def_type, def_name
                 ),
-            }
+            )
+            .with_args(crate::diagnostics::diagnostic_args([
+                ("className", class_name.into()),
+                ("conflictCount", conflict_count.into()),
+                ("defType", def_type.into()),
+                ("defName", def_name.into()),
+            ]))
         })
         .collect();
     conflict_diagnostics.extend(detect_visible_conflicts(

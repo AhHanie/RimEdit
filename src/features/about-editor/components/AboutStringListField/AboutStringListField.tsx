@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, X } from "lucide-react";
 import styles from "./AboutStringListField.module.css";
 
@@ -13,6 +14,7 @@ interface Props {
 /** Tag-list editor reused for every string-list About field (authors, supportedVersions,
  * loadBefore/loadAfter/forceLoadBefore/forceLoadAfter, incompatibleWith, alternativePackageIds). */
 export function AboutStringListField({ label, items, readOnly, placeholder, onCommit }: Props) {
+  const { t } = useTranslation("editor");
   const [draft, setDraft] = useState(items);
   const [newValue, setNewValue] = useState("");
 
@@ -45,7 +47,7 @@ export function AboutStringListField({ label, items, readOnly, placeholder, onCo
                   type="button"
                   className={styles.remove}
                   onClick={() => commit(draft.filter((_, idx) => idx !== i))}
-                  aria-label={`Remove ${item}`}
+                  aria-label={t("about.stringListField.removeItem", { item })}
                 >
                   <X size={10} />
                 </button>
@@ -74,7 +76,7 @@ export function AboutStringListField({ label, items, readOnly, placeholder, onCo
             className={styles.addBtn}
             disabled={!newValue.trim()}
             onClick={addValue}
-            aria-label={`Add to ${label}`}
+            aria-label={t("about.stringListField.addToList", { label })}
           >
             <Plus size={12} />
           </button>

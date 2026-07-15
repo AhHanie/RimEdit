@@ -66,9 +66,9 @@ fn an_edit_to_one_field_leaves_every_other_subtree_byte_exact_including_object_a
         .find(|c| c.name == "recipes")
         .expect("fixture has recipes")
         .node_id;
-    let original_graphic_data_text =
-        doc.source[doc.nodes[graphic_data_id].span.start..doc.nodes[graphic_data_id].span.end]
-            .to_string();
+    let original_graphic_data_text = doc.source
+        [doc.nodes[graphic_data_id].span.start..doc.nodes[graphic_data_id].span.end]
+        .to_string();
     let original_recipes_text =
         doc.source[doc.nodes[recipes_id].span.start..doc.nodes[recipes_id].span.end].to_string();
     // Sanity: the captured spans actually contain real content, not empty/degenerate ranges --
@@ -170,7 +170,9 @@ fn a_field_left_untouched_by_an_edit_still_produces_its_validation_diagnostic() 
     // tree every time, independent of which fields any caller rendered or edited.
     let size_diagnostic = diagnostics
         .iter()
-        .find(|d| d.code == "validation_field_type_mismatch" && d.field_path.as_deref() == Some("size"))
+        .find(|d| {
+            d.code == "validation_field_type_mismatch" && d.field_path.as_deref() == Some("size")
+        })
         .expect("the untouched `size` field still produces its diagnostic");
     assert!(
         size_diagnostic.blocking,

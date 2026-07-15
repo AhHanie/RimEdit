@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { AboutMetadataFields, ValidationDiagnostic } from "../../../xml-editor/types/xmlDocument";
 import type { AboutEditor } from "../../hooks/useAboutEditor";
 import { diagnosticsForField } from "../../lib/aboutValidationText";
@@ -13,11 +14,13 @@ interface Props {
 }
 
 export function AboutIdentitySection({ fields, diagnostics, readOnly, editor }: Props) {
+  const { t } = useTranslation("editor");
+
   return (
     <section className={styles.section}>
-      <h3 className={styles.heading}>Identity</h3>
+      <h3 className={styles.heading}>{t("about.identity.heading")}</h3>
       <AboutTextField
-        label="Package ID"
+        label={t("about.identity.packageId")}
         value={fields.packageId.value ?? ""}
         readOnly={readOnly}
         placeholder="yourname.modname"
@@ -25,51 +28,51 @@ export function AboutIdentitySection({ fields, diagnostics, readOnly, editor }: 
         onCommit={(v) => editor.commitScalar("packageId", v)}
       />
       <AboutTextField
-        label="Name"
+        label={t("about.identity.name")}
         value={fields.name.value ?? ""}
         readOnly={readOnly}
         diagnostics={diagnosticsForField(diagnostics, "name")}
         onCommit={(v) => editor.commitScalar("name", v)}
       />
       <AboutTextField
-        label="Short Name"
+        label={t("about.identity.shortName")}
         value={fields.shortName.value ?? ""}
         readOnly={readOnly}
         onCommit={(v) => editor.commitScalar("shortName", v)}
       />
       <AboutTextField
-        label="Author"
+        label={t("about.identity.author")}
         value={fields.author.value ?? ""}
         readOnly={readOnly}
         onCommit={(v) => editor.commitScalar("author", v)}
       />
       <AboutStringListField
-        label="Authors"
+        label={t("about.identity.authors")}
         items={fields.authors.items}
         readOnly={readOnly}
-        placeholder="Add author"
+        placeholder={t("about.identity.addAuthor")}
         onCommit={(items) => editor.commitList("authors", items)}
       />
       <AboutTextField
-        label="Mod Version"
+        label={t("about.identity.modVersion")}
         value={fields.modVersion.value ?? ""}
         readOnly={readOnly}
         onCommit={(v) => editor.commitScalar("modVersion", v)}
       />
       <AboutTextField
-        label="URL"
+        label={t("about.identity.url")}
         value={fields.url.value ?? ""}
         readOnly={readOnly}
         onCommit={(v) => editor.commitScalar("url", v)}
       />
       <AboutTextField
-        label="Mod Icon Path"
+        label={t("about.identity.modIconPath")}
         value={fields.modIconPath.value ?? ""}
         readOnly={readOnly}
         onCommit={(v) => editor.commitScalar("modIconPath", v)}
       />
       <AboutTextField
-        label="Description"
+        label={t("about.identity.description")}
         value={fields.description.value ?? ""}
         readOnly={readOnly}
         multiline

@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { ProjectExplorerPanel } from "./ProjectExplorerPanel";
 import type { FileTreeFolderNode, ProjectFileScan } from "../../types";
 

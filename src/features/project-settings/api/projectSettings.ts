@@ -42,6 +42,10 @@ export function updateProjectGameVersion(
   });
 }
 
+export function updateAppLocale(locale: string): Promise<ProjectSettings> {
+  return invoke<ProjectSettings>("update_app_locale", { locale });
+}
+
 export function listInstalledSchemaGameVersions(
   extraSchemaRoots?: string[],
 ): Promise<string[]> {

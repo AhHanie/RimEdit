@@ -175,10 +175,10 @@ mod tests {
         );
     }
 
-    // The actual regression this issue exists to prevent (reviewer finding 3): prove the
-    // `schema_pack_roots(settings)` -> `build_schema_catalog(&roots, Some(&settings.game_version))`
-    // pipeline that `validate_doc_for_project`/`validate_doc_for_source` (and, after the reviewer's
-    // finding 1 fix, `project_save::validate_proposed_xml_with_index` and
+    // Prove the `schema_pack_roots(settings)` ->
+    // `build_schema_catalog(&roots, Some(&settings.game_version))` pipeline that
+    // `validate_doc_for_project`/`validate_doc_for_source` (and
+    // `project_save::validate_proposed_xml_with_index` and
     // `commands::project_validation::validate_project`) all now share actually changes real
     // validation output -- not just that it compiles. Uses a genuine external/third-party-style
     // fixture pack (`tests/fixtures/schema_pack/external_project_pack`, defining `ExternalWidgetDef`

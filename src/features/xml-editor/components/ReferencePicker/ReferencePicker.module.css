@@ -54,8 +54,7 @@
 .dropdown {
   position: absolute;
   top: calc(100% + 2px);
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   background: var(--surface-panel);
   border: 1px solid var(--border-subtle);
   border-radius: 3px;

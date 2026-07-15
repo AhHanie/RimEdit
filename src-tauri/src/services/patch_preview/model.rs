@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::patches::{
-    ApplyDiagnostic, ApplyDiagnosticSeverity, CustomOperationMetadataMap, InheritanceDiagnostic,
-    OperationTraceEntry, OperationTraceStatus, PatchFile, PatchIndex, PatchOperationClassification,
-    PatchOperationKey, PatchPreviewSupport, XPathTarget,
+    ApplyDiagnostic, CustomOperationMetadataMap, InheritanceDiagnostic, OperationTraceEntry,
+    OperationTraceStatus, PatchFile, PatchIndex, PatchOperationClassification, PatchOperationKey,
+    PatchPreviewSupport, XPathTarget,
 };
 use crate::project_model::ProjectSettings;
 
@@ -54,12 +54,22 @@ pub struct PatchPreviewOperationSummary {
     pub classification: PatchOperationClassification,
     pub preview_support: PatchPreviewSupport,
     pub status: Option<OperationTraceStatus>,
-    /// Explains `status`, when the apply engine has something more specific to say than the
-    /// status alone (e.g. a `PatchOperationFindMod`-wrapped operation skipped because its
-    /// required mod isn't registered as active in this project -- see
-    /// `patches::apply::find_mod_apply`). `None` for the common case where `status` alone is
-    /// self-explanatory (e.g. a plain `Applied`).
+    /// Compatibility English text mirroring `status_code`/`status_args` below -- see
+    /// `OperationTraceEntry::message`'s doc comment for the same pattern. Explains `status` when
+    /// the apply engine has something more specific to say than the status alone (e.g. a
+    /// `PatchOperationFindMod`-wrapped operation skipped because its required mod isn't
+    /// registered as active in this project -- see `patches::apply::find_mod_apply`). `None` for
+    /// the common case where `status` alone is self-explanatory (e.g. a plain `Applied`).
     pub status_message: Option<String>,
+    /// Stable diagnostic code mirroring `status_message`, for the frontend's shared diagnostic
+    /// renderer (`renderDiagnostic`) to look up and translate instead of showing raw English.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub status_code: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub status_args: crate::diagnostics::DiagnosticArgs,
     /// Whether preview-only reorder controls apply to this operation (top-level operations only
     /// -- see `docs/patches-editor/07-preview-engine.md`'s "Implementation Notes" for why nested
     /// reorder is out of scope for this issue).
@@ -93,6 +103,32 @@ pub struct PatchPreviewConflictDiagnostic {
     pub code: String,
     pub key: PatchOperationKey,
     pub message: String,
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
+}
+
+impl PatchPreviewConflictDiagnostic {
+    pub(super) fn new(
+        code: impl Into<String>,
+        key: PatchOperationKey,
+        message: impl Into<String>,
+    ) -> Self {
+        Self {
+            code: code.into(),
+            key,
+            message: message.into(),
+            args: crate::diagnostics::DiagnosticArgs::new(),
+        }
+    }
+
+    /// Attaches typed args for `code`. Additive on top of the still-English `message`.
+    pub(super) fn with_args(mut self, args: crate::diagnostics::DiagnosticArgs) -> Self {
+        self.args.extend(args);
+        self
+    }
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -137,10 +173,9 @@ pub fn target_not_found_result(target: &PatchPreviewTarget) -> PatchPreviewResul
         is_partial: false,
         visible_operations: Vec::new(),
         operation_trace: Vec::new(),
-        apply_diagnostics: vec![ApplyDiagnostic {
-            severity: ApplyDiagnosticSeverity::Error,
-            code: "patch_preview_target_not_found".to_string(),
-            message: format!(
+        apply_diagnostics: vec![ApplyDiagnostic::error(
+            "patch_preview_target_not_found",
+            format!(
                 "Could not find {} \"{}\" at {} #{} in location \"{}\" -- the file may have \
                  changed, or this tab is no longer showing an active Def.",
                 target.def_type,
@@ -149,8 +184,15 @@ pub fn target_not_found_result(target: &PatchPreviewTarget) -> PatchPreviewResul
                 target.ordinal,
                 target.location_id
             ),
-            key: None,
-        }],
+            None,
+        )
+        .with_args(crate::diagnostics::diagnostic_args([
+            ("defType", target.def_type.as_str().into()),
+            ("identity", target.identity.as_str().into()),
+            ("relativePath", target.relative_path.as_str().into()),
+            ("ordinal", target.ordinal.into()),
+            ("locationId", target.location_id.as_str().into()),
+        ]))],
         inheritance_diagnostics: Vec::new(),
         conflict_diagnostics: Vec::new(),
         impact_summary: PatchPreviewImpactSummary {
@@ -173,4 +215,60 @@ pub struct PreviewInputs<'a> {
     /// `build_patch_index_with_files`.
     pub patch_files: &'a [PatchFile],
     pub custom_operations: &'a CustomOperationMetadataMap,
+}
+
+#[cfg(test)]
+mod diagnostic_ref_wire_tests {
+    use super::*;
+    use crate::diagnostics::diagnostic_args;
+
+    fn key() -> PatchOperationKey {
+        PatchOperationKey {
+            location_id: "loc-1".to_string(),
+            relative_path: "Patches/Foo.xml".to_string(),
+            operation_id: 0,
+        }
+    }
+
+    #[test]
+    fn conflict_diagnostic_wire_shape_carries_code_and_args() {
+        let diag = PatchPreviewConflictDiagnostic::new(
+            "patch_conflict_duplicate_add_child",
+            key(),
+            "2 Add operations add a <label> child",
+        )
+        .with_args(diagnostic_args([
+            ("count", 2usize.into()),
+            ("childName", "label".into()),
+        ]));
+        let json = serde_json::to_value(&diag).unwrap();
+        assert_eq!(json["code"], "patch_conflict_duplicate_add_child");
+        assert_eq!(json["args"]["count"], 2);
+    }
+
+    #[test]
+    fn conflict_diagnostic_without_args_omits_the_field() {
+        let diag =
+            PatchPreviewConflictDiagnostic::new("patch_conflict_multiple_operations", key(), "x");
+        let json = serde_json::to_value(&diag).unwrap();
+        assert!(json.get("args").is_none());
+    }
+
+    #[test]
+    fn target_not_found_result_carries_typed_args() {
+        let target = PatchPreviewTarget {
+            location_id: "loc-1".to_string(),
+            relative_path: "Defs/Things.xml".to_string(),
+            def_type: "ThingDef".to_string(),
+            identity: "Wall".to_string(),
+            ordinal: 0,
+        };
+        let result = target_not_found_result(&target);
+        let diag = &result.apply_diagnostics[0];
+        assert_eq!(diag.code, "patch_preview_target_not_found");
+        assert_eq!(
+            diag.args["defType"],
+            crate::diagnostics::DiagnosticArgValue::Text("ThingDef".to_string())
+        );
+    }
 }

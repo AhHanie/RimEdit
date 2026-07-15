@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Search, RefreshCw, X, FolderOpen, Loader2, FileCode2, FileText, File } from "lucide-react";
 import type { FileTreeFolderNode, ProjectFileEntry, ProjectFileScan, ProjectFileKind } from "../../types";
 import { FileTree } from "../FileTree/FileTree";
@@ -74,17 +75,19 @@ export function ProjectExplorerPanel({
   onRename,
   onDelete,
 }: ProjectExplorerPanelProps) {
+  const { t } = useTranslation(["shell", "common"]);
+
   function renderContent() {
     if (!hasActiveProject) {
       return (
         <div className="state-empty">
           <FolderOpen size={32} className="state-empty-icon" />
-          <p className="state-empty-text">No project open</p>
+          <p className="state-empty-text">{t("shell:explorer.noProjectOpen")}</p>
           <button className="btn-primary" onClick={onOpenProject}>
-            Open Project
+            {t("common:actions.openProject")}
           </button>
           <button className="btn-secondary" onClick={onAddSourceFolder}>
-            Add Source Folder
+            {t("common:actions.addSourceFolder")}
           </button>
         </div>
       );
@@ -94,7 +97,7 @@ export function ProjectExplorerPanel({
       return (
         <div className="state-loading">
           <Loader2 size={14} className="spin" />
-          <span>Scanning project…</span>
+          <span>{t("shell:explorer.scanningProject")}</span>
         </div>
       );
     }
@@ -103,19 +106,23 @@ export function ProjectExplorerPanel({
       if (filteredFiles.length === 0) {
         return (
           <div className="state-empty">
-            <p className="state-empty-text">No matching files</p>
+            <p className="state-empty-text">{t("shell:explorer.noMatchingFiles")}</p>
           </div>
         );
       }
       return (
-        <div className={styles.searchResults} role="list" aria-label="Search results">
+        <div
+          className={styles.searchResults}
+          role="list"
+          aria-label={t("shell:explorer.searchResultsAriaLabel")}
+        >
           {filteredFiles.map((file) => {
             const SearchIcon = fileSearchIcon(file.fileKind);
             return (
               <button
                 key={file.relativePath}
                 className={`${styles.searchRow}${file.relativePath === activeFilePath ? ` ${styles.searchRowActive}` : ""}`}
-                style={{ paddingLeft: 8 }}
+                style={{ paddingInlineStart: 8 }}
                 onClick={() => onSelectFile(file)}
                 title={file.relativePath}
                 aria-current={file.relativePath === activeFilePath ? "true" : undefined}
@@ -155,13 +162,13 @@ export function ProjectExplorerPanel({
     <aside className={styles.root} data-visible={visible ? "true" : "false"}>
       <div className={styles.header}>
         <span className={styles.title}>
-          {scan ? `${scan.files.length} files` : "Explorer"}
+          {scan ? t("shell:explorer.filesTitle", { count: scan.files.length }) : t("shell:explorer.title")}
         </span>
         <button
           className="icon-btn"
           onClick={onRefresh}
-          aria-label="Refresh files"
-          title="Refresh files"
+          aria-label={t("shell:explorer.refreshFiles")}
+          title={t("shell:explorer.refreshFiles")}
           disabled={!hasActiveProject || loadingScan || refreshingScan}
         >
           <RefreshCw size={13} className={refreshingScan ? "spin" : undefined} />
@@ -174,18 +181,18 @@ export function ProjectExplorerPanel({
           ref={searchInputRef}
           className={styles.searchInput}
           type="search"
-          placeholder="Filter files…"
+          placeholder={t("shell:explorer.filterPlaceholder")}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.currentTarget.value)}
-          aria-label="Filter files"
+          aria-label={t("shell:explorer.filterAriaLabel")}
         />
         {searchQuery && (
           <button
             className="icon-btn"
             style={{ width: 20, height: 20 }}
             onClick={() => onSearchChange("")}
-            aria-label="Clear search"
-            title="Clear search"
+            aria-label={t("shell:explorer.clearSearch")}
+            title={t("shell:explorer.clearSearch")}
           >
             <X size={12} />
           </button>
@@ -199,8 +206,8 @@ export function ProjectExplorerPanel({
             className="icon-btn"
             style={{ width: 20, height: 20, flexShrink: 0 }}
             onClick={onClearMutationError}
-            aria-label="Dismiss error"
-            title="Dismiss error"
+            aria-label={t("shell:explorer.dismissError")}
+            title={t("shell:explorer.dismissError")}
           >
             <X size={12} />
           </button>

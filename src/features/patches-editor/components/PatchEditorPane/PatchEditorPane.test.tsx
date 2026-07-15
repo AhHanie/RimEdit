@@ -1,6 +1,7 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { invoke } from "@tauri-apps/api/core";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { PatchEditorPane } from "./PatchEditorPane";
 import type { SchemaCatalog } from "../../../schema-catalog/types";
 import type { PatchFile } from "../../types/patchFile";

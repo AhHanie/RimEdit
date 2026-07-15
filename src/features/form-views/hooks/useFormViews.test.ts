@@ -705,6 +705,31 @@ describe("useFormViews", () => {
     });
   });
 
+  it("saveOverrideAsCustomView rejects with a structured diagnostic code when there is no unsaved override", async () => {
+    // Known, enumerable precondition this hook detects itself (no dirty `FieldVisibilityOverride`
+    // to persist) -- must carry a `code` the shared renderer can translate (see
+    // `src/i18n/diagnostics.ts`), not only an English `Error.message` that bypasses localization
+    // entirely. Mirrors `useCustomFormViews.test.ts`'s equivalent assertion for the same bug class.
+    mockInvoke();
+    const catalog = makeCatalog();
+
+    const { result } = renderHook(() =>
+      useFormViews({
+        projectId: "proj1",
+        gameVersion: "1.6",
+        catalog,
+        pane: null,
+        selectedDef: { defType: "ThingDef", ordinal: 0 },
+      }),
+    );
+    await waitFor(() => expect(result.current.selectedView.id).toBe("weapon"));
+    expect(result.current.hasDirtyOverride).toBe(false);
+
+    await expect(result.current.saveOverrideAsCustomView("My saved view")).rejects.toMatchObject({
+      code: "form_view_no_unsaved_changes",
+    });
+  });
+
   describe("stale CRUD-then-select/persist completions never affect a since-abandoned scope", () => {
     // Shared shape: scope A (game version 1.6) starts a slow async operation with a chained
     // side effect (auto-selecting a freshly created/duplicated view, auto-selecting Default

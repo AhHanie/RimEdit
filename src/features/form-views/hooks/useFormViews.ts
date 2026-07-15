@@ -18,12 +18,15 @@
 // `EditorWorkspace.tsx` -- so this per-instance state survives a tab switch and is torn down on
 // tab close exactly like the rest of that pane's local state).
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { SchemaCatalog } from "../../schema-catalog";
 import { collectEffectiveTopLevelDefFields } from "../../xml-editor/lib/formDescriptors";
 import { getLastSelectedFormView, setLastSelectedFormView } from "../api/formViews";
 import { useCustomFormViews } from "./useCustomFormViews";
+import { noActiveProjectError, noUnsavedChangesError } from "../lib/formViewErrors";
 import {
   buildAvailableFormViews,
+  buildDefaultFormView,
   computeEffectiveVisibility,
   formViewsStateKey,
   isHiddenSetDirty,
@@ -202,6 +205,7 @@ export function useFormViews({
   catalog,
   selectedDef,
 }: UseFormViewsArgs): UseFormViewsResult {
+  const { t, i18n } = useTranslation("editor");
   const defType = selectedDef?.defType ?? null;
   const defSchema = defType && catalog ? (catalog.defTypes[defType] ?? null) : null;
   const applicable = !!selectedDef && !!defSchema;
@@ -224,8 +228,8 @@ export function useFormViews({
 
   const availableViews = useMemo(() => {
     if (!defType) return [];
-    return buildAvailableFormViews(defType, defSchema?.formViews, customFormViews.views);
-  }, [defType, defSchema, customFormViews.views]);
+    return buildAvailableFormViews(defType, defSchema?.formViews, customFormViews.views, i18n.language);
+  }, [defType, defSchema, customFormViews.views, i18n.language]);
 
   // Per-{defType,ordinal} state, stashed across switches within this single pane instance (see
   // module doc comment). Mirrors the stash-ref pattern `useXmlFormController` already uses for
@@ -397,7 +401,7 @@ export function useFormViews({
       .catch(() => {
         if (scopeGenerationRef.current !== myScopeGeneration) return;
         if (selectAttemptRef.current !== myAttempt) return;
-        setPersistWarning("Could not save the fallback Form View selection.");
+        setPersistWarning(t("formViews.persistWarning.fallbackSaveFailed"));
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -469,11 +473,11 @@ export function useFormViews({
           .catch(() => {
             if (scopeGenerationRef.current !== myScopeGeneration) return;
             if (selectAttemptRef.current !== myAttempt) return;
-            setPersistWarning("Could not save your Form View selection.");
+            setPersistWarning(t("formViews.persistWarning.selectionSaveFailed"));
           });
       }
     },
-    [projectId, gameVersion, defType, selectedDefOrdinal],
+    [projectId, gameVersion, defType, selectedDefOrdinal, t],
   );
 
   const selectDefaultView = useCallback(() => {
@@ -498,10 +502,10 @@ export function useFormViews({
   const saveOverrideAsCustomView = useCallback(
     async (name: string, description?: string | null): Promise<CustomFormView> => {
       if (!active?.override) {
-        throw new Error("No unsaved Form View changes to save.");
+        throw noUnsavedChangesError("No unsaved Form View changes to save.");
       }
       if (!projectId || !gameVersion || defType === null) {
-        throw new Error("No active project to save a custom Form View to.");
+        throw noActiveProjectError("No active project to save a custom Form View to.");
       }
       const myScopeGeneration = scopeGenerationRef.current;
       const baseSchemaView = baseSchemaViewFor(selectedView);
@@ -528,7 +532,7 @@ export function useFormViews({
   const duplicateAsCustomView = useCallback(
     async (view: ResolvedFormView, name?: string): Promise<CustomFormView> => {
       if (!projectId || !gameVersion || defType === null) {
-        throw new Error("No active project to duplicate a Form View for.");
+        throw noActiveProjectError("No active project to duplicate a Form View for.");
       }
       const label = name?.trim() || `${view.label} copy`;
       const baseSchemaView = baseSchemaViewFor(view);
@@ -545,7 +549,7 @@ export function useFormViews({
   const createCustomView = useCallback(
     async (name: string, description?: string | null): Promise<CustomFormView> => {
       if (!projectId || !gameVersion || defType === null) {
-        throw new Error("No active project to create a custom Form View for.");
+        throw noActiveProjectError("No active project to create a custom Form View for.");
       }
       // Intentionally does not select the new view -- see the interface doc comment. Creating a
       // view must never bypass the dirty-override switch confirmation.
@@ -628,13 +632,7 @@ function baseSchemaViewFor(view: ResolvedFormView): BaseSchemaViewReference | nu
 }
 
 function buildFallbackDefault(defType: string): ResolvedFormView {
-  return {
-    id: DEFAULT_FORM_VIEW_ID,
-    targetDefType: defType,
-    label: "Default View",
-    order: Number.NEGATIVE_INFINITY,
-    origin: "default",
-    hiddenFieldIds: [],
-    recommended: false,
-  };
+  // Identical shape to `buildAvailableFormViews`'s own Default View entry -- delegate instead
+  // of duplicating the (translated) label literal here.
+  return buildDefaultFormView(defType);
 }

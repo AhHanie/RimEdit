@@ -69,22 +69,28 @@ pub(super) fn resolve_existing_texture_file(
 pub(super) fn normalize_texture_path(input: &str) -> Result<String, AppError> {
     let trimmed = input.trim();
     if trimmed.is_empty() {
-        return Err(invalid_path_error("Texture path must not be empty."));
+        return Err(invalid_path_error(
+            "texture_path_empty",
+            "Texture path must not be empty.",
+        ));
     }
     if trimmed.chars().any(|c| c.is_control()) {
         return Err(invalid_path_error(
+            "texture_path_control_characters",
             "Texture path contains control characters.",
         ));
     }
     let normalized = trimmed.replace('\\', "/");
     if normalized.starts_with('/') {
         return Err(invalid_path_error(
+            "texture_path_not_relative",
             "Texture path must be relative to the Textures folder.",
         ));
     }
     // Reject Windows-style drive roots (e.g. C:/ or C:\)
     if normalized.len() >= 2 && normalized.as_bytes()[1] == b':' {
         return Err(invalid_path_error(
+            "texture_path_not_relative",
             "Texture path must be relative to the Textures folder.",
         ));
     }
@@ -92,14 +98,21 @@ pub(super) fn normalize_texture_path(input: &str) -> Result<String, AppError> {
     let without_prefix = normalized.strip_prefix("Textures/").unwrap_or(&normalized);
     for component in without_prefix.split('/') {
         match component {
-            ".." => return Err(invalid_path_error("Texture path must not contain '..'.")),
+            ".." => {
+                return Err(invalid_path_error(
+                    "texture_path_parent_dir_component",
+                    "Texture path must not contain '..'.",
+                ))
+            }
             "." => {
                 return Err(invalid_path_error(
+                    "texture_path_current_dir_component",
                     "Texture path must not contain '.' components.",
                 ))
             }
             "" => {
                 return Err(invalid_path_error(
+                    "texture_path_empty_segment",
                     "Texture path must not contain empty path segments.",
                 ))
             }
@@ -109,11 +122,12 @@ pub(super) fn normalize_texture_path(input: &str) -> Result<String, AppError> {
     Ok(strip_texture_extension(without_prefix))
 }
 
-pub(super) fn invalid_path_error(msg: &str) -> AppError {
+pub(super) fn invalid_path_error(code: &str, msg: &str) -> AppError {
     AppError {
-        code: "invalid_texture_path".to_string(),
+        code: code.to_string(),
         message: msg.to_string(),
         details: None,
+        args: crate::diagnostics::DiagnosticArgs::new(),
     }
 }
 

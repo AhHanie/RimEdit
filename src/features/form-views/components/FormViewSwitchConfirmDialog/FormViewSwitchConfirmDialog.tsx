@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { formatError } from "../../../../lib/formatError";
 import { useDialogKeyboard } from "../../lib/useDialogKeyboard";
@@ -25,6 +26,10 @@ export function FormViewSwitchConfirmDialog({
   onSaveAsCustom,
   onCancel,
 }: Props) {
+  // Two separate single-namespace hooks, not `useTranslation(["editor", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   const [mode, setMode] = useState<"choose" | "saveAs">("choose");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
@@ -61,12 +66,12 @@ export function FormViewSwitchConfirmDialog({
       className={styles.overlay}
       role="dialog"
       aria-modal="true"
-      aria-label="Unsaved view changes"
+      aria-label={t("formViews.switchConfirm.dialogAriaLabel")}
     >
       <div className={styles.panel} ref={containerRef}>
         <div className={styles.header}>
-          <span className={styles.title}>Unsaved view changes</span>
-          <button className={styles.closeBtn} onClick={onCancel} aria-label="Close">
+          <span className={styles.title}>{t("formViews.switchConfirm.title")}</span>
+          <button className={styles.closeBtn} onClick={onCancel} aria-label={tCommon("actions.close")}>
             <X size={14} />
           </button>
         </div>
@@ -74,14 +79,12 @@ export function FormViewSwitchConfirmDialog({
         <div className={styles.body}>
           {mode === "choose" ? (
             <p className={styles.message}>
-              You have {hiddenCount} hidden field{hiddenCount === 1 ? "" : "s"} that
-              aren&apos;t saved to any view yet. Switching views now will lose this change unless
-              you save it first.
+              {t("formViews.switchConfirm.message", { count: hiddenCount })}
             </p>
           ) : (
             <div className={styles.fieldRow}>
               <label className={styles.fieldLabel} htmlFor="form-view-switch-save-name">
-                Custom view name
+                {t("formViews.switchConfirm.customViewNameLabel")}
               </label>
               <input
                 id="form-view-switch-save-name"
@@ -110,16 +113,16 @@ export function FormViewSwitchConfirmDialog({
           {mode === "choose" ? (
             <>
               <button className={styles.cancelBtn} onClick={onCancel}>
-                Cancel
+                {tCommon("actions.cancel")}
               </button>
               <button
                 className={styles.secondaryBtn}
                 onClick={() => setMode("saveAs")}
               >
-                Save as custom view
+                {t("formViews.switchConfirm.saveAsCustomView")}
               </button>
               <button className={styles.dangerBtn} onClick={onDiscardAndSwitch}>
-                Discard changes and switch
+                {t("formViews.switchConfirm.discardAndSwitch")}
               </button>
             </>
           ) : (
@@ -129,14 +132,16 @@ export function FormViewSwitchConfirmDialog({
                 onClick={() => setMode("choose")}
                 disabled={busy}
               >
-                Back
+                {t("formViews.switchConfirm.back")}
               </button>
               <button
                 className={styles.saveBtn}
                 onClick={() => void handleSaveAsCustom()}
                 disabled={busy || !trimmedName}
               >
-                {busy ? "Saving…" : "Save and switch"}
+                {busy
+                  ? t("formViews.switchConfirm.saving")
+                  : t("formViews.switchConfirm.saveAndSwitch")}
               </button>
             </>
           )}

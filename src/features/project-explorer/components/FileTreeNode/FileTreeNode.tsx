@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ChevronRight,
   ChevronDown,
@@ -94,6 +95,7 @@ export function FileTreeNode({
   onOpenContextMenu,
   isRoot = false,
 }: FileTreeNodeProps) {
+  const { t } = useTranslation(["shell", "common"]);
   const indentPx = depth * 16;
 
   if (node.type === "file") {
@@ -125,7 +127,7 @@ export function FileTreeNode({
 
     const isInactive = node.activeForGameVersion === false;
     const rowTitle = isInactive
-      ? `${node.relativePath} - not loaded for the selected game version`
+      ? t("shell:explorer.inactiveForGameVersion", { relativePath: node.relativePath })
       : node.relativePath;
 
     return (
@@ -139,7 +141,7 @@ export function FileTreeNode({
         ]
           .filter(Boolean)
           .join(" ")}
-        style={{ paddingLeft: indentPx + 8 }}
+        style={{ paddingInlineStart: indentPx + 8 }}
         onClick={() => onSelectFile(node.relativePath)}
         onContextMenu={(e) => {
           e.preventDefault();
@@ -218,7 +220,7 @@ export function FileTreeNode({
           role="treeitem"
           tabIndex={0}
           className={styles.row}
-          style={{ paddingLeft: indentPx }}
+          style={{ paddingInlineStart: indentPx }}
           onClick={() => onToggleFolder(node.id)}
           onContextMenu={(e) => {
             e.preventDefault();
@@ -335,7 +337,7 @@ function InlineEditRow({
 
   return (
     <div onContextMenu={(e) => e.stopPropagation()}>
-      <div className={styles.inlineEditRow} style={{ paddingLeft: indentPx }}>
+      <div className={styles.inlineEditRow} style={{ paddingInlineStart: indentPx }}>
         {icon}
         <input
           ref={inputRef}

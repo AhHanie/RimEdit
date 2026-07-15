@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import { insertAt, moveItem, removeAt, replaceAt } from "../../lib/arrayUtils";
 import { cloneWithFreshIds } from "../../lib/patchOperationDefaults";
@@ -18,9 +19,12 @@ interface Props {
 /** Top-level operation list for a `<Patch>` file: add, remove, duplicate, and reorder operations,
  * recursing into `PatchOperationNodeRow` for nested sequence/conditional/find-mod operations. */
 export function PatchOperationTree({ operations, catalog, readOnly, projectId, generateId, setOperations }: Props) {
+  const { t } = useTranslation("patches");
   return (
     <div className={styles.root}>
-      {operations.length === 0 && <p className={styles.empty}>This patch file has no operations yet.</p>}
+      {operations.length === 0 && (
+        <p className={styles.empty}>{t("operationTree.empty")}</p>
+      )}
       <ul className={styles.list}>
         {operations.map((op, i) => (
           <PatchOperationNodeRow

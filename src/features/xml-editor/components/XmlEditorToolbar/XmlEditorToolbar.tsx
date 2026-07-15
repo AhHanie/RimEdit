@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Undo2, Redo2, Eye, FilePlus, BookmarkPlus, History } from "lucide-react";
 import type { UseXmlEditorSessionReturn } from "../../hooks/useXmlEditorSession";
 import { measureAsync, generateTraceId } from "../../../../instrumentation";
@@ -22,6 +23,7 @@ export function XmlEditorToolbar({
   onPreviewPatches,
   canPreviewPatches = false,
 }: Props) {
+  const { t } = useTranslation("editor");
   const {
     mode,
     relativePath,
@@ -42,17 +44,17 @@ export function XmlEditorToolbar({
   const canSwitchToForm = lastValidSnapshot?.parsed != null;
 
   return (
-    <div className={styles.toolbar} role="toolbar" aria-label="Editor toolbar">
+    <div className={styles.toolbar} role="toolbar" aria-label={t("toolbar.ariaLabel")}>
       {/* Mode segmented control */}
-      <div className={styles.modeSwitch} role="group" aria-label="Editor mode">
+      <div className={styles.modeSwitch} role="group" aria-label={t("toolbar.modeGroupAriaLabel")}>
         <ModeButton
-          label="Form"
+          label={t("toolbar.formMode")}
           active={mode === "form"}
           disabled={!canSwitchToForm}
           onClick={() => switchMode("form")}
         />
         <ModeButton
-          label="XML"
+          label={t("toolbar.xmlMode")}
           active={mode === "raw"}
           disabled={false}
           onClick={() => switchMode("raw")}
@@ -67,8 +69,8 @@ export function XmlEditorToolbar({
           className={styles.iconBtn}
           onClick={onCreateDef}
           disabled={!canCreateDef}
-          title="New Def"
-          aria-label="New Def"
+          title={t("toolbar.newDef")}
+          aria-label={t("toolbar.newDef")}
         >
           <FilePlus size={14} />
         </button>
@@ -80,8 +82,8 @@ export function XmlEditorToolbar({
           className={styles.iconBtn}
           onClick={onSaveAsTemplate}
           disabled={!canSaveAsTemplate}
-          title="Save as Template"
-          aria-label="Save as Template"
+          title={t("toolbar.saveAsTemplate")}
+          aria-label={t("toolbar.saveAsTemplate")}
         >
           <BookmarkPlus size={14} />
         </button>
@@ -93,8 +95,8 @@ export function XmlEditorToolbar({
           className={styles.iconBtn}
           onClick={onPreviewPatches}
           disabled={!canPreviewPatches}
-          title="Preview Patches"
-          aria-label="Preview Patches"
+          title={t("toolbar.previewPatches")}
+          aria-label={t("toolbar.previewPatches")}
         >
           <History size={14} />
         </button>
@@ -107,8 +109,8 @@ export function XmlEditorToolbar({
         className={styles.iconBtn}
         onClick={undo}
         disabled={readOnly || !canUndo}
-        title="Undo"
-        aria-label="Undo"
+        title={t("toolbar.undo")}
+        aria-label={t("toolbar.undo")}
       >
         <Undo2 size={14} />
       </button>
@@ -116,8 +118,8 @@ export function XmlEditorToolbar({
         className={styles.iconBtn}
         onClick={redo}
         disabled={readOnly || !canRedo}
-        title="Redo"
-        aria-label="Redo"
+        title={t("toolbar.redo")}
+        aria-label={t("toolbar.redo")}
       >
         <Redo2 size={14} />
       </button>
@@ -128,8 +130,8 @@ export function XmlEditorToolbar({
       {dirty && (
         <span
           className={styles.dirtyDot}
-          title="Unsaved changes"
-          aria-label="Unsaved changes"
+          title={t("toolbar.unsavedChanges")}
+          aria-label={t("toolbar.unsavedChanges")}
         />
       )}
 
@@ -147,10 +149,10 @@ export function XmlEditorToolbar({
             );
           }}
           disabled={saveBusy || !isBufferValid || !currentRawXml}
-          title="Preview Save"
+          title={t("toolbar.previewSave")}
         >
           <Eye size={13} />
-          Preview Save
+          {t("toolbar.previewSave")}
         </button>
       )}
     </div>

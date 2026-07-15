@@ -2,6 +2,7 @@ export { loadSchemaCatalog } from "./api/schemaPack";
 export { useSchemaCatalog } from "./hooks/useSchemaCatalog";
 export type { UseSchemaCatalogReturn } from "./hooks/useSchemaCatalog";
 export type {
+  DefTemplate,
   DefTypeSchema,
   FieldSchema,
   FormViewDef,
@@ -18,5 +19,6 @@ export type {
   SchemaCatalogLoadResult,
   SchemaLoadDiagnostic,
   ValidationHints,
+  ValidationRule,
   XmlFieldShape,
 } from "./types";

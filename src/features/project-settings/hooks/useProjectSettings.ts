@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import type {
   MissingActiveProjectNotice,
   ProjectSettings,
+  ProjectSettingsLoadResult,
   RegisteredLocationDraft,
   RegisteredLocationUpdate,
 } from "../types";
@@ -31,7 +32,20 @@ interface UseProjectSettingsReturn {
   replaceSettings: (settings: ProjectSettings) => void;
 }
 
-export function useProjectSettings(): UseProjectSettingsReturn {
+/**
+ * @param initialLoad When provided, the initial-load effect awaits this promise instead of
+ * calling `getProjectSettings()` itself. `main.tsx` calls `getProjectSettings()` exactly once,
+ * before mounting `LocaleProvider`, so the persisted locale is resolved and applied before any
+ * locale-sensitive catalog request fires (Plan.md: "the settings command returns the saved locale
+ * before locale-sensitive catalog loading"); threading that same in-flight promise down here
+ * lets `AppShell` consume its result too without a second `get_project_settings` call, which
+ * would silently re-run (and lose) the load-time missing-active-project side effect described
+ * below. Omitted (e.g. in every existing test) it falls back to calling `getProjectSettings()`
+ * directly, unchanged from before.
+ */
+export function useProjectSettings(
+  initialLoad?: Promise<ProjectSettingsLoadResult>,
+): UseProjectSettingsReturn {
   const [settings, setSettings] = useState<ProjectSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +90,7 @@ export function useProjectSettings(): UseProjectSettingsReturn {
     // registered locations, so settings must resolve first.
     (async () => {
       try {
-        const result = await getProjectSettings();
+        const result = await (initialLoad ?? getProjectSettings());
         setSettings(result.settings);
         setStartupNotice(result.missingActiveProject ?? null);
         const roots = result.settings.locations.map((l) => l.rootPath);

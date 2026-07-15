@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Search,
   X,
@@ -40,6 +41,7 @@ export function DefSearchPanel({
   onAddSourceFolder,
   searchInputRef,
 }: DefSearchPanelProps) {
+  const { t } = useTranslation(["shell", "common"]);
   const {
     query,
     setQuery,
@@ -96,12 +98,12 @@ export function DefSearchPanel({
       return (
         <div className="state-empty">
           <FolderOpen size={32} className="state-empty-icon" />
-          <p className="state-empty-text">No project open</p>
+          <p className="state-empty-text">{t("shell:explorer.noProjectOpen")}</p>
           <button className="btn-primary" onClick={onOpenProject}>
-            Open Project
+            {t("common:actions.openProject")}
           </button>
           <button className="btn-secondary" onClick={onAddSourceFolder}>
-            Add Source Folder
+            {t("common:actions.addSourceFolder")}
           </button>
         </div>
       );
@@ -111,7 +113,7 @@ export function DefSearchPanel({
       return (
         <div className="state-loading">
           <Loader2 size={14} className="spin" />
-          <span>Searching…</span>
+          <span>{t("shell:search.searching")}</span>
         </div>
       );
     }
@@ -120,12 +122,12 @@ export function DefSearchPanel({
       return (
         <div className="state-empty">
           <p className="state-empty-text">
-            {query ? "No matching Defs" : "Type to search Defs"}
+            {query ? t("shell:search.noMatchingDefs") : t("shell:search.typeToSearch")}
           </p>
           {!query && (
             <button className="btn-secondary" onClick={onAddSourceFolder}>
               <FolderPlus size={13} />
-              Add Source Folder
+              {t("common:actions.addSourceFolder")}
             </button>
           )}
         </div>
@@ -136,7 +138,7 @@ export function DefSearchPanel({
       <div
         className={styles.results}
         role="list"
-        aria-label="Def search results"
+        aria-label={t("shell:search.resultsAriaLabel")}
       >
         {results.map((result, i) => {
           const isProject = result.def.source.sourceKind === "project";
@@ -148,7 +150,10 @@ export function DefSearchPanel({
               key={`${result.def.source.locationId}:${result.def.relativePath}:${result.def.defName}:${i}`}
               className={styles.resultRow}
               onClick={() => handleSelectResult(result)}
-              title={`${result.def.defName} - ${result.def.relativePath}`}
+              title={t("shell:search.resultTitle", {
+                defName: result.def.defName,
+                relativePath: result.def.relativePath,
+              })}
               role="listitem"
             >
               <span className={styles.resultName}>{result.def.defName}</span>
@@ -167,7 +172,7 @@ export function DefSearchPanel({
                 <span
                   className={`${styles.badge} ${isProject ? styles.badgeProject : styles.badgeSource}`}
                 >
-                  {isProject ? "Project" : "Read-only source"}
+                  {isProject ? t("shell:search.project") : t("shell:search.readOnlySource")}
                 </span>
               </span>
             </button>
@@ -180,12 +185,12 @@ export function DefSearchPanel({
   return (
     <aside className={styles.root} data-visible={visible ? "true" : "false"}>
       <div className={styles.header}>
-        <span className={styles.title}>Def Search</span>
+        <span className={styles.title}>{t("shell:search.title")}</span>
         <button
           className="icon-btn"
           onClick={() => void handleRebuild()}
-          aria-label="Rebuild index"
-          title="Rebuild index"
+          aria-label={t("shell:search.rebuildIndex")}
+          title={t("shell:search.rebuildIndex")}
           disabled={!hasActiveProject}
         >
           <RefreshCw size={13} />
@@ -198,10 +203,10 @@ export function DefSearchPanel({
           ref={searchInputRef}
           className={styles.searchInput}
           type="search"
-          placeholder="Search Defs…"
+          placeholder={t("shell:search.searchPlaceholder")}
           value={query}
           onChange={(e) => setQuery(e.currentTarget.value)}
-          aria-label="Search Defs"
+          aria-label={t("shell:search.searchAriaLabel")}
           disabled={!hasActiveProject}
         />
         {query && (
@@ -209,8 +214,8 @@ export function DefSearchPanel({
             className="icon-btn"
             style={{ width: 20, height: 20 }}
             onClick={() => setQuery("")}
-            aria-label="Clear search"
-            title="Clear search"
+            aria-label={t("shell:search.clearSearch")}
+            title={t("shell:search.clearSearch")}
           >
             <X size={12} />
           </button>
@@ -224,10 +229,10 @@ export function DefSearchPanel({
           onChange={(e) =>
             setSelectedDefType(e.currentTarget.value || undefined)
           }
-          aria-label="Filter by Def type"
+          aria-label={t("shell:search.filterByDefType")}
           disabled={!hasActiveProject}
         >
-          <option value="">All Def types</option>
+          <option value="">{t("shell:search.allDefTypes")}</option>
           {facets?.defTypes.map((ft) => (
             <option key={ft.defType} value={ft.defType}>
               {ft.defType} ({ft.totalCount})
@@ -241,7 +246,7 @@ export function DefSearchPanel({
             onChange={(e) => setIncludeSources(e.currentTarget.checked)}
             disabled={!hasActiveProject}
           />
-          Sources
+          {t("shell:search.includeSources")}
         </label>
       </div>
 

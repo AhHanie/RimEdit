@@ -103,18 +103,20 @@ pub(crate) fn read_preview_asset(
         code: "TOKEN_NOT_FOUND".into(),
         message: format!("Asset token not found: {token}"),
         details: None,
+        args: crate::diagnostics::diagnostic_args([("token", token.into())]),
     })?;
 
     if !is_browser_preview_supported(&path) {
+        let extension = path
+            .extension()
+            .and_then(|e| e.to_str())
+            .unwrap_or("unknown")
+            .to_string();
         return Err(AppError {
             code: "UNSUPPORTED_FORMAT".into(),
-            message: format!(
-                "Unsupported texture format: {}",
-                path.extension()
-                    .and_then(|e| e.to_str())
-                    .unwrap_or("unknown")
-            ),
+            message: format!("Unsupported texture format: {}", extension),
             details: None,
+            args: crate::diagnostics::diagnostic_args([("extension", extension.into())]),
         });
     }
 
@@ -122,6 +124,7 @@ pub(crate) fn read_preview_asset(
         code: "READ_FAILED".into(),
         message: format!("Failed to read asset: {e}"),
         details: None,
+        args: crate::diagnostics::DiagnosticArgs::new(),
     })?;
 
     Ok((bytes, content_type_for_texture(&path)))

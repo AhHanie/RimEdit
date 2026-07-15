@@ -38,7 +38,7 @@
   border: none;
   border-radius: 3px;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
 }
 
 .option:hover {

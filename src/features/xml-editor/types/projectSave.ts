@@ -5,6 +5,10 @@ export interface DiffLine {
   oldLine: number | null;
   newLine: number | null;
   text: string;
+  /** Set only for `kind === "gap"`: the number of elided unchanged lines this marker stands
+   * in for. Machine-readable so the frontend can pluralize/format it via `t()` instead of
+   * rendering a pre-formatted English sentence from the backend. */
+  count?: number;
 }
 
 export interface SavePreview {

@@ -21,6 +21,12 @@ pub struct SchemaLoadDiagnostic {
     pub pack_id: Option<String>,
     pub path: Option<String>,
     pub field_path: Option<String>,
+    /// Typed, literal interpolation arguments for `code` (see `crate::diagnostics` module docs).
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
 }
 
 impl SchemaLoadDiagnostic {
@@ -32,6 +38,7 @@ impl SchemaLoadDiagnostic {
             pack_id: None,
             path: None,
             field_path: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         }
     }
 
@@ -43,7 +50,14 @@ impl SchemaLoadDiagnostic {
             pack_id: None,
             path: None,
             field_path: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         }
+    }
+
+    /// Attaches typed args for `code`. Additive on top of the still-English `message`.
+    pub fn with_args(mut self, args: crate::diagnostics::DiagnosticArgs) -> Self {
+        self.args.extend(args);
+        self
     }
 
     pub fn with_pack_id(mut self, pack_id: impl Into<String>) -> Self {
@@ -579,6 +593,11 @@ pub struct SchemaPackManifestFile {
     /// with no custom/built-in patch operation metadata omits this entirely.
     #[serde(default)]
     pub patch_operation_directories: Vec<String>,
+    /// Pack-root-relative directory containing locale sidecar files (issue 05), one JSON file per
+    /// BCP-47 locale tag (e.g. `locales/en.json`). Optional -- a pack that ships no translations
+    /// yet, or whose canonical fields are already the only supported locale's text, omits this
+    /// entirely. See `schema_pack::locale` for the sidecar JSON shape and key grammar.
+    pub locales_directory: Option<String>,
 }
 
 /// A single def-type schema file. `def_type` is the def type name; the rest
@@ -680,7 +699,22 @@ pub struct FieldSchema {
     pub value_type: Option<FieldType>,
     pub repeatable: bool,
     pub xml: XmlFieldShape,
+    /// "Last pack that touched any property of this field" -- informational only. Locale-sidecar
+    /// ownership of `label`/`description` specifically must NOT be read from this: it is set
+    /// unconditionally on every amendment (see `merge::apply_field_override`), so a pack that
+    /// amends only some non-display property (e.g. `type`, `examples`, `xml`) would otherwise
+    /// wrongly gain sidecar-override rights over a label/description it never supplied. Use
+    /// `label_source_pack_id`/`description_source_pack_id` instead for that check.
     pub source_pack_id: Option<String>,
+    /// Locale-sidecar ownership of `label` specifically: the pack whose JSON last explicitly set
+    /// it. Only written when a pack's `FieldSchemaDef.label` is `Some(..)` -- see
+    /// `merge::apply_field_override`/`merge::field_def_to_schema` and the `locale` module doc
+    /// comment on per-scalar provenance.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub label_source_pack_id: Option<String>,
+    /// Same as `label_source_pack_id` but for `description`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description_source_pack_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub items: Option<FieldType>,
     pub flags: bool,
@@ -840,4 +874,31 @@ pub struct SchemaCatalog {
 pub struct SchemaCatalogLoadResult {
     pub catalog: SchemaCatalog,
     pub diagnostics: Vec<SchemaLoadDiagnostic>,
+}
+
+#[cfg(test)]
+mod diagnostic_ref_wire_tests {
+    use super::*;
+    use crate::diagnostics::diagnostic_args;
+
+    #[test]
+    fn schema_load_diagnostic_wire_shape_carries_code_and_args() {
+        let diag = SchemaLoadDiagnostic::warning(
+            "schema_pack_too_many_def_files",
+            "Pack 'rimworld-core' has more than 5000 def files - remaining files skipped.",
+        )
+        .with_pack_id("rimworld-core")
+        .with_args(diagnostic_args([("limit", 5000usize.into())]));
+        let json = serde_json::to_value(&diag).unwrap();
+        assert_eq!(json["code"], "schema_pack_too_many_def_files");
+        assert_eq!(json["packId"], "rimworld-core");
+        assert_eq!(json["args"]["limit"], 5000);
+    }
+
+    #[test]
+    fn schema_load_diagnostic_without_args_omits_the_field() {
+        let diag = SchemaLoadDiagnostic::error("schema_pack_manifest_read_failed", "boom");
+        let json = serde_json::to_value(&diag).unwrap();
+        assert!(json.get("args").is_none());
+    }
 }

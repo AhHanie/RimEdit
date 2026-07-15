@@ -1,5 +1,7 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { invoke } from "@tauri-apps/api/core";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
+import { useLocale } from "../../../../i18n/LocaleProvider";
 import { PatchValueEditor } from "./PatchValueEditor";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import type { XPathCompletionResult } from "../../types/xpathCompletion";
@@ -7,7 +9,16 @@ import type { XmlChildView } from "../../../xml-editor";
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
 
+// Mocks only `useLocale` (keeping the real `LocaleProvider`/`I18nextProvider` tree the other
+// hooks in this component rely on) so tests can drive an app-wide locale switch, mirroring
+// `PatchPathInput.test.tsx`'s pattern for the same completion command.
+vi.mock("../../../../i18n/LocaleProvider", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../../../i18n/LocaleProvider")>();
+  return { ...actual, useLocale: vi.fn() };
+});
+
 const invokeMock = vi.mocked(invoke);
+const mockUseLocale = vi.mocked(useLocale);
 
 const catalog: SchemaCatalog = {
   formatVersion: 1,
@@ -107,6 +118,7 @@ function mockInvoke(handlers: {
 
 beforeEach(() => {
   invokeMock.mockReset();
+  mockUseLocale.mockReturnValue({ locale: "en", direction: "ltr", changeLocale: vi.fn() });
 });
 
 describe("PatchValueEditor", () => {
@@ -129,6 +141,10 @@ describe("PatchValueEditor", () => {
     await waitFor(() => expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", expect.anything()));
     expect((screen.getByRole("button", { name: "Structured" }) as HTMLButtonElement).disabled).toBe(true);
     expect(screen.getByDisplayValue("<foo>bar</foo>")).toBeTruthy();
+    // XML is machine-readable syntax, not natural-language prose -- this must stay LTR even once
+    // a future RTL locale flips `dir` on `<html>` (docs/i18n/issues/08-editor-and-patch-ui-
+    // migration.md's "keep code editor/XML/XPath controls dir=ltr by semantic policy").
+    expect(screen.getByDisplayValue("<foo>bar</foo>").getAttribute("dir")).toBe("ltr");
   });
 
   it("adds a scalar field payload in structured mode", async () => {
@@ -510,5 +526,59 @@ describe("PatchValueEditor", () => {
 
     await screen.findByDisplayValue("UndoneWall");
     expect(screen.queryByDisplayValue("Wall")).toBeNull();
+  });
+
+  it("passes the active locale to xpath completion and refetches when the locale changes", async () => {
+    mockInvoke({
+      xpath: completionResult({
+        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
+        resolvedField: { defType: "ThingDef", fieldName: "label", field: catalog.defTypes.ThingDef.fields.label },
+      }),
+    });
+
+    const { rerender } = render(
+      <PatchValueEditor
+        valueXml={null}
+        xpath='Defs/ThingDef[defName="Wall"]/label'
+        readOnly={false}
+        catalog={catalog}
+        projectId="proj1"
+        operationType="replace"
+        label="Value"
+        onChange={vi.fn()}
+      />,
+    );
+
+    await waitFor(() =>
+      expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", {
+        projectId: "proj1",
+        xpath: 'Defs/ThingDef[defName="Wall"]/label',
+        locale: "en",
+      }),
+    );
+
+    invokeMock.mockClear();
+    mockUseLocale.mockReturnValue({ locale: "fr", direction: "ltr", changeLocale: vi.fn() });
+
+    rerender(
+      <PatchValueEditor
+        valueXml={null}
+        xpath='Defs/ThingDef[defName="Wall"]/label'
+        readOnly={false}
+        catalog={catalog}
+        projectId="proj1"
+        operationType="replace"
+        label="Value"
+        onChange={vi.fn()}
+      />,
+    );
+
+    await waitFor(() =>
+      expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", {
+        projectId: "proj1",
+        xpath: 'Defs/ThingDef[defName="Wall"]/label',
+        locale: "fr",
+      }),
+    );
   });
 });

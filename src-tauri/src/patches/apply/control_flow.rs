@@ -9,10 +9,7 @@ use sxd_document::dom::Document;
 
 use super::diagnostics::{missing_field_diagnostic, xpath_error_diagnostic};
 use super::engine::{ApplyContext, ApplyEngine};
-use super::{
-    ApplyDiagnostic, ApplyDiagnosticSeverity, OperationTraceEntry, OperationTraceStatus,
-    PatchOperationKey,
-};
+use super::{ApplyDiagnostic, OperationTraceEntry, OperationTraceStatus, PatchOperationKey};
 use crate::patches::dom::select_nodes;
 use crate::patches::model::{PatchOperationNode, PatchSuccessMode};
 
@@ -36,16 +33,21 @@ pub(super) fn sequence_apply<'d>(
         if !engine.apply_node(document, child, ctx) {
             let skipped = children.len() - i - 1;
             if skipped > 0 {
-                engine.diagnostics.push(ApplyDiagnostic {
-                    severity: ApplyDiagnosticSeverity::Warning,
-                    code: "patch_apply_sequence_short_circuited".to_string(),
-                    message: format!(
-                        "Sequence stopped after a failed operation; {} subsequent operation{} skipped",
-                        skipped,
-                        if skipped == 1 { "" } else { "s" }
-                    ),
-                    key: Some(key.clone()),
-                });
+                engine.diagnostics.push(
+                    ApplyDiagnostic::warning(
+                        "patch_apply_sequence_short_circuited",
+                        format!(
+                            "Sequence stopped after a failed operation; {} subsequent operation{} skipped",
+                            skipped,
+                            if skipped == 1 { "" } else { "s" }
+                        ),
+                        Some(key.clone()),
+                    )
+                    .with_args(crate::diagnostics::diagnostic_args([(
+                        "skippedCount",
+                        skipped.into(),
+                    )])),
+                );
             }
             return false;
         }
@@ -102,22 +104,27 @@ pub(super) fn find_mod_apply<'d>(
             operation_id: m.id,
         };
         let mod_list = format_mod_list(mods);
+        let mods_args = crate::diagnostics::diagnostic_args([("mods", mods.to_vec().into())]);
         engine.trace.push(OperationTraceEntry {
             key: key.clone(),
             class_name: m.class_name.clone(),
             status: OperationTraceStatus::Skipped,
             message: Some(format!("Requires mod {} to be active", mod_list)),
+            code: Some("patch_find_mod_dependency_not_active".to_string()),
+            args: mods_args.clone(),
         });
-        engine.diagnostics.push(ApplyDiagnostic {
-            severity: ApplyDiagnosticSeverity::Warning,
-            code: "patch_find_mod_dependency_not_active".to_string(),
-            message: format!(
-                "Requires mod {} to be active, which is not registered as a location in this \
-                 project -- this operation did not apply",
-                mod_list
-            ),
-            key: Some(key),
-        });
+        engine.diagnostics.push(
+            ApplyDiagnostic::warning(
+                "patch_find_mod_dependency_not_active",
+                format!(
+                    "Requires mod {} to be active, which is not registered as a location in this \
+                     project -- this operation did not apply",
+                    mod_list
+                ),
+                Some(key),
+            )
+            .with_args(mods_args),
+        );
     }
     true
 }

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { ChevronDown, ChevronRight, Code2, Copy, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import { insertAt, removeAt, replaceAt, moveItem } from "../../lib/arrayUtils";
@@ -36,6 +38,7 @@ export function PatchOperationNodeRow({
   onMoveUp,
   onMoveDown,
 }: PatchOperationNodeRowProps) {
+  const { t } = useTranslation("patches");
   const [expanded, setExpanded] = useState(true);
   const kind = node.kind;
   const isUnknown = kind.type === "unknown";
@@ -57,38 +60,64 @@ export function PatchOperationNodeRow({
   }
 
   return (
-    <li className={styles.row} style={{ marginLeft: depth > 0 ? 16 : 0 }}>
+    <li className={styles.row} style={{ marginInlineStart: depth > 0 ? 16 : 0 }}>
       <div className={styles.summary}>
         <button
           type="button"
           className={styles.expandBtn}
           onClick={() => setExpanded((v) => !v)}
-          aria-label={expanded ? "Collapse operation" : "Expand operation"}
+          aria-label={
+            expanded ? t("operationRow.collapseOperation") : t("operationRow.expandOperation")
+          }
         >
           {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
         </button>
-        {isUnknown && <Code2 size={12} className={styles.rawBadge} aria-label="Raw XML only" />}
+        {isUnknown && (
+          <Code2 size={12} className={styles.rawBadge} aria-label={t("operationRow.rawXmlOnly")} />
+        )}
         <span className={styles.title}>{operationTitle(node, catalog)}</span>
-        {operationSubtitle(node) && <span className={styles.subtitle}>{operationSubtitle(node)}</span>}
+        {operationSubtitle(node, t) && (
+          <span className={styles.subtitle}>{operationSubtitle(node, t)}</span>
+        )}
         {node.success !== "normal" && <span className={styles.badge}>{node.success}</span>}
         {!readOnly && (
           <div className={styles.actions}>
             {onMoveUp && (
-              <button type="button" className={styles.iconBtn} onClick={onMoveUp} aria-label="Move up">
+              <button
+                type="button"
+                className={styles.iconBtn}
+                onClick={onMoveUp}
+                aria-label={t("operationRow.moveUp")}
+              >
                 <ArrowUp size={12} />
               </button>
             )}
             {onMoveDown && (
-              <button type="button" className={styles.iconBtn} onClick={onMoveDown} aria-label="Move down">
+              <button
+                type="button"
+                className={styles.iconBtn}
+                onClick={onMoveDown}
+                aria-label={t("operationRow.moveDown")}
+              >
                 <ArrowDown size={12} />
               </button>
             )}
             {onDuplicate && (
-              <button type="button" className={styles.iconBtn} onClick={onDuplicate} aria-label="Duplicate operation">
+              <button
+                type="button"
+                className={styles.iconBtn}
+                onClick={onDuplicate}
+                aria-label={t("operationRow.duplicateOperation")}
+              >
                 <Copy size={12} />
               </button>
             )}
-            <button type="button" className={styles.iconBtn} onClick={onRemove} aria-label="Remove operation">
+            <button
+              type="button"
+              className={styles.iconBtn}
+              onClick={onRemove}
+              aria-label={t("operationRow.removeOperation")}
+            >
               <Trash2 size={12} />
             </button>
           </div>
@@ -99,11 +128,16 @@ export function PatchOperationNodeRow({
         <div className={styles.body}>
           {isUnknown ? (
             <label className={styles.rawField}>
-              <span className={styles.rawLabel}>Raw XML (unrecognized or custom operation class)</span>
+              <span className={styles.rawLabel}>{t("operationRow.rawXmlLabel")}</span>
               <textarea
                 rows={6}
                 spellCheck={false}
                 className={styles.rawXml}
+                // XML is machine-readable syntax, not natural-language prose -- keep it forced
+                // LTR even once a future RTL locale flips `dir` on `<html>` (see
+                // docs/i18n/issues/08-editor-and-patch-ui-migration.md's "keep code editor/XML/
+                // XPath controls dir=ltr by semantic policy" carve-out).
+                dir="ltr"
                 value={kind.data.rawXml}
                 disabled={readOnly}
                 onChange={(e) =>
@@ -152,7 +186,7 @@ export function PatchOperationNodeRow({
                       catalog={catalog}
                       generateId={generateId}
                       slot="sequenceChild"
-                      triggerLabel="Add sequence operation"
+                      triggerLabel={t("operationRow.addSequenceOperation")}
                       onAdd={(op) => updateSequenceChildren((ops) => [...ops, op])}
                     />
                   )}
@@ -170,6 +204,7 @@ export function PatchOperationNodeRow({
                     depth={depth}
                     generateId={generateId}
                     onSet={(op) => updateSlot("matchOp", op)}
+                    t={t}
                   />
                   <MatchSlot
                     label="nomatch"
@@ -180,6 +215,7 @@ export function PatchOperationNodeRow({
                     depth={depth}
                     generateId={generateId}
                     onSet={(op) => updateSlot("nomatchOp", op)}
+                    t={t}
                   />
                 </div>
               )}
@@ -200,6 +236,7 @@ function MatchSlot({
   depth,
   generateId,
   onSet,
+  t,
 }: {
   label: "match" | "nomatch";
   op: PatchOperationNode | null;
@@ -209,6 +246,7 @@ function MatchSlot({
   depth: number;
   generateId: () => PatchOperationId;
   onSet: (op: PatchOperationNode | null) => void;
+  t: TFunction<"patches">;
 }) {
   return (
     <div className={styles.slot}>
@@ -232,7 +270,7 @@ function MatchSlot({
             catalog={catalog}
             generateId={generateId}
             slot={label}
-            triggerLabel={`Set ${label} operation`}
+            triggerLabel={t("operationRow.setSlotOperation", { slot: label })}
             onAdd={(newOp) => onSet(newOp)}
           />
         )

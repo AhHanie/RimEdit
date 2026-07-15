@@ -37,7 +37,8 @@ pub enum InheritanceDiagnosticSeverity {
     Warning,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+// Not `Eq`: `args` can carry a `DiagnosticArgValue::Float`, and `f64` has no `Eq` impl.
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct InheritanceDiagnostic {
     pub severity: InheritanceDiagnosticSeverity,
@@ -45,6 +46,35 @@ pub struct InheritanceDiagnostic {
     pub message: String,
     pub def_type: Option<String>,
     pub def_name: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
+}
+
+impl InheritanceDiagnostic {
+    fn error(
+        code: impl Into<String>,
+        message: impl Into<String>,
+        def_type: impl Into<String>,
+        def_name: Option<String>,
+    ) -> Self {
+        Self {
+            severity: InheritanceDiagnosticSeverity::Error,
+            code: code.into(),
+            message: message.into(),
+            def_type: Some(def_type.into()),
+            def_name,
+            args: crate::diagnostics::DiagnosticArgs::new(),
+        }
+    }
+
+    /// Attaches typed args for `code`. Additive on top of the still-English `message`.
+    fn with_args(mut self, args: crate::diagnostics::DiagnosticArgs) -> Self {
+        self.args.extend(args);
+        self
+    }
 }
 
 /// Maps every top-level `<Defs>` child that declared a `ParentName` to its resolved (parent-chain
@@ -127,16 +157,21 @@ pub fn resolve_inheritance<'d>(
         };
         match by_name.get(&parent_name).and_then(|c| c.first().copied()) {
             Some(parent_idx) => node.parent = Some(parent_idx),
-            None => diagnostics.push(InheritanceDiagnostic {
-                severity: InheritanceDiagnosticSeverity::Error,
-                code: "inheritance_missing_parent".to_string(),
-                message: format!(
-                    "Could not find parent node named \"{}\" for {} (def falls back to its own, unmerged values)",
-                    parent_name, node.def_type
-                ),
-                def_type: Some(node.def_type.clone()),
-                def_name: node.def_name.clone(),
-            }),
+            None => diagnostics.push(
+                InheritanceDiagnostic::error(
+                    "inheritance_missing_parent",
+                    format!(
+                        "Could not find parent node named \"{}\" for {} (def falls back to its own, unmerged values)",
+                        parent_name, node.def_type
+                    ),
+                    node.def_type.clone(),
+                    node.def_name.clone(),
+                )
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "parentName",
+                    parent_name.into(),
+                )])),
+            ),
         }
     }
     // Deliberately index-based (not `for node in &nodes`): each iteration writes into a
@@ -160,16 +195,19 @@ pub fn resolve_inheritance<'d>(
     }
     for node in &nodes {
         if node.resolved.is_none() {
-            diagnostics.push(InheritanceDiagnostic {
-                severity: InheritanceDiagnosticSeverity::Error,
-                code: "inheritance_cycle".to_string(),
-                message: format!(
+            diagnostics.push(InheritanceDiagnostic::error(
+                "inheritance_cycle",
+                format!(
                     "Cyclic inheritance hierarchy detected for {} (def falls back to its own, unmerged values)",
                     node.def_type
                 ),
-                def_type: Some(node.def_type.clone()),
-                def_name: node.def_name.clone(),
-            });
+                node.def_type.clone(),
+                node.def_name.clone(),
+            )
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "defType",
+                node.def_type.as_str().into(),
+            )])));
         }
     }
 
@@ -202,16 +240,21 @@ fn resolve_recursively<'d>(
     diagnostics: &mut Vec<InheritanceDiagnostic>,
 ) {
     if nodes[idx].resolved.is_some() {
-        diagnostics.push(InheritanceDiagnostic {
-            severity: InheritanceDiagnosticSeverity::Error,
-            code: "inheritance_cycle".to_string(),
-            message: format!(
-                "Cyclic inheritance hierarchy detected for {}",
-                nodes[idx].def_type
-            ),
-            def_type: Some(nodes[idx].def_type.clone()),
-            def_name: nodes[idx].def_name.clone(),
-        });
+        diagnostics.push(
+            InheritanceDiagnostic::error(
+                "inheritance_cycle",
+                format!(
+                    "Cyclic inheritance hierarchy detected for {}",
+                    nodes[idx].def_type
+                ),
+                nodes[idx].def_type.clone(),
+                nodes[idx].def_name.clone(),
+            )
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "defType",
+                nodes[idx].def_type.as_str().into(),
+            )])),
+        );
         return;
     }
 
@@ -467,10 +510,23 @@ mod tests {
         let resolution = resolve_inheritance(doc, &defs);
         assert_eq!(resolution.diagnostics.len(), 1);
         assert_eq!(resolution.diagnostics[0].code, "inheritance_missing_parent");
+        assert_eq!(
+            resolution.diagnostics[0].args["parentName"],
+            crate::diagnostics::DiagnosticArgValue::Text("DoesNotExist".to_string())
+        );
 
         let wall = find_by_def_name(&defs, "Wall");
         let resolved = resolution.resolve(wall);
         assert_eq!(resolved, wall);
+    }
+
+    #[test]
+    fn inheritance_diagnostic_wire_shape_omits_empty_args() {
+        let diag =
+            InheritanceDiagnostic::error("inheritance_cycle", "Cyclic hierarchy", "Wall", None);
+        let json = serde_json::to_value(&diag).unwrap();
+        assert_eq!(json["code"], "inheritance_cycle");
+        assert!(json.get("args").is_none());
     }
 
     #[test]

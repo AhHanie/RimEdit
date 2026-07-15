@@ -15,7 +15,7 @@
   cursor: pointer;
   font-size: 11px;
   color: var(--text-error);
-  text-align: left;
+  text-align: start;
 }
 
 .header:hover {

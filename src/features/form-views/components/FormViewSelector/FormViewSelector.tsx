@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { UseFormViewsResult } from "../../hooks/useFormViews";
 import { useViewSwitchConfirmation } from "../../hooks/useViewSwitchConfirmation";
 import type { ResolvedFormView } from "../../types/resolvedFormView";
@@ -35,11 +37,14 @@ function parseOptionValue(value: string): SelectedFormViewRef {
   return { origin: value.slice(0, idx) as FormViewOrigin, id: value.slice(idx + 1) };
 }
 
-function sourceText(view: ResolvedFormView): string | null {
+function sourceText(view: ResolvedFormView, t: TFunction<"editor">): string | null {
   if (view.origin === "schema") {
     return view.source
-      ? `Schema view · ${view.source.packId} ${view.source.packVersion}`
-      : "Schema view · read-only";
+      ? t("formViews.selector.sourceSchemaWithVersion", {
+          packId: view.source.packId,
+          packVersion: view.source.packVersion,
+        })
+      : t("formViews.selector.sourceSchemaReadOnly");
   }
   return null;
 }
@@ -51,6 +56,7 @@ function sourceText(view: ResolvedFormView): string | null {
  * duplicate the profile/schema check.
  */
 export function FormViewSelector({ controller, onOpenManager, hiddenIssues, onReveal }: Props) {
+  const { t } = useTranslation("editor");
   const { requestSwitch, switchConfirmDialog } = useViewSwitchConfirmation(controller);
 
   if (!controller.applicable) return null;
@@ -66,12 +72,12 @@ export function FormViewSelector({ controller, onOpenManager, hiddenIssues, onRe
   }
 
   const showFullFormDisabled = selectedView.origin === "default" && !hasDirtyOverride;
-  const currentSourceText = sourceText(selectedView);
+  const currentSourceText = sourceText(selectedView, t);
 
   return (
     <div className={styles.root}>
       <label htmlFor={FORM_VIEW_SELECTOR_SELECT_ID} className={styles.label}>
-        View
+        {t("formViews.selector.viewLabel")}
       </label>
       <select
         id={FORM_VIEW_SELECTOR_SELECT_ID}
@@ -81,17 +87,17 @@ export function FormViewSelector({ controller, onOpenManager, hiddenIssues, onRe
       >
         {defaultView && <option value={optionValue(defaultView)}>{defaultView.label}</option>}
         {schemaViews.length > 0 && (
-          <optgroup label="Schema views">
+          <optgroup label={t("formViews.selector.schemaViewsGroup")}>
             {schemaViews.map((v) => (
               <option key={optionValue(v)} value={optionValue(v)}>
                 {v.label}
-                {v.recommended ? " (recommended)" : ""}
+                {v.recommended ? t("formViews.selector.recommendedSuffix") : ""}
               </option>
             ))}
           </optgroup>
         )}
         {customViews.length > 0 && (
-          <optgroup label="Custom views">
+          <optgroup label={t("formViews.selector.customViewsGroup")}>
             {customViews.map((v) => (
               <option key={optionValue(v)} value={optionValue(v)}>
                 {v.label}
@@ -104,7 +110,7 @@ export function FormViewSelector({ controller, onOpenManager, hiddenIssues, onRe
       {currentSourceText && <span className={styles.sourceText}>{currentSourceText}</span>}
 
       <button type="button" className={styles.actionBtn} onClick={onOpenManager}>
-        Customize view
+        {t("formViews.selector.customizeView")}
       </button>
 
       <button
@@ -113,7 +119,7 @@ export function FormViewSelector({ controller, onOpenManager, hiddenIssues, onRe
         onClick={() => requestSwitch({ origin: "default", id: defaultView?.id ?? "default" })}
         disabled={showFullFormDisabled}
       >
-        Show full form
+        {t("formViews.selector.showFullForm")}
       </button>
 
       <div className={styles.rightGroup}>
@@ -127,12 +133,14 @@ export function FormViewSelector({ controller, onOpenManager, hiddenIssues, onRe
         {hasHiddenIssues && (
           <div className={styles.hiddenIssuesIndicator} role="status">
             <span className={styles.hiddenIssuesText}>
-              {hiddenIssues!.totalCount} hidden field issue{hiddenIssues!.totalCount === 1 ? "" : "s"}
+              {t("formViews.selector.hiddenIssueCount", { count: hiddenIssues!.totalCount })}
               {hiddenIssues!.blockingCount > 0 &&
-                ` (${hiddenIssues!.blockingCount} blocking)`}
+                t("formViews.selector.hiddenIssueBlocking", {
+                  count: hiddenIssues!.blockingCount,
+                })}
             </span>
             <button type="button" className={styles.linkBtn} onClick={onReveal}>
-              Reveal fields with issues
+              {t("formViews.selector.revealFieldsWithIssues")}
             </button>
           </div>
         )}
@@ -140,13 +148,13 @@ export function FormViewSelector({ controller, onOpenManager, hiddenIssues, onRe
         {hasDirtyOverride && (
           <div className={styles.overrideIndicator} role="status">
             <span className={styles.overrideText}>
-              Modified · {hiddenCount} hidden
+              {t("formViews.selector.modifiedHiddenCount", { count: hiddenCount })}
             </span>
             <button type="button" className={styles.linkBtn} onClick={controller.resetOverride}>
-              Reset
+              {t("formViews.selector.reset")}
             </button>
             <button type="button" className={styles.linkBtn} onClick={controller.resetOverride}>
-              Discard
+              {t("formViews.selector.discard")}
             </button>
           </div>
         )}

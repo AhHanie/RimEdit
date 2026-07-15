@@ -32,6 +32,8 @@ fn field(xml_aliases: &[&str]) -> FieldSchema {
         repeatable: false,
         xml: XmlFieldShape::Element,
         source_pack_id: None,
+        label_source_pack_id: None,
+        description_source_pack_id: None,
         items: None,
         flags: false,
         default_collapsed: None,

@@ -21,6 +21,12 @@ import {
   detectLineEnding,
   type LineEnding,
 } from "../lib/lineEndings";
+import {
+  formEditNoDocumentError,
+  noActiveFileError,
+  noActiveProjectError,
+  noDefSelectedError,
+} from "../lib/xmlEditorSessionErrors";
 import { measure, measureAsync } from "../../../instrumentation";
 import type { InstrumentationTags } from "../../../instrumentation";
 import type { TemplateFieldValue } from "../../../features/schema-catalog/types";
@@ -251,7 +257,14 @@ export function useXmlEditorSession(
                 );
 
           if (!result.document) {
-            throw new Error("Form edit returned no parsed document.");
+            // Reachable, documented backend behavior, not a can't-happen invariant: the
+            // backend re-parses the caller-supplied `raw_xml` before applying any edit and,
+            // if that's already fatally malformed, returns `document: null` up front (see
+            // `apply_editor_edits` in `src-tauri/src/services/xml_editor.rs`). A form field's
+            // debounced/queued commit can still be in flight when the user switches to the
+            // raw XML tab and types something unparseable, so this must carry a structured
+            // `code` -- see `formEditNoDocumentError`.
+            throw formEditNoDocumentError("Form edit returned no parsed document.");
           }
 
           const changed = latestRawXmlRef.current !== result.rawXml;
@@ -281,10 +294,15 @@ export function useXmlEditorSession(
           });
 
           return result.rawXml;
-        })
-        .catch((e: unknown) => {
-          throw new Error(formatError(e));
         });
+      // No catch-and-reformat here: rethrow whatever this chain rejects with as-is (a
+      // structured `DiagnosticError`/`AppError`-shaped rejection, or an arbitrary unexpected
+      // error) so callers can render it through `formatError`/`formatCommandError` themselves.
+      // Pre-formatting here (as a prior version of this code did) collapsed a structured
+      // `code`/`args` error down to a plain `Error` whose `message` is already-rendered English
+      // text, which permanently discarded the `code` before it ever reached the shared
+      // diagnostic renderer -- defeating translation for exactly the errors this hook itself
+      // raises (see `formEditNoDocumentError` above).
 
       pendingFormEditRef.current = run;
       return run;
@@ -587,7 +605,7 @@ export function useXmlEditorSession(
       fieldValues: Record<string, TemplateFieldValue>,
     ): Promise<CreateDefResult> => {
       if (readOnly || !projectId || !relativePath) {
-        throw new Error("Cannot insert def: read-only or no active file.");
+        throw noActiveFileError("Cannot insert def: read-only or no active file.");
       }
       await pendingFormEditRef.current.catch(() => latestRawXmlRef.current);
       const currentXml = latestRawXmlRef.current;
@@ -633,7 +651,7 @@ export function useXmlEditorSession(
   const insertDefFromUserTemplate = useCallback(
     async (templateId: string, defName: string): Promise<CreateDefResult> => {
       if (readOnly || !projectId || !relativePath) {
-        throw new Error("Cannot insert def: read-only or no active file.");
+        throw noActiveFileError("Cannot insert def: read-only or no active file.");
       }
       await pendingFormEditRef.current.catch(() => latestRawXmlRef.current);
       const currentXml = latestRawXmlRef.current;
@@ -676,7 +694,7 @@ export function useXmlEditorSession(
   const insertDefFromIndexedDef = useCallback(
     async (source: IndexedDef, defName: string): Promise<CreateDefResult> => {
       if (readOnly || !projectId || !relativePath) {
-        throw new Error("Cannot insert def: read-only or no active file.");
+        throw noActiveFileError("Cannot insert def: read-only or no active file.");
       }
       await pendingFormEditRef.current.catch(() => latestRawXmlRef.current);
       const currentXml = latestRawXmlRef.current;
@@ -723,12 +741,12 @@ export function useXmlEditorSession(
   const saveSelectedDefAsTemplate = useCallback(
     async (name: string): Promise<UserDefTemplate> => {
       if (readOnly || !projectId || !relativePath) {
-        throw new Error("Cannot save template: read-only or no active file.");
+        throw noActiveFileError("Cannot save template: read-only or no active file.");
       }
       await pendingFormEditRef.current.catch(() => latestRawXmlRef.current);
       const nodeId = history.present.selectedDefNodeId;
       if (nodeId == null) {
-        throw new Error("No Def is selected.");
+        throw noDefSelectedError("No Def is selected.");
       }
       const currentXml = latestRawXmlRef.current;
       return saveUserDefTemplate(projectId, relativePath, currentXml, nodeId, name);
@@ -749,7 +767,7 @@ export function useXmlEditorSession(
   const deleteUserDefTemplate = useCallback(
     async (templateId: string): Promise<void> => {
       if (!projectId) {
-        throw new Error("Cannot delete template: no active project.");
+        throw noActiveProjectError("Cannot delete template: no active project.");
       }
       await deleteUserDefTemplateApi(projectId, templateId);
     },

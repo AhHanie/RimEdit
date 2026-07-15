@@ -1,0 +1,46 @@
+{
+  "panel": {
+    "title": "Settings",
+    "openProject": "Open project",
+    "addSourceFolder": "Add source folder",
+    "loading": "Loading…",
+    "noSettingsLoaded": "No settings loaded.",
+    "dismissError": "Dismiss error",
+    "gameVersionHeader": "Game Version",
+    "gameVersionAriaLabel": "Game version",
+    "languageHeader": "Language",
+    "languageAriaLabel": "Language",
+    "noLocationsRegistered": "No locations registered.",
+    "activeProjectHeader": "Active Project",
+    "otherProjectsHeader": "Other Projects",
+    "projectsHeader": "Projects",
+    "noProjectsRegistered": "No projects registered.",
+    "readOnlySourcesHeader": "Read-only Sources",
+    "noSourceFoldersRegistered": "No source folders registered."
+  },
+  "location": {
+    "sourceTypeLabels": {
+      "baseGame": "Base Game",
+      "localMod": "Local Mod",
+      "steamWorkshop": "Steam Workshop",
+      "folder": "Folder"
+    },
+    "kindProject": "project",
+    "kindSource": "source",
+    "active": "Active",
+    "readOnly": "read-only",
+    "mod": "mod: {{modId}}",
+    "version": "version: {{version}}",
+    "displayNameLabel": "Display name",
+    "sourceTypeLabel": "Source type",
+    "modIdLabel": "Mod ID",
+    "modIdPlaceholder": "Mod ID (optional)"
+  },
+  "confirm": {
+    "removeActiveDirty": "This is the active project. Removing it will close unsaved tabs.",
+    "removeLocationTitle": "Remove location",
+    "removeActive": "Remove the active project? It will be deactivated.",
+    "removeNamed": "Remove \"{{displayName}}\"?",
+    "versionChange": "Changing the game version will rebuild the Def index and may change form schemas. Existing open files remain open."
+  }
+}

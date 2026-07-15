@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Blocks, RefreshCw, FolderOpen, FolderPlus, PanelLeft, Sun, Moon, Monitor, Command } from "lucide-react";
 import type { ThemeMode } from "../../../types/ui";
 import styles from "./AppTitleBar.module.css";
@@ -27,26 +28,27 @@ export function AppTitleBar({
   onToggleExplorer,
   explorerVisible,
 }: AppTitleBarProps) {
+  const { t } = useTranslation(["shell", "common"]);
   const ThemeIcon = themeMode === "light" ? Sun : themeMode === "dark" ? Moon : Monitor;
   const themeLabel =
     themeMode === "light"
-      ? "Light theme (click for Dark)"
+      ? t("shell:titleBar.themeLight")
       : themeMode === "dark"
-        ? "Dark theme (click for System)"
-        : "System theme (click for Light)";
+        ? t("shell:titleBar.themeDark")
+        : t("shell:titleBar.themeSystem");
 
   return (
     <header className={styles.root}>
       <div className={styles.brand}>
         <Blocks size={16} className={styles.brandIcon} />
-        <span>RimEdit</span>
+        <span>{t("common:app.name")}</span>
       </div>
 
       <button
         className={styles.command}
         onClick={onTogglePalette}
-        aria-label="Open command palette"
-        title="Open command palette (Ctrl+Shift+P)"
+        aria-label={t("shell:titleBar.commandPaletteAriaLabel")}
+        title={t("shell:titleBar.openCommandPalette")}
       >
         <Command size={12} />
         <span className={styles.commandText}>
@@ -54,7 +56,7 @@ export function AppTitleBar({
             <>
               <span className={styles.commandProject}>{activeProjectName}</span>
               {activeProjectRoot && (
-                <span style={{ marginLeft: 6, opacity: 0.55, fontSize: 11 }}>
+                <span style={{ marginInlineStart: 6, opacity: 0.55, fontSize: 11 }}>
                   {activeProjectRoot.length > 48
                     ? "…" + activeProjectRoot.slice(-46)
                     : activeProjectRoot}
@@ -62,7 +64,7 @@ export function AppTitleBar({
               )}
             </>
           ) : (
-            "Open a RimWorld mod folder…"
+            t("shell:titleBar.noProjectPrompt")
           )}
         </span>
       </button>
@@ -79,8 +81,8 @@ export function AppTitleBar({
         <button
           className="icon-btn"
           onClick={onRefresh}
-          aria-label="Refresh project files"
-          title="Refresh project files"
+          aria-label={t("shell:titleBar.refreshProjectFiles")}
+          title={t("shell:titleBar.refreshProjectFiles")}
           disabled={!activeProjectName}
         >
           <RefreshCw size={15} />
@@ -88,24 +90,24 @@ export function AppTitleBar({
         <button
           className="icon-btn"
           onClick={onOpenProject}
-          aria-label="Open project folder"
-          title="Open project folder"
+          aria-label={t("shell:titleBar.openProjectFolder")}
+          title={t("shell:titleBar.openProjectFolder")}
         >
           <FolderOpen size={15} />
         </button>
         <button
           className="icon-btn"
           onClick={onAddSourceFolder}
-          aria-label="Add source folder"
-          title="Add source folder"
+          aria-label={t("shell:titleBar.addSourceFolder")}
+          title={t("shell:titleBar.addSourceFolder")}
         >
           <FolderPlus size={15} />
         </button>
         <button
           className={`icon-btn${explorerVisible ? ` ${styles.btnActive}` : ""}`}
           onClick={onToggleExplorer}
-          aria-label="Toggle explorer panel"
-          title="Toggle explorer panel"
+          aria-label={t("shell:titleBar.toggleExplorer")}
+          title={t("shell:titleBar.toggleExplorer")}
           aria-pressed={explorerVisible}
         >
           <PanelLeft size={15} />

@@ -10,15 +10,15 @@
 .track {
   position: absolute;
   inset: 0;
-  left: 2px;
+  inset-inline-start: 2px;
   width: 1px;
   background: var(--border-subtle);
-  transition: background 0.1s, width 0.1s, left 0.1s;
+  transition: background 0.1s, width 0.1s, inset-inline-start 0.1s;
 }
 
 .root:hover .track,
 .root:focus-visible .track {
-  left: 1px;
+  inset-inline-start: 1px;
   width: 3px;
   background: var(--accent);
 }

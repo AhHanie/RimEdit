@@ -1,8 +1,9 @@
+import type { TFunction } from "i18next";
 import type { SchemaCatalog } from "../../schema-catalog";
 import type { PatchOperationNode } from "../types/patchFile";
 
 /** Best-effort xpath (or other identifying detail) for a row's collapsed summary line. */
-function summaryDetail(node: PatchOperationNode): string | undefined {
+function summaryDetail(node: PatchOperationNode, t: TFunction<"patches">): string | undefined {
   const kind = node.kind;
   switch (kind.type) {
     case "add":
@@ -21,7 +22,7 @@ function summaryDetail(node: PatchOperationNode): string | undefined {
     case "findMod":
       return kind.data.mods.length > 0 ? kind.data.mods.join(", ") : undefined;
     case "sequence":
-      return `${kind.data.length} operation${kind.data.length === 1 ? "" : "s"}`;
+      return t("operationSummary.operationCount", { count: kind.data.length });
     case "unknown":
       return undefined;
   }
@@ -31,6 +32,6 @@ export function operationTitle(node: PatchOperationNode, catalog: SchemaCatalog 
   return catalog?.patchOperations?.[node.className]?.label || node.className;
 }
 
-export function operationSubtitle(node: PatchOperationNode): string | undefined {
-  return summaryDetail(node);
+export function operationSubtitle(node: PatchOperationNode, t: TFunction<"patches">): string | undefined {
+  return summaryDetail(node, t);
 }

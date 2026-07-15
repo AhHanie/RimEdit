@@ -3,6 +3,8 @@
  * is adjacently tagged (`{ type, data }`) because `Sequence` wraps a bare `Vec`, which serde
  * cannot represent under an internally-tagged (`{ type, ...fields }`) enum. */
 
+import type { DiagnosticArgs } from "../../../lib/diagnostics";
+
 export type PatchOperationId = number;
 
 export interface PatchSpan {
@@ -25,6 +27,11 @@ export interface PatchDiagnostic {
   line: number | null;
   column: number | null;
   message: string;
+  /** Stable code for this diagnostic; absent for diagnostics still awaiting migration off the
+   * raw parser-library `message` alone. See `src/lib/diagnostics.ts`. */
+  code?: string;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 export interface PathedOperationData {

@@ -18,7 +18,9 @@ pub(crate) use asset_protocol::{
     content_type_for_texture, extract_asset_token, is_browser_preview_supported, preview_asset_url,
     read_preview_asset, AssetTokenCache,
 };
-pub(crate) use model::{GraphicPreviewAssetResult, GraphicPreviewVariant};
+pub(crate) use model::{
+    GraphicPreviewAssetResult, GraphicPreviewLabel, GraphicPreviewVariant, GraphicPreviewWarning,
+};
 
 use locations::build_search_locations;
 use paths::{normalize_texture_path, verified_textures_root};
@@ -42,24 +44,33 @@ pub(crate) fn resolve_graphic_preview_assets(
         .iter()
         .any(|l| l.id == project_id && l.kind == LocationKind::Project)
     {
-        return Err(AppError {
-            code: "project_not_found".to_string(),
-            message: format!("No project location found for id '{}'.", project_id),
-            details: None,
-        });
+        return Err(AppError::from_ref(
+            crate::diagnostics::DiagnosticRef::code("project_not_found")
+                .with_arg("projectId", project_id),
+            format!("No project location found for id '{}'.", project_id),
+        ));
     }
 
     let normalized = normalize_texture_path(tex_path)?;
-    let mut warnings: Vec<String> = Vec::new();
+    let mut warnings: Vec<GraphicPreviewWarning> = Vec::new();
 
     let search_locations = build_search_locations(settings, project_id);
 
     for loc in &search_locations {
         if verified_textures_root(Path::new(&loc.root_path)).is_none() {
-            warnings.push(format!(
-                "Location '{}' has no Textures directory; no textures will be found there.",
-                loc.display_name,
-            ));
+            warnings.push(
+                GraphicPreviewWarning::new(
+                    "graphic_preview_missing_textures_directory",
+                    format!(
+                        "Location '{}' has no Textures directory; no textures will be found there.",
+                        loc.display_name,
+                    ),
+                )
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "locationName",
+                    loc.display_name.as_str().into(),
+                )])),
+            );
         }
     }
 
@@ -68,7 +79,7 @@ pub(crate) fn resolve_graphic_preview_assets(
         GraphicPreviewStrategy::Single => resolve_single(
             &normalized,
             "single",
-            "Single",
+            GraphicPreviewLabel::Single,
             &search_locations,
             asset_cache,
             &mut warnings,
@@ -94,14 +105,23 @@ pub(crate) fn resolve_graphic_preview_assets(
             &mut warnings,
         ),
         GraphicPreviewStrategy::Unknown => {
-            warnings.push(format!(
-                "Unknown graphic class '{}'; falling back to single texture.",
-                graphic_class
-            ));
+            warnings.push(
+                GraphicPreviewWarning::new(
+                    "graphic_preview_unknown_graphic_class",
+                    format!(
+                        "Unknown graphic class '{}'; falling back to single texture.",
+                        graphic_class
+                    ),
+                )
+                .with_args(crate::diagnostics::diagnostic_args([(
+                    "graphicClass",
+                    graphic_class.into(),
+                )])),
+            );
             resolve_single(
                 &normalized,
                 "single",
-                "Single",
+                GraphicPreviewLabel::Single,
                 &search_locations,
                 asset_cache,
                 &mut warnings,
@@ -120,10 +140,10 @@ pub(crate) fn resolve_graphic_preview_assets(
 fn resolve_single(
     relative_base: &str,
     role: &str,
-    label: &str,
+    label: GraphicPreviewLabel,
     search_locations: &[&RegisteredLocation],
     asset_cache: &AssetTokenCache,
-    warnings: &mut Vec<String>,
+    warnings: &mut Vec<GraphicPreviewWarning>,
 ) -> Vec<GraphicPreviewVariant> {
     vec![resolve_exact(
         role,

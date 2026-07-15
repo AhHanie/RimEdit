@@ -4,6 +4,8 @@
  * this mirrors (top-level-only reorder, full-stream apply, disable/order silently filtered to the
  * selected Def's visible operations). */
 
+import type { DiagnosticArgs } from "../../../lib/diagnostics";
+
 import type { XPathTarget } from "./xpathCompletion";
 
 export type { XPathTarget };
@@ -62,7 +64,12 @@ export interface OperationTraceEntry {
   key: PatchOperationKey;
   className: string;
   status: OperationTraceStatus;
+  /** Compatibility English text mirroring `code`/`args`. Prefer rendering `code`/`args` through
+   * `renderDiagnostic` -- see `src-tauri/src/patches/apply.rs`'s `OperationTraceEntry` doc comment. */
   message: string | null;
+  code?: string | null;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 export type ApplyDiagnosticSeverity = "error" | "warning";
@@ -72,6 +79,8 @@ export interface ApplyDiagnostic {
   code: string;
   message: string;
   key: PatchOperationKey | null;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 export type InheritanceDiagnosticSeverity = "error" | "warning";
@@ -82,6 +91,8 @@ export interface InheritanceDiagnostic {
   message: string;
   defType: string | null;
   defName: string | null;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 /** One operation affecting the selected Def, in default preview order. */
@@ -91,10 +102,16 @@ export interface PatchPreviewOperationSummary {
   classification: PatchOperationClassification;
   previewSupport: PatchPreviewSupport;
   status: OperationTraceStatus | null;
-  /** Explains `status` when the apply engine has something more specific to say than the status
-   * alone -- e.g. a `PatchOperationFindMod`-wrapped operation skipped because its required mod
-   * isn't registered as a location in this project. `null` when `status` is self-explanatory. */
+  /** Compatibility English text mirroring `statusCode`/`statusArgs`. Explains `status` when the
+   * apply engine has something more specific to say than the status alone -- e.g. a
+   * `PatchOperationFindMod`-wrapped operation skipped because its required mod isn't registered as
+   * a location in this project. `null` when `status` is self-explanatory. Prefer rendering
+   * `statusCode`/`statusArgs` through `renderDiagnostic` rather than this raw string. */
   statusMessage: string | null;
+  /** Stable diagnostic code mirroring `statusMessage`, for `renderDiagnostic`. */
+  statusCode?: string | null;
+  /** Typed, literal interpolation args for `statusCode`. See `src/lib/diagnostics.ts`. */
+  statusArgs?: DiagnosticArgs;
   /** Preview-only reorder controls apply only to top-level operations -- see
    * `docs/patches-editor/07-preview-engine.md`'s "Implementation Notes". */
   canReorder: boolean;
@@ -114,6 +131,8 @@ export interface PatchPreviewConflictDiagnostic {
   code: string;
   key: PatchOperationKey;
   message: string;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 export interface PatchPreviewImpactSummary {

@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FolderOpen, FolderPlus, X } from "lucide-react";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { confirmDiscardChanges } from "../../../../lib/confirmDiscardChanges";
 import { formatError } from "../../../../lib/formatError";
+import { SUPPORTED_LOCALES } from "../../../../i18n/locale";
 import type { ProjectSettings, RegisteredLocation, RegisteredLocationUpdate } from "../../types";
 import { LocationSettingsRow } from "../LocationSettingsRow/LocationSettingsRow";
 import styles from "./ProjectSettingsPanel.module.css";
@@ -14,9 +16,11 @@ interface ProjectSettingsPanelProps {
   loadError: string | null;
   hasDirtyTabs: boolean;
   installedSchemaVersions: string[];
+  locale: string;
   onEditLocation: (update: RegisteredLocationUpdate) => Promise<void>;
   onRemoveLocation: (id: string) => Promise<void>;
   onUpdateGameVersion: (version: string) => Promise<void>;
+  onChangeLocale: (locale: string) => Promise<void>;
   onOpenProject: () => void;
   onAddSourceFolder: () => void;
 }
@@ -28,14 +32,18 @@ export function ProjectSettingsPanel({
   loadError,
   hasDirtyTabs,
   installedSchemaVersions,
+  locale,
   onEditLocation,
   onRemoveLocation,
   onUpdateGameVersion,
+  onChangeLocale,
   onOpenProject,
   onAddSourceFolder,
 }: ProjectSettingsPanelProps) {
+  const { t } = useTranslation(["settings", "common"]);
   const [panelError, setPanelError] = useState<string | null>(null);
   const [versionChangePending, setVersionChangePending] = useState(false);
+  const [localeChangePending, setLocaleChangePending] = useState(false);
 
   async function handleSave(update: RegisteredLocationUpdate) {
     setPanelError(null);
@@ -52,16 +60,19 @@ export function ProjectSettingsPanel({
     const isActive = location.id === settings?.activeProjectId;
 
     if (isActive && hasDirtyTabs) {
-      const ok = await confirmDiscardChanges(
-        "This is the active project. Removing it will close unsaved tabs.",
-      );
+      const ok = await confirmDiscardChanges(t("settings:confirm.removeActiveDirty"));
       if (!ok) return;
     } else {
       const ok = await confirm(
         isActive
-          ? "Remove the active project? It will be deactivated."
-          : `Remove "${location.displayName}"?`,
-        { title: "Remove location", kind: "warning", okLabel: "Remove", cancelLabel: "Cancel" },
+          ? t("settings:confirm.removeActive")
+          : t("settings:confirm.removeNamed", { displayName: location.displayName }),
+        {
+          title: t("settings:confirm.removeLocationTitle"),
+          kind: "warning",
+          okLabel: t("common:actions.remove"),
+          cancelLabel: t("common:actions.cancel"),
+        },
       );
       if (!ok) return;
     }
@@ -78,9 +89,7 @@ export function ProjectSettingsPanel({
     if (!version || version === settings?.gameVersion) return;
 
     if (hasDirtyTabs) {
-      const ok = await confirmDiscardChanges(
-        "Changing the game version will rebuild the Def index and may change form schemas. Existing open files remain open.",
-      );
+      const ok = await confirmDiscardChanges(t("settings:confirm.versionChange"));
       if (!ok) return;
     }
 
@@ -92,6 +101,24 @@ export function ProjectSettingsPanel({
       setPanelError(formatError(err));
     } finally {
       setVersionChangePending(false);
+    }
+  }
+
+  async function handleLocaleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const nextLocale = e.target.value;
+    if (!nextLocale || nextLocale === locale) return;
+
+    setPanelError(null);
+    setLocaleChangePending(true);
+    try {
+      // `onChangeLocale` (`LocaleProvider.changeLocale`) itself guarantees that a persistence
+      // failure reverts i18next/document/state back to the prior locale before rejecting -- see
+      // its doc comment -- so no caller-side rollback is needed here, only surfacing the error.
+      await onChangeLocale(nextLocale);
+    } catch (err) {
+      setPanelError(formatError(err));
+    } finally {
+      setLocaleChangePending(false);
     }
   }
 
@@ -121,20 +148,20 @@ export function ProjectSettingsPanel({
   return (
     <aside className={styles.root} data-visible={visible ? "true" : "false"}>
       <div className={styles.header}>
-        <span className={styles.title}>Settings</span>
+        <span className={styles.title}>{t("settings:panel.title")}</span>
         <button
           className="icon-btn"
           onClick={onOpenProject}
-          aria-label="Open project"
-          title="Open project"
+          aria-label={t("settings:panel.openProject")}
+          title={t("settings:panel.openProject")}
         >
           <FolderOpen size={14} />
         </button>
         <button
           className="icon-btn"
           onClick={onAddSourceFolder}
-          aria-label="Add source folder"
-          title="Add source folder"
+          aria-label={t("settings:panel.addSourceFolder")}
+          title={t("settings:panel.addSourceFolder")}
         >
           <FolderPlus size={14} />
         </button>
@@ -146,7 +173,7 @@ export function ProjectSettingsPanel({
             <button
               className="icon-btn"
               onClick={() => setPanelError(null)}
-              aria-label="Dismiss error"
+              aria-label={t("settings:panel.dismissError")}
             >
               <X size={12} />
             </button>
@@ -154,19 +181,19 @@ export function ProjectSettingsPanel({
         )}
         {loading && (
           <div className="state-loading">
-            <p>Loading…</p>
+            <p>{t("settings:panel.loading")}</p>
           </div>
         )}
         {!loading && !settings && (
           <div className="state-empty">
             <p className="state-empty-text">
-              {loadError ?? "No settings loaded."}
+              {loadError ?? t("settings:panel.noSettingsLoaded")}
             </p>
           </div>
         )}
         {!loading && settings && (
           <>
-            <div className={styles.sectionHeader}>Game Version</div>
+            <div className={styles.sectionHeader}>{t("settings:panel.gameVersionHeader")}</div>
             <div className={styles.gameVersionRow}>
               {installedSchemaVersions.length > 0 ? (
                 <select
@@ -174,7 +201,7 @@ export function ProjectSettingsPanel({
                   value={settings.gameVersion}
                   onChange={(e) => void handleVersionChange(e)}
                   disabled={versionChangePending}
-                  aria-label="Game version"
+                  aria-label={t("settings:panel.gameVersionAriaLabel")}
                 >
                   {installedSchemaVersions.map((v) => (
                     <option key={v} value={v}>
@@ -186,17 +213,33 @@ export function ProjectSettingsPanel({
                 <span className={styles.gameVersionText}>{settings.gameVersion}</span>
               )}
             </div>
+            <div className={styles.sectionHeader}>{t("settings:panel.languageHeader")}</div>
+            <div className={styles.gameVersionRow}>
+              <select
+                className={styles.gameVersionSelect}
+                value={locale}
+                onChange={(e) => void handleLocaleChange(e)}
+                disabled={localeChangePending}
+                aria-label={t("settings:panel.languageAriaLabel")}
+              >
+                {SUPPORTED_LOCALES.map((l) => (
+                  <option key={l.code} value={l.code}>
+                    {l.displayName}
+                  </option>
+                ))}
+              </select>
+            </div>
           </>
         )}
         {!loading && settings && !hasAnyLocations && (
           <div className="state-empty">
             <FolderOpen size={32} className="state-empty-icon" />
-            <p className="state-empty-text">No locations registered.</p>
+            <p className="state-empty-text">{t("settings:panel.noLocationsRegistered")}</p>
             <button className="btn-primary" onClick={onOpenProject}>
-              Open Project
+              {t("common:actions.openProject")}
             </button>
             <button className="btn-secondary" onClick={onAddSourceFolder}>
-              Add Source Folder
+              {t("common:actions.addSourceFolder")}
             </button>
           </div>
         )}
@@ -204,34 +247,36 @@ export function ProjectSettingsPanel({
           <>
             {activeProject && (
               <>
-                <div className={styles.sectionHeader}>Active Project</div>
+                <div className={styles.sectionHeader}>{t("settings:panel.activeProjectHeader")}</div>
                 {renderRow(activeProject, true)}
               </>
             )}
             {otherProjects.length > 0 && (
               <>
                 <div className={styles.sectionHeader}>
-                  {activeProject ? "Other Projects" : "Projects"}
+                  {activeProject
+                    ? t("settings:panel.otherProjectsHeader")
+                    : t("settings:panel.projectsHeader")}
                 </div>
                 {otherProjects.map((loc) => renderRow(loc, false))}
               </>
             )}
             {!activeProject && otherProjects.length === 0 && (
               <>
-                <div className={styles.sectionHeader}>Projects</div>
-                <p className={styles.emptySection}>No projects registered.</p>
+                <div className={styles.sectionHeader}>{t("settings:panel.projectsHeader")}</div>
+                <p className={styles.emptySection}>{t("settings:panel.noProjectsRegistered")}</p>
               </>
             )}
             {sources.length > 0 && (
               <>
-                <div className={styles.sectionHeader}>Read-only Sources</div>
+                <div className={styles.sectionHeader}>{t("settings:panel.readOnlySourcesHeader")}</div>
                 {sources.map((loc) => renderRow(loc, false))}
               </>
             )}
             {sources.length === 0 && (
               <>
-                <div className={styles.sectionHeader}>Read-only Sources</div>
-                <p className={styles.emptySection}>No source folders registered.</p>
+                <div className={styles.sectionHeader}>{t("settings:panel.readOnlySourcesHeader")}</div>
+                <p className={styles.emptySection}>{t("settings:panel.noSourceFoldersRegistered")}</p>
               </>
             )}
           </>

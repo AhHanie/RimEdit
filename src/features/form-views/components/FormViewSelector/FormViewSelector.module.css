@@ -65,7 +65,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .overrideIndicator {

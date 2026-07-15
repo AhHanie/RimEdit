@@ -97,7 +97,7 @@
   min-width: 320px;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border-subtle);
+  border-inline-end: 1px solid var(--border-subtle);
   overflow-y: auto;
 }
 

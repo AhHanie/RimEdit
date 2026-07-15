@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import userEvent from "@testing-library/user-event";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { FormViewManagerDialog, type FormViewFieldChecklistTarget } from "./FormViewManagerDialog";
@@ -424,6 +425,25 @@ describe("FormViewManagerDialog", () => {
     const controller = makeController({ persistWarning: null });
     render(<FormViewManagerDialog controller={controller} onClose={vi.fn()} />);
     expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("renders a custom-view-store warning through the shared diagnostic catalog, not the raw backend message", () => {
+    const controller = makeController({
+      customViewsWarning: {
+        code: "form_view_unsupported_version",
+        // Deliberately different from the catalog text below -- proves the banner renders the
+        // translated code/args lookup (`renderDiagnostic`'s priority-1 path), not a pass-through
+        // of this compatibility message.
+        message: "The custom Form View store was saved by a newer version of RimEdit.",
+        args: { schemaVersion: 7 },
+      },
+    });
+    render(<FormViewManagerDialog controller={controller} onClose={vi.fn()} />);
+    expect(
+      screen.getByText(
+        "This Form View store was saved by a newer version of RimEdit (schema version 7).",
+      ),
+    ).toBeTruthy();
   });
 
   describe("available-views scroll region (Form View Manager scrollable list)", () => {

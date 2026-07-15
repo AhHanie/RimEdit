@@ -1,0 +1,14 @@
+{
+  "defType": "ThingDef",
+  "label": "Thing",
+  "description": "A generic thing.",
+  "fieldOrder": ["defName"],
+  "fields": {
+    "defName": {
+      "label": "Def name",
+      "description": "The unique identifier.",
+      "type": { "kind": "string" },
+      "required": true
+    }
+  }
+}

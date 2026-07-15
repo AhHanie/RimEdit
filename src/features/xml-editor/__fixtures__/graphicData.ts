@@ -217,7 +217,7 @@ export function makeGraphicDataFormState(overrides: Partial<FormFieldState> = {}
 export function makeGraphicPreviewVariant(overrides: Partial<GraphicPreviewVariant> = {}): GraphicPreviewVariant {
   return {
     id: "v1",
-    label: "Single",
+    label: { kind: "single" },
     role: "single",
     sourceLocationId: "fixture-proj",
     sourceLocationName: "Project Mod",

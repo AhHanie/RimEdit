@@ -39,7 +39,7 @@ pub use project_files::{
     read_project_xml_file, rename_project_path_cmd, scan_project_files,
 };
 pub use project_settings::{
-    get_project_settings, remove_location, set_active_project, update_location,
+    get_project_settings, remove_location, set_active_project, update_app_locale, update_location,
     update_project_game_version, upsert_location,
 };
 pub use project_validation::validate_project;

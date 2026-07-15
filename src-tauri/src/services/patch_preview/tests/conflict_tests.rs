@@ -318,7 +318,7 @@ fn custom_operation_affecting_selected_def_reports_unpreviewable_conflict() {
 
 #[test]
 fn disabling_one_of_two_duplicate_replace_operations_clears_the_conflict() {
-    // Regression (codex review, issue 10): `detect_visible_conflicts` originally computed
+    // `detect_visible_conflicts` originally computed
     // conflicts from the static visible-operations list, ignoring the request's own
     // disable/reorder state -- so disabling one side of a duplicate pair left the conflict
     // diagnostic reported even though only one operation is actually still running.
@@ -385,7 +385,7 @@ fn disabling_one_of_two_duplicate_replace_operations_clears_the_conflict() {
 
 #[test]
 fn two_add_operations_adding_different_li_items_to_the_same_list_are_not_a_conflict() {
-    // Regression (codex review, issue 10): grouping solely by raw tag name treated two
+    // Grouping solely by raw tag name treated two
     // ordinary `<li>` list-item additions to the same container as a "duplicate scalar child"
     // conflict, even though appending distinct items to a list across multiple patches is
     // completely normal.
@@ -441,7 +441,7 @@ fn two_add_operations_adding_different_li_items_to_the_same_list_are_not_a_confl
 
 #[test]
 fn duplicate_add_detection_checks_every_value_child_not_only_the_first() {
-    // Regression (codex review, issue 10): only reading the first top-level element of
+    // Only reading the first top-level element of
     // `<value>` missed a duplicate on a later sibling field, e.g. one operation adds
     // `<description/><label/>` and another adds `<label/>` alone at the same xpath.
     let root = temp_project_dir();
@@ -495,7 +495,7 @@ fn duplicate_add_detection_checks_every_value_child_not_only_the_first() {
 
 #[test]
 fn reordering_a_remove_after_a_dependent_operation_removes_the_targets_removed_node_conflict() {
-    // Regression (codex review, issue 10): the ordering check originally used static
+    // The ordering check originally used static
     // file/operation order instead of the actual (possibly reordered) apply order, so
     // reordering the Remove to run *after* the operation that depends on its target could
     // still leave a stale "targets removed node" warning that no longer reflects reality.

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { Loader2, Trash2, X } from "lucide-react";
 import { formatError } from "../../../../lib/formatError";
@@ -64,6 +66,10 @@ export function CreateDefWizard({
   onClose,
   onCreated,
 }: Props) {
+  // Two separate single-namespace hooks, not `useTranslation(["editor", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t, i18n } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   const [state, setState] = useState<WizardState>({
     step: 1,
     defType: "",
@@ -133,7 +139,7 @@ export function CreateDefWizard({
   const allDefTypes = Object.entries(catalog.defTypes)
     .filter(([, schema]) => !schema.abstractType)
     .map(([key, schema]) => ({ key, label: schema.label ?? key }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+    .sort((a, b) => a.label.localeCompare(b.label, i18n.language));
 
   const filteredDefTypes = searchQuery.trim()
     ? allDefTypes.filter(
@@ -229,11 +235,11 @@ export function CreateDefWizard({
   }> = [
     {
       id: BLANK_TEMPLATE_ID,
-      label: "Blank",
-      description: "A minimal def with no fields pre-filled.",
+      label: t("createDefWizard.blankTemplateLabel"),
+      description: t("createDefWizard.blankTemplateDescription"),
     },
     ...Object.values(defTypeSchema?.templates ?? {})
-      .sort((a, b) => a.label.localeCompare(b.label))
+      .sort((a, b) => a.label.localeCompare(b.label, i18n.language))
       .map((t) => ({ id: t.id, label: t.label, description: t.description })),
   ];
 
@@ -276,12 +282,12 @@ export function CreateDefWizard({
   async function handleDeleteTemplate(template: UserDefTemplateSummary) {
     const requestedDefType = state.defType;
     const ok = await confirm(
-      `Delete template "${template.name}"? This cannot be undone.`,
+      t("createDefWizard.deleteTemplateConfirm", { name: template.name }),
       {
-        title: "Delete template",
+        title: t("createDefWizard.deleteTemplateTitle"),
         kind: "warning",
-        okLabel: "Delete",
-        cancelLabel: "Cancel",
+        okLabel: tCommon("actions.delete"),
+        cancelLabel: tCommon("actions.cancel"),
       },
     );
     if (!ok) return;
@@ -324,8 +330,8 @@ export function CreateDefWizard({
 
   const promptFields =
     state.selectedKind === "user" || state.selectedKind === "indexed"
-      ? buildClonePromptFields(defTypeSchema, catalog)
-      : buildPromptFields(defTypeSchema, selectedTemplate, catalog);
+      ? buildClonePromptFields(defTypeSchema, catalog, t)
+      : buildPromptFields(defTypeSchema, selectedTemplate, catalog, t);
 
   function setFieldValue(name: string, value: string) {
     setState((s) => ({
@@ -368,17 +374,17 @@ export function CreateDefWizard({
 
   const stepTitle =
     state.step === 1
-      ? "New Def - Pick Type"
+      ? t("createDefWizard.stepTitlePickType")
       : state.step === 2
-        ? "New Def - Pick Template"
-        : "New Def - Enter Values";
+        ? t("createDefWizard.stepTitlePickTemplate")
+        : t("createDefWizard.stepTitleEnterValues");
 
   return (
     <div
       className={styles.overlay}
       role="dialog"
       aria-modal="true"
-      aria-label="Create Def Wizard"
+      aria-label={t("createDefWizard.dialogAriaLabel")}
     >
       <div className={styles.panel}>
         <div className={styles.header}>
@@ -387,7 +393,7 @@ export function CreateDefWizard({
           <button
             className={styles.closeBtn}
             onClick={onClose}
-            aria-label="Close"
+            aria-label={tCommon("actions.close")}
           >
             <X size={14} />
           </button>
@@ -401,7 +407,7 @@ export function CreateDefWizard({
                   ref={searchRef}
                   className={styles.searchInput}
                   type="text"
-                  placeholder="Search def types…"
+                  placeholder={t("createDefWizard.searchDefTypesPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoComplete="off"
@@ -410,7 +416,7 @@ export function CreateDefWizard({
               <div className={styles.list} role="listbox">
                 {filteredDefTypes.length === 0 ? (
                   <div className={styles.emptyState}>
-                    No def types match "{searchQuery}".
+                    {t("createDefWizard.noDefTypesMatch", { query: searchQuery })}
                   </div>
                 ) : (
                   filteredDefTypes.map((dt) => (
@@ -448,7 +454,7 @@ export function CreateDefWizard({
                       setState((s) => ({ ...s, templateSource: "user" }))
                     }
                   >
-                    User Templates
+                    {t("createDefWizard.userTemplatesTab")}
                   </button>
                 )}
                 <button
@@ -464,7 +470,7 @@ export function CreateDefWizard({
                     setState((s) => ({ ...s, templateSource: "builtin" }))
                   }
                 >
-                  Built-in Templates
+                  {t("createDefWizard.builtinTemplatesTab")}
                 </button>
                 <button
                   type="button"
@@ -479,7 +485,7 @@ export function CreateDefWizard({
                     setState((s) => ({ ...s, templateSource: "indexed" }))
                   }
                 >
-                  Indexed Defs
+                  {t("createDefWizard.indexedDefsTab")}
                 </button>
               </div>
 
@@ -489,7 +495,7 @@ export function CreateDefWizard({
                     <input
                       className={styles.searchInput}
                       type="text"
-                      placeholder="Search indexed defs…"
+                      placeholder={t("createDefWizard.searchIndexedDefsPlaceholder")}
                       value={state.indexedQuery}
                       onChange={(e) =>
                         setState((s) => ({
@@ -508,8 +514,8 @@ export function CreateDefWizard({
                     ) : state.indexedResults.length === 0 ? (
                       <div className={styles.emptyState}>
                         {state.indexedLoading
-                          ? "Searching…"
-                          : "No indexed defs match."}
+                          ? t("createDefWizard.searching")
+                          : t("createDefWizard.noIndexedDefsMatch")}
                       </div>
                     ) : (
                       state.indexedResults.map((result) => (
@@ -523,7 +529,7 @@ export function CreateDefWizard({
                             {result.def.label ?? result.def.defName}
                           </span>
                           <span className={styles.listItemSub}>
-                            {formatIndexedDefSub(result.def)}
+                            {formatIndexedDefSub(result.def, t)}
                           </span>
                         </button>
                       ))
@@ -556,8 +562,8 @@ export function CreateDefWizard({
                       <button
                         type="button"
                         className={styles.deleteBtn}
-                        aria-label={`Delete template ${template.name}`}
-                        title="Delete template"
+                        aria-label={t("createDefWizard.deleteTemplateAriaLabel", { name: template.name })}
+                        title={t("createDefWizard.deleteTemplateTitle")}
                         disabled={state.deletingId === template.id}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -608,8 +614,10 @@ export function CreateDefWizard({
             <div className={styles.formBody}>
               {state.selectedKind === "indexed" && state.selectedIndexedDef && (
                 <span className={styles.listItemSub}>
-                  Cloning {state.selectedIndexedDef.defName} from{" "}
-                  {state.selectedIndexedDef.relativePath}
+                  {t("createDefWizard.cloningFrom", {
+                    defName: state.selectedIndexedDef.defName,
+                    relativePath: state.selectedIndexedDef.relativePath,
+                  })}
                 </span>
               )}
               {promptFields.map((field) => (
@@ -648,7 +656,7 @@ export function CreateDefWizard({
               onClick={() => setState((s) => ({ ...s, step: 2, error: null }))}
               disabled={state.busy}
             >
-              Back
+              {t("createDefWizard.back")}
             </button>
             <button
               className={styles.createBtn}
@@ -660,7 +668,7 @@ export function CreateDefWizard({
                 )
               }
             >
-              {state.busy ? "Creating…" : "Create"}
+              {state.busy ? t("createDefWizard.creating") : t("createDefWizard.create")}
             </button>
           </div>
         )}
@@ -671,7 +679,7 @@ export function CreateDefWizard({
               className={styles.backBtn}
               onClick={() => setState((s) => ({ ...s, step: 1, error: null }))}
             >
-              Back
+              {t("createDefWizard.back")}
             </button>
           </div>
         )}
@@ -693,6 +701,7 @@ function buildPromptFields(
   defTypeSchema: DefTypeSchema | undefined,
   template: DefTemplate | undefined,
   catalog: SchemaCatalog,
+  t: TFunction<"editor">,
 ): PromptField[] {
   const fields: PromptField[] = [];
   const seen = new Set<string>();
@@ -701,9 +710,9 @@ function buildPromptFields(
   const defNameSchema = lookupFieldInCatalog(defTypeSchema, "defName", catalog);
   fields.push({
     name: "defName",
-    label: defNameSchema?.label ?? "Def Name",
+    label: defNameSchema?.label ?? t("createDefWizard.defNameFallback"),
     required: defNameSchema?.required ?? false,
-    placeholder: "e.g. MyThing",
+    placeholder: t("createDefWizard.defNamePlaceholder"),
   });
   seen.add("defName");
 
@@ -744,14 +753,15 @@ function buildPromptFields(
 function buildClonePromptFields(
   defTypeSchema: DefTypeSchema | undefined,
   catalog: SchemaCatalog,
+  t: TFunction<"editor">,
 ): PromptField[] {
   const defNameSchema = lookupFieldInCatalog(defTypeSchema, "defName", catalog);
   return [
     {
       name: "defName",
-      label: defNameSchema?.label ?? "Def Name",
+      label: defNameSchema?.label ?? t("createDefWizard.defNameFallback"),
       required: true,
-      placeholder: "e.g. MyThing",
+      placeholder: t("createDefWizard.defNamePlaceholder"),
     },
   ];
 }
@@ -807,12 +817,16 @@ function lookupFieldInCatalog(
   return undefined;
 }
 
-function formatIndexedDefSub(def: IndexedDef): string {
+function formatIndexedDefSub(def: IndexedDef, t: TFunction<"editor">): string {
   const bits: string[] = [];
   // The def's label is already shown as the row's primary text when present,
   // so surface defName here instead of repeating the label.
   if (def.label) bits.push(def.defName);
-  bits.push(def.source.sourceKind === "project" ? "Project" : def.source.locationName);
+  bits.push(
+    def.source.sourceKind === "project"
+      ? t("createDefWizard.projectSourceLabel")
+      : def.source.locationName,
+  );
   bits.push(def.line != null ? `${def.relativePath}:${def.line}` : def.relativePath);
   return bits.join(" · ");
 }
@@ -821,23 +835,12 @@ function fieldNameToLabel(name: string): string {
   return name.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
 }
 
+/** Normalizes a caught error to English UI text through the shared diagnostic renderer
+ * (`formatError`/`renderDiagnostic`). `formatError` (via `formatCommandError` in
+ * `src/i18n/diagnostics.ts`) already unwraps a raw JSON-encoded string rejection (e.g. a command
+ * that still returns `Result<T, String>`) into its `code`/`args`/`message` object before
+ * rendering, so this wrapper no longer needs its own local unwrap -- keeping it as a thin
+ * pass-through since it is already the call site used throughout this file. */
 function formatWizardError(e: unknown): string {
-  return extractFriendlyError(formatError(e));
-}
-
-function extractFriendlyError(raw: string): string {
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    if (
-      parsed !== null &&
-      typeof parsed === "object" &&
-      "message" in parsed &&
-      typeof (parsed as { message: unknown }).message === "string"
-    ) {
-      return (parsed as { message: string }).message;
-    }
-  } catch {
-    // not JSON
-  }
-  return raw;
+  return formatError(e);
 }

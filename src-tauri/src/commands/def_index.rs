@@ -188,6 +188,7 @@ pub fn read_indexed_def_xml(
             code: "project_not_found".to_string(),
             message: format!("No registered project with id '{}'.", project_id),
             details: None,
+            args: crate::diagnostics::diagnostic_args([("projectId", project_id.into())]),
         });
     }
     // Validate relative_path is inside the registered location root (rejects traversal, absolutes,
@@ -205,19 +206,31 @@ pub fn read_indexed_def_xml(
                 && d.def_type == def_type
                 && d.def_name == def_name
         })
-        .ok_or_else(|| AppError {
-            code: "def_not_indexed".to_string(),
-            message: format!(
-                "'{}' ({}) was not found in the index at '{}'.",
-                def_name, def_type, relative_path
-            ),
-            details: None,
+        .ok_or_else(|| {
+            AppError {
+                code: "def_not_indexed".to_string(),
+                message: format!(
+                    "'{}' ({}) was not found in the index at '{}'.",
+                    def_name, def_type, relative_path
+                ),
+                details: None,
+                args: crate::diagnostics::DiagnosticArgs::new(),
+            }
+            .with_args(crate::diagnostics::diagnostic_args([
+                ("defName", def_name.as_str().into()),
+                ("defType", def_type.as_str().into()),
+                ("relativePath", relative_path.as_str().into()),
+            ]))
         })?;
     let def_line = def_entry.line;
     let raw_xml = std::fs::read_to_string(&canonical).map_err(|e| AppError {
         code: "file_read_error".to_string(),
         message: format!("Failed to read '{}': {}", canonical.display(), e),
         details: None,
+        args: crate::diagnostics::diagnostic_args([(
+            "path",
+            canonical.to_string_lossy().into_owned().into(),
+        )]),
     })?;
     Ok(DefXmlPreview { raw_xml, def_line })
 }

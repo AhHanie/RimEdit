@@ -3,6 +3,8 @@
 
 use super::*;
 use crate::patches::BUILT_IN_OPERATION_CLASSES;
+use crate::schema_pack::locale::SchemaLocaleOverlay;
+use crate::schema_pack::merge::merge_packs_with_locale;
 use crate::schema_pack::model::{PatchOperationFieldRole, PatchOperationPreviewKind};
 
 const DUMMY_MANIFEST: &str = r#"{
@@ -243,6 +245,92 @@ fn unknown_preview_kind_is_normalized_to_unsupported_with_warning() {
         .get("MyMod.PatchOperationFoo")
         .unwrap();
     assert_eq!(merged.preview.kind, PatchOperationPreviewKind::Unsupported);
+}
+
+// --- 4b. Locale sidecar overrides a patch operation's preview.message (issue 05 grammar --
+// the key grammar had no shape for a preview message) ---
+
+#[test]
+fn locale_sidecar_overrides_patch_operation_preview_message() {
+    // Uses an undotted class name -- `parse_locale_key`'s split-based grammar treats every
+    // `.`-separated segment between `patchOperations` and `preview.message` as part of the class
+    // name path, so (like the pre-existing `PatchOperationLabel`/`PatchOperationDescription`
+    // grammar this mirrors) it only resolves for a class name with no literal `.` in it. A
+    // namespaced/dotted custom operation class name is a pre-existing grammar limitation shared by
+    // every `patchOperations.*` key, not something this fix introduces or is scoped to address.
+    let op_json = r#"{
+        "formatVersion": 1,
+        "className": "PatchOperationFoo",
+        "fields": {},
+        "preview": { "kind": "unsupported", "message": "Custom operation, cannot preview." }
+    }"#;
+    let mut pack = inline_pack_with_patch_operations(DUMMY_MANIFEST, &[op_json]);
+
+    let mut en_overlay = SchemaLocaleOverlay::new();
+    en_overlay.insert(
+        "patchOperations.PatchOperationFoo.preview.message".to_string(),
+        "Custom operation (en) -- cannot preview.".to_string(),
+    );
+    pack.locales.insert("en".to_string(), en_overlay);
+
+    let mut diags = Vec::new();
+    let catalog = merge_packs_with_locale(vec![pack], &mut diags, "en");
+    let merged = catalog.patch_operations.get("PatchOperationFoo").unwrap();
+    assert_eq!(
+        merged.preview.message.as_deref(),
+        Some("Custom operation (en) -- cannot preview.")
+    );
+    assert!(
+        !diags
+            .iter()
+            .any(|d| d.code == "schema_pack_locale_unresolved_key"
+                || d.code == "schema_pack_locale_unknown_key"),
+        "preview.message override should resolve cleanly, got: {:?}",
+        diags.iter().map(|d| &d.code).collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn locale_sidecar_preview_message_override_from_a_different_pack_is_ignored() {
+    let op_json = r#"{
+        "formatVersion": 1,
+        "className": "PatchOperationFoo",
+        "fields": {},
+        "preview": { "kind": "unsupported", "message": "Original message." }
+    }"#;
+    let mut owner_pack = inline_pack_with_patch_operations(DUMMY_MANIFEST, &[op_json]);
+    owner_pack
+        .locales
+        .insert("en".to_string(), SchemaLocaleOverlay::new());
+
+    let intruder_manifest = r#"{
+        "formatVersion": 1,
+        "packId": "test.patchops.intruder",
+        "name": "Intruder",
+        "version": "1.0.0",
+        "defTypeDirectories": ["x"]
+    }"#;
+    let mut intruder_pack = inline_pack(intruder_manifest, r#"{ "defType": "Def", "fields": {} }"#);
+    let mut intruder_overlay = SchemaLocaleOverlay::new();
+    intruder_overlay.insert(
+        "patchOperations.PatchOperationFoo.preview.message".to_string(),
+        "Hijacked message.".to_string(),
+    );
+    intruder_pack
+        .locales
+        .insert("en".to_string(), intruder_overlay);
+
+    let mut diags = Vec::new();
+    let catalog = merge_packs_with_locale(vec![owner_pack, intruder_pack], &mut diags, "en");
+    let merged = catalog.patch_operations.get("PatchOperationFoo").unwrap();
+    assert_eq!(
+        merged.preview.message.as_deref(),
+        Some("Original message."),
+        "a sidecar must never override a preview.message owned by a different pack"
+    );
+    assert!(diags
+        .iter()
+        .any(|d| d.code == "schema_pack_locale_wrong_owner"));
 }
 
 // --- 5. Built-in operation metadata matches the hardcoded AST model ---

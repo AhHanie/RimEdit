@@ -10,5 +10,6 @@
   "dependencies": [],
   "defTypeDirectories": ["def-types"],
   "objectTypeDirectories": ["object-types"],
-  "patchOperationDirectories": ["patch-operations"]
+  "patchOperationDirectories": ["patch-operations"],
+  "localesDirectory": "locales"
 }

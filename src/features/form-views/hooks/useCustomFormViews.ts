@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { formatError } from "../../../lib/formatError";
+import { noActiveProjectError } from "../lib/formViewErrors";
 import {
   createCustomFormView,
   deleteCustomFormView,
@@ -34,8 +36,11 @@ export interface UseCustomFormViewsResult {
   resetStore: () => Promise<ResetCustomFormViewStoreResult>;
 }
 
+/** Normalizes a caught error (a structured Tauri `AppError` or a plain thrown `Error`) to
+ * English UI text through the shared diagnostic renderer, rather than reading `.message`/
+ * `String(e)` directly and discarding a command rejection's structured `code`/`args`. */
 function errorMessage(e: unknown): string {
-  return e instanceof Error ? e.message : String(e);
+  return formatError(e);
 }
 
 /// Thin data-fetching hook over the custom Form View store: lists a project's custom views for
@@ -134,7 +139,7 @@ export function useCustomFormViews(
       baseSchemaView?: BaseSchemaViewReference | null,
     ) => {
       if (!projectId) {
-        throw new Error("No active project to save a custom Form View to.");
+        throw noActiveProjectError("No active project to save a custom Form View to.");
       }
       const myScopeEpoch = scopeEpochRef.current;
       const created = await createCustomFormView(
@@ -162,7 +167,7 @@ export function useCustomFormViews(
   const updateView = useCallback(
     async (viewId: string, updates: CustomFormViewUpdateInput) => {
       if (!projectId) {
-        throw new Error("No active project to update a custom Form View in.");
+        throw noActiveProjectError("No active project to update a custom Form View in.");
       }
       const myScopeEpoch = scopeEpochRef.current;
       const updated = await updateCustomFormView(projectId, viewId, updates);
@@ -177,7 +182,7 @@ export function useCustomFormViews(
   const deleteView = useCallback(
     async (viewId: string) => {
       if (!projectId) {
-        throw new Error("No active project to delete a custom Form View from.");
+        throw noActiveProjectError("No active project to delete a custom Form View from.");
       }
       const myScopeEpoch = scopeEpochRef.current;
       await deleteCustomFormView(projectId, viewId);
@@ -190,7 +195,7 @@ export function useCustomFormViews(
 
   const resetStore = useCallback(async () => {
     if (!projectId) {
-      throw new Error("No active project to reset the custom Form View store for.");
+      throw noActiveProjectError("No active project to reset the custom Form View store for.");
     }
     const myScopeEpoch = scopeEpochRef.current;
     const result = await resetCustomFormViewStore(projectId);

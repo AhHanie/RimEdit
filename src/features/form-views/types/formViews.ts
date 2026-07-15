@@ -3,6 +3,8 @@
 // runtime `ResolvedFormView` union live in the schema-catalog / issue-05 resolver, not here --
 // this feature only owns user-editable custom views and the store's own preferences.
 
+import type { DiagnosticArgs } from "../../../lib/diagnostics";
+
 export interface FormViewTarget {
   gameVersion: string;
   defType: string;
@@ -39,6 +41,8 @@ export interface SelectedFormViewRef {
 export interface FormViewStoreWarning {
   code: string;
   message: string;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 export interface ListCustomFormViewsResult {

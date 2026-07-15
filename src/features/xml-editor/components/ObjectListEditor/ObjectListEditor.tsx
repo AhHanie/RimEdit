@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import type {
   FormFieldState,
@@ -191,6 +193,10 @@ function ObjectListItem({
   initialFields,
   onResetField,
 }: ItemProps) {
+  // Two separate single-namespace hooks, not `useTranslation(["editor", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   const [expanded, setExpanded] = useState(true);
 
   const hasDiscriminator = !!catalog?.objectTypes[baseSchemaRef]?.discriminator;
@@ -215,8 +221,8 @@ function ObjectListItem({
   const displayName = hasDiscriminator
     ? item.className
       ? prettifyClassName(item.className)
-      : "(no class)"
-    : (inferItemDisplayName(item) ?? `Item ${index + 1}`);
+      : t("objectListEditor.noClassLabel")
+    : (inferItemDisplayName(item) ?? t("objectListEditor.itemFallback", { index: index + 1 }));
 
   function fieldDirty(fieldName: string): boolean {
     if (!initialFields) return false;
@@ -245,7 +251,7 @@ function ObjectListItem({
           className={styles.expandBtn}
           onClick={() => setExpanded((e) => !e)}
           type="button"
-          aria-label={expanded ? "Collapse" : "Expand"}
+          aria-label={expanded ? t("objectListEditor.collapse") : t("objectListEditor.expand")}
         >
           {expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
         </button>
@@ -255,8 +261,8 @@ function ObjectListItem({
             className={styles.removeBtn}
             onClick={onRemove}
             type="button"
-            aria-label={`Remove ${displayName}`}
-            title="Remove"
+            aria-label={t("objectListEditor.removeItem", { name: displayName })}
+            title={tCommon("actions.remove")}
           >
             <Trash2 size={12} />
           </button>
@@ -268,7 +274,7 @@ function ObjectListItem({
           {/* Class attribute input - only for discriminator-based schemas */}
           {hasDiscriminator && (
             <div className={styles.fieldRow}>
-              <label className={styles.fieldLabel}>Class</label>
+              <label className={styles.fieldLabel}>{t("objectListEditor.class")}</label>
               <input
                 type="text"
                 className={styles.fieldInput}
@@ -277,7 +283,7 @@ function ObjectListItem({
                 onFocus={onFocus}
                 onBlur={onBlur}
                 spellCheck={false}
-                placeholder="Class name…"
+                placeholder={t("objectListEditor.classNamePlaceholder")}
                 readOnly={readOnly}
                 disabled={readOnly}
               />
@@ -304,14 +310,14 @@ function ObjectListItem({
 
           {hasDiscriminator && !schema && item.className && (
             <p className={styles.unknownNotice}>
-              No schema for this class. Unknown fields preserved; use Raw XML
-              for details.
+              {t("objectListEditor.noSchemaForClass")}
             </p>
           )}
           {item.initialUnknownFieldCount > 0 && (
             <p className={styles.unknownNotice}>
-              {item.initialUnknownFieldCount} unknown field
-              {item.initialUnknownFieldCount !== 1 ? "s" : ""} preserved.
+              {t("objectListEditor.unknownFieldsPreserved", {
+                count: item.initialUnknownFieldCount,
+              })}
             </p>
           )}
         </div>
@@ -353,6 +359,7 @@ function ObjectFieldRenderer({
   onReset = null,
   initialValue,
 }: ObjectFieldRendererProps) {
+  const { t } = useTranslation("editor");
   const label = fieldSchema.label ?? fieldName;
 
   if (value?.kind === "readonly") {
@@ -378,7 +385,9 @@ function ObjectFieldRenderer({
       return (
         <div className={styles.fieldRow}>
           <label className={styles.fieldLabel}>{label}</label>
-          <span className={styles.readonlyValue}>object list (no schema)</span>
+          <span className={styles.readonlyValue}>
+            {t("objectListEditor.objectListNoSchema")}
+          </span>
         </div>
       );
     }
@@ -388,7 +397,7 @@ function ObjectFieldRenderer({
         <div className={styles.fieldRow}>
           <label className={styles.fieldLabel}>{label}</label>
           <span className={styles.readonlyValue}>
-            {count} item{count !== 1 ? "s" : ""}
+            {t("objectListEditor.itemCount", { count })}
           </span>
         </div>
       );
@@ -432,7 +441,7 @@ function ObjectFieldRenderer({
       return (
         <div className={styles.fieldRow}>
           <label className={styles.fieldLabel}>{label}</label>
-          <span className={styles.readonlyValue}>structured object</span>
+          <span className={styles.readonlyValue}>{t("objectListEditor.structuredObject")}</span>
         </div>
       );
     }
@@ -440,7 +449,7 @@ function ObjectFieldRenderer({
       return (
         <div className={styles.fieldRow}>
           <label className={styles.fieldLabel}>{label}</label>
-          <span className={styles.readonlyValue}>nested object</span>
+          <span className={styles.readonlyValue}>{t("objectListEditor.nestedObject")}</span>
         </div>
       );
     }
@@ -468,7 +477,7 @@ function ObjectFieldRenderer({
   const onClear =
     !readOnly && emptyVal !== undefined ? () => onChange(emptyVal) : null;
   const effectiveOnReset = readOnly ? null : onReset;
-  const error = validateObjectField(fieldName, fieldSchema, value);
+  const error = validateObjectField(fieldName, fieldSchema, value, t);
 
   // --- Scalar list ---
   if (
@@ -489,7 +498,7 @@ function ObjectFieldRenderer({
           className={styles.fieldTextarea}
           value={items.join("\n")}
           rows={Math.max(2, Math.min(items.length + 1, 6))}
-          placeholder="One item per line…"
+          placeholder={t("objectListEditor.onePerLinePlaceholder")}
           readOnly={readOnly}
           disabled={readOnly}
           onChange={(e) =>
@@ -534,7 +543,7 @@ function ObjectFieldRenderer({
           type="text"
           className={styles.fieldInput}
           value={all.join(", ")}
-          placeholder="Comma-separated flags…"
+          placeholder={t("objectListEditor.commaSeparatedFlagsPlaceholder")}
           readOnly={readOnly}
           disabled={readOnly}
           onChange={(e) => {
@@ -664,6 +673,7 @@ function NestedObjectSection({
   defaultCollapsed,
   initialObjectValue,
 }: NestedObjectSectionProps) {
+  const { t } = useTranslation("editor");
   const schema = catalog?.objectTypes[schemaRef] ?? null;
   const allFields = catalog
     ? getAllObjectFields(schemaRef, catalog)
@@ -750,12 +760,14 @@ function NestedObjectSection({
               initialValue={initialObjectValue?.fields[fieldName]}
             />
           ))}
-          {!schema && <p className={styles.unknownNotice}>Unknown schema.</p>}
+          {!schema && (
+            <p className={styles.unknownNotice}>{t("objectListEditor.unknownSchema")}</p>
+          )}
           {currentValue.initialUnknownFieldCount > 0 && (
             <p className={styles.unknownNotice}>
-              {currentValue.initialUnknownFieldCount} unknown field
-              {currentValue.initialUnknownFieldCount !== 1 ? "s" : ""}{" "}
-              preserved.
+              {t("objectListEditor.unknownFieldsPreserved", {
+                count: currentValue.initialUnknownFieldCount,
+              })}
             </p>
           )}
         </div>
@@ -895,6 +907,10 @@ function NamedMapInlineEditor({
   onBlur,
   readOnly = false,
 }: NamedMapInlineEditorProps) {
+  // Two separate single-namespace hooks, not `useTranslation(["editor", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   function updateEntry(index: number, field: "key" | "value", val: string) {
     if (readOnly) return;
     onChange(entries.map((e, i) => (i === index ? { ...e, [field]: val } : e)));
@@ -919,7 +935,7 @@ function NamedMapInlineEditor({
             type="text"
             className={styles.mapKeyInput}
             value={entry.key}
-            placeholder="key"
+            placeholder={t("objectListEditor.keyPlaceholder")}
             readOnly={readOnly}
             disabled={readOnly}
             onChange={(e) => updateEntry(index, "key", e.currentTarget.value)}
@@ -931,7 +947,7 @@ function NamedMapInlineEditor({
             type="text"
             className={styles.mapValueInput}
             value={entry.value}
-            placeholder="value"
+            placeholder={t("objectListEditor.valuePlaceholder")}
             readOnly={readOnly}
             disabled={readOnly}
             onChange={(e) => updateEntry(index, "value", e.currentTarget.value)}
@@ -944,7 +960,7 @@ function NamedMapInlineEditor({
               className={styles.mapRemoveBtn}
               onClick={() => removeEntry(index)}
               type="button"
-              title="Remove"
+              title={tCommon("actions.remove")}
             >
               <Trash2 size={10} />
             </button>
@@ -953,7 +969,7 @@ function NamedMapInlineEditor({
       ))}
       {!readOnly && (
         <button className={styles.mapAddBtn} onClick={addEntry} type="button">
-          <Plus size={10} /> Add
+          <Plus size={10} /> {tCommon("actions.add")}
         </button>
       )}
     </div>
@@ -979,6 +995,10 @@ function TypedRefListInlineEditor({
   onBlur,
   readOnly = false,
 }: TypedRefListInlineEditorProps) {
+  // Two separate single-namespace hooks, not `useTranslation(["editor", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   function updateItem(
     index: number,
     field: "defType" | "defName",
@@ -1009,7 +1029,7 @@ function TypedRefListInlineEditor({
             type="text"
             className={styles.mapKeyInput}
             value={item.defType}
-            placeholder="DefType"
+            placeholder={t("objectListEditor.defTypePlaceholder")}
             readOnly={readOnly}
             disabled={readOnly}
             onChange={(e) =>
@@ -1023,7 +1043,7 @@ function TypedRefListInlineEditor({
             type="text"
             className={styles.mapValueInput}
             value={item.defName}
-            placeholder="DefName"
+            placeholder={t("objectListEditor.defNamePlaceholder")}
             readOnly={readOnly}
             disabled={readOnly}
             onChange={(e) =>
@@ -1038,7 +1058,7 @@ function TypedRefListInlineEditor({
               className={styles.mapRemoveBtn}
               onClick={() => removeItem(index)}
               type="button"
-              title="Remove"
+              title={tCommon("actions.remove")}
             >
               <Trash2 size={10} />
             </button>
@@ -1047,7 +1067,7 @@ function TypedRefListInlineEditor({
       ))}
       {!readOnly && (
         <button className={styles.mapAddBtn} onClick={addItem} type="button">
-          <Plus size={10} /> Add
+          <Plus size={10} /> {tCommon("actions.add")}
         </button>
       )}
     </div>
@@ -1180,6 +1200,10 @@ interface AddCompButtonProps {
 }
 
 function AddCompButton({ catalog, baseSchemaRef, onAdd }: AddCompButtonProps) {
+  // Two separate single-namespace hooks, not `useTranslation(["editor", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   const [customClass, setCustomClass] = useState("");
   const [showCustom, setShowCustom] = useState(false);
 
@@ -1205,7 +1229,7 @@ function AddCompButton({ catalog, baseSchemaRef, onAdd }: AddCompButtonProps) {
           type="button"
         >
           <Plus size={12} />
-          Add item
+          {t("objectListEditor.addItem")}
         </button>
       </div>
     );
@@ -1221,7 +1245,7 @@ function AddCompButton({ catalog, baseSchemaRef, onAdd }: AddCompButtonProps) {
             if (e.currentTarget.value) handleAdd(e.currentTarget.value);
           }}
         >
-          <option value="">Add known type…</option>
+          <option value="">{t("objectListEditor.addKnownType")}</option>
           {knownClasses.map((cls) => (
             <option key={cls} value={cls}>
               {prettifyClassName(cls)}
@@ -1236,7 +1260,7 @@ function AddCompButton({ catalog, baseSchemaRef, onAdd }: AddCompButtonProps) {
           type="button"
         >
           <Plus size={12} />
-          Add custom type
+          {t("objectListEditor.addCustomType")}
         </button>
       ) : (
         <div className={styles.customRow}>
@@ -1245,7 +1269,7 @@ function AddCompButton({ catalog, baseSchemaRef, onAdd }: AddCompButtonProps) {
             className={styles.customInput}
             value={customClass}
             onChange={(e) => setCustomClass(e.currentTarget.value)}
-            placeholder="Class name…"
+            placeholder={t("objectListEditor.classNamePlaceholder")}
             spellCheck={false}
             autoFocus
             onKeyDown={(e) => {
@@ -1258,14 +1282,14 @@ function AddCompButton({ catalog, baseSchemaRef, onAdd }: AddCompButtonProps) {
             onClick={() => handleAdd(customClass)}
             type="button"
           >
-            Add
+            {tCommon("actions.add")}
           </button>
           <button
             className={styles.cancelBtn}
             onClick={() => setShowCustom(false)}
             type="button"
           >
-            Cancel
+            {tCommon("actions.cancel")}
           </button>
         </div>
       )}
@@ -1325,9 +1349,10 @@ function validateObjectField(
   fieldName: string,
   fieldSchema: FieldSchema,
   value: ObjectFieldValue | undefined,
+  t: TFunction<"editor">,
 ): string | null {
   if (fieldSchema.required && isObjectFieldEmpty(value)) {
-    return `${fieldSchema.label ?? fieldName} is required`;
+    return t("objectListEditor.requiredError", { label: fieldSchema.label ?? fieldName });
   }
   if (
     value?.kind === "enum" &&
@@ -1337,7 +1362,7 @@ function validateObjectField(
       value.value &&
       !fieldSchema.validationHints.allowedValues.includes(value.value)
     ) {
-      return `"${value.value}" is not a valid value`;
+      return t("objectListEditor.invalidValueError", { value: value.value });
     }
   }
   return null;

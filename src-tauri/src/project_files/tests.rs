@@ -28,8 +28,9 @@ fn make_location(
 
 fn make_settings(root: &Path) -> ProjectSettings {
     ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations: vec![make_location(
             "proj1",
             "Test Project",
@@ -229,8 +230,9 @@ fn base_game_scan_keeps_duplicate_def_paths_from_peer_content_packs() {
     .unwrap();
 
     let settings = ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations: vec![make_base_game_location("base", "RimWorld Data", &data_dir)],
         active_project_id: None,
     };
@@ -270,8 +272,9 @@ fn mod_load_folder_scan_still_shadows_duplicate_relative_paths() {
     .unwrap();
 
     let settings = ProjectSettings {
-        schema_version: 2,
+        schema_version: 3,
         game_version: "1.6".to_string(),
+        locale: "en".to_string(),
         locations: vec![make_location(
             "source",
             "Source Mod",

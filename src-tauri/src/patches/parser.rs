@@ -25,7 +25,11 @@ pub fn parse_patch_file(relative_path: &str, source: &str) -> PatchFile {
         let diagnostics = doc
             .parse_diagnostics
             .iter()
-            .map(|d| PatchDiagnostic::new(d.line, d.column, d.message.clone()))
+            .map(|d| {
+                PatchDiagnostic::new(d.line, d.column, d.message.clone())
+                    .with_code(d.code.clone())
+                    .with_args(d.args.clone())
+            })
             .collect();
         return PatchFile {
             relative_path: relative_path.to_string(),
@@ -39,7 +43,11 @@ pub fn parse_patch_file(relative_path: &str, source: &str) -> PatchFile {
     let mut diagnostics: Vec<PatchDiagnostic> = doc
         .parse_diagnostics
         .iter()
-        .map(|d| PatchDiagnostic::new(d.line, d.column, d.message.clone()))
+        .map(|d| {
+            PatchDiagnostic::new(d.line, d.column, d.message.clone())
+                .with_code(d.code.clone())
+                .with_args(d.args.clone())
+        })
         .collect();
 
     let root_elements: Vec<XmlNodeId> = doc
@@ -50,14 +58,21 @@ pub fn parse_patch_file(relative_path: &str, source: &str) -> PatchFile {
         .collect();
 
     if root_elements.len() > 1 {
-        diagnostics.push(PatchDiagnostic::new(
-            None,
-            None,
-            format!(
-                "patch file has {} root elements; exactly one is required",
-                root_elements.len()
-            ),
-        ));
+        diagnostics.push(
+            PatchDiagnostic::new(
+                None,
+                None,
+                format!(
+                    "patch file has {} root elements; exactly one is required",
+                    root_elements.len()
+                ),
+            )
+            .with_code("patch_invalid_root_element_count")
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "elementCount",
+                root_elements.len().into(),
+            )])),
+        );
         return PatchFile {
             relative_path: relative_path.to_string(),
             xml_declaration,
@@ -68,11 +83,10 @@ pub fn parse_patch_file(relative_path: &str, source: &str) -> PatchFile {
     }
 
     let Some(root_id) = root_elements.first().copied() else {
-        diagnostics.push(PatchDiagnostic::new(
-            None,
-            None,
-            "patch file has no root element",
-        ));
+        diagnostics.push(
+            PatchDiagnostic::new(None, None, "patch file has no root element")
+                .with_code("patch_missing_root_element"),
+        );
         return PatchFile {
             relative_path: relative_path.to_string(),
             xml_declaration,
@@ -88,11 +102,18 @@ pub fn parse_patch_file(relative_path: &str, source: &str) -> PatchFile {
     };
 
     if root_name != "Patch" {
-        diagnostics.push(PatchDiagnostic::new(
-            Some(doc.nodes[root_id].span.line),
-            Some(doc.nodes[root_id].span.column),
-            format!("root element must be <Patch>, found <{}>", root_name),
-        ));
+        diagnostics.push(
+            PatchDiagnostic::new(
+                Some(doc.nodes[root_id].span.line),
+                Some(doc.nodes[root_id].span.column),
+                format!("root element must be <Patch>, found <{}>", root_name),
+            )
+            .with_code("patch_invalid_root_element_name")
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "rootName",
+                root_name.as_str().into(),
+            )])),
+        );
         return PatchFile {
             relative_path: relative_path.to_string(),
             xml_declaration,
@@ -110,14 +131,21 @@ pub fn parse_patch_file(relative_path: &str, source: &str) -> PatchFile {
             _ => continue,
         };
         if el.name != "Operation" {
-            diagnostics.push(PatchDiagnostic::new(
-                Some(doc.nodes[child_id].span.line),
-                Some(doc.nodes[child_id].span.column),
-                format!(
-                    "unexpected child <{}> of <Patch>; expected <Operation>",
-                    el.name
-                ),
-            ));
+            diagnostics.push(
+                PatchDiagnostic::new(
+                    Some(doc.nodes[child_id].span.line),
+                    Some(doc.nodes[child_id].span.column),
+                    format!(
+                        "unexpected child <{}> of <Patch>; expected <Operation>",
+                        el.name
+                    ),
+                )
+                .with_code("patch_unexpected_child_element")
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("parentName", "Patch".into()),
+                    ("childName", el.name.as_str().into()),
+                ])),
+            );
             continue;
         }
         operations.push(parse_operation_element(
@@ -173,11 +201,18 @@ fn parse_operation_element(
     }
 
     if class_name.is_empty() {
-        diagnostics.push(PatchDiagnostic::new(
-            Some(node.span.line),
-            Some(node.span.column),
-            format!("<{}> is missing a Class attribute", el.name),
-        ));
+        diagnostics.push(
+            PatchDiagnostic::new(
+                Some(node.span.line),
+                Some(node.span.column),
+                format!("<{}> is missing a Class attribute", el.name),
+            )
+            .with_code("patch_missing_class_attribute")
+            .with_args(crate::diagnostics::diagnostic_args([(
+                "elementName",
+                el.name.as_str().into(),
+            )])),
+        );
     }
 
     // Mirrors RimWorld's DirectXmlToObject, which logs "defines the same field twice" for
@@ -186,14 +221,21 @@ fn parse_operation_element(
     for &child_id in &node.children {
         if let XmlNodeKind::Element(ref child_el) = doc.nodes[child_id].kind {
             if !seen_field_names.insert(child_el.name.as_str()) {
-                diagnostics.push(PatchDiagnostic::new(
-                    Some(doc.nodes[child_id].span.line),
-                    Some(doc.nodes[child_id].span.column),
-                    format!(
-                        "<{}> defines the field <{}> twice; the last one wins",
-                        el.name, child_el.name
-                    ),
-                ));
+                diagnostics.push(
+                    PatchDiagnostic::new(
+                        Some(doc.nodes[child_id].span.line),
+                        Some(doc.nodes[child_id].span.column),
+                        format!(
+                            "<{}> defines the field <{}> twice; the last one wins",
+                            el.name, child_el.name
+                        ),
+                    )
+                    .with_code("patch_duplicate_field")
+                    .with_args(crate::diagnostics::diagnostic_args([(
+                        "fieldName",
+                        child_el.name.as_str().into(),
+                    )])),
+                );
             }
         }
     }
@@ -203,11 +245,18 @@ fn parse_operation_element(
         .and_then(|text| match PatchSuccessMode::from_xml_str(&text) {
             Some(mode) => Some(mode),
             None => {
-                diagnostics.push(PatchDiagnostic::new(
-                    Some(node.span.line),
-                    Some(node.span.column),
-                    format!("unrecognized <success> value '{}'", text),
-                ));
+                diagnostics.push(
+                    PatchDiagnostic::new(
+                        Some(node.span.line),
+                        Some(node.span.column),
+                        format!("unrecognized <success> value '{}'", text),
+                    )
+                    .with_code("patch_unrecognized_success_value")
+                    .with_args(crate::diagnostics::diagnostic_args([(
+                        "value",
+                        text.as_str().into(),
+                    )])),
+                );
                 None
             }
         })
@@ -220,14 +269,21 @@ fn parse_operation_element(
             // `parse_known_kind`, which only reads the specific fields it knows about -- so the
             // whole operation falls back to `Unknown` (raw XML) instead, preserving it exactly.
             Some(unrecognized) => {
-                diagnostics.push(PatchDiagnostic::new(
-                    Some(node.span.line),
-                    Some(node.span.column),
-                    format!(
-                        "<{}> has a field <{}> not recognized for {}; editing this operation as raw XML to avoid losing it",
-                        el.name, unrecognized, class_name
-                    ),
-                ));
+                diagnostics.push(
+                    PatchDiagnostic::new(
+                        Some(node.span.line),
+                        Some(node.span.column),
+                        format!(
+                            "<{}> has a field <{}> not recognized for {}; editing this operation as raw XML to avoid losing it",
+                            el.name, unrecognized, class_name
+                        ),
+                    )
+                    .with_code("patch_unrecognized_field_for_class")
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("fieldName", unrecognized.into()),
+                        ("className", class_name.as_str().into()),
+                    ])),
+                );
                 PatchOperationKind::Unknown(UnknownPatchOperation {
                     raw_xml: doc.source[node.span.start..node.span.end].to_string(),
                 })
@@ -415,11 +471,18 @@ fn read_pathed_value_order(
         .and_then(|text| match PatchOrderMode::from_xml_str(&text) {
             Some(mode) => Some(mode),
             None => {
-                diagnostics.push(PatchDiagnostic::new(
-                    Some(doc.nodes[elem_id].span.line),
-                    Some(doc.nodes[elem_id].span.column),
-                    format!("unrecognized <order> value '{}'", text),
-                ));
+                diagnostics.push(
+                    PatchDiagnostic::new(
+                        Some(doc.nodes[elem_id].span.line),
+                        Some(doc.nodes[elem_id].span.column),
+                        format!("unrecognized <order> value '{}'", text),
+                    )
+                    .with_code("patch_unrecognized_order_value")
+                    .with_args(crate::diagnostics::diagnostic_args([(
+                        "value",
+                        text.as_str().into(),
+                    )])),
+                );
                 None
             }
         });
@@ -509,14 +572,21 @@ fn read_sequence(
             _ => continue,
         };
         if el.name != "li" {
-            diagnostics.push(PatchDiagnostic::new(
-                Some(doc.nodes[child_id].span.line),
-                Some(doc.nodes[child_id].span.column),
-                format!(
-                    "unexpected child <{}> of <operations>; expected <li>",
-                    el.name
-                ),
-            ));
+            diagnostics.push(
+                PatchDiagnostic::new(
+                    Some(doc.nodes[child_id].span.line),
+                    Some(doc.nodes[child_id].span.column),
+                    format!(
+                        "unexpected child <{}> of <operations>; expected <li>",
+                        el.name
+                    ),
+                )
+                .with_code("patch_unexpected_child_element")
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("parentName", "operations".into()),
+                    ("childName", el.name.as_str().into()),
+                ])),
+            );
             continue;
         }
         result.push(parse_operation_element(doc, child_id, next_id, diagnostics));
@@ -538,11 +608,18 @@ fn read_mods(
                     _ => continue,
                 };
                 if el.name != "li" {
-                    diagnostics.push(PatchDiagnostic::new(
-                        Some(doc.nodes[cid].span.line),
-                        Some(doc.nodes[cid].span.column),
-                        format!("unexpected child <{}> of <mods>; expected <li>", el.name),
-                    ));
+                    diagnostics.push(
+                        PatchDiagnostic::new(
+                            Some(doc.nodes[cid].span.line),
+                            Some(doc.nodes[cid].span.column),
+                            format!("unexpected child <{}> of <mods>; expected <li>", el.name),
+                        )
+                        .with_code("patch_unexpected_child_element")
+                        .with_args(crate::diagnostics::diagnostic_args([
+                            ("parentName", "mods".into()),
+                            ("childName", el.name.as_str().into()),
+                        ])),
+                    );
                     continue;
                 }
                 mods.push(element_text(doc, cid));
@@ -623,4 +700,9 @@ fn missing_field_diagnostic(doc: &XmlDocument, elem_id: XmlNodeId, field: &str) 
         Some(node.span.column),
         format!("missing required <{}> field", field),
     )
+    .with_code("patch_missing_required_field")
+    .with_args(crate::diagnostics::diagnostic_args([(
+        "fieldName",
+        field.into(),
+    )]))
 }

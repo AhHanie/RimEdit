@@ -1,3 +1,4 @@
+use crate::locale::validate_locale;
 use crate::project_model::{
     validate_project_game_version, AppError, LocationKind, MissingActiveProjectNotice,
     ProjectSettings, RegisteredLocation, RegisteredLocationDraft, RegisteredLocationUpdate,
@@ -133,6 +134,7 @@ pub(crate) fn update_location(
             code: "invalid_display_name".to_string(),
             message: "Display name must not be blank.".to_string(),
             details: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
         });
     }
     location.display_name = trimmed;
@@ -153,6 +155,15 @@ pub(crate) fn update_project_game_version(
         return Err(StoreError::GameVersionSchemaUnavailable(game_version).into());
     }
     settings.game_version = game_version;
+    Ok(())
+}
+
+pub(crate) fn update_app_locale(
+    settings: &mut ProjectSettings,
+    locale: String,
+) -> Result<(), AppError> {
+    validate_locale(&locale)?;
+    settings.locale = locale;
     Ok(())
 }
 
@@ -180,8 +191,9 @@ mod tests {
 
     fn make_settings_with_version(game_version: &str) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: game_version.to_string(),
+            locale: "en".to_string(),
             locations: vec![],
             active_project_id: None,
         }
@@ -191,8 +203,9 @@ mod tests {
     fn removing_active_project_clears_active_project_id() {
         let id = "test-id".to_string();
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Project, &id)],
             active_project_id: Some(id.clone()),
         };
@@ -206,8 +219,9 @@ mod tests {
         let id = "loc1".to_string();
         let created = OffsetDateTime::now_utc();
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![RegisteredLocation {
                 id: id.clone(),
                 display_name: "Old Name".to_string(),
@@ -247,8 +261,9 @@ mod tests {
     fn update_location_rejects_blank_display_name() {
         let id = "loc1".to_string();
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Source, &id)],
             active_project_id: None,
         };
@@ -268,8 +283,9 @@ mod tests {
     #[test]
     fn update_location_missing_id_returns_not_found() {
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Project, "existing")],
             active_project_id: None,
         };
@@ -291,8 +307,9 @@ mod tests {
         let id = "loc1".to_string();
         let created = OffsetDateTime::now_utc();
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![RegisteredLocation {
                 id: id.clone(),
                 display_name: "Old".to_string(),
@@ -364,14 +381,31 @@ mod tests {
     }
 
     #[test]
+    fn update_app_locale_accepts_supported_locale() {
+        let mut settings = make_settings_with_version("1.6");
+        super::update_app_locale(&mut settings, "en".to_string()).unwrap();
+        assert_eq!(settings.locale, "en");
+    }
+
+    #[test]
+    fn update_app_locale_rejects_unsupported_locale() {
+        let mut settings = make_settings_with_version("1.6");
+        let before = settings.locale.clone();
+        let result = super::update_app_locale(&mut settings, "fr".to_string());
+        assert!(result.is_err());
+        assert_eq!(settings.locale, before);
+    }
+
+    #[test]
     fn deactivate_missing_active_project_keeps_existing_directory_active() {
         let dir = tempfile::tempdir().unwrap();
         let id = "proj1".to_string();
         let mut location = make_location(LocationKind::Project, &id);
         location.root_path = dir.path().to_string_lossy().to_string();
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![location],
             active_project_id: Some(id.clone()),
         };
@@ -389,8 +423,9 @@ mod tests {
         location.display_name = "My Mod".to_string();
         location.root_path = missing_path.to_string_lossy().to_string();
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![location],
             active_project_id: Some(id.clone()),
         };
@@ -404,8 +439,9 @@ mod tests {
     #[test]
     fn deactivate_missing_active_project_clears_unknown_id_without_notice() {
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![],
             active_project_id: Some("stale-id".to_string()),
         };
@@ -418,8 +454,9 @@ mod tests {
     fn deactivate_missing_active_project_clears_id_pointing_at_source_location() {
         let id = "source1".to_string();
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Source, &id)],
             active_project_id: Some(id),
         };
@@ -431,8 +468,9 @@ mod tests {
     #[test]
     fn deactivate_missing_active_project_does_nothing_when_no_active_id() {
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Project, "proj1")],
             active_project_id: None,
         };
@@ -450,8 +488,9 @@ mod tests {
         let mut inactive_location = make_location(LocationKind::Project, "inactive");
         inactive_location.root_path = "/never/created/path".to_string();
         let mut settings = ProjectSettings {
-            schema_version: 2,
+            schema_version: 3,
             game_version: "1.6".to_string(),
+            locale: "en".to_string(),
             locations: vec![active_location, inactive_location],
             active_project_id: Some(active_id.clone()),
         };

@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { vi, describe, it, expect } from "vitest";
 import { FormFieldControl } from "./FormFieldControl";
 import { XmlEditorContextProvider } from "../../context/XmlEditorContext";

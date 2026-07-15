@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { formatError } from "../../../../lib/formatError";
 import {
   collectTopLevelFieldSummaries,
@@ -17,37 +19,37 @@ interface Props {
   catalog: SchemaCatalog;
 }
 
-function badgeLabel(summary: TopLevelFieldSummary): string {
-  if (summary.isSection) return "Section";
+function badgeLabel(summary: TopLevelFieldSummary, t: TFunction<"editor">): string {
+  if (summary.isSection) return t("formViews.checklist.badge.section");
   switch (summary.controlKind) {
     case "checkbox":
-      return "Boolean";
+      return t("formViews.checklist.badge.boolean");
     case "number":
-      return "Number";
+      return t("formViews.checklist.badge.number");
     case "select":
-      return "Enum";
+      return t("formViews.checklist.badge.enum");
     case "reference":
-      return "Reference";
+      return t("formViews.checklist.badge.reference");
     case "list":
-      return "List";
+      return t("formViews.checklist.badge.list");
     case "objectList":
-      return "List";
+      return t("formViews.checklist.badge.list");
     case "namedMap":
-      return "Map";
+      return t("formViews.checklist.badge.map");
     case "flags":
-      return "Flags";
+      return t("formViews.checklist.badge.flags");
     case "typedReferenceList":
-      return "Reference list";
+      return t("formViews.checklist.badge.referenceList");
     case "color":
-      return "Color";
+      return t("formViews.checklist.badge.color");
     case "object":
-      return "Object";
+      return t("formViews.checklist.badge.object");
     case "readonlyUnknown":
-      return "Unknown";
+      return t("formViews.checklist.badge.unknown");
     case "textarea":
     case "text":
     default:
-      return "Text";
+      return t("formViews.checklist.badge.text");
   }
 }
 
@@ -61,6 +63,10 @@ function badgeLabel(summary: TopLevelFieldSummary): string {
  * use, so there is exactly one place that decides what "hidden" means.
  */
 export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: Props) {
+  // Two separate single-namespace hooks, not `useTranslation(["editor", "common"])` with
+  // `"common:key"`-prefixed lookups -- see `AboutDependencySection`'s `DependencyRow` doc comment.
+  const { t } = useTranslation("editor");
+  const { t: tCommon } = useTranslation("common");
   const [filter, setFilter] = useState("");
   const [savingChanges, setSavingChanges] = useState(false);
   const [saveAsOpen, setSaveAsOpen] = useState(false);
@@ -166,16 +172,16 @@ export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: 
         <input
           type="text"
           className={styles.filterInput}
-          placeholder="Filter fields..."
+          placeholder={t("formViews.checklist.filterPlaceholder")}
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          aria-label="Filter fields"
+          aria-label={t("formViews.checklist.filterAriaLabel")}
         />
         <button type="button" className={styles.smallBtn} onClick={showAll}>
-          Show all
+          {t("formViews.checklist.showAll")}
         </button>
         <button type="button" className={styles.smallBtn} onClick={hideAll}>
-          Hide all
+          {t("formViews.checklist.hideAll")}
         </button>
         <button
           type="button"
@@ -183,19 +189,22 @@ export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: 
           onClick={controller.resetOverride}
           disabled={!hasDirtyOverride}
         >
-          Reset to selected view
+          {t("formViews.checklist.resetToSelected")}
         </button>
       </div>
 
       <div className={styles.summaryRow}>
         <span className={styles.hiddenCount}>
-          {hiddenCount} of {summaries.length} hidden
+          {t("formViews.checklist.hiddenSummary", {
+            hiddenCount,
+            total: summaries.length,
+          })}
         </span>
       </div>
 
       {allHidden && (
         <p className={styles.warningBanner} role="status">
-          All fields are hidden. Default View and unknown XML fields remain available.
+          {t("formViews.checklist.allHiddenWarning")}
         </p>
       )}
 
@@ -210,20 +219,19 @@ export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: 
                 aria-label={s.label}
               />
               <span className={styles.fieldLabelText}>{s.label}</span>
-              <span className={styles.typeBadge}>{badgeLabel(s)}</span>
-              {s.hasValue && <span className={styles.valueBadge}>Has value</span>}
+              <span className={styles.typeBadge}>{badgeLabel(s, t)}</span>
+              {s.hasValue && (
+                <span className={styles.valueBadge}>{t("formViews.checklist.hasValue")}</span>
+              )}
             </label>
           </li>
         ))}
         {filtered.length === 0 && (
-          <li className={styles.emptyRow}>No fields match &quot;{filter}&quot;.</li>
+          <li className={styles.emptyRow}>{t("formViews.checklist.noMatch", { filter })}</li>
         )}
       </ul>
 
-      <p className={styles.unknownNote}>
-        XML content not described by the active schema is always shown separately below, and is
-        never affected by Form Views.
-      </p>
+      <p className={styles.unknownNote}>{t("formViews.checklist.unknownNote")}</p>
 
       {error && <p className={styles.errorBanner}>{error}</p>}
 
@@ -235,14 +243,16 @@ export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: 
             onClick={() => void handleSaveChanges()}
             disabled={!hasDirtyOverride || savingChanges}
           >
-            {savingChanges ? "Saving…" : "Save changes"}
+            {savingChanges
+              ? t("formViews.checklist.saving")
+              : t("formViews.checklist.saveChanges")}
           </button>
         ) : saveAsOpen ? (
           <div className={styles.saveAsRow}>
             <input
               type="text"
               className={styles.saveAsInput}
-              placeholder="Custom view name"
+              placeholder={t("formViews.checklist.saveAsPlaceholder")}
               value={saveAsName}
               onChange={(e) => setSaveAsName(e.target.value)}
               onKeyDown={(e) => {
@@ -250,7 +260,7 @@ export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: 
                 if (e.key === "Escape") setSaveAsOpen(false);
               }}
               autoFocus
-              aria-label="Custom view name"
+              aria-label={t("formViews.checklist.saveAsAriaLabel")}
             />
             <button
               type="button"
@@ -258,7 +268,7 @@ export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: 
               onClick={() => void handleSaveAsCustom()}
               disabled={!saveAsName.trim() || savingAs}
             >
-              {savingAs ? "Saving…" : "Save"}
+              {savingAs ? t("formViews.checklist.saving") : tCommon("actions.save")}
             </button>
             <button
               type="button"
@@ -266,7 +276,7 @@ export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: 
               onClick={() => setSaveAsOpen(false)}
               disabled={savingAs}
             >
-              Cancel
+              {tCommon("actions.cancel")}
             </button>
           </div>
         ) : (
@@ -276,7 +286,7 @@ export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: 
             onClick={() => setSaveAsOpen(true)}
             disabled={!hasDirtyOverride}
           >
-            Save as custom view
+            {t("formViews.checklist.saveAsCustomView")}
           </button>
         )}
       </div>

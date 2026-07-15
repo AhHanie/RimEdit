@@ -100,15 +100,21 @@ pub(super) fn detect_visible_conflicts(
     for (xpath, group) in &by_xpath {
         if group.len() > 1 {
             for s in group {
-                diagnostics.push(PatchPreviewConflictDiagnostic {
-                    code: "patch_conflict_duplicate_replace_or_remove".to_string(),
-                    key: s.key.clone(),
-                    message: format!(
-                        "{} operations target \"{}\" with Replace/Remove -- verify only one should apply",
-                        group.len(),
-                        xpath
-                    ),
-                });
+                diagnostics.push(
+                    PatchPreviewConflictDiagnostic::new(
+                        "patch_conflict_duplicate_replace_or_remove",
+                        s.key.clone(),
+                        format!(
+                            "{} operations target \"{}\" with Replace/Remove -- verify only one should apply",
+                            group.len(),
+                            xpath
+                        ),
+                    )
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("count", group.len().into()),
+                        ("xpath", (*xpath).into()),
+                    ])),
+                );
             }
         }
     }
@@ -139,16 +145,23 @@ pub(super) fn detect_visible_conflicts(
     for ((xpath, tag), group) in &by_xpath_and_tag {
         if group.len() > 1 {
             for s in group {
-                diagnostics.push(PatchPreviewConflictDiagnostic {
-                    code: "patch_conflict_duplicate_add_child".to_string(),
-                    key: s.key.clone(),
-                    message: format!(
-                        "{} Add operations add a <{}> child at \"{}\" -- if this field expects a single value, only the last one applied will take effect",
-                        group.len(),
-                        tag,
-                        xpath
-                    ),
-                });
+                diagnostics.push(
+                    PatchPreviewConflictDiagnostic::new(
+                        "patch_conflict_duplicate_add_child",
+                        s.key.clone(),
+                        format!(
+                            "{} Add operations add a <{}> child at \"{}\" -- if this field expects a single value, only the last one applied will take effect",
+                            group.len(),
+                            tag,
+                            xpath
+                        ),
+                    )
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("count", group.len().into()),
+                        ("childName", tag.as_str().into()),
+                        ("xpath", (*xpath).into()),
+                    ])),
+                );
             }
         }
     }
@@ -194,14 +207,20 @@ pub(super) fn detect_visible_conflicts(
             let targets_removed =
                 xpath == remove_xpath || xpath.starts_with(&format!("{}/", remove_xpath));
             if targets_removed {
-                diagnostics.push(PatchPreviewConflictDiagnostic {
-                    code: "patch_conflict_targets_removed_node".to_string(),
-                    key: s.key.clone(),
-                    message: format!(
-                        "Targets \"{}\", which an earlier operation removes via \"{}\" -- this operation may have nothing to act on",
-                        xpath, remove_xpath
-                    ),
-                });
+                diagnostics.push(
+                    PatchPreviewConflictDiagnostic::new(
+                        "patch_conflict_targets_removed_node",
+                        s.key.clone(),
+                        format!(
+                            "Targets \"{}\", which an earlier operation removes via \"{}\" -- this operation may have nothing to act on",
+                            xpath, remove_xpath
+                        ),
+                    )
+                    .with_args(crate::diagnostics::diagnostic_args([
+                        ("xpath", xpath.into()),
+                        ("removeXpath", remove_xpath.into()),
+                    ])),
+                );
             }
         }
     }
@@ -209,14 +228,22 @@ pub(super) fn detect_visible_conflicts(
     // (f) a custom/unknown operation affects this Def but cannot be previewed.
     for &s in &effective {
         if let PatchPreviewSupport::Unsupported { reason } = &s.preview_support {
-            diagnostics.push(PatchPreviewConflictDiagnostic {
-                code: "patch_conflict_custom_operation_unpreviewable".to_string(),
-                key: s.key.clone(),
-                message: format!(
-                    "'{}' may affect {} {}, but cannot be previewed: {}",
-                    s.class_name, def_type, def_name, reason
-                ),
-            });
+            diagnostics.push(
+                PatchPreviewConflictDiagnostic::new(
+                    "patch_conflict_custom_operation_unpreviewable",
+                    s.key.clone(),
+                    format!(
+                        "'{}' may affect {} {}, but cannot be previewed: {}",
+                        s.class_name, def_type, def_name, reason
+                    ),
+                )
+                .with_args(crate::diagnostics::diagnostic_args([
+                    ("className", s.class_name.as_str().into()),
+                    ("defType", def_type.into()),
+                    ("defName", def_name.into()),
+                    ("reason", reason.as_str().into()),
+                ])),
+            );
         }
     }
 

@@ -7,7 +7,7 @@
   padding: 6px 0;
   gap: 2px;
   background: var(--surface-rail);
-  border-right: 1px solid var(--border-subtle);
+  border-inline-end: 1px solid var(--border-subtle);
 }
 
 .spacer {

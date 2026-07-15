@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { AboutEditorPane } from "./AboutEditorPane";
 import type { AboutMetadataView } from "../../../xml-editor/types/xmlDocument";
 

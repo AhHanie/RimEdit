@@ -1,3 +1,4 @@
+import { FALLBACK_LOCALE } from "../../../i18n/locale";
 import type {
   FileTreeFileNode,
   FileTreeFolderNode,
@@ -5,7 +6,11 @@ import type {
   ProjectFileScan,
 } from "../types";
 
-export function buildFileTree(scan: ProjectFileScan, rootName: string): FileTreeFolderNode {
+export function buildFileTree(
+  scan: ProjectFileScan,
+  rootName: string,
+  locale: string = FALLBACK_LOCALE,
+): FileTreeFolderNode {
   const folderMap = new Map<string, FileTreeFolderNode>();
 
   const root: FileTreeFolderNode = {
@@ -64,7 +69,7 @@ export function buildFileTree(scan: ProjectFileScan, rootName: string): FileTree
   function sortChildren(node: FileTreeFolderNode): void {
     node.children.sort((a, b) => {
       if (a.type !== b.type) return a.type === "folder" ? -1 : 1;
-      return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+      return a.name.localeCompare(b.name, locale, { sensitivity: "base" });
     });
     for (const child of node.children) {
       if (child.type === "folder") sortChildren(child);

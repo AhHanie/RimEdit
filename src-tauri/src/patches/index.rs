@@ -109,6 +109,13 @@ pub struct PatchIndexError {
     pub relative_path: Option<String>,
     pub code: String,
     pub message: String,
+    /// Typed, literal interpolation arguments for `code` (see `crate::diagnostics` module docs).
+    /// Additive alongside the still-English `message`; omitted from JSON when empty.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::diagnostics::DiagnosticArgs::is_empty"
+    )]
+    pub args: crate::diagnostics::DiagnosticArgs,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -225,6 +232,7 @@ fn add_location_to_index(
                 relative_path: None,
                 code: "patch_index_location_scan_failed".to_string(),
                 message: error.to_string(),
+                args: crate::diagnostics::DiagnosticArgs::new(),
             });
             return;
         }
@@ -254,6 +262,7 @@ fn add_location_to_index(
                 relative_path: Some(file_entry.relative_path),
                 code: "patch_index_file_read_failed".to_string(),
                 message: error.to_string(),
+                args: crate::diagnostics::DiagnosticArgs::new(),
             }),
         }
     }

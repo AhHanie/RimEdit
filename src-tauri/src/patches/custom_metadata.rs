@@ -170,6 +170,8 @@ mod tests {
             repeatable: false,
             xml,
             source_pack_id: None,
+            label_source_pack_id: None,
+            description_source_pack_id: None,
             items: None,
             flags: false,
             default_collapsed: None,

@@ -55,8 +55,9 @@ describe("useCustomFormViews", () => {
         return Promise.resolve({
           views: [],
           warning: {
-            code: "form_view_store_unsupported_version",
+            code: "form_view_unsupported_version",
             message: "newer store version",
+            args: { schemaVersion: 999 },
           },
         });
       }
@@ -68,7 +69,8 @@ describe("useCustomFormViews", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(result.current.views).toEqual([]);
-    expect(result.current.warning?.code).toBe("form_view_store_unsupported_version");
+    expect(result.current.warning?.code).toBe("form_view_unsupported_version");
+    expect(result.current.warning?.args).toEqual({ schemaVersion: 999 });
     expect(result.current.error).toBeNull();
   });
 
@@ -94,6 +96,28 @@ describe("useCustomFormViews", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(result.current.error).toBe("boom");
+  });
+
+  it("renders a rejected list call's code/args through the shared diagnostic catalog, not the raw backend message", async () => {
+    invokeMock.mockImplementation((cmd: string) => {
+      if (cmd === "list_custom_form_views") {
+        // Same wire shape a rejected Tauri command carries (`AppError`'s `code`/`args`).
+        // Deliberately different `message` from the catalog text below, so a passing assertion
+        // proves this reads the translated code/args lookup, not `.message`/`String(e)` directly.
+        return Promise.reject({
+          code: "invalid_location_path",
+          message: "backend raw message that must not be shown",
+          args: { path: "Defs/Thing.xml" },
+        });
+      }
+      throw new Error(`unexpected invoke: ${cmd}`);
+    });
+
+    const { result } = renderHook(() => useCustomFormViews("proj1", "1.6", "ThingDef"));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.error).toBe('"Defs/Thing.xml" is not a valid location path.');
   });
 
   it("createView invokes create then reloads the list", async () => {
@@ -167,6 +191,27 @@ describe("useCustomFormViews", () => {
     expect(invokeMock).not.toHaveBeenCalled();
   });
 
+  it("rejects mutating calls with a structured diagnostic code, not just a raw English message", async () => {
+    // The "no active project" precondition is a known condition this hook itself detects -- it
+    // must carry a `code` the shared renderer can translate (see `src/i18n/diagnostics.ts`), not
+    // only an English `Error.message` that bypasses localization entirely.
+    const { result } = renderHook(() => useCustomFormViews(null, "1.6", "ThingDef"));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await expect(result.current.createView("Weapon", [])).rejects.toMatchObject({
+      code: "form_view_no_active_project",
+    });
+    await expect(result.current.updateView("view1", { name: "x" })).rejects.toMatchObject({
+      code: "form_view_no_active_project",
+    });
+    await expect(result.current.deleteView("view1")).rejects.toMatchObject({
+      code: "form_view_no_active_project",
+    });
+    await expect(result.current.resetStore()).rejects.toMatchObject({
+      code: "form_view_no_active_project",
+    });
+  });
+
   it("resetStore invokes reset then reloads the list", async () => {
     let listCallCount = 0;
     invokeMock.mockImplementation((cmd: string) => {
@@ -175,7 +220,7 @@ describe("useCustomFormViews", () => {
         if (listCallCount === 1) {
           return Promise.resolve({
             views: [],
-            warning: { code: "form_view_store_unsupported_version", message: "newer store" },
+            warning: { code: "form_view_unsupported_version", message: "newer store" },
           });
         }
         return Promise.resolve({ views: [], warning: null });
@@ -259,9 +304,9 @@ describe("useCustomFormViews", () => {
     // switches to B (1.5) -- which loads its own real view list promptly -- while A's mutation
     // is still in flight, and only then does A's mutation resolve. In every case, A's mutation's
     // OWN chained `reload()` call must never fire (or, if it did, must never apply) against
-    // scope B's now-current state -- this is the exact bug the reviewer found: the scope had
-    // already moved on by the time the CRUD's chained reload was issued, so a request-id check
-    // *inside* `reload()` alone isn't enough (it would already read as "current" by then).
+    // scope B's now-current state: the scope had already moved on by the time the CRUD's chained
+    // reload was issued, so a request-id check *inside* `reload()` alone isn't enough (it would
+    // already read as "current" by then).
     const viewA = sampleView({ id: "view-a", target: { gameVersion: "1.6", defType: "ThingDef" } });
     const viewB = sampleView({
       id: "view-b",

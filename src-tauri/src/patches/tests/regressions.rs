@@ -1,7 +1,7 @@
 use super::*;
 
-// Regressions found by an independent codex review of the initial implementation, verified
-// against RimWorld's decompiled `Verse.DirectXmlToObject`/`ModContentPack.LoadPatches`.
+// Regression tests verified against RimWorld's decompiled
+// `Verse.DirectXmlToObject`/`ModContentPack.LoadPatches`.
 
 #[test]
 fn multiple_root_elements_report_diagnostic_instead_of_using_the_first() {

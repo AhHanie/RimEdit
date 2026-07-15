@@ -1,3 +1,4 @@
+import type { DiagnosticArgs } from "../../lib/diagnostics";
 import type { SourceType } from "../project-settings/types";
 
 export type IndexedSourceKind = "project" | "source";
@@ -48,6 +49,8 @@ export interface DefIndexError {
   message: string;
   line?: number;
   column?: number;
+  /** Typed, literal interpolation args for `code`. See `src/lib/diagnostics.ts`. */
+  args?: DiagnosticArgs;
 }
 
 export interface DefIndexSummary {
