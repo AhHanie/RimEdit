@@ -9,7 +9,7 @@ import type { DefEditorView } from "../../../xml-editor/types/xmlDocument";
 import type { DefTypeSchema, SchemaCatalog } from "../../../schema-catalog";
 import type { UseFormViewsResult } from "../../hooks/useFormViews";
 import { useViewSwitchConfirmation } from "../../hooks/useViewSwitchConfirmation";
-import { useDialogKeyboard } from "../../lib/useDialogKeyboard";
+import { useDialogKeyboard } from "../../../../lib/useDialogKeyboard";
 import { isCustomViewBaseUnavailable } from "../../lib/resolveFormViews";
 import type { ResolvedFormView } from "../../types/resolvedFormView";
 import { FormViewFieldChecklist } from "../FormViewFieldChecklist/FormViewFieldChecklist";

@@ -18,6 +18,8 @@ import {
   Sun,
   Moon,
   Monitor,
+  Command,
+  Info,
   X,
 } from "lucide-react";
 import {
@@ -48,11 +50,12 @@ import {
 import type { ProjectFileEntry } from "../../../features/project-explorer";
 import { DefSearchPanel, useIndexingStatus } from "../../../features/def-index";
 import type { ActivityView } from "../types";
-import type { CommandAction } from "../../commands/commandTypes";
+import type { CommandAction, MenuDescriptor } from "../../commands/commandTypes";
 import { AppTitleBar } from "../AppTitleBar/AppTitleBar";
 import { ActivityRail } from "../ActivityRail/ActivityRail";
 import { StatusBar } from "../StatusBar/StatusBar";
 import { CommandPalette } from "../../commands/CommandPalette/CommandPalette";
+import { AboutDialog } from "../AboutDialog/AboutDialog";
 import { ResizablePaneHandle } from "../ResizablePaneHandle/ResizablePaneHandle";
 import { usePersistentLayoutState } from "../layout/usePersistentLayoutState";
 import { LAYOUT_DEFAULTS } from "../layout/layoutState";
@@ -139,6 +142,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     new Set(),
   );
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [createDefSignal, setCreateDefSignal] = useState(0);
   const activeEditorCommandsRef = useRef<ActiveEditorCommands | null>(null);
   const handleActiveCommandsChange = useCallback(
@@ -399,6 +403,20 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         run: handleOpenProject,
       },
       {
+        id: "open-command-palette",
+        labelKey: "shell:commands.openCommandPalette.label",
+        keywordsKey: "shell:commands.openCommandPalette.keywords",
+        icon: Command,
+        run: () => setPaletteOpen(true),
+      },
+      {
+        id: "show-about",
+        labelKey: "shell:commands.showAbout.label",
+        keywordsKey: "shell:commands.showAbout.keywords",
+        icon: Info,
+        run: () => setAboutOpen(true),
+      },
+      {
         id: "add-source-folder",
         labelKey: "shell:commands.addSourceFolder.label",
         keywordsKey: "shell:commands.addSourceFolder.keywords",
@@ -475,7 +493,50 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
       activeTab,
       setMode,
       setActiveView,
+      setPaletteOpen,
+      setAboutOpen,
     ],
+  );
+
+  const menus = useMemo<MenuDescriptor[]>(
+    () => [
+      {
+        id: "file",
+        labelKey: "shell:menuBar.file",
+        entries: [
+          { kind: "command", commandId: "open-project" },
+          { kind: "command", commandId: "add-source-folder" },
+          { kind: "separator" },
+          { kind: "command", commandId: "refresh" },
+        ],
+      },
+      {
+        id: "view",
+        labelKey: "shell:menuBar.view",
+        entries: [
+          { kind: "command", commandId: "open-command-palette" },
+          { kind: "command", commandId: "focus-search" },
+          { kind: "separator" },
+          { kind: "command", commandId: "toggle-explorer", checked: explorerVisible },
+          { kind: "command", commandId: "open-settings" },
+        ],
+      },
+      {
+        id: "theme",
+        labelKey: "shell:menuBar.theme",
+        entries: [
+          { kind: "command", commandId: "theme-light", checked: themeMode === "light", radioGroup: true },
+          { kind: "command", commandId: "theme-dark", checked: themeMode === "dark", radioGroup: true },
+          { kind: "command", commandId: "theme-system", checked: themeMode === "system", radioGroup: true },
+        ],
+      },
+      {
+        id: "help",
+        labelKey: "shell:menuBar.help",
+        entries: [{ kind: "command", commandId: "show-about" }],
+      },
+    ],
+    [explorerVisible, themeMode],
   );
 
   return (
@@ -491,6 +552,8 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         onTogglePalette={() => setPaletteOpen((o) => !o)}
         onToggleExplorer={() => handleSelectView("explorer")}
         explorerVisible={explorerVisible}
+        commands={commands}
+        menus={menus}
       />
       <div className={styles.middle}>
         {startupNotice && (
@@ -690,6 +753,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         onClose={() => setPaletteOpen(false)}
         commands={commands}
       />
+      {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
     </div>
   );
 }

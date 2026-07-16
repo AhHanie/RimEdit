@@ -1,0 +1,115 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--surface-overlay);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 80px;
+  z-index: 1000;
+}
+
+.panel {
+  width: min(340px, 90vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-editor);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.title {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 3px;
+  color: var(--text-muted);
+}
+
+.closeBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.body {
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.appIcon {
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.appName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.versionRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.versionLabel {
+  color: var(--text-muted);
+}
+
+.versionValue {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.closeFooterBtn {
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--surface-editor);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.closeFooterBtn:hover {
+  border-color: var(--border-strong);
+}

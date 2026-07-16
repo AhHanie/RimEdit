@@ -44,6 +44,20 @@ export const enResources = {
     "itemCount_other": "{{count}} items"
   },
   shell: {
+    "menuBar": {
+      "ariaLabel": "Menu Bar",
+      "file": "File",
+      "view": "View",
+      "theme": "Theme",
+      "help": "Help"
+    },
+    "aboutDialog": {
+      "dialogAriaLabel": "About RimEdit",
+      "title": "About RimEdit",
+      "versionLabel": "Version",
+      "versionLoading": "Loading…",
+      "versionUnavailable": "Unavailable"
+    },
     "titleBar": {
       "openCommandPalette": "Open command palette (Ctrl+Shift+P)",
       "commandPaletteAriaLabel": "Open command palette",
@@ -124,6 +138,14 @@ export const enResources = {
       "createDef": {
         "label": "Create Def from Template",
         "keywords": "new, def, template, insert, create, add"
+      },
+      "openCommandPalette": {
+        "label": "Command Palette",
+        "keywords": "command, palette, search, actions"
+      },
+      "showAbout": {
+        "label": "About RimEdit",
+        "keywords": "about, version, help, info"
       }
     },
     "startupNotice": {

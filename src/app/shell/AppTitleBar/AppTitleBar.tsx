@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { Blocks, RefreshCw, FolderOpen, FolderPlus, PanelLeft, Sun, Moon, Monitor, Command } from "lucide-react";
+import { RefreshCw, FolderOpen, FolderPlus, PanelLeft, Sun, Moon, Monitor, Command } from "lucide-react";
 import type { ThemeMode } from "../../../types/ui";
+import type { CommandAction, MenuDescriptor } from "../../commands/commandTypes";
+import { AppMenuBar } from "../AppMenuBar/AppMenuBar";
 import styles from "./AppTitleBar.module.css";
 
 interface AppTitleBarProps {
@@ -14,6 +16,8 @@ interface AppTitleBarProps {
   onTogglePalette: () => void;
   onToggleExplorer: () => void;
   explorerVisible: boolean;
+  commands: CommandAction[];
+  menus: MenuDescriptor[];
 }
 
 export function AppTitleBar({
@@ -27,6 +31,8 @@ export function AppTitleBar({
   onTogglePalette,
   onToggleExplorer,
   explorerVisible,
+  commands,
+  menus,
 }: AppTitleBarProps) {
   const { t } = useTranslation(["shell", "common"]);
   const ThemeIcon = themeMode === "light" ? Sun : themeMode === "dark" ? Moon : Monitor;
@@ -39,10 +45,7 @@ export function AppTitleBar({
 
   return (
     <header className={styles.root}>
-      <div className={styles.brand}>
-        <Blocks size={16} className={styles.brandIcon} />
-        <span>{t("common:app.name")}</span>
-      </div>
+      <AppMenuBar commands={commands} menus={menus} />
 
       <button
         className={styles.command}
