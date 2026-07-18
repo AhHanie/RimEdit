@@ -210,7 +210,13 @@ fn test_catalog() -> SchemaCatalog {
     );
     object_types.insert(
         "VerbProperties".to_string(),
-        object_type_schema(&[], &[("verbClass", field(&["Verb"]))]),
+        object_type_schema(
+            &[],
+            &[
+                ("verbClass", field(&["Verb"])),
+                ("defaultProjectile", field(&[])),
+            ],
+        ),
     );
     object_types.insert(
         "VerbPropertiesAI".to_string(),
@@ -788,6 +794,133 @@ fn discriminator_variant_class_predicate_on_a_list_item_stays_unsupported() {
         .diagnostics
         .iter()
         .any(|d| d.code == "xpath_autocomplete_unsupported_pattern"));
+}
+
+// ---------------------------------------------------------------------------
+// Positional list-entry predicate (`li[n]`)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn positional_list_item_predicate_reaches_the_item_schema_like_plain_li() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    // The reported regression: a `verbs` list item selected by position must still resolve
+    // `defaultProjectile`, an inherited-through-object-type field of the item schema.
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Gun_AssaultRifle"]/verbs/li[1]/defaultProjectile"#,
+    );
+    let resolved = result
+        .resolved_field
+        .expect("defaultProjectile should resolve through a positional li[1]");
+    assert_eq!(resolved.field_name, "defaultProjectile");
+    assert!(result.diagnostics.is_empty(), "{:?}", result.diagnostics);
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li[1]/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"verbClass"), "{labels:?}");
+    assert!(labels.contains(&"defaultProjectile"), "{labels:?}");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn positional_list_item_predicate_is_index_independent() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li[2]/range");
+    let resolved = result.resolved_field.expect("range should resolve via li[2]");
+    assert_eq!(resolved.field_name, "range");
+    assert!(result.diagnostics.is_empty());
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li[10]/range");
+    let resolved = result
+        .resolved_field
+        .expect("range should resolve via li[10]");
+    assert_eq!(resolved.field_name, "range");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn positional_keyed_map_predicate_reaches_key_and_value() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/keyframeParts/li[1]/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"key"), "{labels:?}");
+    assert!(labels.contains(&"value"), "{labels:?}");
+    assert!(result.diagnostics.is_empty());
+
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        "Defs/ThingDef/keyframeParts/li[1]/value/partName",
+    );
+    let resolved = result.resolved_field.expect("partName should resolve");
+    assert_eq!(resolved.field_name, "partName");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn plain_li_still_works_alongside_positional_predicate_support() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li/verbClass");
+    let resolved = result.resolved_field.expect("verbClass should resolve");
+    assert_eq!(resolved.field_name, "verbClass");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn malformed_positional_predicates_are_rejected_with_unsupported_pattern() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    for bad_step in [
+        "li[0]",
+        "li[01]",
+        "li[-1]",
+        "li[1.5]",
+        "li[ 1]",
+        "li[1 ]",
+        "li[]",
+        "li[last()]",
+        r#"li[@Class="CompProperties_Foo"]"#,
+        "li[1][2]",
+        "li[1]extra",
+    ] {
+        let input = format!("Defs/ThingDef/verbs/{bad_step}/verbClass");
+        let result = complete_patch_xpath(&catalog, &index, &input);
+        assert!(result.items.is_empty(), "for {input}");
+        assert!(
+            result
+                .diagnostics
+                .iter()
+                .any(|d| d.code == "xpath_autocomplete_unsupported_pattern"),
+            "for {input}: {:?}",
+            result.diagnostics
+        );
+        // Best-effort: "verbs" itself still resolved before the mismatch.
+        let resolved = result
+            .resolved_field
+            .unwrap_or_else(|| panic!("verbs should still resolve for {input}"));
+        assert_eq!(resolved.field_name, "verbs");
+    }
+}
+
+#[test]
+fn in_progress_positional_predicate_typing_has_no_false_warning() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    for partial in ["Defs/ThingDef/verbs/li[", "Defs/ThingDef/verbs/li[1"] {
+        let result = complete_patch_xpath(&catalog, &index, partial);
+        assert!(result.items.is_empty(), "for {partial}");
+        assert!(
+            result.diagnostics.is_empty(),
+            "for {partial}: {:?}",
+            result.diagnostics
+        );
+    }
 }
 
 #[test]

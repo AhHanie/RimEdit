@@ -22,16 +22,20 @@
 //!
 //! Field-segment depth is *not* capped: once the Def type/predicate segment resolves, a
 //! [`SchemaCursor`] walks every remaining segment against the merged [`SchemaCatalog`], descending
-//! through nested `object` fields, `listOfLi` object items (`/li/...`), `keyedObjectMap` entries
-//! (`/li/key` or `/li/value/...`), and `keyedObjectList` data-dependent keys (`/<key>/...`) for as
-//! long as the schema keeps resolving concrete, statically-known children. Traversal stops --
-//! silently, or with `xpath_autocomplete_unsupported_pattern` when a *typed* segment doesn't match
-//! anything the cursor understands -- at a scalar field, an XML shape with no statically known
-//! descendants (scalar lists, `namedChildrenMap`, `keyedValueList`, `typedReferenceList`,
-//! attributes/text/flags), an unresolvable `schemaRef`, or a discriminator-based list item's
-//! variant-specific members (only the declared base `items.schemaRef` is traversed; narrowing to a
-//! `Class="..."` variant would need predicate parsing, which stays outside this conservative
-//! grammar -- see [`SchemaCursor::ListItem`]).
+//! through nested `object` fields, `listOfLi` object items (`/li[n]/...`), `keyedObjectMap` entries
+//! (`/li[n]/key` or `/li[n]/value/...`), and `keyedObjectList` data-dependent keys (`/<key>/...`)
+//! for as long as the schema keeps resolving concrete, statically-known children. A `listOfLi`/
+//! `keyedObjectMap` entry step optionally carries a single one-based positional predicate (`li[1]`,
+//! `li[2]`, ...); it only changes *which* XML list entry the XPath selects, never the selected
+//! entry's schema, so `li` and `li[n]` transition the cursor identically (see
+//! [`parse_list_item_step`]). Traversal stops -- silently, or with
+//! `xpath_autocomplete_unsupported_pattern` when a *typed* segment doesn't match anything the
+//! cursor understands -- at a scalar field, an XML shape with no statically known descendants
+//! (scalar lists, `namedChildrenMap`, `keyedValueList`, `typedReferenceList`, attributes/text/
+//! flags), an unresolvable `schemaRef`, or a discriminator-based list item's variant-specific
+//! members (only the declared base `items.schemaRef` is traversed; narrowing to one `Class="..."`
+//! variant remains unsupported since it would need predicate parsing beyond the plain positional
+//! index, which stays outside this conservative grammar -- see [`SchemaCursor::ListItem`]).
 
 use std::collections::HashSet;
 
@@ -922,13 +926,14 @@ enum SchemaCursor {
     /// ordinary schema inheritance already resolved on one XML element, not RimWorld's
     /// before-patches Def inheritance.
     ObjectFields { schema_ref: String },
-    /// A `listOfLi` field whose items are objects: the next segment must be the literal `li`
-    /// before entering `schema_ref`'s object fields. For a discriminator-based item type, only the
-    /// declared base `schema_ref` is traversed -- narrowing to one `Class="..."` variant's own
-    /// members would require predicate parsing, which stays outside this conservative grammar (see
-    /// module docs).
+    /// A `listOfLi` field whose items are objects: the next segment must be `li` or `li[n]` (see
+    /// [`parse_list_item_step`]) before entering `schema_ref`'s object fields. For a
+    /// discriminator-based item type, only the declared base `schema_ref` is traversed --
+    /// narrowing to one `Class="..."` variant's own members would require predicate parsing beyond
+    /// the plain positional index, which stays outside this conservative grammar (see module
+    /// docs).
     ListItem { schema_ref: String },
-    /// A `keyedObjectMap` field: the next segment must be the literal `li` before entering a map
+    /// A `keyedObjectMap` field: the next segment must be `li` or `li[n]` before entering a map
     /// entry (see [`SchemaCursor::KeyedMapEntry`]).
     KeyedMapLi { schema_ref: String },
     /// Inside a `keyedObjectMap` `<li>`: the next segment is either `key` (a scalar terminal) or
@@ -1010,6 +1015,60 @@ fn object_item_schema_ref<'a>(catalog: &SchemaCatalog, field: &'a FieldSchema) -
         .then_some(schema_ref)
 }
 
+/// The three shapes a `listOfLi`/`keyedObjectMap` entry step (`li`, `li[n]`, ...) can take.
+/// Deliberately independent of any RimWorld schema or project data -- see [`parse_list_item_step`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ListItemStep {
+    /// Exactly `li`, or `li[n]` for a positive decimal `n` with no trailing content.
+    Valid,
+    /// A trailing, unclosed positional predicate (`li[`, `li[12`) -- still being typed.
+    Incomplete,
+    /// Anything else: a non-`li` step, a malformed/unsupported predicate (`li[0]`, `li[-1]`,
+    /// `li[1.5]`, `li[last()]`, `li[@Class="..."]`), multiple predicates (`li[1][2]`), or trailing
+    /// content after the closing bracket (`li[1]extra`).
+    Invalid,
+}
+
+/// Classify a single fully-typed list-entry step's text against the grammar `"li" | "li"
+/// "[" positive-integer "]"` (see module docs). Reuses [`find_matching_close`] so the closing
+/// bracket must belong to the first (and only) opening bracket, which naturally rejects a second
+/// adjacent predicate and any trailing text. The index is validated lexically (leading digit
+/// 1-9, remaining digits 0-9) rather than parsed to an integer, so an arbitrarily long decimal
+/// index isn't rejected by an arbitrary overflow limit.
+fn parse_list_item_step(text: &str) -> ListItemStep {
+    let Some(rest) = text.strip_prefix("li") else {
+        return ListItemStep::Invalid;
+    };
+    if rest.is_empty() {
+        return ListItemStep::Valid;
+    }
+    if !rest.starts_with('[') {
+        return ListItemStep::Invalid;
+    }
+    match find_matching_close(rest, 0) {
+        None => ListItemStep::Incomplete,
+        Some(close_pos) if close_pos != rest.len() - 1 => ListItemStep::Invalid,
+        Some(close_pos) => {
+            let content = &rest[1..close_pos];
+            if is_positive_integer(content) {
+                ListItemStep::Valid
+            } else {
+                ListItemStep::Invalid
+            }
+        }
+    }
+}
+
+/// A non-empty decimal literal with no leading zero, e.g. `"1"`, `"10"` -- rejects `"0"`, `"01"`,
+/// `"-1"`, `"1.5"`, and non-numeric content alike.
+fn is_positive_integer(s: &str) -> bool {
+    let mut chars = s.chars();
+    match chars.next() {
+        Some(c) if c.is_ascii_digit() && c != '0' => chars.all(|c| c.is_ascii_digit()),
+        _ => false,
+    }
+}
+
 /// Resolve one fully-typed segment against `cursor`, mutating it in place to the next position.
 /// Returns the field just resolved (for [`XPathResolvedField`] accumulation) when this segment
 /// named a real field, `Ok(None)` for a structural transition (`li`/`value`) that doesn't itself
@@ -1054,22 +1113,24 @@ fn resolve_and_transition(
                 Err(unsupported_child_segment())
             }
         }
-        SchemaCursor::ListItem { schema_ref } => {
-            if text == "li" {
+        SchemaCursor::ListItem { schema_ref } => match parse_list_item_step(text) {
+            ListItemStep::Valid => {
                 *cursor = SchemaCursor::ObjectFields { schema_ref };
                 Ok(None)
-            } else {
-                Err(unsupported_child_segment())
             }
-        }
-        SchemaCursor::KeyedMapLi { schema_ref } => {
-            if text == "li" {
+            // Structurally can't happen for a fully-typed (non-final) segment -- an unclosed `[`
+            // keeps bracket depth > 0, so `split_segments` can't have split a `/` after it.
+            ListItemStep::Incomplete => Ok(None),
+            ListItemStep::Invalid => Err(unsupported_child_segment()),
+        },
+        SchemaCursor::KeyedMapLi { schema_ref } => match parse_list_item_step(text) {
+            ListItemStep::Valid => {
                 *cursor = SchemaCursor::KeyedMapEntry { schema_ref };
                 Ok(None)
-            } else {
-                Err(unsupported_child_segment())
             }
-        }
+            ListItemStep::Incomplete => Ok(None),
+            ListItemStep::Invalid => Err(unsupported_child_segment()),
+        },
         SchemaCursor::KeyedMapEntry { schema_ref } => match text {
             "key" => {
                 *cursor = SchemaCursor::Terminal;
@@ -1139,14 +1200,7 @@ fn child_completion(
             resolved_field,
         ),
         SchemaCursor::ListItem { .. } | SchemaCursor::KeyedMapLi { .. } => {
-            literal_segment_completion(
-                &["li"],
-                XPathCompletionItemKind::ListItem,
-                target,
-                replace_from,
-                partial,
-                resolved_field,
-            )
+            list_item_step_completion(target, replace_from, partial, resolved_field)
         }
         SchemaCursor::KeyedMapEntry { .. } => literal_segment_completion(
             &["key", "value"],
@@ -1240,6 +1294,47 @@ fn object_field_completion(
         diagnostics: Vec::new(),
         target,
         resolved_field,
+    }
+}
+
+/// Completion for the segment currently being typed at a `ListItem`/`KeyedMapLi` cursor: the
+/// structural `li` suggestion while `partial` is still a plain identifier prefix (`""`, `"l"`,
+/// `"li"`), and -- once brackets appear -- [`parse_list_item_step`]'s classification instead. A
+/// complete, valid positional predicate (`li[1]`) or one still being typed (`li[`, `li[1`) yields
+/// no items and no diagnostic; a completed invalid predicate yields the same
+/// `xpath_autocomplete_unsupported_pattern` diagnostic a fully-typed invalid segment gets from
+/// [`resolve_and_transition`], so invalid syntax reads the same whether or not a `/` follows it.
+fn list_item_step_completion(
+    target: XPathTarget,
+    replace_from: usize,
+    partial: &str,
+    resolved_field: Option<XPathResolvedField>,
+) -> XPathCompletionResult {
+    if is_ident_prefix(partial) {
+        return literal_segment_completion(
+            &["li"],
+            XPathCompletionItemKind::ListItem,
+            target,
+            replace_from,
+            partial,
+            resolved_field,
+        );
+    }
+    match parse_list_item_step(partial) {
+        ListItemStep::Valid | ListItemStep::Incomplete => XPathCompletionResult {
+            replace_from,
+            items: Vec::new(),
+            diagnostics: Vec::new(),
+            target,
+            resolved_field,
+        },
+        ListItemStep::Invalid => XPathCompletionResult {
+            replace_from,
+            items: Vec::new(),
+            diagnostics: vec![unsupported_child_segment()],
+            target,
+            resolved_field,
+        },
     }
 }
 
