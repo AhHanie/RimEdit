@@ -185,6 +185,48 @@ describe("PatchValueEditor", () => {
     });
   });
 
+  it("uses a nested resolvedField's own terminal field, not its root container", async () => {
+    // The backend resolves a multi-level path (e.g. `graphicData/texPath`) to the *terminal*
+    // field's own name/schema, not the top-level container it's nested under (see
+    // `patches::xpath`'s unlimited-depth schema cursor). PatchValueEditor must trust that
+    // resolution as-is: it should build the structured subform -- and the serialized XML element
+    // -- around "texPath", never "graphicData".
+    mockInvoke({
+      xpath: completionResult({
+        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
+        // Reuses the fixture's plain scalar `label` field schema under a different fieldName --
+        // its shape (scalar string, xml: element) is all that matters here, not its origin.
+        resolvedField: { defType: "ThingDef", fieldName: "texPath", field: catalog.defTypes.ThingDef.fields.label },
+      }),
+      parse: [],
+      serialize: "<texPath>Things/Wall</texPath>\n",
+    });
+
+    const onChange = vi.fn();
+    render(
+      <PatchValueEditor
+        valueXml={null}
+        xpath='Defs/ThingDef[defName="Wall"]/graphicData/texPath'
+        readOnly={false}
+        catalog={catalog}
+        projectId="proj1"
+        operationType="add"
+        label="Value"
+        onChange={onChange}
+      />,
+    );
+
+    const subLabel = await screen.findByText("texPath");
+    expect(screen.queryByText("graphicData")).toBeNull();
+    const input = subLabel.parentElement!.querySelector("input") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "Things/Wall" } });
+
+    await waitFor(() => expect(onChange).toHaveBeenLastCalledWith("<texPath>Things/Wall</texPath>\n"));
+    expect(invokeMock).toHaveBeenCalledWith("serialize_patch_value_fragment", {
+      elements: [{ name: "texPath", value: "Things/Wall" }],
+    });
+  });
+
   it("edits a replace scalar field payload parsed from existing XML", async () => {
     mockInvoke({
       xpath: completionResult({

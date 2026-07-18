@@ -105,6 +105,101 @@ pub fn collect_all_object_inherited_fields(
     fields
 }
 
+/// Look up a field by name or XML alias on an object type, walking the `inherits` chain, and
+/// return the *canonical* field name alongside its schema. Used by patch XPath completion
+/// (`patches::xpath`), which must report which canonical field a typed alias resolves to for
+/// `XPathResolvedField.fieldName` -- `lookup_object_field_inherited` above only returns the
+/// `FieldSchema`, not the name that resolved it. Search order and cycle guard mirror
+/// `lookup_object_field_recursive`.
+pub fn lookup_object_field_with_alias<'a>(
+    catalog: &'a SchemaCatalog,
+    object_type: &str,
+    field_name: &str,
+) -> Option<(&'a str, &'a FieldSchema)> {
+    let mut visited: HashSet<String> = HashSet::new();
+    lookup_object_field_with_alias_recursive(catalog, object_type, field_name, &mut visited)
+}
+
+fn lookup_object_field_with_alias_recursive<'a>(
+    catalog: &'a SchemaCatalog,
+    object_type: &str,
+    field_name: &str,
+    visited: &mut HashSet<String>,
+) -> Option<(&'a str, &'a FieldSchema)> {
+    if visited.contains(object_type) {
+        return None;
+    }
+    visited.insert(object_type.to_string());
+
+    let schema = catalog.object_types.get(object_type)?;
+
+    if let Some((canonical, field)) = schema.fields.get_key_value(field_name) {
+        return Some((canonical.as_str(), field));
+    }
+    for (canonical, field) in &schema.fields {
+        if field.xml_aliases.iter().any(|a| a == field_name) {
+            return Some((canonical.as_str(), field));
+        }
+    }
+
+    for parent in &schema.inherits {
+        if let Some(found) =
+            lookup_object_field_with_alias_recursive(catalog, parent.as_str(), field_name, visited)
+        {
+            return Some(found);
+        }
+    }
+
+    None
+}
+
+/// Collect every field reachable on an object type through its `inherits` chain, each canonical
+/// name appearing once (own fields win over a same-named inherited field, mirroring
+/// `lookup_object_field_with_alias`'s own-fields-first search order). Used to build patch XPath
+/// autocomplete suggestions for an object-typed path segment (`patches::xpath`), which -- unlike
+/// Def-type field completion -- has no "direct fields only" restriction: object-type inheritance
+/// is ordinary C# inheritance already resolved on the object instance, not RimWorld's
+/// before-patches Def XML inheritance, so every inherited field is a legitimate patch target.
+pub fn collect_object_fields_ordered<'a>(
+    catalog: &'a SchemaCatalog,
+    object_type: &str,
+) -> Vec<(&'a str, &'a FieldSchema)> {
+    let mut out: Vec<(&str, &FieldSchema)> = Vec::new();
+    let mut seen: HashSet<&str> = HashSet::new();
+    let mut visited: HashSet<String> = HashSet::new();
+    collect_object_fields_ordered_recursive(
+        catalog,
+        object_type,
+        &mut out,
+        &mut seen,
+        &mut visited,
+    );
+    out
+}
+
+fn collect_object_fields_ordered_recursive<'a>(
+    catalog: &'a SchemaCatalog,
+    object_type: &str,
+    out: &mut Vec<(&'a str, &'a FieldSchema)>,
+    seen: &mut HashSet<&'a str>,
+    visited: &mut HashSet<String>,
+) {
+    if !visited.insert(object_type.to_string()) {
+        return;
+    }
+    let Some(schema) = catalog.object_types.get(object_type) else {
+        return;
+    };
+    for (name, field) in &schema.fields {
+        if seen.insert(name.as_str()) {
+            out.push((name.as_str(), field));
+        }
+    }
+    for parent in &schema.inherits {
+        collect_object_fields_ordered_recursive(catalog, parent, out, seen, visited);
+    }
+}
+
 fn lookup_object_field_recursive<'a>(
     catalog: &'a SchemaCatalog,
     object_type: &str,

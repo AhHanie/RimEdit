@@ -165,6 +165,61 @@ describe("PatchPathInput", () => {
     expect(onChange).toHaveBeenLastCalledWith(`${prefix}graphicData`);
   });
 
+  it("renders and splices a structural 'li' completion for a listOfLi object field", async () => {
+    // Proves PatchPathInput's rendering/splicing needs no depth-specific handling: a structural
+    // `listItem` suggestion (offered several levels into a nested schema on the Rust side) is
+    // spliced exactly like a `field`/`defType` one.
+    invokeMock.mockResolvedValue(
+      completionResult({
+        replaceFrom: "Defs/ThingDef/comps/".length,
+        items: [{ insertText: "li", label: "li", detail: null, kind: "listItem" }],
+      }),
+    );
+
+    const onChange = vi.fn();
+    render(
+      <PatchPathInput
+        value="Defs/ThingDef/comps/"
+        readOnly={false}
+        label="XPath"
+        projectId="proj1"
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.focus(screen.getByRole("textbox"));
+    const suggestion = await screen.findByText("li");
+    fireEvent.mouseDown(suggestion);
+
+    expect(onChange).toHaveBeenLastCalledWith("Defs/ThingDef/comps/li");
+  });
+
+  it("renders and splices a nested field completion several levels deep", async () => {
+    invokeMock.mockResolvedValue(
+      completionResult({
+        replaceFrom: "Defs/ThingDef/graphicData/".length,
+        items: [{ insertText: "texPath", label: "texPath", detail: null, kind: "field" }],
+      }),
+    );
+
+    const onChange = vi.fn();
+    render(
+      <PatchPathInput
+        value="Defs/ThingDef/graphicData/texP"
+        readOnly={false}
+        label="XPath"
+        projectId="proj1"
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.focus(screen.getByRole("textbox"));
+    const suggestion = await screen.findByText("texPath");
+    fireEvent.mouseDown(suggestion);
+
+    expect(onChange).toHaveBeenLastCalledWith("Defs/ThingDef/graphicData/texPath");
+  });
+
   it("renders diagnostics returned by the completion result", async () => {
     invokeMock.mockResolvedValue(
       completionResult({
