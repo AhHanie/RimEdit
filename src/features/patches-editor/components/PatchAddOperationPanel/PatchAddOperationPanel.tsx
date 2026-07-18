@@ -119,17 +119,17 @@ export function PatchAddOperationPanel({
         if (!field) return null;
         const current = values[fieldName]?.value ?? "";
         if (field.role === "xmlValue") {
-          // Custom metadata fields aren't xpath-targeted (xpath=null, projectId=null), so this
-          // always resolves to raw-only mode -- structured editing needs a resolved Def schema
-          // field, which a custom operation's own field has no notion of.
+          // Custom metadata fields aren't xpath-targeted (target=null, resolvedField=null), so
+          // this always resolves to raw-only mode -- structured editing needs a resolved Def
+          // schema field, which a custom operation's own field has no notion of.
           return (
             <div key={fieldName} className={styles.customField}>
               <PatchValueEditor
                 valueXml={current || null}
-                xpath={null}
                 readOnly={false}
                 catalog={catalog}
-                projectId={null}
+                target={null}
+                resolvedField={null}
                 operationType="custom"
                 label={field.label || fieldName}
                 onChange={(value) =>

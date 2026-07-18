@@ -79,6 +79,13 @@
   white-space: nowrap;
 }
 
+.suggestionStatus {
+  padding: 5px 8px;
+  font-size: 10px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+}
+
 .diagnostics {
   list-style: none;
   margin: 0;

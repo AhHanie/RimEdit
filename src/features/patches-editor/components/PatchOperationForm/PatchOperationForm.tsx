@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { Plus, X } from "lucide-react";
 import type { SchemaCatalog } from "../../../schema-catalog";
 import { emptyToNull, insertAt, nullToEmpty, removeAt, replaceAt } from "../../lib/arrayUtils";
+import type { XPathCompletionResult } from "../../types/xpathCompletion";
 import type {
   AttributeOperationData,
   AttributeValueOperationData,
@@ -23,6 +25,7 @@ interface Props {
   catalog: SchemaCatalog | null;
   readOnly: boolean;
   projectId: string | null;
+  registerDraftFlush?: (flush: () => void) => () => void;
   onChange: (updater: (node: PatchOperationNode) => PatchOperationNode) => void;
 }
 
@@ -41,8 +44,12 @@ function fieldLabel(
   return catalog?.patchOperations?.[className]?.fields[fieldName]?.label || fallback;
 }
 
-export function PatchOperationForm({ node, catalog, readOnly, projectId, onChange }: Props) {
+export function PatchOperationForm({ node, catalog, readOnly, projectId, registerDraftFlush, onChange }: Props) {
   const { t } = useTranslation("patches");
+  // Shared with `PatchValueEditor` below (via `target`/`resolvedField` props) so one settled XPath
+  // edit produces exactly one `complete_patch_operation_xpath` request instead of two independent
+  // debounced fetches -- see `PatchPathInput`'s `onCompletionResult` and `usePatchXPathCompletion`.
+  const [xpathCompletion, setXpathCompletion] = useState<XPathCompletionResult | null>(null);
   function updateData(patch: Partial<FlatDataKind["data"]>) {
     onChange((n) => {
       const kind = n.kind;
@@ -135,7 +142,18 @@ export function PatchOperationForm({ node, catalog, readOnly, projectId, onChang
         </label>
       </div>
 
-      {kindFields(kind, node.className, catalog, readOnly, projectId, updateData, t)}
+      {kindFields(
+        kind,
+        node.className,
+        catalog,
+        readOnly,
+        projectId,
+        registerDraftFlush,
+        xpathCompletion,
+        setXpathCompletion,
+        updateData,
+        t,
+      )}
 
       {otherAttributes.length > 0 || !readOnly ? (
         <div className={styles.otherAttributes}>
@@ -185,6 +203,9 @@ function kindFields(
   catalog: SchemaCatalog | null,
   readOnly: boolean,
   projectId: string | null,
+  registerDraftFlush: ((flush: () => void) => () => void) | undefined,
+  xpathCompletion: XPathCompletionResult | null,
+  setXpathCompletion: (result: XPathCompletionResult | null) => void,
   updateData: (patch: Record<string, unknown>) => void,
   t: TFunction<"patches">,
 ) {
@@ -196,6 +217,8 @@ function kindFields(
       label={label("xpath", t("operationForm.xpathFallback"))}
       projectId={projectId}
       onChange={onChange}
+      onCompletionResult={setXpathCompletion}
+      registerDraftFlush={registerDraftFlush}
     />
   );
 
@@ -208,10 +231,10 @@ function kindFields(
           {xpathField(data.xpath, (xpath) => updateData({ xpath }))}
           <PatchValueEditor
             valueXml={data.valueXml}
-            xpath={data.xpath}
             readOnly={readOnly}
             catalog={catalog}
-            projectId={projectId}
+            target={xpathCompletion?.target ?? null}
+            resolvedField={xpathCompletion?.resolvedField ?? null}
             operationType={kind.type}
             label={label("value", t("operationForm.valueFallback"))}
             onChange={(valueXml) => updateData({ valueXml })}
@@ -233,10 +256,10 @@ function kindFields(
           {xpathField(data.xpath, (xpath) => updateData({ xpath }))}
           <PatchValueEditor
             valueXml={data.valueXml}
-            xpath={data.xpath}
             readOnly={readOnly}
             catalog={catalog}
-            projectId={projectId}
+            target={xpathCompletion?.target ?? null}
+            resolvedField={xpathCompletion?.resolvedField ?? null}
             operationType={kind.type}
             label={label("value", t("operationForm.valueFallback"))}
             onChange={(valueXml) => updateData({ valueXml })}

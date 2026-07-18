@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { ChevronDown, ChevronRight, Code2, Copy, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import type { SchemaCatalog } from "../../../schema-catalog";
-import { insertAt, removeAt, replaceAt, moveItem } from "../../lib/arrayUtils";
-import { cloneWithFreshIds } from "../../lib/patchOperationDefaults";
+import { useOperationListDispatch } from "../../lib/useOperationListDispatch";
 import { operationSubtitle, operationTitle } from "../../lib/operationSummary";
 import type { PatchOperationId, PatchOperationNode } from "../../types/patchFile";
 import { PatchAddOperationPanel } from "../PatchAddOperationPanel/PatchAddOperationPanel";
@@ -18,6 +17,7 @@ export interface PatchOperationNodeRowProps {
   projectId: string | null;
   depth: number;
   generateId: () => PatchOperationId;
+  registerDraftFlush?: (flush: () => void) => () => void;
   onChange: (updater: (node: PatchOperationNode) => PatchOperationNode) => void;
   onRemove: () => void;
   onDuplicate?: () => void;
@@ -25,13 +25,17 @@ export interface PatchOperationNodeRowProps {
   onMoveDown?: () => void;
 }
 
-export function PatchOperationNodeRow({
+/** Memoized so an edit to one row (which only replaces that row's own node in the tree state)
+ * does not force every sibling/ancestor row to re-render -- see `useOperationListDispatch` for how
+ * callers keep this row's callback props referentially stable across unrelated edits. */
+export const PatchOperationNodeRow = memo(function PatchOperationNodeRow({
   node,
   catalog,
   readOnly,
   projectId,
   depth,
   generateId,
+  registerDraftFlush,
   onChange,
   onRemove,
   onDuplicate,
@@ -43,21 +47,12 @@ export function PatchOperationNodeRow({
   const kind = node.kind;
   const isUnknown = kind.type === "unknown";
 
-  function updateSequenceChildren(updater: (ops: PatchOperationNode[]) => PatchOperationNode[]) {
-    onChange((n) => (n.kind.type === "sequence" ? { ...n, kind: { type: "sequence", data: updater(n.kind.data) } } : n));
-  }
-
-  function updateSlot(slot: "matchOp" | "nomatchOp", op: PatchOperationNode | null) {
-    onChange((n): PatchOperationNode => {
-      if (n.kind.type === "findMod") {
-        return { ...n, kind: { type: "findMod", data: { ...n.kind.data, [slot]: op } } };
-      }
-      if (n.kind.type === "conditional") {
-        return { ...n, kind: { type: "conditional", data: { ...n.kind.data, [slot]: op } } };
-      }
-      return n;
-    });
-  }
+  const updateSequenceChildren = useCallback(
+    (updater: (ops: PatchOperationNode[]) => PatchOperationNode[]) => {
+      onChange((n) => (n.kind.type === "sequence" ? { ...n, kind: { type: "sequence", data: updater(n.kind.data) } } : n));
+    },
+    [onChange],
+  );
 
   return (
     <li className={styles.row} style={{ marginInlineStart: depth > 0 ? 16 : 0 }}>
@@ -151,33 +146,31 @@ export function PatchOperationNodeRow({
             </label>
           ) : (
             <>
-              <PatchOperationForm node={node} catalog={catalog} readOnly={readOnly} projectId={projectId} onChange={onChange} />
+              <PatchOperationForm
+                node={node}
+                catalog={catalog}
+                readOnly={readOnly}
+                projectId={projectId}
+                registerDraftFlush={registerDraftFlush}
+                onChange={onChange}
+              />
 
               {kind.type === "sequence" && (
                 <div className={styles.nested}>
                   <ul className={styles.childList}>
                     {kind.data.map((child, i) => (
-                      <PatchOperationNodeRow
+                      <SequenceChildRow
                         key={child.id}
                         node={child}
+                        index={i}
+                        total={kind.data.length}
                         catalog={catalog}
                         readOnly={readOnly}
                         projectId={projectId}
                         depth={depth + 1}
                         generateId={generateId}
-                        onChange={(updater) => updateSequenceChildren((ops) => replaceAt(ops, i, updater(ops[i])))}
-                        onRemove={() => updateSequenceChildren((ops) => removeAt(ops, i))}
-                        onDuplicate={() =>
-                          updateSequenceChildren((ops) =>
-                            insertAt(ops, i + 1, cloneWithFreshIds(ops[i], generateId)),
-                          )
-                        }
-                        onMoveUp={i > 0 ? () => updateSequenceChildren((ops) => moveItem(ops, i, -1)) : undefined}
-                        onMoveDown={
-                          i < kind.data.length - 1
-                            ? () => updateSequenceChildren((ops) => moveItem(ops, i, 1))
-                            : undefined
-                        }
+                        registerDraftFlush={registerDraftFlush}
+                        setList={updateSequenceChildren}
                       />
                     ))}
                   </ul>
@@ -196,25 +189,27 @@ export function PatchOperationNodeRow({
               {(kind.type === "findMod" || kind.type === "conditional") && (
                 <div className={styles.nested}>
                   <MatchSlot
-                    label="match"
+                    slot="matchOp"
                     op={kind.data.matchOp}
                     catalog={catalog}
                     readOnly={readOnly}
                     projectId={projectId}
                     depth={depth}
                     generateId={generateId}
-                    onSet={(op) => updateSlot("matchOp", op)}
+                    registerDraftFlush={registerDraftFlush}
+                    onChange={onChange}
                     t={t}
                   />
                   <MatchSlot
-                    label="nomatch"
+                    slot="nomatchOp"
                     op={kind.data.nomatchOp}
                     catalog={catalog}
                     readOnly={readOnly}
                     projectId={projectId}
                     depth={depth}
                     generateId={generateId}
-                    onSet={(op) => updateSlot("nomatchOp", op)}
+                    registerDraftFlush={registerDraftFlush}
+                    onChange={onChange}
                     t={t}
                   />
                 </div>
@@ -225,29 +220,110 @@ export function PatchOperationNodeRow({
       )}
     </li>
   );
+});
+
+interface SequenceChildRowProps {
+  node: PatchOperationNode;
+  index: number;
+  total: number;
+  catalog: SchemaCatalog | null;
+  readOnly: boolean;
+  projectId: string | null;
+  depth: number;
+  generateId: () => PatchOperationId;
+  registerDraftFlush?: (flush: () => void) => () => void;
+  setList: (updater: (operations: PatchOperationNode[]) => PatchOperationNode[]) => void;
 }
 
+/** Same operation-id-based dispatch as `PatchOperationTree`'s top-level rows, scoped to one
+ * `sequence` operation's nested child list instead of the file's top-level operation array. */
+const SequenceChildRow = memo(function SequenceChildRow({
+  node,
+  index,
+  total,
+  catalog,
+  readOnly,
+  projectId,
+  depth,
+  generateId,
+  registerDraftFlush,
+  setList,
+}: SequenceChildRowProps) {
+  const { onChange, onRemove, onDuplicate, onMoveUp, onMoveDown } = useOperationListDispatch(
+    node.id,
+    setList,
+    generateId,
+  );
+  return (
+    <PatchOperationNodeRow
+      node={node}
+      catalog={catalog}
+      readOnly={readOnly}
+      projectId={projectId}
+      depth={depth}
+      generateId={generateId}
+      registerDraftFlush={registerDraftFlush}
+      onChange={onChange}
+      onRemove={onRemove}
+      onDuplicate={onDuplicate}
+      onMoveUp={index > 0 ? onMoveUp : undefined}
+      onMoveDown={index < total - 1 ? onMoveDown : undefined}
+    />
+  );
+});
+
 function MatchSlot({
-  label,
+  slot,
   op,
   catalog,
   readOnly,
   projectId,
   depth,
   generateId,
-  onSet,
+  registerDraftFlush,
+  onChange: onRowChange,
   t,
 }: {
-  label: "match" | "nomatch";
+  /** Which of `findMod`/`conditional`'s data fields this slot manages. */
+  slot: "matchOp" | "nomatchOp";
   op: PatchOperationNode | null;
   catalog: SchemaCatalog | null;
   readOnly: boolean;
   projectId: string | null;
   depth: number;
   generateId: () => PatchOperationId;
-  onSet: (op: PatchOperationNode | null) => void;
+  registerDraftFlush?: (flush: () => void) => () => void;
+  /** The containing row's own (stable, `useOperationListDispatch`-provided) onChange -- building
+   * `onSet` from this rather than from a per-render-recreated inline callback keeps the nested
+   * row's own onChange/onRemove props stable across edits to unrelated sibling fields (e.g.
+   * `MayRequire`), so the memoized nested `PatchOperationNodeRow` doesn't re-render on every one
+   * of those keystrokes. */
+  onChange: (updater: (node: PatchOperationNode) => PatchOperationNode) => void;
   t: TFunction<"patches">;
 }) {
+  const label = slot === "matchOp" ? "match" : "nomatch";
+  const onSet = useCallback(
+    (newOp: PatchOperationNode | null) => {
+      onRowChange((n): PatchOperationNode => {
+        if (n.kind.type === "findMod") {
+          return { ...n, kind: { type: "findMod", data: { ...n.kind.data, [slot]: newOp } } };
+        }
+        if (n.kind.type === "conditional") {
+          return { ...n, kind: { type: "conditional", data: { ...n.kind.data, [slot]: newOp } } };
+        }
+        return n;
+      });
+    },
+    [onRowChange, slot],
+  );
+  const onChildChange = useCallback(
+    (updater: (n: PatchOperationNode) => PatchOperationNode) => {
+      if (op) onSet(updater(op));
+    },
+    [onSet, op],
+  );
+  const onChildRemove = useCallback(() => onSet(null), [onSet]);
+
   return (
     <div className={styles.slot}>
       <span className={styles.slotLabel}>{label}</span>
@@ -260,8 +336,9 @@ function MatchSlot({
             projectId={projectId}
             depth={depth + 1}
             generateId={generateId}
-            onChange={(updater) => onSet(updater(op))}
-            onRemove={() => onSet(null)}
+            registerDraftFlush={registerDraftFlush}
+            onChange={onChildChange}
+            onRemove={onChildRemove}
           />
         </ul>
       ) : (

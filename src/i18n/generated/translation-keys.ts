@@ -683,6 +683,9 @@ export const enResources = {
       "customSuffix": " · custom",
       "empty": "No matching operation type."
     },
+    "patchPathInput": {
+      "truncatedResults": "Showing first {{shown}} of {{total}} matches; type more to narrow."
+    },
     "operationForm": {
       "success": "Success",
       "mayRequire": "MayRequire",

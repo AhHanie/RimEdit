@@ -1,12 +1,10 @@
 use crate::patches::{
     complete_patch_xpath, parse_patch_file, parse_value_fragment, serialize_initial_elements,
     serialize_patch_file, IndexedPatchOperation, PatchFile, PatchImpactGraph, PatchIndexSummary,
-    XPathCompletionResult,
+    XPathCompletionItemKind, XPathCompletionResult,
 };
 use crate::project_model::AppError;
-use crate::schema_pack::{
-    build_schema_catalog_with_locale, schema_pack_roots, SchemaCatalog, SchemaCatalogCacheState,
-};
+use crate::schema_pack::{schema_pack_roots, SchemaCatalog, SchemaCatalogCacheState};
 use crate::services::patch_preview::{
     self, PatchPreviewRequest, PatchPreviewResult, PatchPreviewTarget,
 };
@@ -118,15 +116,13 @@ pub fn query_patch_operations_for_def(
 /// work deterministic" -- so a runtime locale switch that has not yet finished persisting can never
 /// race a completion request into serving a stale locale's labels.
 ///
-/// This command fires on a per-keystroke (debounced) cadence from `PatchPathInput`, unlike other
-/// `build_schema_catalog` callers, so when the project has no registered locations (no external
-/// roots to consider) the catalog is served from `SchemaCatalogCacheState` instead of being rebuilt
-/// (re-parsing ~1,300 embedded schema JSON files) on every call, keyed by `(gameVersion, locale)`.
-/// A project with at least one registered location always builds directly (uncached) via
-/// `build_schema_catalog_with_locale`, exactly like `load_schema_catalog` does -- `SchemaCatalogCacheState`
-/// is documented to never cache an external-root catalog (see `schema_pack::cache`'s module docs),
-/// so caching on `(gameVersion, locale)` alone here would otherwise let an external pack's fields
-/// silently appear in the display catalog but not in XPath completion.
+/// This command fires on a per-keystroke (debounced) cadence from `PatchPathInput`, so -- unlike
+/// other `build_schema_catalog` callers -- it always serves the catalog from
+/// `SchemaCatalogCacheState`, keyed by `(gameVersion, locale, externalRootsSignature)`, rather than
+/// rebuilding (re-parsing every embedded/external schema JSON file) on every call. A project with
+/// registered locations gets its own cache entry per distinct root set, so external-pack fields
+/// still appear in completion exactly as they do in the display catalog (see `schema_pack::cache`'s
+/// module docs for the cache's invalidation policy).
 #[tauri::command]
 pub fn complete_patch_operation_xpath(
     app: AppHandle,
@@ -136,21 +132,48 @@ pub fn complete_patch_operation_xpath(
 ) -> Result<XPathCompletionResult, AppError> {
     let settings = load_settings(&app)?;
     let roots = schema_pack_roots(&settings);
-    let catalog: Arc<SchemaCatalog> = if roots.is_empty() {
-        app.state::<SchemaCatalogCacheState>()
-            .get_or_build(Some(&settings.game_version), locale.as_deref())
-    } else {
-        Arc::new(
-            build_schema_catalog_with_locale(
-                &roots,
-                Some(&settings.game_version),
-                locale.as_deref(),
-            )
-            .catalog,
-        )
-    };
+    let mut span = crate::instrumentation::span_with_tags(
+        &app,
+        "patches.xpathCompletion",
+        [
+            ("xpathLen".to_string(), xpath.len().to_string()),
+            (
+                "hasExternalRoots".to_string(),
+                (!roots.is_empty()).to_string(),
+            ),
+        ],
+    );
+
+    let (catalog, cache_hit): (Arc<SchemaCatalog>, bool) = app
+        .state::<SchemaCatalogCacheState>()
+        .get_or_build_with_roots(&roots, Some(&settings.game_version), locale.as_deref());
+    span.set_tag("catalogCacheHit", cache_hit.to_string());
+
     let def_index = def_index_cache::load_for_project_query(&app, &settings, &project_id)?;
-    Ok(complete_patch_xpath(&catalog, &def_index, &xpath))
+    let result = complete_patch_xpath(&catalog, &def_index, &xpath);
+
+    span.set_tag("resultCount", result.items.len().to_string());
+    span.set_tag("isTruncated", result.is_truncated.to_string());
+    span.set_tag("completionContext", completion_context_tag(&result));
+
+    Ok(result)
+}
+
+/// Classify a completion result into a small, safe-to-log context tag -- never the XPath text,
+/// path, Def name, or XML itself -- for `complete_patch_operation_xpath`'s instrumentation span.
+fn completion_context_tag(result: &XPathCompletionResult) -> &'static str {
+    match result.items.first().map(|item| item.kind) {
+        Some(XPathCompletionItemKind::Root) => "root",
+        Some(XPathCompletionItemKind::DefType) => "defType",
+        Some(XPathCompletionItemKind::PredicateKey) | Some(XPathCompletionItemKind::DefName) => {
+            "defName"
+        }
+        Some(XPathCompletionItemKind::Field) | Some(XPathCompletionItemKind::FieldAlias) => "field",
+        Some(XPathCompletionItemKind::ListItem) | Some(XPathCompletionItemKind::MapEntry) => {
+            "structural"
+        }
+        None => "none",
+    }
 }
 
 /// Parse a patch operation's raw `<value>` inner XML into shape-classified child views for

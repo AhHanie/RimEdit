@@ -13,7 +13,7 @@ use super::model::{
     DefTypeSchemaFile, ObjectTypeSchemaFile, PatchOperationMetadataFile, SchemaLoadDiagnostic,
     SchemaPackManifest,
 };
-use fs_utils::discover_manifest_paths_in_root;
+pub(crate) use fs_utils::{collect_json_files, discover_manifest_paths_in_root};
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 

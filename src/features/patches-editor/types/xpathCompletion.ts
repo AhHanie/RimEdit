@@ -61,7 +61,12 @@ export interface XPathResolvedField {
 
 export interface XPathCompletionResult {
   replaceFrom: number;
+  /** The bounded, display-ready suggestion list -- see `totalMatches`/`isTruncated`. */
   items: XPathCompletionItem[];
+  /** How many suggestions matched before truncation; always `>= items.length`. */
+  totalMatches: number;
+  /** Whether `items` was truncated to a server-side cap. */
+  isTruncated: boolean;
   diagnostics: XPathDiagnostic[];
   target: XPathTarget;
   resolvedField: XPathResolvedField | null;

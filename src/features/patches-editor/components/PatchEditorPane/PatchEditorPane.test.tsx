@@ -112,6 +112,70 @@ describe("PatchEditorPane", () => {
     expect(lastCall).toContain('Defs/ThingDef[defName=\\"Steel\\"]');
   });
 
+  it("coalesces a typing burst into exactly one reserialize call at the commit boundary", async () => {
+    const onChangeRawXml = vi.fn();
+    setupInvokeMock(initialPatchFile());
+    render(
+      <PatchEditorPane
+        relativePath="Patches/MyPatch.xml"
+        rawXml="<Patch></Patch>"
+        readOnly={false}
+        catalog={makeCatalog()}
+        projectId="test-project"
+        onChangeRawXml={onChangeRawXml}
+      />,
+    );
+
+    const xpathInput = await screen.findByDisplayValue('Defs/ThingDef[defName="Wall"]');
+    invokeMock.mockClear();
+
+    // A burst of keystrokes updates the field's own draft immediately but must not each trigger
+    // a tree mutation/reserialize (Plan.md finding #1) -- only the commit boundary (here: blur)
+    // should.
+    fireEvent.change(xpathInput, { target: { value: 'Defs/ThingDef[defName="S' } });
+    fireEvent.change(xpathInput, { target: { value: 'Defs/ThingDef[defName="St' } });
+    fireEvent.change(xpathInput, { target: { value: 'Defs/ThingDef[defName="Ste' } });
+    fireEvent.change(xpathInput, { target: { value: 'Defs/ThingDef[defName="Steel"]' } });
+    expect(invokeMock.mock.calls.filter(([cmd]) => cmd === "serialize_patch_operations")).toHaveLength(0);
+
+    fireEvent.blur(xpathInput);
+
+    await waitFor(() => expect(onChangeRawXml).toHaveBeenCalled());
+    expect(invokeMock.mock.calls.filter(([cmd]) => cmd === "serialize_patch_operations")).toHaveLength(1);
+    const lastCall = onChangeRawXml.mock.calls[onChangeRawXml.mock.calls.length - 1][0];
+    expect(lastCall).toContain('Defs/ThingDef[defName=\\"Steel\\"]');
+  });
+
+  it("flush() persists a pending draft immediately, before any idle timer or blur", async () => {
+    const onChangeRawXml = vi.fn();
+    let flush: (() => Promise<void>) | undefined;
+    setupInvokeMock(initialPatchFile());
+    render(
+      <PatchEditorPane
+        relativePath="Patches/MyPatch.xml"
+        rawXml="<Patch></Patch>"
+        readOnly={false}
+        catalog={makeCatalog()}
+        projectId="test-project"
+        onChangeRawXml={onChangeRawXml}
+        registerFlush={(fn) => {
+          flush = fn;
+        }}
+      />,
+    );
+
+    const xpathInput = await screen.findByDisplayValue('Defs/ThingDef[defName="Wall"]');
+    fireEvent.change(xpathInput, { target: { value: 'Defs/ThingDef[defName="Steel"]' } });
+    // Neither blurred nor idle -- without an explicit flush, nothing has committed yet.
+    expect(onChangeRawXml).not.toHaveBeenCalled();
+
+    await flush?.();
+
+    expect(onChangeRawXml).toHaveBeenCalled();
+    const lastCall = onChangeRawXml.mock.calls[onChangeRawXml.mock.calls.length - 1][0];
+    expect(lastCall).toContain('Defs/ThingDef[defName=\\"Steel\\"]');
+  });
+
   it("adds a new top-level built-in operation", async () => {
     const onChangeRawXml = vi.fn();
     setupInvokeMock(initialPatchFile());

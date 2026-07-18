@@ -1,24 +1,14 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { invoke } from "@tauri-apps/api/core";
 import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
-import { useLocale } from "../../../../i18n/LocaleProvider";
 import { PatchValueEditor } from "./PatchValueEditor";
 import type { SchemaCatalog } from "../../../schema-catalog";
-import type { XPathCompletionResult } from "../../types/xpathCompletion";
+import type { XPathResolvedField, XPathTarget } from "../../types/xpathCompletion";
 import type { XmlChildView } from "../../../xml-editor";
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
 
-// Mocks only `useLocale` (keeping the real `LocaleProvider`/`I18nextProvider` tree the other
-// hooks in this component rely on) so tests can drive an app-wide locale switch, mirroring
-// `PatchPathInput.test.tsx`'s pattern for the same completion command.
-vi.mock("../../../../i18n/LocaleProvider", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../../../i18n/LocaleProvider")>();
-  return { ...actual, useLocale: vi.fn() };
-});
-
 const invokeMock = vi.mocked(invoke);
-const mockUseLocale = vi.mocked(useLocale);
 
 const catalog: SchemaCatalog = {
   formatVersion: 1,
@@ -92,53 +82,42 @@ const catalog: SchemaCatalog = {
   },
 };
 
-function completionResult(overrides: Partial<XPathCompletionResult> = {}): XPathCompletionResult {
-  return {
-    replaceFrom: 0,
-    items: [],
-    diagnostics: [],
-    target: { kind: "unsupported" },
-    resolvedField: null,
-    ...overrides,
-  };
-}
-
-function mockInvoke(handlers: {
-  xpath?: XPathCompletionResult;
-  parse?: XmlChildView[];
-  serialize?: string;
-}) {
+function mockInvoke(handlers: { parse?: XmlChildView[]; serialize?: string }) {
   invokeMock.mockImplementation((cmd: string) => {
-    if (cmd === "complete_patch_operation_xpath") return Promise.resolve(handlers.xpath ?? completionResult());
     if (cmd === "parse_patch_value_xml") return Promise.resolve(handlers.parse ?? []);
     if (cmd === "serialize_patch_value_fragment") return Promise.resolve(handlers.serialize ?? "");
     return Promise.reject(new Error(`unexpected invoke: ${cmd}`));
   });
 }
 
+const unsupportedTarget: XPathTarget = { kind: "unsupported" };
+const wallTarget: XPathTarget = { kind: "def", defType: "ThingDef", defName: "Wall" };
+
+function resolvedField(fieldName: string, field: SchemaCatalog["defTypes"]["ThingDef"]["fields"][string]): XPathResolvedField {
+  return { defType: "ThingDef", fieldName, field };
+}
+
 beforeEach(() => {
   invokeMock.mockReset();
-  mockUseLocale.mockReturnValue({ locale: "en", direction: "ltr", changeLocale: vi.fn() });
 });
 
 describe("PatchValueEditor", () => {
-  it("defaults to raw XML when the xpath has no resolvable target", async () => {
-    mockInvoke({ xpath: completionResult({ target: { kind: "unsupported" } }) });
+  it("defaults to raw XML when the xpath has no resolvable target", () => {
+    mockInvoke({});
 
     render(
       <PatchValueEditor
         valueXml="<foo>bar</foo>"
-        xpath="Defs/ThingDef/foo/bar/baz"
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={unsupportedTarget}
+        resolvedField={null}
         operationType="replace"
         label="Value"
         onChange={vi.fn()}
       />,
     );
 
-    await waitFor(() => expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", expect.anything()));
     expect((screen.getByRole("button", { name: "Structured" }) as HTMLButtonElement).disabled).toBe(true);
     expect(screen.getByDisplayValue("<foo>bar</foo>")).toBeTruthy();
     // XML is machine-readable syntax, not natural-language prose -- this must stay LTR even once
@@ -148,23 +127,16 @@ describe("PatchValueEditor", () => {
   });
 
   it("adds a scalar field payload in structured mode", async () => {
-    mockInvoke({
-      xpath: completionResult({
-        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-        resolvedField: { defType: "ThingDef", fieldName: "label", field: catalog.defTypes.ThingDef.fields.label },
-      }),
-      parse: [],
-      serialize: "<label>Wall</label>\n",
-    });
+    mockInvoke({ parse: [], serialize: "<label>Wall</label>\n" });
 
     const onChange = vi.fn();
     render(
       <PatchValueEditor
         valueXml={null}
-        xpath='Defs/ThingDef[defName="Wall"]/label'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={resolvedField("label", catalog.defTypes.ThingDef.fields.label)}
         operationType="add"
         label="Value"
         onChange={onChange}
@@ -191,25 +163,18 @@ describe("PatchValueEditor", () => {
     // `patches::xpath`'s unlimited-depth schema cursor). PatchValueEditor must trust that
     // resolution as-is: it should build the structured subform -- and the serialized XML element
     // -- around "texPath", never "graphicData".
-    mockInvoke({
-      xpath: completionResult({
-        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-        // Reuses the fixture's plain scalar `label` field schema under a different fieldName --
-        // its shape (scalar string, xml: element) is all that matters here, not its origin.
-        resolvedField: { defType: "ThingDef", fieldName: "texPath", field: catalog.defTypes.ThingDef.fields.label },
-      }),
-      parse: [],
-      serialize: "<texPath>Things/Wall</texPath>\n",
-    });
+    mockInvoke({ parse: [], serialize: "<texPath>Things/Wall</texPath>\n" });
 
     const onChange = vi.fn();
     render(
       <PatchValueEditor
         valueXml={null}
-        xpath='Defs/ThingDef[defName="Wall"]/graphicData/texPath'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        // Reuses the fixture's plain scalar `label` field schema under a different fieldName --
+        // its shape (scalar string, xml: element) is all that matters here, not its origin.
+        resolvedField={resolvedField("texPath", catalog.defTypes.ThingDef.fields.label)}
         operationType="add"
         label="Value"
         onChange={onChange}
@@ -229,10 +194,6 @@ describe("PatchValueEditor", () => {
 
   it("edits a replace scalar field payload parsed from existing XML", async () => {
     mockInvoke({
-      xpath: completionResult({
-        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-        resolvedField: { defType: "ThingDef", fieldName: "label", field: catalog.defTypes.ThingDef.fields.label },
-      }),
       parse: [
         {
           nodeId: 1,
@@ -253,10 +214,10 @@ describe("PatchValueEditor", () => {
     render(
       <PatchValueEditor
         valueXml="<label>OldWall</label>"
-        xpath='Defs/ThingDef[defName="Wall"]/label'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={resolvedField("label", catalog.defTypes.ThingDef.fields.label)}
         operationType="replace"
         label="Value"
         onChange={onChange}
@@ -270,27 +231,16 @@ describe("PatchValueEditor", () => {
   });
 
   it("adds a list item payload", async () => {
-    mockInvoke({
-      xpath: completionResult({
-        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-        resolvedField: {
-          defType: "ThingDef",
-          fieldName: "comps",
-          field: { ...catalog.defTypes.ThingDef.fields.comps, items: undefined },
-        },
-      }),
-      parse: [],
-      serialize: "<comps>\n  <li>Foo</li>\n</comps>\n",
-    });
+    mockInvoke({ parse: [], serialize: "<comps>\n  <li>Foo</li>\n</comps>\n" });
 
     const onChange = vi.fn();
     render(
       <PatchValueEditor
         valueXml={null}
-        xpath='Defs/ThingDef[defName="Wall"]/comps'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={resolvedField("comps", { ...catalog.defTypes.ThingDef.fields.comps, items: undefined })}
         operationType="add"
         label="Value"
         onChange={onChange}
@@ -306,23 +256,16 @@ describe("PatchValueEditor", () => {
   });
 
   it("adds an object list item payload with a Class discriminator", async () => {
-    mockInvoke({
-      xpath: completionResult({
-        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-        resolvedField: { defType: "ThingDef", fieldName: "comps", field: catalog.defTypes.ThingDef.fields.comps },
-      }),
-      parse: [],
-      serialize: '<comps>\n  <li Class="CompProperties_Foo" />\n</comps>\n',
-    });
+    mockInvoke({ parse: [], serialize: '<comps>\n  <li Class="CompProperties_Foo" />\n</comps>\n' });
 
     const onChange = vi.fn();
     render(
       <PatchValueEditor
         valueXml={null}
-        xpath='Defs/ThingDef[defName="Wall"]/comps'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={resolvedField("comps", catalog.defTypes.ThingDef.fields.comps)}
         operationType="add"
         label="Value"
         onChange={onChange}
@@ -350,10 +293,6 @@ describe("PatchValueEditor", () => {
 
   it("falls back to raw XML when the existing value's root element doesn't match the target field", async () => {
     mockInvoke({
-      xpath: completionResult({
-        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-        resolvedField: { defType: "ThingDef", fieldName: "label", field: catalog.defTypes.ThingDef.fields.label },
-      }),
       parse: [
         {
           nodeId: 1,
@@ -372,10 +311,10 @@ describe("PatchValueEditor", () => {
     render(
       <PatchValueEditor
         valueXml="<comps></comps>"
-        xpath='Defs/ThingDef[defName="Wall"]/label'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={resolvedField("label", catalog.defTypes.ThingDef.fields.label)}
         operationType="replace"
         label="Value"
         onChange={vi.fn()}
@@ -387,7 +326,7 @@ describe("PatchValueEditor", () => {
   });
 
   it("dedents raw XML captured with the source file's original indentation for display", async () => {
-    mockInvoke({ xpath: completionResult({ target: { kind: "unsupported" } }) });
+    mockInvoke({});
 
     const rawFromSource =
       '\n                        <li Class="aRandomKiwi.PPP.CompProperties_LocalWirelessPowerReceptor">\n' +
@@ -398,10 +337,10 @@ describe("PatchValueEditor", () => {
     const { container } = render(
       <PatchValueEditor
         valueXml={rawFromSource}
-        xpath="Defs/ThingDef/comps"
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={unsupportedTarget}
+        resolvedField={null}
         operationType="replace"
         label="Value"
         onChange={onChange}
@@ -424,10 +363,6 @@ describe("PatchValueEditor", () => {
 
   it("lets the user toggle back to raw XML manually", async () => {
     mockInvoke({
-      xpath: completionResult({
-        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-        resolvedField: { defType: "ThingDef", fieldName: "label", field: catalog.defTypes.ThingDef.fields.label },
-      }),
       parse: [
         {
           nodeId: 1,
@@ -446,10 +381,10 @@ describe("PatchValueEditor", () => {
     render(
       <PatchValueEditor
         valueXml="<label>Wall</label>"
-        xpath='Defs/ThingDef[defName="Wall"]/label'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={resolvedField("label", catalog.defTypes.ThingDef.fields.label)}
         operationType="replace"
         label="Value"
         onChange={vi.fn()}
@@ -465,33 +400,26 @@ describe("PatchValueEditor", () => {
     // The fixture's modExtensions field (like the real built-in schema pack's) is a plain
     // scalar listOfLi with no items.schemaRef -- a scalar list editor would let the user create
     // invalid `<li>text</li>` entries instead of the `<li Class="...">...` RimWorld requires.
-    mockInvoke({
-      xpath: completionResult({ target: { kind: "def", defType: "ThingDef", defName: "Wall" } }),
-    });
+    mockInvoke({});
 
     render(
       <PatchValueEditor
         valueXml={null}
-        xpath='Defs/ThingDef[defName="Wall"]'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={null}
         operationType="addModExtension"
         label="Value"
         onChange={vi.fn()}
       />,
     );
 
-    await waitFor(() => expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", expect.anything()));
     expect((screen.getByRole("button", { name: "Structured" }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("re-parses when valueXml changes externally (e.g. undo) while structured mode stays active", async () => {
     mockInvoke({
-      xpath: completionResult({
-        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-        resolvedField: { defType: "ThingDef", fieldName: "label", field: catalog.defTypes.ThingDef.fields.label },
-      }),
       parse: [
         {
           nodeId: 1,
@@ -510,10 +438,10 @@ describe("PatchValueEditor", () => {
     const { rerender } = render(
       <PatchValueEditor
         valueXml="<label>Wall</label>"
-        xpath='Defs/ThingDef[defName="Wall"]/label'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={resolvedField("label", catalog.defTypes.ThingDef.fields.label)}
         operationType="replace"
         label="Value"
         onChange={vi.fn()}
@@ -527,14 +455,6 @@ describe("PatchValueEditor", () => {
     // updateStructuredValue -- the structured field must pick up the new content, not keep
     // showing the stale "Wall" value.
     invokeMock.mockImplementation((cmd: string) => {
-      if (cmd === "complete_patch_operation_xpath") {
-        return Promise.resolve(
-          completionResult({
-            target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-            resolvedField: { defType: "ThingDef", fieldName: "label", field: catalog.defTypes.ThingDef.fields.label },
-          }),
-        );
-      }
       if (cmd === "parse_patch_value_xml") {
         return Promise.resolve([
           {
@@ -556,10 +476,10 @@ describe("PatchValueEditor", () => {
     rerender(
       <PatchValueEditor
         valueXml="<label>UndoneWall</label>"
-        xpath='Defs/ThingDef[defName="Wall"]/label'
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={resolvedField("label", catalog.defTypes.ThingDef.fields.label)}
         operationType="replace"
         label="Value"
         onChange={vi.fn()}
@@ -570,45 +490,47 @@ describe("PatchValueEditor", () => {
     expect(screen.queryByDisplayValue("Wall")).toBeNull();
   });
 
-  it("passes the active locale to xpath completion and refetches when the locale changes", async () => {
+  it("clears the structured target and falls back to raw XML once the shared xpath result becomes unavailable", async () => {
     mockInvoke({
-      xpath: completionResult({
-        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
-        resolvedField: { defType: "ThingDef", fieldName: "label", field: catalog.defTypes.ThingDef.fields.label },
-      }),
+      parse: [
+        {
+          nodeId: 1,
+          name: "label",
+          textValue: "Wall",
+          listItems: [],
+          xmlShape: "element",
+          order: 0,
+          known: true,
+          line: null,
+          column: null,
+        },
+      ],
     });
 
     const { rerender } = render(
       <PatchValueEditor
-        valueXml={null}
-        xpath='Defs/ThingDef[defName="Wall"]/label'
+        valueXml="<label>Wall</label>"
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={wallTarget}
+        resolvedField={resolvedField("label", catalog.defTypes.ThingDef.fields.label)}
         operationType="replace"
         label="Value"
         onChange={vi.fn()}
       />,
     );
 
-    await waitFor(() =>
-      expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", {
-        projectId: "proj1",
-        xpath: 'Defs/ThingDef[defName="Wall"]/label',
-        locale: "en",
-      }),
-    );
+    await screen.findByDisplayValue("Wall");
 
-    invokeMock.mockClear();
-    mockUseLocale.mockReturnValue({ locale: "fr", direction: "ltr", changeLocale: vi.fn() });
-
+    // The shared completion result becomes unavailable (e.g. the xpath itself was cleared, or the
+    // project context disappeared) -- PatchOperationForm passes `null`/`null` down in that case.
     rerender(
       <PatchValueEditor
-        valueXml={null}
-        xpath='Defs/ThingDef[defName="Wall"]/label'
+        valueXml="<label>Wall</label>"
         readOnly={false}
         catalog={catalog}
-        projectId="proj1"
+        target={null}
+        resolvedField={null}
         operationType="replace"
         label="Value"
         onChange={vi.fn()}
@@ -616,11 +538,8 @@ describe("PatchValueEditor", () => {
     );
 
     await waitFor(() =>
-      expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", {
-        projectId: "proj1",
-        xpath: 'Defs/ThingDef[defName="Wall"]/label',
-        locale: "fr",
-      }),
+      expect((screen.getByRole("button", { name: "Structured" }) as HTMLButtonElement).disabled).toBe(true),
     );
+    expect(screen.getByDisplayValue("<label>Wall</label>")).toBeTruthy();
   });
 });

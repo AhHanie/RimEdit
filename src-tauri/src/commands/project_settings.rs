@@ -2,11 +2,11 @@ use crate::project_model::{
     AppError, ProjectSettings, ProjectSettingsLoadResult, RegisteredLocationDraft,
     RegisteredLocationUpdate,
 };
-use crate::schema_pack::list_installed_schema_game_versions;
+use crate::schema_pack::{list_installed_schema_game_versions, SchemaCatalogCacheState};
 use crate::services::indexing::{self, IndexJobReason};
 use crate::services::project_settings as ps_service;
 use crate::settings_store::{load_settings, save_settings};
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 
 #[tauri::command]
 pub fn get_project_settings(app: AppHandle) -> Result<ProjectSettingsLoadResult, AppError> {
@@ -28,6 +28,12 @@ fn trigger_settings_reindex(app: &AppHandle, settings: &ProjectSettings) {
     if let Some(ref pid) = settings.active_project_id {
         indexing::enqueue_full_rebuild(app, Some(pid.clone()), IndexJobReason::SettingsChanged);
     }
+    // Registered locations, game version, and active project all feed into the external schema
+    // roots/game-version key `SchemaCatalogCacheState` builds catalogs from -- drop every cached
+    // catalog so the next XPath completion (or built-in-only) request rebuilds against the new
+    // settings rather than serving one built for the prior root set (Plan.md's cache invalidation
+    // requirement).
+    app.state::<SchemaCatalogCacheState>().invalidate_all();
 }
 
 #[tauri::command]

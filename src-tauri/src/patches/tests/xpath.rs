@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
 use crate::def_index::{DefIdentityKey, DefIndex, IndexedDef, IndexedDefSource, IndexedSourceKind};
+use crate::patches::xpath::COMPLETION_ITEM_LIMIT;
 use crate::patches::{
     complete_patch_xpath, XPathCompletionItemKind, XPathDiagnosticSeverity, XPathTarget,
 };
@@ -323,6 +324,8 @@ fn completes_def_type_names_from_schema_catalog() {
     assert!(!labels.contains(&"Def"), "{labels:?}");
     assert_eq!(result.replace_from, "Defs/".len());
     assert!(result.diagnostics.is_empty());
+    assert_eq!(result.total_matches, result.items.len());
+    assert!(!result.is_truncated);
 }
 
 #[test]
@@ -829,7 +832,9 @@ fn positional_list_item_predicate_is_index_independent() {
     let catalog = test_catalog();
     let index = test_def_index();
     let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li[2]/range");
-    let resolved = result.resolved_field.expect("range should resolve via li[2]");
+    let resolved = result
+        .resolved_field
+        .expect("range should resolve via li[2]");
     assert_eq!(resolved.field_name, "range");
     assert!(result.diagnostics.is_empty());
 
@@ -1005,4 +1010,62 @@ fn field_completion_offers_nothing_extra_for_unknown_def_type() {
             def_type: "NotARealDefType".to_string(),
         }
     );
+}
+
+#[test]
+fn def_type_completion_is_capped_and_reports_true_match_count() {
+    let total = COMPLETION_ITEM_LIMIT + 10;
+    let mut def_types = BTreeMap::new();
+    for i in 0..total {
+        def_types.insert(format!("Prefix{i:03}"), def_type_schema(&[], &[]));
+    }
+    let catalog = SchemaCatalog {
+        format_version: 1,
+        packs: Vec::new(),
+        def_types,
+        object_types: BTreeMap::new(),
+        patch_operations: BTreeMap::new(),
+    };
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/Prefix");
+
+    assert_eq!(result.items.len(), COMPLETION_ITEM_LIMIT);
+    assert_eq!(result.total_matches, total);
+    assert!(result.is_truncated);
+    // Sorted deterministically, so a short/empty prefix always yields the same first page.
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    let mut expected: Vec<String> = (0..total).map(|i| format!("Prefix{i:03}")).collect();
+    expected.sort();
+    let expected: Vec<&str> = expected[..COMPLETION_ITEM_LIMIT]
+        .iter()
+        .map(|s| s.as_str())
+        .collect();
+    assert_eq!(labels, expected);
+}
+
+#[test]
+fn field_completion_is_capped_and_reports_true_match_count() {
+    let total = COMPLETION_ITEM_LIMIT + 10;
+    let fields: Vec<(String, FieldSchema)> = (0..total)
+        .map(|i| (format!("field{i:03}"), field(&[])))
+        .collect();
+    let field_refs: Vec<(&str, FieldSchema)> = fields
+        .iter()
+        .map(|(n, f)| (n.as_str(), f.clone()))
+        .collect();
+    let mut def_types = BTreeMap::new();
+    def_types.insert("Big".to_string(), def_type_schema(&[], &field_refs));
+    let catalog = SchemaCatalog {
+        format_version: 1,
+        packs: Vec::new(),
+        def_types,
+        object_types: BTreeMap::new(),
+        patch_operations: BTreeMap::new(),
+    };
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/Big/");
+
+    assert_eq!(result.items.len(), COMPLETION_ITEM_LIMIT);
+    assert_eq!(result.total_matches, total);
+    assert!(result.is_truncated);
 }

@@ -51,6 +51,14 @@ use super::impact_graph::{is_valid_identifier, XPathTarget};
 
 const DEF_NAME_SUGGESTION_LIMIT: usize = 20;
 
+/// Conservative server-side cap on Def-type, direct-field, object-field, and field-alias
+/// suggestions, applied after deterministic sort and before serialization -- a short or empty
+/// prefix must never send hundreds of items over IPC just to render a dropdown (Plan.md's
+/// "bound completion production and dropdown rendering"). Chosen to comfortably exceed any
+/// single Def type's field count while staying small for keyboard navigation/DOM cost; revisit
+/// once profiled against real schema-pack cardinalities.
+pub(crate) const COMPLETION_ITEM_LIMIT: usize = 50;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum XPathCompletionItemKind {
@@ -158,12 +166,69 @@ pub struct XPathCompletionResult {
     /// Byte offset into the input XPath string that completion items replace from -- i.e. the
     /// frontend applies a suggestion via `xpath[..replaceFrom] + item.insertText`.
     pub replace_from: usize,
+    /// The bounded, display-ready suggestion list (see [`COMPLETION_ITEM_LIMIT`]).
     pub items: Vec<XPathCompletionItem>,
+    /// How many suggestions matched before truncation -- always `>= items.len()`. The frontend
+    /// uses this (with `is_truncated`) to render a "showing first N matches; type more to
+    /// narrow" status without needing its own count.
+    pub total_matches: usize,
+    /// Whether `items` was truncated to `total_matches`.
+    pub is_truncated: bool,
     pub diagnostics: Vec<XPathDiagnostic>,
     /// The statically-inferred target of the XPath as typed so far (see module docs for how this
     /// differs from `impact_graph::infer_xpath_target`).
     pub target: XPathTarget,
     pub resolved_field: Option<XPathResolvedField>,
+}
+
+impl XPathCompletionResult {
+    /// Construct a result whose `items` is already within any applicable cap (or inherently
+    /// small/unbounded, e.g. structural `li`/`key`/`value` suggestions) -- `total_matches` is
+    /// simply `items.len()` and `is_truncated` is always `false`.
+    fn new(
+        replace_from: usize,
+        items: Vec<XPathCompletionItem>,
+        diagnostics: Vec<XPathDiagnostic>,
+        target: XPathTarget,
+        resolved_field: Option<XPathResolvedField>,
+    ) -> Self {
+        let total_matches = items.len();
+        Self {
+            replace_from,
+            items,
+            total_matches,
+            is_truncated: false,
+            diagnostics,
+            target,
+            resolved_field,
+        }
+    }
+
+    /// Same as [`Self::new`], but truncates `items` (already deterministically sorted by the
+    /// caller) to `limit`, recording the true match count and truncation flag.
+    fn capped(
+        replace_from: usize,
+        mut items: Vec<XPathCompletionItem>,
+        limit: usize,
+        diagnostics: Vec<XPathDiagnostic>,
+        target: XPathTarget,
+        resolved_field: Option<XPathResolvedField>,
+    ) -> Self {
+        let total_matches = items.len();
+        let is_truncated = total_matches > limit;
+        if is_truncated {
+            items.truncate(limit);
+        }
+        Self {
+            replace_from,
+            items,
+            total_matches,
+            is_truncated,
+            diagnostics,
+            target,
+            resolved_field,
+        }
+    }
 }
 
 /// Compute completions, diagnostics, and target/field inference for a `PatchPathInput` value.
@@ -205,18 +270,18 @@ pub fn complete_patch_xpath(
             && is_ident_prefix(root_text)
             && "Defs".starts_with(root_text)
         {
-            return XPathCompletionResult {
-                replace_from: segments[0].start,
-                items: vec![XPathCompletionItem {
+            return XPathCompletionResult::new(
+                segments[0].start,
+                vec![XPathCompletionItem {
                     insert_text: "Defs".to_string(),
                     label: "Defs".to_string(),
                     detail: Some("Patch document root".to_string()),
                     kind: XPathCompletionItemKind::Root,
                 }],
-                diagnostics: Vec::new(),
-                target: XPathTarget::Unsupported,
-                resolved_field: None,
-            };
+                Vec::new(),
+                XPathTarget::Unsupported,
+                None,
+            );
         }
         return terminal(
             xpath.len(),
@@ -277,13 +342,13 @@ pub fn complete_patch_xpath(
             Ok(Some(field)) => resolved_field = Some(field),
             Ok(None) => {}
             Err(diagnostic) => {
-                return XPathCompletionResult {
-                    replace_from: xpath.len(),
-                    items: Vec::new(),
-                    diagnostics: vec![diagnostic],
+                return XPathCompletionResult::new(
+                    xpath.len(),
+                    Vec::new(),
+                    vec![diagnostic],
                     target,
                     resolved_field,
-                };
+                );
             }
         }
     }
@@ -587,15 +652,15 @@ fn predicate_completion(
         let after_key_trimmed_start = after_key.len() - after_key.trim_start().len();
         let after_key_trimmed = &after_key[after_key_trimmed_start..];
         let Some(after_eq) = after_key_trimmed.strip_prefix('=') else {
-            return XPathCompletionResult {
-                replace_from: base_offset + trimmed_start,
-                items: vec![predicate_key_item(key)],
-                diagnostics: Vec::new(),
-                target: XPathTarget::DefType {
+            return XPathCompletionResult::new(
+                base_offset + trimmed_start,
+                vec![predicate_key_item(key)],
+                Vec::new(),
+                XPathTarget::DefType {
                     def_type: def_type.to_string(),
                 },
-                resolved_field: None,
-            };
+                None,
+            );
         };
         let after_eq_trimmed_start = after_eq.len() - after_eq.trim_start().len();
         let after_eq_trimmed = &after_eq[after_eq_trimmed_start..];
@@ -643,27 +708,27 @@ fn predicate_completion(
                     kind: XPathCompletionItemKind::DefName,
                 })
                 .collect();
-            return XPathCompletionResult {
-                replace_from: value_start,
+            return XPathCompletionResult::new(
+                value_start,
                 items,
-                diagnostics: Vec::new(),
-                target: XPathTarget::DefType {
+                Vec::new(),
+                XPathTarget::DefType {
                     def_type: def_type.to_string(),
                 },
-                resolved_field: None,
-            };
+                None,
+            );
         }
         // `@Name`/`@ParentName` are recognized, supported predicate syntax, but RimEdit has no
         // index of inheritance-template `Name=`/`ParentName=` identifiers to suggest values from.
-        return XPathCompletionResult {
-            replace_from: value_start,
-            items: Vec::new(),
-            diagnostics: Vec::new(),
-            target: XPathTarget::DefType {
+        return XPathCompletionResult::new(
+            value_start,
+            Vec::new(),
+            Vec::new(),
+            XPathTarget::DefType {
                 def_type: def_type.to_string(),
             },
-            resolved_field: None,
-        };
+            None,
+        );
     }
 
     let needle = trimmed.to_lowercase();
@@ -681,15 +746,15 @@ fn predicate_completion(
             ),
         );
     }
-    XPathCompletionResult {
-        replace_from: base_offset + trimmed_start,
+    XPathCompletionResult::new(
+        base_offset + trimmed_start,
         items,
-        diagnostics: Vec::new(),
-        target: XPathTarget::DefType {
+        Vec::new(),
+        XPathTarget::DefType {
             def_type: def_type.to_string(),
         },
-        resolved_field: None,
-    }
+        None,
+    )
 }
 
 fn predicate_key_item(key: &str) -> XPathCompletionItem {
@@ -710,18 +775,18 @@ fn predicate_key_item(key: &str) -> XPathCompletionItem {
 // ---------------------------------------------------------------------------
 
 fn root_completion(replace_from: usize) -> XPathCompletionResult {
-    XPathCompletionResult {
+    XPathCompletionResult::new(
         replace_from,
-        items: vec![XPathCompletionItem {
+        vec![XPathCompletionItem {
             insert_text: "Defs".to_string(),
             label: "Defs".to_string(),
             detail: Some("Patch document root".to_string()),
             kind: XPathCompletionItemKind::Root,
         }],
-        diagnostics: Vec::new(),
-        target: XPathTarget::Unsupported,
-        resolved_field: None,
-    }
+        Vec::new(),
+        XPathTarget::Unsupported,
+        None,
+    )
 }
 
 fn def_type_completion(
@@ -745,12 +810,47 @@ fn def_type_completion(
         })
         .collect();
     items.sort_by(|a, b| a.label.cmp(&b.label));
-    XPathCompletionResult {
+    XPathCompletionResult::capped(
         replace_from,
         items,
-        diagnostics: Vec::new(),
-        target: XPathTarget::Unsupported,
-        resolved_field: None,
+        COMPLETION_ITEM_LIMIT,
+        Vec::new(),
+        XPathTarget::Unsupported,
+        None,
+    )
+}
+
+/// Append `Field`/`FieldAlias` items for every `(name, field)` pair whose name or XML alias
+/// starts with `needle` (case-insensitive; an empty `needle` matches everything), preserving
+/// `fields`' own iteration order. Shared by [`field_completion`] (direct Def fields) and
+/// [`object_field_completion`] (nested object-type fields via [`collect_object_fields_ordered`]),
+/// which otherwise duplicated this exact matching loop over two differently-shaped field
+/// iterables.
+fn push_matching_field_items<'a>(
+    fields: impl IntoIterator<Item = (impl AsRef<str>, &'a FieldSchema)>,
+    needle: &str,
+    items: &mut Vec<XPathCompletionItem>,
+) {
+    for (name, field) in fields {
+        let name = name.as_ref();
+        if needle.is_empty() || name.to_lowercase().starts_with(needle) {
+            items.push(XPathCompletionItem {
+                insert_text: name.to_string(),
+                label: name.to_string(),
+                detail: field.label.clone(),
+                kind: XPathCompletionItemKind::Field,
+            });
+        }
+        for alias in &field.xml_aliases {
+            if needle.is_empty() || alias.to_lowercase().starts_with(needle) {
+                items.push(XPathCompletionItem {
+                    insert_text: alias.clone(),
+                    label: alias.clone(),
+                    detail: Some(format!("XML alias for '{name}'")),
+                    kind: XPathCompletionItemKind::FieldAlias,
+                });
+            }
+        }
     }
 }
 
@@ -762,52 +862,34 @@ fn field_completion(
     partial: &str,
 ) -> XPathCompletionResult {
     if !is_ident_prefix(partial) {
-        return XPathCompletionResult {
+        return XPathCompletionResult::new(
             replace_from,
-            items: Vec::new(),
-            diagnostics: vec![XPathDiagnostic::warning(
+            Vec::new(),
+            vec![XPathDiagnostic::warning(
                 "xpath_autocomplete_unsupported_pattern",
                 "Field segment must be a plain element name; attribute-node targeting and functions are not supported here.",
             )],
             target,
-            resolved_field: None,
-        };
+            None,
+        );
     }
 
     let mut items = Vec::new();
     if let Some(schema) = catalog.def_types.get(def_type) {
         let needle = partial.to_lowercase();
-        for (name, field) in &schema.fields {
-            if needle.is_empty() || name.to_lowercase().starts_with(&needle) {
-                items.push(XPathCompletionItem {
-                    insert_text: name.clone(),
-                    label: name.clone(),
-                    detail: field.label.clone(),
-                    kind: XPathCompletionItemKind::Field,
-                });
-            }
-            for alias in &field.xml_aliases {
-                if needle.is_empty() || alias.to_lowercase().starts_with(&needle) {
-                    items.push(XPathCompletionItem {
-                        insert_text: alias.clone(),
-                        label: alias.clone(),
-                        detail: Some(format!("XML alias for '{name}'")),
-                        kind: XPathCompletionItemKind::FieldAlias,
-                    });
-                }
-            }
-        }
+        push_matching_field_items(&schema.fields, &needle, &mut items);
     }
     items.sort_by(|a, b| a.label.cmp(&b.label));
 
     let (resolved_field, diagnostics) = resolve_field(catalog, def_type, partial);
-    XPathCompletionResult {
+    XPathCompletionResult::capped(
         replace_from,
         items,
+        COMPLETION_ITEM_LIMIT,
         diagnostics,
         target,
         resolved_field,
-    }
+    )
 }
 
 /// Resolve a fully-typed field name (or alias) against a Def type's *direct* fields only.
@@ -835,19 +917,7 @@ fn resolve_field(
         );
     }
     if is_inherited_only_field(catalog, def_type, name) {
-        return (
-            None,
-            vec![XPathDiagnostic::warning(
-                "xpath_autocomplete_inherited_field",
-                format!(
-                    "'{name}' is declared on a schema parent of '{def_type}', not on '{def_type}' itself. RimWorld applies patches before XML inheritance, so this field can only be targeted if it is physically present in the XML being patched."
-                ),
-            )
-            .with_args(crate::diagnostics::diagnostic_args([
-                ("fieldName", name.into()),
-                ("defType", def_type.into()),
-            ]))],
-        );
+        return (None, vec![inherited_field_diagnostic(name, def_type)]);
     }
     (None, Vec::new())
 }
@@ -1212,13 +1282,9 @@ fn child_completion(
         ),
         // DynamicKey: the key is data-dependent (e.g. a defName RimEdit has no index of) -- offer
         // no invented suggestions, per Plan.md's keyedObjectList row.
-        SchemaCursor::DynamicKey { .. } | SchemaCursor::Terminal => XPathCompletionResult {
-            replace_from,
-            items: Vec::new(),
-            diagnostics: Vec::new(),
-            target,
-            resolved_field,
-        },
+        SchemaCursor::DynamicKey { .. } | SchemaCursor::Terminal => {
+            XPathCompletionResult::new(replace_from, Vec::new(), Vec::new(), target, resolved_field)
+        }
     }
 }
 
@@ -1244,40 +1310,25 @@ fn object_field_completion(
     container_field: Option<XPathResolvedField>,
 ) -> XPathCompletionResult {
     if !is_ident_prefix(partial) {
-        return XPathCompletionResult {
+        return XPathCompletionResult::new(
             replace_from,
-            items: Vec::new(),
-            diagnostics: vec![XPathDiagnostic::warning(
+            Vec::new(),
+            vec![XPathDiagnostic::warning(
                 "xpath_autocomplete_unsupported_pattern",
                 "Field segment must be a plain element name; attribute-node targeting and functions are not supported here.",
             )],
             target,
-            resolved_field: container_field,
-        };
+            container_field,
+        );
     }
 
     let needle = partial.to_lowercase();
     let mut items = Vec::new();
-    for (name, field) in collect_object_fields_ordered(catalog, schema_ref) {
-        if needle.is_empty() || name.to_lowercase().starts_with(&needle) {
-            items.push(XPathCompletionItem {
-                insert_text: name.to_string(),
-                label: name.to_string(),
-                detail: field.label.clone(),
-                kind: XPathCompletionItemKind::Field,
-            });
-        }
-        for alias in &field.xml_aliases {
-            if needle.is_empty() || alias.to_lowercase().starts_with(&needle) {
-                items.push(XPathCompletionItem {
-                    insert_text: alias.clone(),
-                    label: alias.clone(),
-                    detail: Some(format!("XML alias for '{name}'")),
-                    kind: XPathCompletionItemKind::FieldAlias,
-                });
-            }
-        }
-    }
+    push_matching_field_items(
+        collect_object_fields_ordered(catalog, schema_ref),
+        &needle,
+        &mut items,
+    );
     items.sort_by(|a, b| a.label.cmp(&b.label));
 
     let resolved_field = lookup_object_field_with_alias(catalog, schema_ref, partial)
@@ -1288,13 +1339,14 @@ fn object_field_completion(
         })
         .or(container_field);
 
-    XPathCompletionResult {
+    XPathCompletionResult::capped(
         replace_from,
         items,
-        diagnostics: Vec::new(),
+        COMPLETION_ITEM_LIMIT,
+        Vec::new(),
         target,
         resolved_field,
-    }
+    )
 }
 
 /// Completion for the segment currently being typed at a `ListItem`/`KeyedMapLi` cursor: the
@@ -1321,20 +1373,16 @@ fn list_item_step_completion(
         );
     }
     match parse_list_item_step(partial) {
-        ListItemStep::Valid | ListItemStep::Incomplete => XPathCompletionResult {
+        ListItemStep::Valid | ListItemStep::Incomplete => {
+            XPathCompletionResult::new(replace_from, Vec::new(), Vec::new(), target, resolved_field)
+        }
+        ListItemStep::Invalid => XPathCompletionResult::new(
             replace_from,
-            items: Vec::new(),
-            diagnostics: Vec::new(),
+            Vec::new(),
+            vec![unsupported_child_segment()],
             target,
             resolved_field,
-        },
-        ListItemStep::Invalid => XPathCompletionResult {
-            replace_from,
-            items: Vec::new(),
-            diagnostics: vec![unsupported_child_segment()],
-            target,
-            resolved_field,
-        },
+        ),
     }
 }
 
@@ -1350,13 +1398,13 @@ fn literal_segment_completion(
     resolved_field: Option<XPathResolvedField>,
 ) -> XPathCompletionResult {
     if !is_ident_prefix(partial) {
-        return XPathCompletionResult {
+        return XPathCompletionResult::new(
             replace_from,
-            items: Vec::new(),
-            diagnostics: Vec::new(),
+            Vec::new(),
+            Vec::new(),
             target,
             resolved_field,
-        };
+        );
     }
     let items = literals
         .iter()
@@ -1368,13 +1416,7 @@ fn literal_segment_completion(
             kind,
         })
         .collect();
-    XPathCompletionResult {
-        replace_from,
-        items,
-        diagnostics: Vec::new(),
-        target,
-        resolved_field,
-    }
+    XPathCompletionResult::new(replace_from, items, Vec::new(), target, resolved_field)
 }
 
 // ---------------------------------------------------------------------------
@@ -1386,23 +1428,17 @@ fn is_ident_prefix(s: &str) -> bool {
 }
 
 fn terminal(replace_from: usize, diagnostic: XPathDiagnostic) -> XPathCompletionResult {
-    XPathCompletionResult {
+    XPathCompletionResult::new(
         replace_from,
-        items: Vec::new(),
-        diagnostics: vec![diagnostic],
-        target: XPathTarget::Unsupported,
-        resolved_field: None,
-    }
+        Vec::new(),
+        vec![diagnostic],
+        XPathTarget::Unsupported,
+        None,
+    )
 }
 
 fn empty(replace_from: usize, target: XPathTarget) -> XPathCompletionResult {
-    XPathCompletionResult {
-        replace_from,
-        items: Vec::new(),
-        diagnostics: Vec::new(),
-        target,
-        resolved_field: None,
-    }
+    XPathCompletionResult::new(replace_from, Vec::new(), Vec::new(), target, None)
 }
 
 #[cfg(test)]

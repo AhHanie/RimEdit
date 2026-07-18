@@ -1,6 +1,6 @@
 use std::path::{Component, Path, PathBuf};
 
-pub(super) fn discover_manifest_paths_in_root(root: &Path) -> Vec<PathBuf> {
+pub(crate) fn discover_manifest_paths_in_root(root: &Path) -> Vec<PathBuf> {
     let mut paths = Vec::new();
 
     // <root>/schema-pack.json
@@ -71,7 +71,7 @@ pub(super) fn resolve_manifest_relative_dir(manifest_dir: &Path, entry: &str) ->
 
 /// Walk `dir` recursively, collecting all `.json` files at any depth.
 /// Symlinks are skipped at every level. Callers sort the result for determinism.
-pub(super) fn collect_json_files(dir: &Path) -> Vec<PathBuf> {
+pub(crate) fn collect_json_files(dir: &Path) -> Vec<PathBuf> {
     let mut files = Vec::new();
     collect_json_files_recursive(dir, &mut files);
     files

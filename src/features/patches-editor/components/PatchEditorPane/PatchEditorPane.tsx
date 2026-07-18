@@ -55,7 +55,7 @@ function toParseDiagnostics(diagnostics: PatchDiagnostic[], relativePath: string
  * `useFormViews`/`FormViewSelector` into this pane until that design exists. */
 export function PatchEditorPane({ relativePath, rawXml, readOnly, catalog, projectId, onChangeRawXml, registerFlush }: Props) {
   const { t } = useTranslation("patches");
-  const { patchFile, loading, error, setOperations, generateId, flush } = usePatchOperationTree({
+  const { patchFile, loading, error, setOperations, generateId, registerDraftFlush, flush } = usePatchOperationTree({
     relativePath,
     rawXml,
     readOnly,
@@ -98,6 +98,7 @@ export function PatchEditorPane({ relativePath, rawXml, readOnly, catalog, proje
         projectId={projectId}
         generateId={generateId}
         setOperations={setOperations}
+        registerDraftFlush={registerDraftFlush}
       />
       <XmlDiagnosticsPanel
         diagnostics={toParseDiagnostics(
