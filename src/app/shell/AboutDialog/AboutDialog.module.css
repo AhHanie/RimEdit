@@ -63,7 +63,8 @@
 }
 
 .appIcon {
-  color: var(--accent);
+  width: 48px;
+  height: 48px;
   margin-bottom: 4px;
 }
 

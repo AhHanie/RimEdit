@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getVersion } from "@tauri-apps/api/app";
-import { Blocks, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useDialogKeyboard } from "../../../lib/useDialogKeyboard";
+import appIcon from "../../../assets/app-icon.png";
 import styles from "./AboutDialog.module.css";
 
 interface AboutDialogProps {
@@ -62,7 +63,7 @@ export function AboutDialog({ onClose }: AboutDialogProps) {
         </div>
 
         <div className={styles.body}>
-          <Blocks size={28} className={styles.appIcon} aria-hidden="true" />
+          <img src={appIcon} alt="" className={styles.appIcon} aria-hidden="true" />
           <span className={styles.appName}>{t("common:app.name")}</span>
           <div className={styles.versionRow}>
             <span className={styles.versionLabel}>{t("shell:aboutDialog.versionLabel")}</span>
