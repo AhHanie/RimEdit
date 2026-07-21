@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { RefreshCw, FolderOpen, FolderPlus, PanelLeft, Sun, Moon, Monitor, Command } from "lucide-react";
-import type { ThemeMode } from "../../../types/ui";
+import { RefreshCw, FolderOpen, FolderPlus, PanelLeft, Command } from "lucide-react";
 import type { CommandAction, MenuDescriptor } from "../../commands/commandTypes";
 import { AppMenuBar } from "../AppMenuBar/AppMenuBar";
 import styles from "./AppTitleBar.module.css";
@@ -8,8 +7,6 @@ import styles from "./AppTitleBar.module.css";
 interface AppTitleBarProps {
   activeProjectName: string | null;
   activeProjectRoot: string | null;
-  themeMode: ThemeMode;
-  onCycleTheme: () => void;
   onOpenProject: () => void;
   onAddSourceFolder: () => void;
   onRefresh: () => void;
@@ -23,8 +20,6 @@ interface AppTitleBarProps {
 export function AppTitleBar({
   activeProjectName,
   activeProjectRoot,
-  themeMode,
-  onCycleTheme,
   onOpenProject,
   onAddSourceFolder,
   onRefresh,
@@ -35,13 +30,6 @@ export function AppTitleBar({
   menus,
 }: AppTitleBarProps) {
   const { t } = useTranslation(["shell", "common"]);
-  const ThemeIcon = themeMode === "light" ? Sun : themeMode === "dark" ? Moon : Monitor;
-  const themeLabel =
-    themeMode === "light"
-      ? t("shell:titleBar.themeLight")
-      : themeMode === "dark"
-        ? t("shell:titleBar.themeDark")
-        : t("shell:titleBar.themeSystem");
 
   return (
     <header className={styles.root}>
@@ -73,14 +61,6 @@ export function AppTitleBar({
       </button>
 
       <div className={styles.actions}>
-        <button
-          className="icon-btn"
-          onClick={onCycleTheme}
-          aria-label={themeLabel}
-          title={themeLabel}
-        >
-          <ThemeIcon size={15} />
-        </button>
         <button
           className="icon-btn"
           onClick={onRefresh}

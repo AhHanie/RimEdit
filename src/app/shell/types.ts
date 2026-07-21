@@ -1,1 +1,1 @@
-export type ActivityView = "explorer" | "search" | "settings";
+export type ActivityView = "explorer" | "search";

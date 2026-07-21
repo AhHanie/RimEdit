@@ -50,8 +50,6 @@ function defaultProps(overrides: Partial<Parameters<typeof AppTitleBar>[0]> = {}
   return {
     activeProjectName: null,
     activeProjectRoot: null,
-    themeMode: "system" as const,
-    onCycleTheme: vi.fn(),
     onOpenProject: vi.fn(),
     onAddSourceFolder: vi.fn(),
     onRefresh: vi.fn(),
@@ -82,5 +80,10 @@ describe("AppTitleBar", () => {
     expect(screen.getByRole("navigation", { name: "Menu Bar" })).toBeDefined();
     expect(screen.getByRole("button", { name: "File" })).toBeDefined();
     expect(screen.queryByText("RimEdit")).toBeNull();
+  });
+
+  it("no longer renders a theme-cycle control", () => {
+    render(<AppTitleBar {...defaultProps()} />);
+    expect(screen.queryByLabelText(/theme/i)).toBeNull();
   });
 });

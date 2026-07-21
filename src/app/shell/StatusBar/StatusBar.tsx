@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-import type { ThemeMode } from "../../../types/ui";
 import type { IndexingStatus } from "../../../features/def-index";
 import { formatFileSize } from "../../../i18n/format";
 import styles from "./StatusBar.module.css";
@@ -12,7 +11,6 @@ interface StatusBarProps {
   fileCount: number;
   activeFilePath: string | null;
   activeFileSizeBytes: number | null;
-  themeMode: ThemeMode;
   indexingStatus?: IndexingStatus | null;
 }
 

@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { FolderOpen, FolderPlus, RefreshCw, Search, Settings, Sun, Moon, Monitor, Command, Info } from "lucide-react";
+import { FolderOpen, FolderPlus, RefreshCw, Search, Settings, Command, Info } from "lucide-react";
 import { renderWithI18n as render } from "../../../i18n/testing/renderWithI18n";
 import type { CommandAction, MenuDescriptor } from "../../commands/commandTypes";
 import { AppMenuBar } from "./AppMenuBar";
@@ -30,6 +30,13 @@ function sampleCommands(overrides: Partial<Record<string, Partial<CommandAction>
       disabled: true,
     },
     {
+      id: "open-settings",
+      labelKey: "shell:commands.openSettings.label",
+      keywordsKey: "shell:commands.openSettings.keywords",
+      icon: Settings,
+      run: vi.fn(),
+    },
+    {
       id: "open-command-palette",
       labelKey: "shell:commands.openCommandPalette.label",
       keywordsKey: "shell:commands.openCommandPalette.keywords",
@@ -51,34 +58,6 @@ function sampleCommands(overrides: Partial<Record<string, Partial<CommandAction>
       run: vi.fn(),
     },
     {
-      id: "open-settings",
-      labelKey: "shell:commands.openSettings.label",
-      keywordsKey: "shell:commands.openSettings.keywords",
-      icon: Settings,
-      run: vi.fn(),
-    },
-    {
-      id: "theme-light",
-      labelKey: "shell:commands.themeLight.label",
-      keywordsKey: "shell:commands.themeLight.keywords",
-      icon: Sun,
-      run: vi.fn(),
-    },
-    {
-      id: "theme-dark",
-      labelKey: "shell:commands.themeDark.label",
-      keywordsKey: "shell:commands.themeDark.keywords",
-      icon: Moon,
-      run: vi.fn(),
-    },
-    {
-      id: "theme-system",
-      labelKey: "shell:commands.themeSystem.label",
-      keywordsKey: "shell:commands.themeSystem.keywords",
-      icon: Monitor,
-      run: vi.fn(),
-    },
-    {
       id: "show-about",
       labelKey: "shell:commands.showAbout.label",
       keywordsKey: "shell:commands.showAbout.keywords",
@@ -89,7 +68,7 @@ function sampleCommands(overrides: Partial<Record<string, Partial<CommandAction>
   return base.map((c) => ({ ...c, ...overrides[c.id] }));
 }
 
-function sampleMenus(explorerVisible = false, themeMode: "light" | "dark" | "system" = "system"): MenuDescriptor[] {
+function sampleMenus(explorerVisible = false): MenuDescriptor[] {
   return [
     {
       id: "file",
@@ -97,6 +76,8 @@ function sampleMenus(explorerVisible = false, themeMode: "light" | "dark" | "sys
       entries: [
         { kind: "command", commandId: "open-project" },
         { kind: "command", commandId: "add-source-folder" },
+        { kind: "separator" },
+        { kind: "command", commandId: "open-settings" },
         { kind: "separator" },
         { kind: "command", commandId: "refresh" },
       ],
@@ -109,16 +90,6 @@ function sampleMenus(explorerVisible = false, themeMode: "light" | "dark" | "sys
         { kind: "command", commandId: "focus-search" },
         { kind: "separator" },
         { kind: "command", commandId: "toggle-explorer", checked: explorerVisible },
-        { kind: "command", commandId: "open-settings" },
-      ],
-    },
-    {
-      id: "theme",
-      labelKey: "shell:menuBar.theme",
-      entries: [
-        { kind: "command", commandId: "theme-light", checked: themeMode === "light", radioGroup: true },
-        { kind: "command", commandId: "theme-dark", checked: themeMode === "dark", radioGroup: true },
-        { kind: "command", commandId: "theme-system", checked: themeMode === "system", radioGroup: true },
       ],
     },
     {
@@ -130,15 +101,16 @@ function sampleMenus(explorerVisible = false, themeMode: "light" | "dark" | "sys
 }
 
 describe("AppMenuBar", () => {
-  it("renders the four top-level triggers with translated labels", () => {
+  it("renders the three top-level triggers with translated labels", () => {
     render(<AppMenuBar commands={sampleCommands()} menus={sampleMenus()} />);
     expect(screen.getByRole("navigation", { name: "Menu Bar" })).toBeDefined();
-    for (const label of ["File", "View", "Theme", "Help"]) {
+    for (const label of ["File", "View", "Help"]) {
       expect(screen.getByRole("button", { name: label })).toBeDefined();
     }
+    expect(screen.queryByRole("button", { name: "Theme" })).toBeNull();
   });
 
-  it("opens the File menu on click and shows its commands", async () => {
+  it("opens the File menu on click and shows its commands, including Preferences", async () => {
     const user = userEvent.setup();
     render(<AppMenuBar commands={sampleCommands()} menus={sampleMenus()} />);
     await user.click(screen.getByRole("button", { name: "File" }));
@@ -146,6 +118,7 @@ describe("AppMenuBar", () => {
     expect(screen.getByRole("menuitem", { name: "Open Project" })).toBeDefined();
     expect(screen.getByRole("menuitem", { name: "Add Source Folder" })).toBeDefined();
     expect(screen.getByRole("menuitem", { name: "Refresh Project Files" })).toBeDefined();
+    expect(screen.getByRole("menuitem", { name: "Preferences" })).toBeDefined();
   });
 
   it("invokes the underlying command's run callback exactly once and closes the menu", async () => {
@@ -194,16 +167,14 @@ describe("AppMenuBar", () => {
     expect(explorerItem.getAttribute("aria-checked")).toBe("true");
   });
 
-  it("marks the active theme as checked via menuitemradio", async () => {
+  it("invokes File > Preferences exactly once", async () => {
+    const commands = sampleCommands();
+    const openSettings = commands.find((c) => c.id === "open-settings")!;
     const user = userEvent.setup();
-    render(<AppMenuBar commands={sampleCommands()} menus={sampleMenus(false, "dark")} />);
-    await user.click(screen.getByRole("button", { name: "Theme" }));
-    expect(screen.getByRole("menuitemradio", { name: "Theme: Dark" }).getAttribute("aria-checked")).toBe(
-      "true",
-    );
-    expect(screen.getByRole("menuitemradio", { name: "Theme: Light" }).getAttribute("aria-checked")).toBe(
-      "false",
-    );
+    render(<AppMenuBar commands={commands} menus={sampleMenus()} />);
+    await user.click(screen.getByRole("button", { name: "File" }));
+    await user.click(screen.getByRole("menuitem", { name: "Preferences" }));
+    expect(openSettings.run).toHaveBeenCalledOnce();
   });
 
   it("invokes Help > About exactly once", async () => {
@@ -244,14 +215,15 @@ describe("AppMenuBar", () => {
 
   it("navigates items with ArrowDown/ArrowUp, wrapping at the ends and skipping disabled entries", async () => {
     // "Refresh Project Files" is disabled in `sampleCommands`, so the File menu's enabled items
-    // are just [Open Project, Add Source Folder] -- wrapping must skip over it in both directions.
+    // are [Open Project, Add Source Folder, Preferences] -- wrapping must skip over Refresh in
+    // both directions.
     const user = userEvent.setup();
     render(<AppMenuBar commands={sampleCommands()} menus={sampleMenus()} />);
     screen.getByRole("button", { name: "File" }).focus();
     await user.keyboard("{ArrowDown}");
     expect(document.activeElement).toBe(screen.getByRole("menuitem", { name: "Open Project" }));
     await user.keyboard("{ArrowUp}");
-    expect(document.activeElement).toBe(screen.getByRole("menuitem", { name: "Add Source Folder" }));
+    expect(document.activeElement).toBe(screen.getByRole("menuitem", { name: "Preferences" }));
     await user.keyboard("{ArrowDown}");
     expect(document.activeElement).toBe(screen.getByRole("menuitem", { name: "Open Project" }));
   });

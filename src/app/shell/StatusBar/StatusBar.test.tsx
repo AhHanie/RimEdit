@@ -10,7 +10,6 @@ function defaultProps(overrides: Partial<Parameters<typeof StatusBar>[0]> = {}) 
     fileCount: 0,
     activeFilePath: null,
     activeFileSizeBytes: null,
-    themeMode: "system" as const,
     indexingStatus: null,
     ...overrides,
   };

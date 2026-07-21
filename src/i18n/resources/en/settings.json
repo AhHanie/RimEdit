@@ -1,15 +1,32 @@
 {
+  "preferences": {
+    "dialogAriaLabel": "Preferences",
+    "title": "Preferences",
+    "categoriesAriaLabel": "Preference categories",
+    "categories": {
+      "general": "General",
+      "rimworld": "RimWorld",
+      "locations": "Locations"
+    },
+    "appearanceHeader": "Appearance",
+    "appearanceDescription": "Choose a theme, or follow System to match your operating system's setting.",
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "languageHeader": "Language",
+    "languageAriaLabel": "Language",
+    "gameVersionHeader": "Game Version",
+    "locationsDescription": "A location is either your active project (the mod you're editing) or a read-only source folder, such as the base game or another mod, registered so its Defs are available for reference, autocomplete, and validation without being editable."
+  },
   "panel": {
-    "title": "Settings",
     "openProject": "Open project",
     "addSourceFolder": "Add source folder",
     "loading": "Loading…",
     "noSettingsLoaded": "No settings loaded.",
     "dismissError": "Dismiss error",
-    "gameVersionHeader": "Game Version",
     "gameVersionAriaLabel": "Game version",
-    "languageHeader": "Language",
-    "languageAriaLabel": "Language",
     "noLocationsRegistered": "No locations registered.",
     "activeProjectHeader": "Active Project",
     "otherProjectsHeader": "Other Projects",
