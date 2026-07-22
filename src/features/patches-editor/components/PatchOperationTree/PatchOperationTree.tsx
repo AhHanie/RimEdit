@@ -1,7 +1,7 @@
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import type { SchemaCatalog } from "../../../schema-catalog";
-import { insertAt, moveItem, removeAt, replaceAt } from "../../lib/arrayUtils";
-import { cloneWithFreshIds } from "../../lib/patchOperationDefaults";
+import { useOperationListDispatch } from "../../lib/useOperationListDispatch";
 import type { PatchOperationId, PatchOperationNode } from "../../types/patchFile";
 import { PatchAddOperationPanel } from "../PatchAddOperationPanel/PatchAddOperationPanel";
 import { PatchOperationNodeRow } from "../PatchOperationNodeRow/PatchOperationNodeRow";
@@ -14,11 +14,20 @@ interface Props {
   projectId: string | null;
   generateId: () => PatchOperationId;
   setOperations: (updater: (operations: PatchOperationNode[]) => PatchOperationNode[]) => void;
+  registerDraftFlush?: (flush: () => void) => () => void;
 }
 
 /** Top-level operation list for a `<Patch>` file: add, remove, duplicate, and reorder operations,
  * recursing into `PatchOperationNodeRow` for nested sequence/conditional/find-mod operations. */
-export function PatchOperationTree({ operations, catalog, readOnly, projectId, generateId, setOperations }: Props) {
+export function PatchOperationTree({
+  operations,
+  catalog,
+  readOnly,
+  projectId,
+  generateId,
+  setOperations,
+  registerDraftFlush,
+}: Props) {
   const { t } = useTranslation("patches");
   return (
     <div className={styles.root}>
@@ -27,19 +36,17 @@ export function PatchOperationTree({ operations, catalog, readOnly, projectId, g
       )}
       <ul className={styles.list}>
         {operations.map((op, i) => (
-          <PatchOperationNodeRow
+          <TopLevelOperationRow
             key={op.id}
             node={op}
+            index={i}
+            total={operations.length}
             catalog={catalog}
             readOnly={readOnly}
             projectId={projectId}
-            depth={0}
             generateId={generateId}
-            onChange={(updater) => setOperations((ops) => replaceAt(ops, i, updater(ops[i])))}
-            onRemove={() => setOperations((ops) => removeAt(ops, i))}
-            onDuplicate={() => setOperations((ops) => insertAt(ops, i + 1, cloneWithFreshIds(ops[i], generateId)))}
-            onMoveUp={i > 0 ? () => setOperations((ops) => moveItem(ops, i, -1)) : undefined}
-            onMoveDown={i < operations.length - 1 ? () => setOperations((ops) => moveItem(ops, i, 1)) : undefined}
+            setOperations={setOperations}
+            registerDraftFlush={registerDraftFlush}
           />
         ))}
       </ul>
@@ -49,3 +56,55 @@ export function PatchOperationTree({ operations, catalog, readOnly, projectId, g
     </div>
   );
 }
+
+interface TopLevelOperationRowProps {
+  node: PatchOperationNode;
+  index: number;
+  total: number;
+  catalog: SchemaCatalog | null;
+  readOnly: boolean;
+  projectId: string | null;
+  generateId: () => PatchOperationId;
+  setOperations: (updater: (operations: PatchOperationNode[]) => PatchOperationNode[]) => void;
+  registerDraftFlush?: (flush: () => void) => () => void;
+}
+
+/** Builds this row's `onChange`/`onRemove`/`onDuplicate`/`onMoveUp`/`onMoveDown` callbacks keyed
+ * by the operation's stable id rather than its array index, so their identity survives a
+ * `setOperations` update to a *different* row untouched (Plan.md's "operation-id-based
+ * dispatcher") -- combined with `React.memo` on `PatchOperationNodeRow`, editing one row no longer
+ * forces every other row's subtree to re-render just because the top-level `operations` array got
+ * a new reference. */
+const TopLevelOperationRow = memo(function TopLevelOperationRow({
+  node,
+  index,
+  total,
+  catalog,
+  readOnly,
+  projectId,
+  generateId,
+  setOperations,
+  registerDraftFlush,
+}: TopLevelOperationRowProps) {
+  const { onChange, onRemove, onDuplicate, onMoveUp, onMoveDown } = useOperationListDispatch(
+    node.id,
+    setOperations,
+    generateId,
+  );
+  return (
+    <PatchOperationNodeRow
+      node={node}
+      catalog={catalog}
+      readOnly={readOnly}
+      projectId={projectId}
+      depth={0}
+      generateId={generateId}
+      registerDraftFlush={registerDraftFlush}
+      onChange={onChange}
+      onRemove={onRemove}
+      onDuplicate={onDuplicate}
+      onMoveUp={index > 0 ? onMoveUp : undefined}
+      onMoveDown={index < total - 1 ? onMoveDown : undefined}
+    />
+  );
+});

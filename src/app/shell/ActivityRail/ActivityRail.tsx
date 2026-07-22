@@ -6,9 +6,10 @@ import styles from "./ActivityRail.module.css";
 interface ActivityRailProps {
   activeView: ActivityView | null;
   onSelectView: (view: ActivityView) => void;
+  onOpenPreferences: () => void;
 }
 
-export function ActivityRail({ activeView, onSelectView }: ActivityRailProps) {
+export function ActivityRail({ activeView, onSelectView, onOpenPreferences }: ActivityRailProps) {
   const { t } = useTranslation(["shell", "common"]);
   return (
     <nav className={styles.root} aria-label={t("shell:activityRail.ariaLabel")}>
@@ -32,11 +33,10 @@ export function ActivityRail({ activeView, onSelectView }: ActivityRailProps) {
       </button>
       <div className={styles.spacer} />
       <button
-        className={`icon-btn ${styles.btn}${activeView === "settings" ? ` ${styles.btnActive}` : ""}`}
-        onClick={() => onSelectView("settings")}
-        aria-label={t("shell:activityRail.settings")}
-        title={t("shell:activityRail.settings")}
-        aria-pressed={activeView === "settings"}
+        className={`icon-btn ${styles.btn}`}
+        onClick={onOpenPreferences}
+        aria-label={t("shell:activityRail.preferences")}
+        title={t("shell:activityRail.preferences")}
       >
         <Settings size={20} />
       </button>

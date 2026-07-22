@@ -1,11 +1,21 @@
 {
+  "menuBar": {
+    "ariaLabel": "Menu Bar",
+    "file": "File",
+    "view": "View",
+    "help": "Help"
+  },
+  "aboutDialog": {
+    "dialogAriaLabel": "About RimEdit",
+    "title": "About RimEdit",
+    "versionLabel": "Version",
+    "versionLoading": "Loading…",
+    "versionUnavailable": "Unavailable"
+  },
   "titleBar": {
     "openCommandPalette": "Open command palette (Ctrl+Shift+P)",
     "commandPaletteAriaLabel": "Open command palette",
     "noProjectPrompt": "Open a RimWorld mod folder…",
-    "themeLight": "Light theme (click for Dark)",
-    "themeDark": "Dark theme (click for System)",
-    "themeSystem": "System theme (click for Light)",
     "refreshProjectFiles": "Refresh project files",
     "openProjectFolder": "Open project folder",
     "addSourceFolder": "Add source folder",
@@ -15,7 +25,7 @@
     "ariaLabel": "Activity",
     "explorer": "Explorer",
     "search": "Search",
-    "settings": "Settings"
+    "preferences": "Preferences"
   },
   "statusBar": {
     "scanning": "Scanning…",
@@ -43,13 +53,12 @@
     "openProject": { "label": "Open Project", "keywords": "folder, open, browse" },
     "addSourceFolder": { "label": "Add Source Folder", "keywords": "source, reference, readonly, folder, index" },
     "refresh": { "label": "Refresh Project Files", "keywords": "scan, reload, refresh" },
-    "openSettings": { "label": "Open Settings", "keywords": "settings, locations, sources, projects, configure" },
+    "openSettings": { "label": "Preferences", "keywords": "settings, preferences, theme, language, locations, sources, projects, configure" },
     "toggleExplorer": { "label": "Toggle Explorer", "keywords": "sidebar, panel, files, toggle" },
     "focusSearch": { "label": "Focus Def Search", "keywords": "filter, find, search, def" },
-    "themeLight": { "label": "Theme: Light", "keywords": "color, appearance, light" },
-    "themeDark": { "label": "Theme: Dark", "keywords": "color, appearance, dark" },
-    "themeSystem": { "label": "Theme: System", "keywords": "color, appearance, system, auto" },
-    "createDef": { "label": "Create Def from Template", "keywords": "new, def, template, insert, create, add" }
+    "createDef": { "label": "Create Def from Template", "keywords": "new, def, template, insert, create, add" },
+    "openCommandPalette": { "label": "Command Palette", "keywords": "command, palette, search, actions" },
+    "showAbout": { "label": "About RimEdit", "keywords": "about, version, help, info" }
   },
   "startupNotice": {
     "projectNotFound": "Project folder not found: {{displayName}} ({{rootPath}})",

@@ -14,6 +14,7 @@ pub(crate) use lookup::{
     collect_all_object_inherited_fields, collect_def_subtypes, lookup_def_type, lookup_field,
     lookup_patch_operation_metadata,
 };
+pub(crate) use lookup::{collect_object_fields_ordered, lookup_object_field_with_alias};
 #[allow(unused_imports)]
 pub(crate) use lookup::{lookup_object_field, lookup_object_field_inherited, lookup_object_type};
 use merge::merge_packs_with_locale;

@@ -22,6 +22,8 @@ function completionResult(overrides: Partial<XPathCompletionResult> = {}): XPath
   return {
     replaceFrom: 0,
     items: [],
+    totalMatches: 0,
+    isTruncated: false,
     diagnostics: [],
     target: { kind: "unsupported" },
     resolvedField: null,
@@ -35,7 +37,7 @@ beforeEach(() => {
 });
 
 describe("PatchPathInput", () => {
-  it("fetches completions on focus and renders suggestions", async () => {
+  it("fetches completions on mount and renders them once focused", async () => {
     invokeMock.mockResolvedValue(
       completionResult({
         replaceFrom: 5,
@@ -48,8 +50,8 @@ describe("PatchPathInput", () => {
 
     render(<PatchPathInput value="Defs/" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />);
 
-    fireEvent.focus(screen.getByRole("textbox"));
-
+    // The shared completion result is needed by a sibling `PatchValueEditor` regardless of
+    // whether this field is ever focused, so the request fires on mount, not only on focus.
     await waitFor(() => {
       expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", {
         projectId: "proj1",
@@ -58,32 +60,127 @@ describe("PatchPathInput", () => {
       });
     });
 
+    fireEvent.focus(screen.getByRole("textbox"));
     expect(await screen.findByText("ThingDef")).toBeTruthy();
     expect(screen.getByText("ThingDefStyleUnlockDef")).toBeTruthy();
   });
 
-  it("debounces completion requests while typing", async () => {
+  it("updates the textbox immediately while typing without committing to the parent per keystroke", async () => {
     invokeMock.mockResolvedValue(completionResult());
 
     const onChange = vi.fn();
     render(<PatchPathInput value="" readOnly={false} label="XPath" projectId="proj1" onChange={onChange} />);
 
-    const input = screen.getByRole("textbox");
+    const input = screen.getByRole("textbox") as HTMLInputElement;
     fireEvent.change(input, { target: { value: "D" } });
     fireEvent.change(input, { target: { value: "De" } });
     fireEvent.change(input, { target: { value: "Def" } });
 
-    expect(onChange).toHaveBeenCalledTimes(3);
-    expect(onChange).toHaveBeenLastCalledWith("Def");
+    // The textbox reflects every keystroke immediately...
+    expect(input.value).toBe("Def");
+    // ...but none of them reached the parent tree mutation (Plan.md's per-character-serialize
+    // fix): only a deliberate commit boundary (idle pause, blur, selection, flush) does.
+    expect(onChange).not.toHaveBeenCalled();
 
-    await waitFor(() => {
-      expect(invokeMock).toHaveBeenCalledTimes(1);
-    });
+    await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
     expect(invokeMock).toHaveBeenCalledWith("complete_patch_operation_xpath", {
       projectId: "proj1",
       xpath: "Def",
       locale: "en",
     });
+  });
+
+  it("commits the draft once after an idle pause following a typing burst", async () => {
+    vi.useFakeTimers();
+    try {
+      invokeMock.mockResolvedValue(completionResult());
+      const onChange = vi.fn();
+      render(<PatchPathInput value="" readOnly={false} label="XPath" projectId="proj1" onChange={onChange} />);
+      const input = screen.getByRole("textbox");
+
+      fireEvent.change(input, { target: { value: "D" } });
+      vi.advanceTimersByTime(100);
+      fireEvent.change(input, { target: { value: "De" } });
+      vi.advanceTimersByTime(100);
+      fireEvent.change(input, { target: { value: "Def" } });
+
+      expect(onChange).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(500);
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenLastCalledWith("Def");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("commits the draft immediately on blur", () => {
+    invokeMock.mockResolvedValue(completionResult());
+    const onChange = vi.fn();
+    render(<PatchPathInput value="" readOnly={false} label="XPath" projectId="proj1" onChange={onChange} />);
+    const input = screen.getByRole("textbox");
+
+    fireEvent.change(input, { target: { value: "Defs/ThingDef" } });
+    expect(onChange).not.toHaveBeenCalled();
+
+    fireEvent.blur(input);
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenLastCalledWith("Defs/ThingDef");
+  });
+
+  it("commits the pending draft exactly once when flushed via the draft-flush registry", () => {
+    invokeMock.mockResolvedValue(completionResult());
+    const onChange = vi.fn();
+    let flush: (() => void) | undefined;
+    const registerDraftFlush = (fn: () => void) => {
+      flush = fn;
+      return () => {
+        flush = undefined;
+      };
+    };
+
+    render(
+      <PatchPathInput
+        value=""
+        readOnly={false}
+        label="XPath"
+        projectId="proj1"
+        onChange={onChange}
+        registerDraftFlush={registerDraftFlush}
+      />,
+    );
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "Defs/ThingDef" } });
+    expect(onChange).not.toHaveBeenCalled();
+
+    flush?.();
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenLastCalledWith("Defs/ThingDef");
+
+    // Flushing again with nothing new to commit is a no-op, not a redundant call.
+    flush?.();
+    expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports the completion result upward via onCompletionResult", async () => {
+    const result = completionResult({
+      target: { kind: "def", defType: "ThingDef", defName: "Wall" },
+    });
+    invokeMock.mockResolvedValue(result);
+    const onCompletionResult = vi.fn();
+
+    render(
+      <PatchPathInput
+        value='Defs/ThingDef[defName="Wall"]'
+        readOnly={false}
+        label="XPath"
+        projectId="proj1"
+        onChange={vi.fn()}
+        onCompletionResult={onCompletionResult}
+      />,
+    );
+
+    await waitFor(() => expect(onCompletionResult).toHaveBeenCalledWith(result));
   });
 
   it("discards a stale response that resolves while a newer request is still debouncing", async () => {
@@ -104,13 +201,15 @@ describe("PatchPathInput", () => {
     // only once its own debounce timer fires -- otherwise the stale response below would still
     // look current for this whole 180ms window.
     fireEvent.change(input, { target: { value: "Def" } });
+    invokeMock.mockResolvedValue(completionResult());
 
     resolveFirst(
       completionResult({
         items: [{ insertText: "STALE", label: "STALE", detail: null, kind: "defType" }],
       }),
     );
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    fireEvent.focus(input);
+    await new Promise((resolve) => setTimeout(resolve, 250));
 
     expect(screen.queryByText("STALE")).toBeNull();
   });
@@ -165,6 +264,76 @@ describe("PatchPathInput", () => {
     expect(onChange).toHaveBeenLastCalledWith(`${prefix}graphicData`);
   });
 
+  it("renders and splices a structural 'li' completion for a listOfLi object field", async () => {
+    // Proves PatchPathInput's rendering/splicing needs no depth-specific handling: a structural
+    // `listItem` suggestion (offered several levels into a nested schema on the Rust side) is
+    // spliced exactly like a `field`/`defType` one.
+    invokeMock.mockResolvedValue(
+      completionResult({
+        replaceFrom: "Defs/ThingDef/comps/".length,
+        items: [{ insertText: "li", label: "li", detail: null, kind: "listItem" }],
+      }),
+    );
+
+    const onChange = vi.fn();
+    render(
+      <PatchPathInput
+        value="Defs/ThingDef/comps/"
+        readOnly={false}
+        label="XPath"
+        projectId="proj1"
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.focus(screen.getByRole("textbox"));
+    const suggestion = await screen.findByText("li");
+    fireEvent.mouseDown(suggestion);
+
+    expect(onChange).toHaveBeenLastCalledWith("Defs/ThingDef/comps/li");
+  });
+
+  it("renders and splices a nested field completion several levels deep", async () => {
+    invokeMock.mockResolvedValue(
+      completionResult({
+        replaceFrom: "Defs/ThingDef/graphicData/".length,
+        items: [{ insertText: "texPath", label: "texPath", detail: null, kind: "field" }],
+      }),
+    );
+
+    const onChange = vi.fn();
+    render(
+      <PatchPathInput
+        value="Defs/ThingDef/graphicData/texP"
+        readOnly={false}
+        label="XPath"
+        projectId="proj1"
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.focus(screen.getByRole("textbox"));
+    const suggestion = await screen.findByText("texPath");
+    fireEvent.mouseDown(suggestion);
+
+    expect(onChange).toHaveBeenLastCalledWith("Defs/ThingDef/graphicData/texPath");
+  });
+
+  it("renders a truncated-results status when the completion result is capped", async () => {
+    invokeMock.mockResolvedValue(
+      completionResult({
+        items: [{ insertText: "ThingDef", label: "ThingDef", detail: null, kind: "defType" }],
+        totalMatches: 500,
+        isTruncated: true,
+      }),
+    );
+
+    render(<PatchPathInput value="Defs/" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />);
+    fireEvent.focus(screen.getByRole("textbox"));
+
+    expect(await screen.findByRole("status")).toBeTruthy();
+  });
+
   it("renders diagnostics returned by the completion result", async () => {
     invokeMock.mockResolvedValue(
       completionResult({
@@ -182,19 +351,16 @@ describe("PatchPathInput", () => {
       <PatchPathInput value="Defs/ThingDef/statBases" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />,
     );
 
-    fireEvent.focus(screen.getByRole("textbox"));
-
     expect(await screen.findByText("inherited field warning")).toBeTruthy();
   });
 
-  it("refetches completions on refocus after a locale switch, even with unchanged xpath text", async () => {
+  it("refetches immediately when the locale changes, even with unchanged xpath text", async () => {
     invokeMock.mockResolvedValue(completionResult());
 
     const { rerender } = render(
       <PatchPathInput value="Defs/" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />,
     );
 
-    fireEvent.focus(screen.getByRole("textbox"));
     await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
     expect(invokeMock).toHaveBeenLastCalledWith("complete_patch_operation_xpath", {
       projectId: "proj1",
@@ -202,22 +368,18 @@ describe("PatchPathInput", () => {
       locale: "en",
     });
 
+    // Refocusing with unchanged text and no locale change must not refetch (mere refocus doesn't
+    // change any of the shared hook's reactive inputs).
     fireEvent.blur(screen.getByRole("textbox"));
-
-    // Refocusing with unchanged text but no locale change must not refetch (existing dedup
-    // behavior).
     fireEvent.focus(screen.getByRole("textbox"));
     await new Promise((resolve) => setTimeout(resolve, 250));
     expect(invokeMock).toHaveBeenCalledTimes(1);
 
-    fireEvent.blur(screen.getByRole("textbox"));
-
-    // Simulate an app-wide locale switch (e.g. via the settings panel) while this input is not
-    // focused -- the xpath text itself never changes.
+    // Simulate an app-wide locale switch (e.g. via the settings panel) -- the xpath text itself
+    // never changes, but the shared hook treats locale as a reactive input and refetches.
     mockUseLocale.mockReturnValue({ locale: "fr", direction: "ltr", changeLocale: vi.fn() });
     rerender(<PatchPathInput value="Defs/" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />);
 
-    fireEvent.focus(screen.getByRole("textbox"));
     await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(2));
     expect(invokeMock).toHaveBeenLastCalledWith("complete_patch_operation_xpath", {
       projectId: "proj1",
@@ -226,13 +388,14 @@ describe("PatchPathInput", () => {
     });
   });
 
-  it("does not fetch completions when readOnly", () => {
+  it("does not fetch completions or render an interactive dropdown when readOnly", async () => {
     invokeMock.mockResolvedValue(completionResult());
 
     render(<PatchPathInput value="Defs/ThingDef" readOnly label="XPath" projectId="proj1" onChange={vi.fn()} />);
 
     const input = screen.getByRole("textbox") as HTMLInputElement;
     expect(input.disabled).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, 250));
     expect(invokeMock).not.toHaveBeenCalled();
   });
 
@@ -255,5 +418,40 @@ describe("PatchPathInput", () => {
     // Give the debounce window a chance to fire, then confirm it never called invoke.
     await new Promise((resolve) => setTimeout(resolve, 250));
     expect(invokeMock).not.toHaveBeenCalled();
+  });
+
+  it("adopts an external value change when the field isn't focused", async () => {
+    invokeMock.mockResolvedValue(completionResult());
+    const { rerender } = render(
+      <PatchPathInput value="Defs/ThingDef" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />,
+    );
+    await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
+
+    // Simulate an external change (e.g. undo) while unfocused.
+    rerender(
+      <PatchPathInput value="Defs/ThingDef/statBases" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />,
+    );
+
+    expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe("Defs/ThingDef/statBases");
+  });
+
+  it("does not clobber a focused in-progress draft with an unrelated external value change", async () => {
+    invokeMock.mockResolvedValue(completionResult());
+    const { rerender } = render(
+      <PatchPathInput value="Defs/ThingDef" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />,
+    );
+    await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
+
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "Defs/ThingDef/labe" } });
+
+    // An external change to `value` arrives (e.g. a sibling field's flush reconciling first)
+    // while this field is focused with its own uncommitted draft -- the draft must survive.
+    rerender(
+      <PatchPathInput value="Defs/ThingDef/statBases" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />,
+    );
+
+    expect(input.value).toBe("Defs/ThingDef/labe");
   });
 });

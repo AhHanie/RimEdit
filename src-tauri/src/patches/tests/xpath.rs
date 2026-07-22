@@ -1,12 +1,14 @@
 use std::collections::BTreeMap;
 
 use crate::def_index::{DefIdentityKey, DefIndex, IndexedDef, IndexedDefSource, IndexedSourceKind};
+use crate::patches::xpath::COMPLETION_ITEM_LIMIT;
 use crate::patches::{
     complete_patch_xpath, XPathCompletionItemKind, XPathDiagnosticSeverity, XPathTarget,
 };
 use crate::project_model::SourceType;
 use crate::schema_pack::{
-    DefTypeSchema, FieldSchema, FieldType, FieldTypeKind, SchemaCatalog, XmlFieldShape,
+    DefTypeSchema, FieldSchema, FieldType, FieldTypeKind, ObjectTypeSchema, SchemaCatalog,
+    XmlFieldShape,
 };
 
 fn field(xml_aliases: &[&str]) -> FieldSchema {
@@ -42,6 +44,62 @@ fn field(xml_aliases: &[&str]) -> FieldSchema {
     }
 }
 
+/// An `object`-shaped field whose children live on `schema_ref`'s object-type schema (e.g.
+/// `ThingDef.graphicData`).
+fn object_field(schema_ref: &str, xml_aliases: &[&str]) -> FieldSchema {
+    let mut f = field(xml_aliases);
+    f.field_type = FieldType {
+        kind: FieldTypeKind::Object,
+        schema_ref: Some(schema_ref.to_string()),
+        reference: None,
+    };
+    f.xml = XmlFieldShape::Object;
+    f
+}
+
+/// A `listOfLi` field whose items are objects of `schema_ref` (e.g. `ThingDef.comps`).
+fn object_list_field(schema_ref: &str) -> FieldSchema {
+    let mut f = field(&[]);
+    f.field_type = FieldType {
+        kind: FieldTypeKind::List,
+        schema_ref: None,
+        reference: None,
+    };
+    f.xml = XmlFieldShape::ListOfLi;
+    f.items = Some(FieldType {
+        kind: FieldTypeKind::Object,
+        schema_ref: Some(schema_ref.to_string()),
+        reference: None,
+    });
+    f
+}
+
+/// A `keyedObjectMap` field (`<li><key>..</key><value>..</value></li>` entries) whose values are
+/// objects of `schema_ref`.
+fn keyed_object_map_field(schema_ref: &str) -> FieldSchema {
+    let mut f = field(&[]);
+    f.xml = XmlFieldShape::KeyedObjectMap;
+    f.items = Some(FieldType {
+        kind: FieldTypeKind::Object,
+        schema_ref: Some(schema_ref.to_string()),
+        reference: None,
+    });
+    f
+}
+
+/// A `keyedObjectList` field (`<actualKey>...</actualKey>` entries keyed by element name) whose
+/// items are objects of `schema_ref`.
+fn keyed_object_list_field(schema_ref: &str) -> FieldSchema {
+    let mut f = field(&[]);
+    f.xml = XmlFieldShape::KeyedObjectList;
+    f.items = Some(FieldType {
+        kind: FieldTypeKind::Object,
+        schema_ref: Some(schema_ref.to_string()),
+        reference: None,
+    });
+    f
+}
+
 fn def_type_schema(inherits: &[&str], fields: &[(&str, FieldSchema)]) -> DefTypeSchema {
     DefTypeSchema {
         label: None,
@@ -60,9 +118,40 @@ fn def_type_schema(inherits: &[&str], fields: &[(&str, FieldSchema)]) -> DefType
     }
 }
 
-/// A small synthetic schema: `Def` (defName, label) <- `BuildableDef` (statBases, costList) <-
-/// `ThingDef` (comps, graphicData[alias: graphic]), plus an unrelated `ThingDefStyleUnlockDef`
-/// sharing the `Def`/`ThingDef` name prefix (to exercise prefix-only, not substring, matching).
+fn object_type_schema(inherits: &[&str], fields: &[(&str, FieldSchema)]) -> ObjectTypeSchema {
+    ObjectTypeSchema {
+        label: None,
+        description: None,
+        inherits: inherits.iter().map(|s| s.to_string()).collect(),
+        field_order: Vec::new(),
+        fields: fields
+            .iter()
+            .cloned()
+            .map(|(name, field)| (name.to_string(), field))
+            .collect(),
+        discriminator: None,
+    }
+}
+
+/// A small synthetic schema exercising unlimited-depth completion:
+///
+/// - `Def` (defName, label) <- `BuildableDef` (statBases, costList) <- `ThingDef`, plus an
+///   unrelated `ThingDefStyleUnlockDef` sharing the `Def`/`ThingDef` name prefix (to exercise
+///   prefix-only, not substring, matching).
+/// - `ThingDef.graphicData` -> object `GraphicData` (texPath[alias: graphicPath], graphicClass,
+///   shaderParameters -> object `ShaderParameters` (colorOne)), a 3-level object chain via
+///   `shaderParameters`.
+/// - `ThingDef.comps` -> `listOfLi` of object `CompProperties` (compClass).
+/// - `ThingDef.verbs` -> `listOfLi` of object `VerbPropertiesAI`, which `inherits`
+///   `VerbProperties` (verbClass[alias: Verb]) and adds its own `range` -- object-type
+///   inheritance, not Def inheritance, so both levels' fields are directly completable.
+/// - `ThingDef.keyframeParts` -> `keyedObjectMap` of object `KeyframePart` (partName).
+/// - `ThingDef.things` -> `keyedObjectList` of object `PrefabThing` (pos) -- data-dependent keys.
+/// - `ThingDef.weird` -> object field whose `schemaRef` ("NoSuchObjectType") is absent from the
+///   catalog, to exercise the unknown-ref termination boundary.
+/// - `ThingDef.cyclic` -> object `CycleA`, which mutually `inherits` `CycleB` (and vice versa), to
+///   exercise cycle protection in the object-inheritance walk.
+/// - `ThingDef.thingClass` -> a plain scalar direct field, to exercise scalar termination.
 fn test_catalog() -> SchemaCatalog {
     let mut def_types = BTreeMap::new();
     def_types.insert(
@@ -83,7 +172,16 @@ fn test_catalog() -> SchemaCatalog {
         "ThingDef".to_string(),
         def_type_schema(
             &["BuildableDef"],
-            &[("comps", field(&[])), ("graphicData", field(&["graphic"]))],
+            &[
+                ("comps", object_list_field("CompProperties")),
+                ("graphicData", object_field("GraphicData", &["graphic"])),
+                ("verbs", object_list_field("VerbPropertiesAI")),
+                ("keyframeParts", keyed_object_map_field("KeyframePart")),
+                ("things", keyed_object_list_field("PrefabThing")),
+                ("weird", object_field("NoSuchObjectType", &[])),
+                ("cyclic", object_field("CycleA", &[])),
+                ("thingClass", field(&[])),
+            ],
         ),
     );
     def_types.insert(
@@ -91,11 +189,62 @@ fn test_catalog() -> SchemaCatalog {
         def_type_schema(&[], &[]),
     );
 
+    let mut object_types = BTreeMap::new();
+    object_types.insert(
+        "GraphicData".to_string(),
+        object_type_schema(
+            &[],
+            &[
+                ("texPath", field(&["graphicPath"])),
+                ("graphicClass", field(&[])),
+                ("shaderParameters", object_field("ShaderParameters", &[])),
+            ],
+        ),
+    );
+    object_types.insert(
+        "ShaderParameters".to_string(),
+        object_type_schema(&[], &[("colorOne", field(&[]))]),
+    );
+    object_types.insert(
+        "CompProperties".to_string(),
+        object_type_schema(&[], &[("compClass", field(&[]))]),
+    );
+    object_types.insert(
+        "VerbProperties".to_string(),
+        object_type_schema(
+            &[],
+            &[
+                ("verbClass", field(&["Verb"])),
+                ("defaultProjectile", field(&[])),
+            ],
+        ),
+    );
+    object_types.insert(
+        "VerbPropertiesAI".to_string(),
+        object_type_schema(&["VerbProperties"], &[("range", field(&[]))]),
+    );
+    object_types.insert(
+        "KeyframePart".to_string(),
+        object_type_schema(&[], &[("partName", field(&[]))]),
+    );
+    object_types.insert(
+        "PrefabThing".to_string(),
+        object_type_schema(&[], &[("pos", field(&[]))]),
+    );
+    object_types.insert(
+        "CycleA".to_string(),
+        object_type_schema(&["CycleB"], &[("a", field(&[]))]),
+    );
+    object_types.insert(
+        "CycleB".to_string(),
+        object_type_schema(&["CycleA"], &[("b", field(&[]))]),
+    );
+
     SchemaCatalog {
         format_version: 1,
         packs: Vec::new(),
         def_types,
-        object_types: BTreeMap::new(),
+        object_types,
         patch_operations: BTreeMap::new(),
     }
 }
@@ -175,6 +324,8 @@ fn completes_def_type_names_from_schema_catalog() {
     assert!(!labels.contains(&"Def"), "{labels:?}");
     assert_eq!(result.replace_from, "Defs/".len());
     assert!(result.diagnostics.is_empty());
+    assert_eq!(result.total_matches, result.items.len());
+    assert!(!result.is_truncated);
 }
 
 #[test]
@@ -368,24 +519,413 @@ fn valid_xpath_outside_conservative_subset_is_unsupported_with_diagnostic() {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Unlimited-depth field/structural descent
+// ---------------------------------------------------------------------------
+
 #[test]
-fn only_one_field_segment_deep_is_supported() {
+fn nested_object_field_completes_at_every_level() {
     let catalog = test_catalog();
     let index = test_def_index();
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/graphicData/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"texPath"), "{labels:?}");
+    assert!(labels.contains(&"graphicClass"), "{labels:?}");
+    assert!(labels.contains(&"shaderParameters"), "{labels:?}");
+    assert!(result
+        .items
+        .iter()
+        .filter(|i| i.label == "texPath")
+        .all(|i| i.kind == XPathCompletionItemKind::Field));
+    assert!(result.diagnostics.is_empty());
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/graphicData/texP");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"texPath"), "{labels:?}");
+    // "texP" is a prefix, not an exact field name -- no *deeper* terminal-field resolution yet,
+    // but the walk's last known-good field ("graphicData" itself) is kept rather than discarded,
+    // matching every other cursor kind's "in-progress typing still resolves to the last
+    // known-good field" behavior.
+    let resolved = result
+        .resolved_field
+        .expect("graphicData should still resolve as a fallback");
+    assert_eq!(resolved.field_name, "graphicData");
+}
+
+#[test]
+fn resolves_deeply_nested_object_field_for_value_subform() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/graphicData/texPath");
+    let resolved = result.resolved_field.expect("texPath should resolve");
+    // The wire contract's `defType` stays the *root* Def type, not the nested object schema.
+    assert_eq!(resolved.def_type, "ThingDef");
+    assert_eq!(resolved.field_name, "texPath");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn resolves_xml_alias_on_a_nested_object_field_to_its_canonical_name() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/graphicData/graphicP");
+    let alias = result
+        .items
+        .iter()
+        .find(|i| i.label == "graphicPath")
+        .expect("alias suggested");
+    assert_eq!(alias.kind, XPathCompletionItemKind::FieldAlias);
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/graphicData/graphicPath");
+    let resolved = result.resolved_field.expect("alias should resolve");
+    assert_eq!(resolved.field_name, "texPath");
+}
+
+#[test]
+fn three_level_object_chain_completes_and_resolves() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
     let result = complete_patch_xpath(
         &catalog,
         &index,
-        "Defs/ThingDef[defName=\"Wall\"]/comps/foo",
+        "Defs/ThingDef/graphicData/shaderParameters/",
+    );
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"colorOne"), "{labels:?}");
+
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        "Defs/ThingDef/graphicData/shaderParameters/colorOne",
+    );
+    let resolved = result.resolved_field.expect("colorOne should resolve");
+    assert_eq!(resolved.def_type, "ThingDef");
+    assert_eq!(resolved.field_name, "colorOne");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn object_list_of_li_suggests_li_then_descends_into_item_schema() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/comps/");
+    assert_eq!(result.items.len(), 1);
+    assert_eq!(result.items[0].insert_text, "li");
+    assert_eq!(result.items[0].kind, XPathCompletionItemKind::ListItem);
+    assert!(result.diagnostics.is_empty());
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/comps/li/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"compClass"), "{labels:?}");
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/comps/li/compClass");
+    let resolved = result.resolved_field.expect("compClass should resolve");
+    assert_eq!(resolved.def_type, "ThingDef");
+    assert_eq!(resolved.field_name, "compClass");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn object_list_item_resolves_fields_through_object_type_inheritance_and_aliases() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
+    // `verbClass` is declared on `VerbProperties`, the *parent* of `verbs`' own item schema
+    // `VerbPropertiesAI` -- unlike Def fields, object-type-inherited fields resolve directly (no
+    // "inherited-only" diagnostic), since object inheritance is ordinary schema inheritance
+    // already resolved on one XML element, not RimWorld's before-patches Def inheritance.
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li/verbClass");
+    let resolved = result.resolved_field.expect("verbClass should resolve");
+    assert_eq!(resolved.field_name, "verbClass");
+    assert!(result.diagnostics.is_empty());
+
+    // `range` is declared directly on `VerbPropertiesAI` itself.
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li/range");
+    let resolved = result.resolved_field.expect("range should resolve");
+    assert_eq!(resolved.field_name, "range");
+
+    // An alias declared on the inherited parent's field also resolves to its canonical name.
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li/Verb");
+    let resolved = result.resolved_field.expect("alias should resolve");
+    assert_eq!(resolved.field_name, "verbClass");
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"verbClass"), "{labels:?}");
+    assert!(labels.contains(&"range"), "{labels:?}");
+}
+
+#[test]
+fn keyed_object_map_suggests_li_then_key_or_value_and_only_value_descends() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/keyframeParts/");
+    assert_eq!(result.items.len(), 1);
+    assert_eq!(result.items[0].insert_text, "li");
+    assert_eq!(result.items[0].kind, XPathCompletionItemKind::ListItem);
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/keyframeParts/li/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert_eq!(labels.len(), 2);
+    assert!(labels.contains(&"key"), "{labels:?}");
+    assert!(labels.contains(&"value"), "{labels:?}");
+    assert!(result
+        .items
+        .iter()
+        .all(|i| i.kind == XPathCompletionItemKind::MapEntry));
+
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        "Defs/ThingDef/keyframeParts/li/value/partName",
+    );
+    let resolved = result.resolved_field.expect("partName should resolve");
+    assert_eq!(resolved.field_name, "partName");
+    assert!(result.diagnostics.is_empty());
+
+    // "key" is a scalar terminal -- it never enters the item object schema.
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/keyframeParts/li/key/");
+    assert!(result.items.is_empty());
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn keyed_object_list_offers_no_invented_key_but_accepts_a_typed_key() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
+    // Keys are data-dependent (e.g. a defName RimEdit has no index of here) -- no suggestions at
+    // an empty segment, and no diagnostic either.
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/things/");
+    assert!(result.items.is_empty());
+    assert!(result.diagnostics.is_empty());
+
+    // Any typed, well-formed key is accepted and descends into the item object schema.
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/things/SomeThingKey/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"pos"), "{labels:?}");
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/things/SomeThingKey/pos");
+    let resolved = result.resolved_field.expect("pos should resolve");
+    assert_eq!(resolved.field_name, "pos");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn unknown_schema_ref_terminates_traversal_without_a_diagnostic() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/weird/");
+    assert!(result.items.is_empty());
+    assert!(result.diagnostics.is_empty());
+    // The field itself is real and still resolves -- only its (unknown) children can't.
+    let resolved = result.resolved_field.expect("weird should still resolve");
+    assert_eq!(resolved.field_name, "weird");
+}
+
+#[test]
+fn object_type_inheritance_cycle_does_not_hang_and_still_completes_reachable_fields() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    // CycleA <-> CycleB mutually `inherits` each other -- if the object-inheritance walk lacked a
+    // cycle guard this would hang the test suite rather than fail an assertion.
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/cyclic/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"a"), "{labels:?}");
+    assert!(labels.contains(&"b"), "{labels:?}");
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/cyclic/b");
+    let resolved = result
+        .resolved_field
+        .expect("b should resolve through the cycle");
+    assert_eq!(resolved.field_name, "b");
+}
+
+#[test]
+fn scalar_field_terminates_traversal_without_the_old_depth_warning() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/thingClass/anything");
+    assert!(result.items.is_empty());
+    // No `xpath_autocomplete_unsupported_pattern` (or any other) diagnostic -- typing past a
+    // scalar field is simply not completed, not an error.
+    assert!(result.diagnostics.is_empty(), "{:?}", result.diagnostics);
+    // Best-effort: the last real field on the path ("thingClass") still resolves for the value
+    // subform even though nothing deeper does.
+    let resolved = result
+        .resolved_field
+        .expect("thingClass should still resolve");
+    assert_eq!(resolved.field_name, "thingClass");
+}
+
+#[test]
+fn structural_segment_mismatch_stops_with_unsupported_pattern_diagnostic() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    // "list" is not the literal "li" a `listOfLi` object item expects.
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/comps/list/compClass");
+    assert!(result.items.is_empty());
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|d| d.code == "xpath_autocomplete_unsupported_pattern"));
+    // Best-effort: "comps" itself still resolved before the mismatch.
+    let resolved = result.resolved_field.expect("comps should still resolve");
+    assert_eq!(resolved.field_name, "comps");
+}
+
+#[test]
+fn discriminator_variant_class_predicate_on_a_list_item_stays_unsupported() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    // Narrowing to one `Class="..."` variant's own members needs predicate parsing, which stays
+    // outside this conservative grammar -- only the declared base `items.schemaRef` is traversed
+    // (see `SchemaCursor::ListItem`'s docs). The bracketed segment isn't the literal `li`, so this
+    // stops with the same diagnostic as any other unrecognized structural segment.
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef/comps/li[@Class="CompProperties_Foo"]/compClass"#,
     );
     assert!(result.items.is_empty());
     assert!(result
         .diagnostics
         .iter()
         .any(|d| d.code == "xpath_autocomplete_unsupported_pattern"));
-    // Best-effort: the first field segment ("comps") still resolves for the value subform even
-    // though we can't offer completions one level deeper.
-    let resolved = result.resolved_field.expect("comps should still resolve");
-    assert_eq!(resolved.field_name, "comps");
+}
+
+// ---------------------------------------------------------------------------
+// Positional list-entry predicate (`li[n]`)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn positional_list_item_predicate_reaches_the_item_schema_like_plain_li() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    // The reported regression: a `verbs` list item selected by position must still resolve
+    // `defaultProjectile`, an inherited-through-object-type field of the item schema.
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Gun_AssaultRifle"]/verbs/li[1]/defaultProjectile"#,
+    );
+    let resolved = result
+        .resolved_field
+        .expect("defaultProjectile should resolve through a positional li[1]");
+    assert_eq!(resolved.field_name, "defaultProjectile");
+    assert!(result.diagnostics.is_empty(), "{:?}", result.diagnostics);
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li[1]/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"verbClass"), "{labels:?}");
+    assert!(labels.contains(&"defaultProjectile"), "{labels:?}");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn positional_list_item_predicate_is_index_independent() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li[2]/range");
+    let resolved = result
+        .resolved_field
+        .expect("range should resolve via li[2]");
+    assert_eq!(resolved.field_name, "range");
+    assert!(result.diagnostics.is_empty());
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li[10]/range");
+    let resolved = result
+        .resolved_field
+        .expect("range should resolve via li[10]");
+    assert_eq!(resolved.field_name, "range");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn positional_keyed_map_predicate_reaches_key_and_value() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/keyframeParts/li[1]/");
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"key"), "{labels:?}");
+    assert!(labels.contains(&"value"), "{labels:?}");
+    assert!(result.diagnostics.is_empty());
+
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        "Defs/ThingDef/keyframeParts/li[1]/value/partName",
+    );
+    let resolved = result.resolved_field.expect("partName should resolve");
+    assert_eq!(resolved.field_name, "partName");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn plain_li_still_works_alongside_positional_predicate_support() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/ThingDef/verbs/li/verbClass");
+    let resolved = result.resolved_field.expect("verbClass should resolve");
+    assert_eq!(resolved.field_name, "verbClass");
+    assert!(result.diagnostics.is_empty());
+}
+
+#[test]
+fn malformed_positional_predicates_are_rejected_with_unsupported_pattern() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    for bad_step in [
+        "li[0]",
+        "li[01]",
+        "li[-1]",
+        "li[1.5]",
+        "li[ 1]",
+        "li[1 ]",
+        "li[]",
+        "li[last()]",
+        r#"li[@Class="CompProperties_Foo"]"#,
+        "li[1][2]",
+        "li[1]extra",
+    ] {
+        let input = format!("Defs/ThingDef/verbs/{bad_step}/verbClass");
+        let result = complete_patch_xpath(&catalog, &index, &input);
+        assert!(result.items.is_empty(), "for {input}");
+        assert!(
+            result
+                .diagnostics
+                .iter()
+                .any(|d| d.code == "xpath_autocomplete_unsupported_pattern"),
+            "for {input}: {:?}",
+            result.diagnostics
+        );
+        // Best-effort: "verbs" itself still resolved before the mismatch.
+        let resolved = result
+            .resolved_field
+            .unwrap_or_else(|| panic!("verbs should still resolve for {input}"));
+        assert_eq!(resolved.field_name, "verbs");
+    }
+}
+
+#[test]
+fn in_progress_positional_predicate_typing_has_no_false_warning() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    for partial in ["Defs/ThingDef/verbs/li[", "Defs/ThingDef/verbs/li[1"] {
+        let result = complete_patch_xpath(&catalog, &index, partial);
+        assert!(result.items.is_empty(), "for {partial}");
+        assert!(
+            result.diagnostics.is_empty(),
+            "for {partial}: {:?}",
+            result.diagnostics
+        );
+    }
 }
 
 #[test]
@@ -470,4 +1010,62 @@ fn field_completion_offers_nothing_extra_for_unknown_def_type() {
             def_type: "NotARealDefType".to_string(),
         }
     );
+}
+
+#[test]
+fn def_type_completion_is_capped_and_reports_true_match_count() {
+    let total = COMPLETION_ITEM_LIMIT + 10;
+    let mut def_types = BTreeMap::new();
+    for i in 0..total {
+        def_types.insert(format!("Prefix{i:03}"), def_type_schema(&[], &[]));
+    }
+    let catalog = SchemaCatalog {
+        format_version: 1,
+        packs: Vec::new(),
+        def_types,
+        object_types: BTreeMap::new(),
+        patch_operations: BTreeMap::new(),
+    };
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/Prefix");
+
+    assert_eq!(result.items.len(), COMPLETION_ITEM_LIMIT);
+    assert_eq!(result.total_matches, total);
+    assert!(result.is_truncated);
+    // Sorted deterministically, so a short/empty prefix always yields the same first page.
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    let mut expected: Vec<String> = (0..total).map(|i| format!("Prefix{i:03}")).collect();
+    expected.sort();
+    let expected: Vec<&str> = expected[..COMPLETION_ITEM_LIMIT]
+        .iter()
+        .map(|s| s.as_str())
+        .collect();
+    assert_eq!(labels, expected);
+}
+
+#[test]
+fn field_completion_is_capped_and_reports_true_match_count() {
+    let total = COMPLETION_ITEM_LIMIT + 10;
+    let fields: Vec<(String, FieldSchema)> = (0..total)
+        .map(|i| (format!("field{i:03}"), field(&[])))
+        .collect();
+    let field_refs: Vec<(&str, FieldSchema)> = fields
+        .iter()
+        .map(|(n, f)| (n.as_str(), f.clone()))
+        .collect();
+    let mut def_types = BTreeMap::new();
+    def_types.insert("Big".to_string(), def_type_schema(&[], &field_refs));
+    let catalog = SchemaCatalog {
+        format_version: 1,
+        packs: Vec::new(),
+        def_types,
+        object_types: BTreeMap::new(),
+        patch_operations: BTreeMap::new(),
+    };
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, "Defs/Big/");
+
+    assert_eq!(result.items.len(), COMPLETION_ITEM_LIMIT);
+    assert_eq!(result.total_matches, total);
+    assert!(result.is_truncated);
 }

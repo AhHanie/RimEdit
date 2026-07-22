@@ -3,7 +3,10 @@ use super::loader::{
     parse_def_type_schema, parse_object_type_schema, parse_patch_operation_metadata,
     parse_schema_pack_manifest, LoadedPack,
 };
-use super::lookup::{lookup_def_type, lookup_field, lookup_object_field, lookup_object_type};
+use super::lookup::{
+    collect_object_fields_ordered, lookup_def_type, lookup_field, lookup_object_field,
+    lookup_object_field_with_alias, lookup_object_type,
+};
 use super::merge::merge_packs;
 use super::model::{
     DefTypeSchemaFile, FieldTypeKind, ObjectTypeSchemaFile, PatchOperationMetadataFile,
@@ -926,6 +929,128 @@ fn lookup_object_type_and_field_work() {
 
     let missing_field = lookup_object_field(&catalog, "TestObject", "nonExistentField");
     assert!(missing_field.is_none());
+}
+
+#[test]
+fn lookup_object_field_with_alias_resolves_inherited_aliases_to_their_canonical_name() {
+    let manifest_json = r#"{ "formatVersion": 1, "packId": "test.aliaslookup", "name": "AliasLookup", "version": "1.0.0", "defTypeDirectories": ["x"] }"#;
+    let def_json = r#"{ "defType": "TestDef", "fields": {} }"#;
+    let base_json = r#"{
+        "objectType": "BaseObject",
+        "fields": {
+            "verbClass": { "type": { "kind": "string" }, "required": false, "xmlAliases": ["Verb"] }
+        }
+    }"#;
+    let child_json = r#"{
+        "objectType": "ChildObject",
+        "inherits": ["BaseObject"],
+        "fields": {
+            "range": { "type": { "kind": "string" }, "required": false }
+        }
+    }"#;
+    let pack = inline_pack_with_objects(manifest_json, def_json, &[base_json, child_json]);
+    let mut diags = Vec::new();
+    let catalog = merge_packs(vec![pack], &mut diags);
+
+    // A field declared on the *parent* resolves directly on the child -- object-type inheritance
+    // has no "direct fields only" restriction the way Def fields do.
+    let (canonical, field) = lookup_object_field_with_alias(&catalog, "ChildObject", "verbClass")
+        .expect("verbClass should resolve");
+    assert_eq!(canonical, "verbClass");
+    assert_eq!(field.field_type.kind, FieldTypeKind::String);
+
+    // An XML alias declared on the inherited parent field resolves to the *canonical* name, not
+    // the alias itself.
+    let (canonical, _) = lookup_object_field_with_alias(&catalog, "ChildObject", "Verb")
+        .expect("alias should resolve");
+    assert_eq!(canonical, "verbClass");
+
+    // A field declared directly on the child itself also resolves.
+    let (canonical, _) = lookup_object_field_with_alias(&catalog, "ChildObject", "range")
+        .expect("range should resolve");
+    assert_eq!(canonical, "range");
+
+    assert!(lookup_object_field_with_alias(&catalog, "ChildObject", "nonExistentField").is_none());
+    assert!(lookup_object_field_with_alias(&catalog, "NonExistentType", "verbClass").is_none());
+}
+
+#[test]
+fn lookup_object_field_with_alias_and_collect_object_fields_ordered_guard_inheritance_cycles() {
+    let manifest_json = r#"{ "formatVersion": 1, "packId": "test.cyclelookup", "name": "CycleLookup", "version": "1.0.0", "defTypeDirectories": ["x"] }"#;
+    let def_json = r#"{ "defType": "TestDef", "fields": {} }"#;
+    // A mutually-recursive `inherits` pair -- malformed, but the lookup/collection helpers must
+    // not hang (this test would time out the suite rather than fail an assertion if the cycle
+    // guard were missing or broken).
+    let cycle_a_json = r#"{
+        "objectType": "CycleA",
+        "inherits": ["CycleB"],
+        "fields": {
+            "a": { "type": { "kind": "string" }, "required": false }
+        }
+    }"#;
+    let cycle_b_json = r#"{
+        "objectType": "CycleB",
+        "inherits": ["CycleA"],
+        "fields": {
+            "b": { "type": { "kind": "string" }, "required": false }
+        }
+    }"#;
+    let pack = inline_pack_with_objects(manifest_json, def_json, &[cycle_a_json, cycle_b_json]);
+    let mut diags = Vec::new();
+    let catalog = merge_packs(vec![pack], &mut diags);
+
+    let (canonical, _) = lookup_object_field_with_alias(&catalog, "CycleA", "b")
+        .expect("b should resolve through the cycle");
+    assert_eq!(canonical, "b");
+    assert!(lookup_object_field_with_alias(&catalog, "CycleA", "nonExistentField").is_none());
+
+    let fields: Vec<&str> = collect_object_fields_ordered(&catalog, "CycleA")
+        .into_iter()
+        .map(|(name, _)| name)
+        .collect();
+    assert!(fields.contains(&"a"), "{fields:?}");
+    assert!(fields.contains(&"b"), "{fields:?}");
+    assert_eq!(
+        fields.len(),
+        2,
+        "each field name should appear exactly once: {fields:?}"
+    );
+}
+
+#[test]
+fn collect_object_fields_ordered_prefers_own_field_over_a_same_named_inherited_one() {
+    let manifest_json = r#"{ "formatVersion": 1, "packId": "test.overridelookup", "name": "OverrideLookup", "version": "1.0.0", "defTypeDirectories": ["x"] }"#;
+    let def_json = r#"{ "defType": "TestDef", "fields": {} }"#;
+    let base_json = r#"{
+        "objectType": "BaseObject",
+        "fields": {
+            "shared": { "type": { "kind": "string" }, "required": false }
+        }
+    }"#;
+    let child_json = r#"{
+        "objectType": "ChildObject",
+        "inherits": ["BaseObject"],
+        "fields": {
+            "shared": { "type": { "kind": "integer" }, "required": false }
+        }
+    }"#;
+    let pack = inline_pack_with_objects(manifest_json, def_json, &[base_json, child_json]);
+    let mut diags = Vec::new();
+    let catalog = merge_packs(vec![pack], &mut diags);
+
+    let fields = collect_object_fields_ordered(&catalog, "ChildObject");
+    let shared_entries: Vec<_> = fields
+        .iter()
+        .filter(|(name, _)| *name == "shared")
+        .collect();
+    assert_eq!(
+        shared_entries.len(),
+        1,
+        "a same-named inherited field must not appear twice: {fields:?}"
+    );
+    // The child's own redeclaration wins, matching `lookup_object_field_with_alias`'s
+    // own-fields-first search order.
+    assert_eq!(shared_entries[0].1.field_type.kind, FieldTypeKind::Integer);
 }
 
 // --- 19. Object type directory diagnostics ---

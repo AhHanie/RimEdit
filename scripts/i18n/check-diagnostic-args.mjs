@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // Guards against a new backend diagnostic/error wire struct being added without the shared
 // code+args mechanism (`crate::diagnostics::DiagnosticArgs`, see `src-tauri/src/diagnostics.rs`
 // and `docs/i18n/diagnostic-codes.md`). Per

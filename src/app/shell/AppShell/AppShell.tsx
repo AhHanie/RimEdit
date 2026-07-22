@@ -15,16 +15,15 @@ import {
   PanelLeft,
   Search,
   Settings,
-  Sun,
-  Moon,
-  Monitor,
+  Command,
+  Info,
   X,
 } from "lucide-react";
 import {
   pickProjectFolder,
   pickSourceFolder,
   useProjectSettings,
-  ProjectSettingsPanel,
+  PreferencesDialog,
   type ProjectSettingsLoadResult,
 } from "../../../features/project-settings";
 import {
@@ -48,11 +47,12 @@ import {
 import type { ProjectFileEntry } from "../../../features/project-explorer";
 import { DefSearchPanel, useIndexingStatus } from "../../../features/def-index";
 import type { ActivityView } from "../types";
-import type { CommandAction } from "../../commands/commandTypes";
+import type { CommandAction, MenuDescriptor } from "../../commands/commandTypes";
 import { AppTitleBar } from "../AppTitleBar/AppTitleBar";
 import { ActivityRail } from "../ActivityRail/ActivityRail";
 import { StatusBar } from "../StatusBar/StatusBar";
 import { CommandPalette } from "../../commands/CommandPalette/CommandPalette";
+import { AboutDialog } from "../AboutDialog/AboutDialog";
 import { ResizablePaneHandle } from "../ResizablePaneHandle/ResizablePaneHandle";
 import { usePersistentLayoutState } from "../layout/usePersistentLayoutState";
 import { LAYOUT_DEFAULTS } from "../layout/layoutState";
@@ -100,7 +100,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     () => settings?.locations.map((l) => l.rootPath) ?? [],
     [settings?.locations],
   );
-  const { mode: themeMode, setMode, cycleMode: cycleTheme } = useTheme();
+  const { mode: themeMode, setMode } = useTheme();
   const { locale, changeLocale } = useLocale();
   // Locale is threaded through so catalog labels/descriptions reload for the active locale
   // (issue 06); `useSchemaCatalog` discards any in-flight response superseded by a newer switch.
@@ -139,6 +139,8 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     new Set(),
   );
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [createDefSignal, setCreateDefSignal] = useState(0);
   const activeEditorCommandsRef = useRef<ActiveEditorCommands | null>(null);
   const handleActiveCommandsChange = useCallback(
@@ -159,7 +161,6 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
 
   const explorerVisible = activeView === "explorer";
   const searchPanelVisible = activeView === "search";
-  const settingsVisible = activeView === "settings";
 
   const indexingStatus = useIndexingStatus(activeProjectId);
   const [indexRevision, setIndexRevision] = useState(0);
@@ -324,6 +325,11 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
   // Global keyboard shortcuts
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      // Preferences is a modal dialog with its own Escape/Tab handling (`useDialogKeyboard`) --
+      // none of these background-workspace shortcuts (command palette, Def Search focus, editor
+      // undo/redo/save/close) should fire while it's open, or they'd act on the workspace behind
+      // the dialog instead of leaving it focus-isolated.
+      if (preferencesOpen) return;
       if (e.ctrlKey && e.shiftKey && e.key === "P") {
         e.preventDefault();
         setPaletteOpen((open) => !open);
@@ -387,7 +393,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [paletteOpen, fileFilterQuery]);
+  }, [paletteOpen, fileFilterQuery, preferencesOpen]);
 
   const commands = useMemo<CommandAction[]>(
     () => [
@@ -397,6 +403,20 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         keywordsKey: "shell:commands.openProject.keywords",
         icon: FolderOpen,
         run: handleOpenProject,
+      },
+      {
+        id: "open-command-palette",
+        labelKey: "shell:commands.openCommandPalette.label",
+        keywordsKey: "shell:commands.openCommandPalette.keywords",
+        icon: Command,
+        run: () => setPaletteOpen(true),
+      },
+      {
+        id: "show-about",
+        labelKey: "shell:commands.showAbout.label",
+        keywordsKey: "shell:commands.showAbout.keywords",
+        icon: Info,
+        run: () => setAboutOpen(true),
       },
       {
         id: "add-source-folder",
@@ -418,7 +438,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         labelKey: "shell:commands.openSettings.label",
         keywordsKey: "shell:commands.openSettings.keywords",
         icon: Settings,
-        run: () => setActiveView("settings"),
+        run: () => setPreferencesOpen(true),
       },
       {
         id: "toggle-explorer",
@@ -438,27 +458,6 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         },
       },
       {
-        id: "theme-light",
-        labelKey: "shell:commands.themeLight.label",
-        keywordsKey: "shell:commands.themeLight.keywords",
-        icon: Sun,
-        run: () => setMode("light"),
-      },
-      {
-        id: "theme-dark",
-        labelKey: "shell:commands.themeDark.label",
-        keywordsKey: "shell:commands.themeDark.keywords",
-        icon: Moon,
-        run: () => setMode("dark"),
-      },
-      {
-        id: "theme-system",
-        labelKey: "shell:commands.themeSystem.label",
-        keywordsKey: "shell:commands.themeSystem.keywords",
-        icon: Monitor,
-        run: () => setMode("system"),
-      },
-      {
         id: "create-def",
         labelKey: "shell:commands.createDef.label",
         keywordsKey: "shell:commands.createDef.keywords",
@@ -473,9 +472,44 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
       workspace.refresh,
       activeProjectId,
       activeTab,
-      setMode,
       setActiveView,
+      setPaletteOpen,
+      setAboutOpen,
+      setPreferencesOpen,
     ],
+  );
+
+  const menus = useMemo<MenuDescriptor[]>(
+    () => [
+      {
+        id: "file",
+        labelKey: "shell:menuBar.file",
+        entries: [
+          { kind: "command", commandId: "open-project" },
+          { kind: "command", commandId: "add-source-folder" },
+          { kind: "separator" },
+          { kind: "command", commandId: "open-settings" },
+          { kind: "separator" },
+          { kind: "command", commandId: "refresh" },
+        ],
+      },
+      {
+        id: "view",
+        labelKey: "shell:menuBar.view",
+        entries: [
+          { kind: "command", commandId: "open-command-palette" },
+          { kind: "command", commandId: "focus-search" },
+          { kind: "separator" },
+          { kind: "command", commandId: "toggle-explorer", checked: explorerVisible },
+        ],
+      },
+      {
+        id: "help",
+        labelKey: "shell:menuBar.help",
+        entries: [{ kind: "command", commandId: "show-about" }],
+      },
+    ],
+    [explorerVisible],
   );
 
   return (
@@ -483,14 +517,14 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
       <AppTitleBar
         activeProjectName={activeLocation?.displayName ?? null}
         activeProjectRoot={activeLocation?.rootPath ?? null}
-        themeMode={themeMode}
-        onCycleTheme={cycleTheme}
         onOpenProject={handleOpenProject}
         onAddSourceFolder={handleAddSourceFolder}
         onRefresh={workspace.refresh}
         onTogglePalette={() => setPaletteOpen((o) => !o)}
         onToggleExplorer={() => handleSelectView("explorer")}
         explorerVisible={explorerVisible}
+        commands={commands}
+        menus={menus}
       />
       <div className={styles.middle}>
         {startupNotice && (
@@ -517,7 +551,11 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
           ref={workspaceRef}
           style={{ "--explorer-width": `${explorerWidth}px` } as CSSProperties}
         >
-          <ActivityRail activeView={activeView} onSelectView={handleSelectView} />
+          <ActivityRail
+            activeView={activeView}
+            onSelectView={handleSelectView}
+            onOpenPreferences={() => setPreferencesOpen(true)}
+          />
           <ProjectExplorerPanel
             visible={explorerVisible}
             scan={workspace.scan}
@@ -631,21 +669,6 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
             onAddSourceFolder={handleAddSourceFolder}
             searchInputRef={defSearchInputRef}
           />
-          <ProjectSettingsPanel
-            visible={settingsVisible}
-            settings={settings}
-            loading={loading}
-            loadError={settingsLoadError}
-            hasDirtyTabs={hasDirtyTabs}
-            installedSchemaVersions={installedSchemaVersions}
-            locale={locale}
-            onEditLocation={editLocation}
-            onRemoveLocation={deleteLocation}
-            onUpdateGameVersion={updateGameVersion}
-            onChangeLocale={changeLocale}
-            onOpenProject={handleOpenProject}
-            onAddSourceFolder={handleAddSourceFolder}
-          />
           {activeView !== null && (
             <ResizablePaneHandle
               width={explorerWidth}
@@ -682,7 +705,6 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         fileCount={workspace.scan?.files.length ?? 0}
         activeFilePath={activeFilePath}
         activeFileSizeBytes={activeFileEntry?.sizeBytes ?? null}
-        themeMode={themeMode}
         indexingStatus={indexingStatus}
       />
       <CommandPalette
@@ -690,6 +712,26 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         onClose={() => setPaletteOpen(false)}
         commands={commands}
       />
+      {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
+      {preferencesOpen && (
+        <PreferencesDialog
+          onClose={() => setPreferencesOpen(false)}
+          settings={settings}
+          loading={loading}
+          loadError={settingsLoadError}
+          hasDirtyTabs={hasDirtyTabs}
+          installedSchemaVersions={installedSchemaVersions}
+          locale={locale}
+          themeMode={themeMode}
+          onChangeTheme={setMode}
+          onEditLocation={editLocation}
+          onRemoveLocation={deleteLocation}
+          onUpdateGameVersion={updateGameVersion}
+          onChangeLocale={changeLocale}
+          onOpenProject={handleOpenProject}
+          onAddSourceFolder={handleAddSourceFolder}
+        />
+      )}
     </div>
   );
 }

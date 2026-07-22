@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { formatError } from "../../../../lib/formatError";
-import { useDialogKeyboard } from "../../lib/useDialogKeyboard";
+import { useDialogKeyboard } from "../../../../lib/useDialogKeyboard";
 import styles from "./FormViewSwitchConfirmDialog.module.css";
 
 interface Props {

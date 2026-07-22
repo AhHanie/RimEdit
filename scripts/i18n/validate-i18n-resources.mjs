@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // Validates src/i18n/resources/**/*.json and checks that
 // src/i18n/generated/translation-keys.ts is up to date.
 // Usage: node scripts/i18n/validate-i18n-resources.mjs

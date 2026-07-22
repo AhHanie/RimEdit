@@ -44,13 +44,23 @@ export const enResources = {
     "itemCount_other": "{{count}} items"
   },
   shell: {
+    "menuBar": {
+      "ariaLabel": "Menu Bar",
+      "file": "File",
+      "view": "View",
+      "help": "Help"
+    },
+    "aboutDialog": {
+      "dialogAriaLabel": "About RimEdit",
+      "title": "About RimEdit",
+      "versionLabel": "Version",
+      "versionLoading": "Loading…",
+      "versionUnavailable": "Unavailable"
+    },
     "titleBar": {
       "openCommandPalette": "Open command palette (Ctrl+Shift+P)",
       "commandPaletteAriaLabel": "Open command palette",
       "noProjectPrompt": "Open a RimWorld mod folder…",
-      "themeLight": "Light theme (click for Dark)",
-      "themeDark": "Dark theme (click for System)",
-      "themeSystem": "System theme (click for Light)",
       "refreshProjectFiles": "Refresh project files",
       "openProjectFolder": "Open project folder",
       "addSourceFolder": "Add source folder",
@@ -60,7 +70,7 @@ export const enResources = {
       "ariaLabel": "Activity",
       "explorer": "Explorer",
       "search": "Search",
-      "settings": "Settings"
+      "preferences": "Preferences"
     },
     "statusBar": {
       "scanning": "Scanning…",
@@ -98,8 +108,8 @@ export const enResources = {
         "keywords": "scan, reload, refresh"
       },
       "openSettings": {
-        "label": "Open Settings",
-        "keywords": "settings, locations, sources, projects, configure"
+        "label": "Preferences",
+        "keywords": "settings, preferences, theme, language, locations, sources, projects, configure"
       },
       "toggleExplorer": {
         "label": "Toggle Explorer",
@@ -109,21 +119,17 @@ export const enResources = {
         "label": "Focus Def Search",
         "keywords": "filter, find, search, def"
       },
-      "themeLight": {
-        "label": "Theme: Light",
-        "keywords": "color, appearance, light"
-      },
-      "themeDark": {
-        "label": "Theme: Dark",
-        "keywords": "color, appearance, dark"
-      },
-      "themeSystem": {
-        "label": "Theme: System",
-        "keywords": "color, appearance, system, auto"
-      },
       "createDef": {
         "label": "Create Def from Template",
         "keywords": "new, def, template, insert, create, add"
+      },
+      "openCommandPalette": {
+        "label": "Command Palette",
+        "keywords": "command, palette, search, actions"
+      },
+      "showAbout": {
+        "label": "About RimEdit",
+        "keywords": "about, version, help, info"
       }
     },
     "startupNotice": {
@@ -198,17 +204,34 @@ export const enResources = {
     }
   },
   settings: {
+    "preferences": {
+      "dialogAriaLabel": "Preferences",
+      "title": "Preferences",
+      "categoriesAriaLabel": "Preference categories",
+      "categories": {
+        "general": "General",
+        "rimworld": "RimWorld",
+        "locations": "Locations"
+      },
+      "appearanceHeader": "Appearance",
+      "appearanceDescription": "Choose a theme, or follow System to match your operating system's setting.",
+      "theme": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "languageHeader": "Language",
+      "languageAriaLabel": "Language",
+      "gameVersionHeader": "Game Version",
+      "locationsDescription": "A location is either your active project (the mod you're editing) or a read-only source folder, such as the base game or another mod, registered so its Defs are available for reference, autocomplete, and validation without being editable."
+    },
     "panel": {
-      "title": "Settings",
       "openProject": "Open project",
       "addSourceFolder": "Add source folder",
       "loading": "Loading…",
       "noSettingsLoaded": "No settings loaded.",
       "dismissError": "Dismiss error",
-      "gameVersionHeader": "Game Version",
       "gameVersionAriaLabel": "Game version",
-      "languageHeader": "Language",
-      "languageAriaLabel": "Language",
       "noLocationsRegistered": "No locations registered.",
       "activeProjectHeader": "Active Project",
       "otherProjectsHeader": "Other Projects",
@@ -660,6 +683,9 @@ export const enResources = {
       "searchPlaceholder": "Search operation type…",
       "customSuffix": " · custom",
       "empty": "No matching operation type."
+    },
+    "patchPathInput": {
+      "truncatedResults": "Showing first {{shown}} of {{total}} matches; type more to narrow."
     },
     "operationForm": {
       "success": "Success",

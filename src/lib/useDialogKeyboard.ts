@@ -1,9 +1,8 @@
-// Small, reusable keyboard/focus behavior for the two new Form View overlay dialogs
-// (`FormViewSwitchConfirmDialog`, `FormViewManagerDialog`). Not a shared *dialog component* --
-// existing overlays (`SaveDefTemplateDialog`, `CommandPalette`) each own their visual structure
-// and CSS module independently, and this issue follows that same convention -- just the
-// Escape-to-close/focus-trap/focus-restoration *behavior* the issue asks for, factored out once
-// because both new dialogs need it identically rather than copy-pasted twice.
+// Small, reusable keyboard/focus behavior shared by overlay dialogs across features
+// (`FormViewSwitchConfirmDialog`, `FormViewManagerDialog`, `AboutDialog`). Not a shared *dialog
+// component* -- each overlay owns its own visual structure and CSS module independently; this is
+// just the Escape-to-close/focus-trap/focus-restoration *behavior*, factored out once so it isn't
+// copy-pasted into every new dialog.
 import { useEffect, useRef, type RefObject } from "react";
 
 const FOCUSABLE_SELECTOR =

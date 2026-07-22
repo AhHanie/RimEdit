@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { SchemaCatalog } from "../../../schema-catalog";
-import { useLocale } from "../../../../i18n/LocaleProvider";
 import { formatError } from "../../../../lib/formatError";
 import { emptyToNull, nullToEmpty } from "../../lib/arrayUtils";
 import { dedentXmlFragment } from "../../lib/xmlDedent";
 import { parsePatchValueXml, serializePatchValueFragment } from "../../api/valueXml";
-import { completePatchOperationXPath } from "../../api/xpathCompletion";
 import {
   listDirectDefTypeFields,
   resolveModExtensionsField,
@@ -26,18 +24,17 @@ import type { ObjectFieldValue } from "../../../xml-editor";
 import { ValueFieldRenderer } from "./ValueFieldRenderer";
 import styles from "./PatchValueEditor.module.css";
 
-const DEBOUNCE_MS = 200;
-
 interface Props {
   valueXml: string | null;
-  /** The operation's own xpath field value -- used only to resolve a structured edit target;
-   * never displayed or edited here. */
-  xpath: string | null;
   readOnly: boolean;
   catalog: SchemaCatalog | null;
-  /** Absent when there's no project context to resolve the xpath's target against (e.g. a custom
-   * operation field, which has no xpath at all) -- structured mode is simply unavailable then. */
-  projectId: string | null;
+  /** The xpath's statically-inferred target and terminal resolved field, computed once by the
+   * sibling `PatchPathInput` field's shared completion result (`usePatchXPathCompletion`) and
+   * passed down here rather than resolved independently -- see `PatchOperationForm`, which owns
+   * the shared result. Both are `null` while there's no result yet, no project context, or the
+   * xpath doesn't resolve to anything. */
+  target: XPathTarget | null;
+  resolvedField: XPathResolvedField | null;
   label: string;
   operationType: PatchValueOperationType;
   onChange: (value: string | null) => void;
@@ -50,18 +47,15 @@ interface Props {
  * docs/patches-editor/06-structured-patch-value-editor.md for the shape-support boundary. */
 export function PatchValueEditor({
   valueXml,
-  xpath,
   readOnly,
   catalog,
-  projectId,
+  target,
+  resolvedField,
   label,
   operationType,
   onChange,
 }: Props) {
   const { t } = useTranslation("patches");
-  const { locale } = useLocale();
-  const [target, setTarget] = useState<XPathTarget | null>(null);
-  const [resolvedField, setResolvedField] = useState<XPathResolvedField | null>(null);
   const [pickedFieldName, setPickedFieldName] = useState<string | null>(null);
   const [mode, setMode] = useState<"raw" | "structured">("raw");
   const [structuredValue, setStructuredValue] = useState<ObjectFieldValue | null>(null);
@@ -81,36 +75,6 @@ export function PatchValueEditor({
     }
     setRawDraft(dedentXmlFragment(nullToEmpty(valueXml)));
   }, [valueXml]);
-
-  // --- Resolve the xpath's target (debounced, independent of PatchPathInput's own dropdown). ---
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const requestIdRef = useRef(0);
-
-  useEffect(() => {
-    if (!projectId || !xpath) {
-      setTarget(null);
-      setResolvedField(null);
-      return;
-    }
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    const requestId = ++requestIdRef.current;
-    debounceRef.current = setTimeout(() => {
-      completePatchOperationXPath(projectId, xpath, locale)
-        .then((result) => {
-          if (requestIdRef.current !== requestId) return;
-          setTarget(result.target);
-          setResolvedField(result.resolvedField);
-        })
-        .catch(() => {
-          if (requestIdRef.current !== requestId) return;
-          setTarget(null);
-          setResolvedField(null);
-        });
-    }, DEBOUNCE_MS);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [projectId, xpath, locale]);
 
   const directDefType = targetDefType(target);
   const showFieldPicker =

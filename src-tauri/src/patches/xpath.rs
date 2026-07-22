@@ -15,21 +15,49 @@
 //! the *end* of the string as the position being completed (mirrors how `ReferencePicker` treats
 //! its whole current value as the live query). Completion is only offered for the conservative
 //! path shapes the issue documents; anything else -- axes, functions, wildcards, multiple
-//! predicates, `//`, attribute-node path segments, deeper-than-one-field nesting -- is reported as
-//! [`XPathDiagnostic`] with code `xpath_autocomplete_unsupported_pattern` and an empty completion
-//! list, but is never rejected outright: the XPath stays editable and (per the Plan's XPath
-//! evaluation/autocomplete boundary) previewable by a fuller backend XML library later.
+//! predicates, `//`, attribute-node path segments -- is reported as [`XPathDiagnostic`] with code
+//! `xpath_autocomplete_unsupported_pattern` and an empty completion list, but is never rejected
+//! outright: the XPath stays editable and (per the Plan's XPath evaluation/autocomplete boundary)
+//! previewable by a fuller backend XML library later.
+//!
+//! Field-segment depth is *not* capped: once the Def type/predicate segment resolves, a
+//! [`SchemaCursor`] walks every remaining segment against the merged [`SchemaCatalog`], descending
+//! through nested `object` fields, `listOfLi` object items (`/li[n]/...`), `keyedObjectMap` entries
+//! (`/li[n]/key` or `/li[n]/value/...`), and `keyedObjectList` data-dependent keys (`/<key>/...`)
+//! for as long as the schema keeps resolving concrete, statically-known children. A `listOfLi`/
+//! `keyedObjectMap` entry step optionally carries a single one-based positional predicate (`li[1]`,
+//! `li[2]`, ...); it only changes *which* XML list entry the XPath selects, never the selected
+//! entry's schema, so `li` and `li[n]` transition the cursor identically (see
+//! [`parse_list_item_step`]). Traversal stops -- silently, or with
+//! `xpath_autocomplete_unsupported_pattern` when a *typed* segment doesn't match anything the
+//! cursor understands -- at a scalar field, an XML shape with no statically known descendants
+//! (scalar lists, `namedChildrenMap`, `keyedValueList`, `typedReferenceList`, attributes/text/
+//! flags), an unresolvable `schemaRef`, or a discriminator-based list item's variant-specific
+//! members (only the declared base `items.schemaRef` is traversed; narrowing to one `Class="..."`
+//! variant remains unsupported since it would need predicate parsing beyond the plain positional
+//! index, which stays outside this conservative grammar -- see [`SchemaCursor::ListItem`]).
 
 use std::collections::HashSet;
 
 use serde::{Deserialize, Serialize};
 
 use crate::def_index::{suggest_def_references, DefIndex};
-use crate::schema_pack::{DefTypeSchema, FieldSchema, ReferenceScope, SchemaCatalog};
+use crate::schema_pack::{
+    collect_object_fields_ordered, lookup_object_field_with_alias, DefTypeSchema, FieldSchema,
+    FieldTypeKind, ReferenceScope, SchemaCatalog, XmlFieldShape,
+};
 
 use super::impact_graph::{is_valid_identifier, XPathTarget};
 
 const DEF_NAME_SUGGESTION_LIMIT: usize = 20;
+
+/// Conservative server-side cap on Def-type, direct-field, object-field, and field-alias
+/// suggestions, applied after deterministic sort and before serialization -- a short or empty
+/// prefix must never send hundreds of items over IPC just to render a dropdown (Plan.md's
+/// "bound completion production and dropdown rendering"). Chosen to comfortably exceed any
+/// single Def type's field count while staying small for keyboard navigation/DOM cost; revisit
+/// once profiled against real schema-pack cardinalities.
+pub(crate) const COMPLETION_ITEM_LIMIT: usize = 50;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -42,10 +70,17 @@ pub enum XPathCompletionItemKind {
     PredicateKey,
     /// A `defName` value from the Def index.
     DefName,
-    /// A field declared directly on the target Def type.
+    /// A field declared directly on the target Def type, or -- once the cursor has descended
+    /// into an object schema -- a field of that object type (own or inherited).
     Field,
-    /// An XML alias for a field declared directly on the target Def type.
+    /// An XML alias for a `Field` suggestion.
     FieldAlias,
+    /// The literal `li` element that opens a `listOfLi` or `keyedObjectMap` entry.
+    ListItem,
+    /// The literal `key` or `value` element inside a `keyedObjectMap` entry (`/li/key`,
+    /// `/li/value`). Kept distinct from `Field`/`FieldAlias` since these are structural XML
+    /// container names, not schema fields.
+    MapEntry,
 }
 
 /// One completion suggestion. `insert_text` replaces the input from the result's `replace_from`
@@ -108,9 +143,12 @@ impl XPathDiagnostic {
 }
 
 /// The field a fully- (or mostly-) typed XPath resolves to, for `PatchValueEditor`'s structured
-/// subform (a later patches-editor issue). Only ever set for a field declared *directly* on the
-/// resolved Def type -- an inherited-only match instead produces an
-/// `xpath_autocomplete_inherited_field` diagnostic (see module docs).
+/// subform. This is the *terminal* field on the path -- for a direct Def field it's a field
+/// declared directly on `def_type` (an inherited-only match instead produces an
+/// `xpath_autocomplete_inherited_field` diagnostic, see module docs); at any deeper, schema-cursor
+/// resolved level (e.g. `graphicData/texPath`) it's the nested object-type field the path actually
+/// resolved to. `def_type` always stays the *root* Def type for wire compatibility, regardless of
+/// how deep `field_name`/`field` themselves are nested.
 // `FieldSchema` (from `schema_pack`) is a Serialize-only catalog output type, so anything that
 // embeds it -- this struct and `XPathCompletionResult` below -- can only derive `Serialize`, not
 // `PartialEq`/`Deserialize`; these values only ever cross the IPC boundary outbound.
@@ -128,12 +166,69 @@ pub struct XPathCompletionResult {
     /// Byte offset into the input XPath string that completion items replace from -- i.e. the
     /// frontend applies a suggestion via `xpath[..replaceFrom] + item.insertText`.
     pub replace_from: usize,
+    /// The bounded, display-ready suggestion list (see [`COMPLETION_ITEM_LIMIT`]).
     pub items: Vec<XPathCompletionItem>,
+    /// How many suggestions matched before truncation -- always `>= items.len()`. The frontend
+    /// uses this (with `is_truncated`) to render a "showing first N matches; type more to
+    /// narrow" status without needing its own count.
+    pub total_matches: usize,
+    /// Whether `items` was truncated to `total_matches`.
+    pub is_truncated: bool,
     pub diagnostics: Vec<XPathDiagnostic>,
     /// The statically-inferred target of the XPath as typed so far (see module docs for how this
     /// differs from `impact_graph::infer_xpath_target`).
     pub target: XPathTarget,
     pub resolved_field: Option<XPathResolvedField>,
+}
+
+impl XPathCompletionResult {
+    /// Construct a result whose `items` is already within any applicable cap (or inherently
+    /// small/unbounded, e.g. structural `li`/`key`/`value` suggestions) -- `total_matches` is
+    /// simply `items.len()` and `is_truncated` is always `false`.
+    fn new(
+        replace_from: usize,
+        items: Vec<XPathCompletionItem>,
+        diagnostics: Vec<XPathDiagnostic>,
+        target: XPathTarget,
+        resolved_field: Option<XPathResolvedField>,
+    ) -> Self {
+        let total_matches = items.len();
+        Self {
+            replace_from,
+            items,
+            total_matches,
+            is_truncated: false,
+            diagnostics,
+            target,
+            resolved_field,
+        }
+    }
+
+    /// Same as [`Self::new`], but truncates `items` (already deterministically sorted by the
+    /// caller) to `limit`, recording the true match count and truncation flag.
+    fn capped(
+        replace_from: usize,
+        mut items: Vec<XPathCompletionItem>,
+        limit: usize,
+        diagnostics: Vec<XPathDiagnostic>,
+        target: XPathTarget,
+        resolved_field: Option<XPathResolvedField>,
+    ) -> Self {
+        let total_matches = items.len();
+        let is_truncated = total_matches > limit;
+        if is_truncated {
+            items.truncate(limit);
+        }
+        Self {
+            replace_from,
+            items,
+            total_matches,
+            is_truncated,
+            diagnostics,
+            target,
+            resolved_field,
+        }
+    }
 }
 
 /// Compute completions, diagnostics, and target/field inference for a `PatchPathInput` value.
@@ -175,18 +270,18 @@ pub fn complete_patch_xpath(
             && is_ident_prefix(root_text)
             && "Defs".starts_with(root_text)
         {
-            return XPathCompletionResult {
-                replace_from: segments[0].start,
-                items: vec![XPathCompletionItem {
+            return XPathCompletionResult::new(
+                segments[0].start,
+                vec![XPathCompletionItem {
                     insert_text: "Defs".to_string(),
                     label: "Defs".to_string(),
                     detail: Some("Patch document root".to_string()),
                     kind: XPathCompletionItemKind::Root,
                 }],
-                diagnostics: Vec::new(),
-                target: XPathTarget::Unsupported,
-                resolved_field: None,
-            };
+                Vec::new(),
+                XPathTarget::Unsupported,
+                None,
+            );
         }
         return terminal(
             xpath.len(),
@@ -226,35 +321,59 @@ pub fn complete_patch_xpath(
         };
     }
 
-    // segments.len() >= 3: a field segment follows the Def type/predicate.
-    let field_seg = &segments[2];
-    if segments.len() == 3 && !trailing_slash {
-        return field_completion(
-            catalog,
-            &def_type,
-            target,
-            field_seg.start,
-            field_seg.text(xpath),
-        );
+    // segments.len() >= 3: one or more field/structural segments follow the Def type/predicate.
+    // Walk them left-to-right against a schema cursor that starts at the Def's direct fields and
+    // descends through object/list/map shapes with no fixed depth limit -- see module docs.
+    let field_segments = &segments[2..];
+    let mut cursor = SchemaCursor::DefFields {
+        def_type: def_type.clone(),
+    };
+    let mut resolved_field: Option<XPathResolvedField> = None;
+
+    // Every segment except the one being completed is fully typed (has a `/` after it, whether
+    // that's an interior segment or -- when `trailing_slash` -- the last one too).
+    let complete_count = if trailing_slash {
+        field_segments.len()
+    } else {
+        field_segments.len() - 1
+    };
+    for seg in &field_segments[..complete_count] {
+        match resolve_and_transition(catalog, &mut cursor, &def_type, seg.text(xpath)) {
+            Ok(Some(field)) => resolved_field = Some(field),
+            Ok(None) => {}
+            Err(diagnostic) => {
+                return XPathCompletionResult::new(
+                    xpath.len(),
+                    Vec::new(),
+                    vec![diagnostic],
+                    target,
+                    resolved_field,
+                );
+            }
+        }
     }
 
-    // Either typing beyond the first field segment (segments.len() > 3) or a trailing slash right
-    // after the first field segment (e.g. ".../statBases/") -- both are beyond issue 05's
-    // documented completion depth. Still resolve the first field segment on a best-effort basis so
-    // a value subform can use it, matching this module's "stay transparent, don't just go silent"
-    // philosophy.
-    let (resolved_field, mut diagnostics) =
-        resolve_field(catalog, &def_type, field_seg.text(xpath));
-    diagnostics.push(XPathDiagnostic::warning(
-        "xpath_autocomplete_unsupported_pattern",
-        "Only one field segment after the Def type is supported for autocomplete.",
-    ));
-    XPathCompletionResult {
-        replace_from: xpath.len(),
-        items: Vec::new(),
-        diagnostics,
-        target,
-        resolved_field,
+    if trailing_slash {
+        child_completion(
+            catalog,
+            &cursor,
+            &def_type,
+            target,
+            xpath.len(),
+            "",
+            resolved_field,
+        )
+    } else {
+        let final_seg = &field_segments[complete_count];
+        child_completion(
+            catalog,
+            &cursor,
+            &def_type,
+            target,
+            final_seg.start,
+            final_seg.text(xpath),
+            resolved_field,
+        )
     }
 }
 
@@ -533,15 +652,15 @@ fn predicate_completion(
         let after_key_trimmed_start = after_key.len() - after_key.trim_start().len();
         let after_key_trimmed = &after_key[after_key_trimmed_start..];
         let Some(after_eq) = after_key_trimmed.strip_prefix('=') else {
-            return XPathCompletionResult {
-                replace_from: base_offset + trimmed_start,
-                items: vec![predicate_key_item(key)],
-                diagnostics: Vec::new(),
-                target: XPathTarget::DefType {
+            return XPathCompletionResult::new(
+                base_offset + trimmed_start,
+                vec![predicate_key_item(key)],
+                Vec::new(),
+                XPathTarget::DefType {
                     def_type: def_type.to_string(),
                 },
-                resolved_field: None,
-            };
+                None,
+            );
         };
         let after_eq_trimmed_start = after_eq.len() - after_eq.trim_start().len();
         let after_eq_trimmed = &after_eq[after_eq_trimmed_start..];
@@ -589,27 +708,27 @@ fn predicate_completion(
                     kind: XPathCompletionItemKind::DefName,
                 })
                 .collect();
-            return XPathCompletionResult {
-                replace_from: value_start,
+            return XPathCompletionResult::new(
+                value_start,
                 items,
-                diagnostics: Vec::new(),
-                target: XPathTarget::DefType {
+                Vec::new(),
+                XPathTarget::DefType {
                     def_type: def_type.to_string(),
                 },
-                resolved_field: None,
-            };
+                None,
+            );
         }
         // `@Name`/`@ParentName` are recognized, supported predicate syntax, but RimEdit has no
         // index of inheritance-template `Name=`/`ParentName=` identifiers to suggest values from.
-        return XPathCompletionResult {
-            replace_from: value_start,
-            items: Vec::new(),
-            diagnostics: Vec::new(),
-            target: XPathTarget::DefType {
+        return XPathCompletionResult::new(
+            value_start,
+            Vec::new(),
+            Vec::new(),
+            XPathTarget::DefType {
                 def_type: def_type.to_string(),
             },
-            resolved_field: None,
-        };
+            None,
+        );
     }
 
     let needle = trimmed.to_lowercase();
@@ -627,15 +746,15 @@ fn predicate_completion(
             ),
         );
     }
-    XPathCompletionResult {
-        replace_from: base_offset + trimmed_start,
+    XPathCompletionResult::new(
+        base_offset + trimmed_start,
         items,
-        diagnostics: Vec::new(),
-        target: XPathTarget::DefType {
+        Vec::new(),
+        XPathTarget::DefType {
             def_type: def_type.to_string(),
         },
-        resolved_field: None,
-    }
+        None,
+    )
 }
 
 fn predicate_key_item(key: &str) -> XPathCompletionItem {
@@ -656,18 +775,18 @@ fn predicate_key_item(key: &str) -> XPathCompletionItem {
 // ---------------------------------------------------------------------------
 
 fn root_completion(replace_from: usize) -> XPathCompletionResult {
-    XPathCompletionResult {
+    XPathCompletionResult::new(
         replace_from,
-        items: vec![XPathCompletionItem {
+        vec![XPathCompletionItem {
             insert_text: "Defs".to_string(),
             label: "Defs".to_string(),
             detail: Some("Patch document root".to_string()),
             kind: XPathCompletionItemKind::Root,
         }],
-        diagnostics: Vec::new(),
-        target: XPathTarget::Unsupported,
-        resolved_field: None,
-    }
+        Vec::new(),
+        XPathTarget::Unsupported,
+        None,
+    )
 }
 
 fn def_type_completion(
@@ -691,12 +810,47 @@ fn def_type_completion(
         })
         .collect();
     items.sort_by(|a, b| a.label.cmp(&b.label));
-    XPathCompletionResult {
+    XPathCompletionResult::capped(
         replace_from,
         items,
-        diagnostics: Vec::new(),
-        target: XPathTarget::Unsupported,
-        resolved_field: None,
+        COMPLETION_ITEM_LIMIT,
+        Vec::new(),
+        XPathTarget::Unsupported,
+        None,
+    )
+}
+
+/// Append `Field`/`FieldAlias` items for every `(name, field)` pair whose name or XML alias
+/// starts with `needle` (case-insensitive; an empty `needle` matches everything), preserving
+/// `fields`' own iteration order. Shared by [`field_completion`] (direct Def fields) and
+/// [`object_field_completion`] (nested object-type fields via [`collect_object_fields_ordered`]),
+/// which otherwise duplicated this exact matching loop over two differently-shaped field
+/// iterables.
+fn push_matching_field_items<'a>(
+    fields: impl IntoIterator<Item = (impl AsRef<str>, &'a FieldSchema)>,
+    needle: &str,
+    items: &mut Vec<XPathCompletionItem>,
+) {
+    for (name, field) in fields {
+        let name = name.as_ref();
+        if needle.is_empty() || name.to_lowercase().starts_with(needle) {
+            items.push(XPathCompletionItem {
+                insert_text: name.to_string(),
+                label: name.to_string(),
+                detail: field.label.clone(),
+                kind: XPathCompletionItemKind::Field,
+            });
+        }
+        for alias in &field.xml_aliases {
+            if needle.is_empty() || alias.to_lowercase().starts_with(needle) {
+                items.push(XPathCompletionItem {
+                    insert_text: alias.clone(),
+                    label: alias.clone(),
+                    detail: Some(format!("XML alias for '{name}'")),
+                    kind: XPathCompletionItemKind::FieldAlias,
+                });
+            }
+        }
     }
 }
 
@@ -708,52 +862,34 @@ fn field_completion(
     partial: &str,
 ) -> XPathCompletionResult {
     if !is_ident_prefix(partial) {
-        return XPathCompletionResult {
+        return XPathCompletionResult::new(
             replace_from,
-            items: Vec::new(),
-            diagnostics: vec![XPathDiagnostic::warning(
+            Vec::new(),
+            vec![XPathDiagnostic::warning(
                 "xpath_autocomplete_unsupported_pattern",
                 "Field segment must be a plain element name; attribute-node targeting and functions are not supported here.",
             )],
             target,
-            resolved_field: None,
-        };
+            None,
+        );
     }
 
     let mut items = Vec::new();
     if let Some(schema) = catalog.def_types.get(def_type) {
         let needle = partial.to_lowercase();
-        for (name, field) in &schema.fields {
-            if needle.is_empty() || name.to_lowercase().starts_with(&needle) {
-                items.push(XPathCompletionItem {
-                    insert_text: name.clone(),
-                    label: name.clone(),
-                    detail: field.label.clone(),
-                    kind: XPathCompletionItemKind::Field,
-                });
-            }
-            for alias in &field.xml_aliases {
-                if needle.is_empty() || alias.to_lowercase().starts_with(&needle) {
-                    items.push(XPathCompletionItem {
-                        insert_text: alias.clone(),
-                        label: alias.clone(),
-                        detail: Some(format!("XML alias for '{name}'")),
-                        kind: XPathCompletionItemKind::FieldAlias,
-                    });
-                }
-            }
-        }
+        push_matching_field_items(&schema.fields, &needle, &mut items);
     }
     items.sort_by(|a, b| a.label.cmp(&b.label));
 
     let (resolved_field, diagnostics) = resolve_field(catalog, def_type, partial);
-    XPathCompletionResult {
+    XPathCompletionResult::capped(
         replace_from,
         items,
+        COMPLETION_ITEM_LIMIT,
         diagnostics,
         target,
         resolved_field,
-    }
+    )
 }
 
 /// Resolve a fully-typed field name (or alias) against a Def type's *direct* fields only.
@@ -781,19 +917,7 @@ fn resolve_field(
         );
     }
     if is_inherited_only_field(catalog, def_type, name) {
-        return (
-            None,
-            vec![XPathDiagnostic::warning(
-                "xpath_autocomplete_inherited_field",
-                format!(
-                    "'{name}' is declared on a schema parent of '{def_type}', not on '{def_type}' itself. RimWorld applies patches before XML inheritance, so this field can only be targeted if it is physically present in the XML being patched."
-                ),
-            )
-            .with_args(crate::diagnostics::diagnostic_args([
-                ("fieldName", name.into()),
-                ("defType", def_type.into()),
-            ]))],
-        );
+        return (None, vec![inherited_field_diagnostic(name, def_type)]);
     }
     (None, Vec::new())
 }
@@ -853,6 +977,449 @@ fn is_inherited_only_field(catalog: &SchemaCatalog, def_type: &str, name: &str) 
 }
 
 // ---------------------------------------------------------------------------
+// Schema cursor traversal (unlimited-depth field/structural descent)
+// ---------------------------------------------------------------------------
+
+/// Where the segment walk is positioned in the schema after the Def type/predicate segment.
+/// Contains only catalog-derived identifiers and this small state enum -- never project XML --
+/// so completion stays a pure, fast, deterministic function of the typed text and the catalog.
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum SchemaCursor {
+    /// Direct XML children of a Def type. RimWorld applies patches before Def XML inheritance, so
+    /// only fields declared directly on `def_type` are completed/resolved here -- an
+    /// ancestor-only field surfaces the existing `xpath_autocomplete_inherited_field` diagnostic
+    /// instead (see [`resolve_field`]/[`is_inherited_only_field`]).
+    DefFields { def_type: String },
+    /// Fields of an object-type schema, resolved through its `inherits` chain and XML aliases
+    /// (`schema_pack::lookup_object_field_with_alias`/`collect_object_fields_ordered`). Unlike
+    /// `DefFields`, inherited fields are completed/resolved directly: object-type inheritance is
+    /// ordinary schema inheritance already resolved on one XML element, not RimWorld's
+    /// before-patches Def inheritance.
+    ObjectFields { schema_ref: String },
+    /// A `listOfLi` field whose items are objects: the next segment must be `li` or `li[n]` (see
+    /// [`parse_list_item_step`]) before entering `schema_ref`'s object fields. For a
+    /// discriminator-based item type, only the declared base `schema_ref` is traversed --
+    /// narrowing to one `Class="..."` variant's own members would require predicate parsing beyond
+    /// the plain positional index, which stays outside this conservative grammar (see module
+    /// docs).
+    ListItem { schema_ref: String },
+    /// A `keyedObjectMap` field: the next segment must be `li` or `li[n]` before entering a map
+    /// entry (see [`SchemaCursor::KeyedMapEntry`]).
+    KeyedMapLi { schema_ref: String },
+    /// Inside a `keyedObjectMap` `<li>`: the next segment is either `key` (a scalar terminal) or
+    /// `value` (enters `schema_ref`'s object fields).
+    KeyedMapEntry { schema_ref: String },
+    /// A `keyedObjectList` field: the next segment is a data-dependent key (the item's own XML
+    /// element name, e.g. a `defName`) rather than a schema-known name. RimEdit has no index of
+    /// these keys, so no suggestions are offered at an empty segment; any non-empty, well-formed
+    /// segment is accepted as the key and transitions into `schema_ref`'s object fields.
+    DynamicKey { schema_ref: String },
+    /// A scalar field, or an XML shape with no statically known descendants (scalar lists,
+    /// `namedChildrenMap`, `keyedValueList`, `typedReferenceList`, attributes/text/flags, or an
+    /// object/list field whose `schemaRef` doesn't resolve in the catalog).
+    Terminal,
+}
+
+/// Choose the next [`SchemaCursor`] after `field` resolves, from both its `field_type.kind` and
+/// `xml` shape together (see Plan.md's field-representation/continuation table). Falls back to
+/// [`SchemaCursor::Terminal`] for any shape with no statically known descendants, including an
+/// object/list field whose declared `schemaRef` isn't present in `catalog` -- an unknown ref stays
+/// editable but uncompleted rather than guessed at.
+fn cursor_after_field(catalog: &SchemaCatalog, field: &FieldSchema) -> SchemaCursor {
+    match field.xml {
+        // Some object fields use `xml: element` rather than `xml: object` (mirrors
+        // `xml_document::validation::fields::validate_object_children`'s own
+        // `matches!(.., XmlFieldShape::Object | XmlFieldShape::Element)` check).
+        XmlFieldShape::Object | XmlFieldShape::Element
+            if field.field_type.kind == FieldTypeKind::Object =>
+        {
+            object_schema_cursor(catalog, field.field_type.schema_ref.as_deref())
+        }
+        XmlFieldShape::ListOfLi if field.field_type.kind == FieldTypeKind::List => {
+            match object_item_schema_ref(catalog, field) {
+                Some(schema_ref) => SchemaCursor::ListItem {
+                    schema_ref: schema_ref.to_string(),
+                },
+                None => SchemaCursor::Terminal,
+            }
+        }
+        XmlFieldShape::KeyedObjectMap => match object_item_schema_ref(catalog, field) {
+            Some(schema_ref) => SchemaCursor::KeyedMapLi {
+                schema_ref: schema_ref.to_string(),
+            },
+            None => SchemaCursor::Terminal,
+        },
+        XmlFieldShape::KeyedObjectList => match object_item_schema_ref(catalog, field) {
+            Some(schema_ref) => SchemaCursor::DynamicKey {
+                schema_ref: schema_ref.to_string(),
+            },
+            None => SchemaCursor::Terminal,
+        },
+        // Scalar lists, NamedChildrenMap, KeyedValueList, TypedReferenceList, Attribute, Text,
+        // FlagsText: no statically known child schema.
+        _ => SchemaCursor::Terminal,
+    }
+}
+
+fn object_schema_cursor(catalog: &SchemaCatalog, schema_ref: Option<&str>) -> SchemaCursor {
+    match schema_ref {
+        Some(schema_ref) if catalog.object_types.contains_key(schema_ref) => {
+            SchemaCursor::ObjectFields {
+                schema_ref: schema_ref.to_string(),
+            }
+        }
+        _ => SchemaCursor::Terminal,
+    }
+}
+
+/// `field.items.schemaRef` when `items.kind` is `object` and it resolves in `catalog`.
+fn object_item_schema_ref<'a>(catalog: &SchemaCatalog, field: &'a FieldSchema) -> Option<&'a str> {
+    let items = field.items.as_ref()?;
+    if items.kind != FieldTypeKind::Object {
+        return None;
+    }
+    let schema_ref = items.schema_ref.as_deref()?;
+    catalog
+        .object_types
+        .contains_key(schema_ref)
+        .then_some(schema_ref)
+}
+
+/// The three shapes a `listOfLi`/`keyedObjectMap` entry step (`li`, `li[n]`, ...) can take.
+/// Deliberately independent of any RimWorld schema or project data -- see [`parse_list_item_step`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ListItemStep {
+    /// Exactly `li`, or `li[n]` for a positive decimal `n` with no trailing content.
+    Valid,
+    /// A trailing, unclosed positional predicate (`li[`, `li[12`) -- still being typed.
+    Incomplete,
+    /// Anything else: a non-`li` step, a malformed/unsupported predicate (`li[0]`, `li[-1]`,
+    /// `li[1.5]`, `li[last()]`, `li[@Class="..."]`), multiple predicates (`li[1][2]`), or trailing
+    /// content after the closing bracket (`li[1]extra`).
+    Invalid,
+}
+
+/// Classify a single fully-typed list-entry step's text against the grammar `"li" | "li"
+/// "[" positive-integer "]"` (see module docs). Reuses [`find_matching_close`] so the closing
+/// bracket must belong to the first (and only) opening bracket, which naturally rejects a second
+/// adjacent predicate and any trailing text. The index is validated lexically (leading digit
+/// 1-9, remaining digits 0-9) rather than parsed to an integer, so an arbitrarily long decimal
+/// index isn't rejected by an arbitrary overflow limit.
+fn parse_list_item_step(text: &str) -> ListItemStep {
+    let Some(rest) = text.strip_prefix("li") else {
+        return ListItemStep::Invalid;
+    };
+    if rest.is_empty() {
+        return ListItemStep::Valid;
+    }
+    if !rest.starts_with('[') {
+        return ListItemStep::Invalid;
+    }
+    match find_matching_close(rest, 0) {
+        None => ListItemStep::Incomplete,
+        Some(close_pos) if close_pos != rest.len() - 1 => ListItemStep::Invalid,
+        Some(close_pos) => {
+            let content = &rest[1..close_pos];
+            if is_positive_integer(content) {
+                ListItemStep::Valid
+            } else {
+                ListItemStep::Invalid
+            }
+        }
+    }
+}
+
+/// A non-empty decimal literal with no leading zero, e.g. `"1"`, `"10"` -- rejects `"0"`, `"01"`,
+/// `"-1"`, `"1.5"`, and non-numeric content alike.
+fn is_positive_integer(s: &str) -> bool {
+    let mut chars = s.chars();
+    match chars.next() {
+        Some(c) if c.is_ascii_digit() && c != '0' => chars.all(|c| c.is_ascii_digit()),
+        _ => false,
+    }
+}
+
+/// Resolve one fully-typed segment against `cursor`, mutating it in place to the next position.
+/// Returns the field just resolved (for [`XPathResolvedField`] accumulation) when this segment
+/// named a real field, `Ok(None)` for a structural transition (`li`/`value`) that doesn't itself
+/// name a field, or `Err` with the existing `xpath_autocomplete_unsupported_pattern` diagnostic
+/// when `cursor` cannot make sense of `text` at all -- callers stop the walk on `Err` rather than
+/// guessing. A [`SchemaCursor::Terminal`] cursor always succeeds with `Ok(None)` and no diagnostic:
+/// typing past a scalar field is simply not completed, not an error (see module docs).
+fn resolve_and_transition(
+    catalog: &SchemaCatalog,
+    cursor: &mut SchemaCursor,
+    def_type: &str,
+    text: &str,
+) -> Result<Option<XPathResolvedField>, XPathDiagnostic> {
+    match cursor.clone() {
+        SchemaCursor::DefFields { def_type: dt } => {
+            if let Some((canonical, field)) = direct_field(catalog, &dt, text) {
+                let resolved = XPathResolvedField {
+                    def_type: dt.clone(),
+                    field_name: canonical.to_string(),
+                    field: field.clone(),
+                };
+                *cursor = cursor_after_field(catalog, field);
+                Ok(Some(resolved))
+            } else if is_inherited_only_field(catalog, &dt, text) {
+                Err(inherited_field_diagnostic(text, &dt))
+            } else {
+                Err(unsupported_child_segment())
+            }
+        }
+        SchemaCursor::ObjectFields { schema_ref } => {
+            if let Some((canonical, field)) =
+                lookup_object_field_with_alias(catalog, &schema_ref, text)
+            {
+                let resolved = XPathResolvedField {
+                    def_type: def_type.to_string(),
+                    field_name: canonical.to_string(),
+                    field: field.clone(),
+                };
+                *cursor = cursor_after_field(catalog, field);
+                Ok(Some(resolved))
+            } else {
+                Err(unsupported_child_segment())
+            }
+        }
+        SchemaCursor::ListItem { schema_ref } => match parse_list_item_step(text) {
+            ListItemStep::Valid => {
+                *cursor = SchemaCursor::ObjectFields { schema_ref };
+                Ok(None)
+            }
+            // Structurally can't happen for a fully-typed (non-final) segment -- an unclosed `[`
+            // keeps bracket depth > 0, so `split_segments` can't have split a `/` after it.
+            ListItemStep::Incomplete => Ok(None),
+            ListItemStep::Invalid => Err(unsupported_child_segment()),
+        },
+        SchemaCursor::KeyedMapLi { schema_ref } => match parse_list_item_step(text) {
+            ListItemStep::Valid => {
+                *cursor = SchemaCursor::KeyedMapEntry { schema_ref };
+                Ok(None)
+            }
+            ListItemStep::Incomplete => Ok(None),
+            ListItemStep::Invalid => Err(unsupported_child_segment()),
+        },
+        SchemaCursor::KeyedMapEntry { schema_ref } => match text {
+            "key" => {
+                *cursor = SchemaCursor::Terminal;
+                Ok(None)
+            }
+            "value" => {
+                *cursor = SchemaCursor::ObjectFields { schema_ref };
+                Ok(None)
+            }
+            _ => Err(unsupported_child_segment()),
+        },
+        SchemaCursor::DynamicKey { schema_ref } => {
+            if is_valid_identifier(text) {
+                *cursor = SchemaCursor::ObjectFields { schema_ref };
+                Ok(None)
+            } else {
+                Err(unsupported_child_segment())
+            }
+        }
+        // Nothing more to resolve past a scalar/unresolvable field -- stay silent, not an error.
+        SchemaCursor::Terminal => Ok(None),
+    }
+}
+
+fn unsupported_child_segment() -> XPathDiagnostic {
+    XPathDiagnostic::warning(
+        "xpath_autocomplete_unsupported_pattern",
+        "This path segment does not match a known schema field or structural entry, so deeper autocomplete stops here.",
+    )
+}
+
+fn inherited_field_diagnostic(name: &str, def_type: &str) -> XPathDiagnostic {
+    XPathDiagnostic::warning(
+        "xpath_autocomplete_inherited_field",
+        format!(
+            "'{name}' is declared on a schema parent of '{def_type}', not on '{def_type}' itself. RimWorld applies patches before XML inheritance, so this field can only be targeted if it is physically present in the XML being patched."
+        ),
+    )
+    .with_args(crate::diagnostics::diagnostic_args([
+        ("fieldName", name.into()),
+        ("defType", def_type.into()),
+    ]))
+}
+
+/// Build the completion result for the segment currently being typed (in progress, or an empty
+/// segment right after a trailing slash), dispatching on the cursor's current position.
+fn child_completion(
+    catalog: &SchemaCatalog,
+    cursor: &SchemaCursor,
+    def_type: &str,
+    target: XPathTarget,
+    replace_from: usize,
+    partial: &str,
+    resolved_field: Option<XPathResolvedField>,
+) -> XPathCompletionResult {
+    match cursor {
+        SchemaCursor::DefFields { def_type } => {
+            field_completion(catalog, def_type, target, replace_from, partial)
+        }
+        SchemaCursor::ObjectFields { schema_ref } => object_field_completion(
+            catalog,
+            schema_ref,
+            def_type,
+            target,
+            replace_from,
+            partial,
+            resolved_field,
+        ),
+        SchemaCursor::ListItem { .. } | SchemaCursor::KeyedMapLi { .. } => {
+            list_item_step_completion(target, replace_from, partial, resolved_field)
+        }
+        SchemaCursor::KeyedMapEntry { .. } => literal_segment_completion(
+            &["key", "value"],
+            XPathCompletionItemKind::MapEntry,
+            target,
+            replace_from,
+            partial,
+            resolved_field,
+        ),
+        // DynamicKey: the key is data-dependent (e.g. a defName RimEdit has no index of) -- offer
+        // no invented suggestions, per Plan.md's keyedObjectList row.
+        SchemaCursor::DynamicKey { .. } | SchemaCursor::Terminal => {
+            XPathCompletionResult::new(replace_from, Vec::new(), Vec::new(), target, resolved_field)
+        }
+    }
+}
+
+/// Suggest fields (and XML aliases) of an object-type schema, resolved through its `inherits`
+/// chain -- the `ObjectFields` cursor's counterpart to [`field_completion`]. Also resolves `partial`
+/// as a terminal field for the value subform when it's a complete, exact field name or alias (no
+/// "inherited-only" restriction here: see [`SchemaCursor::ObjectFields`]'s docs).
+///
+/// `container_field` is the field the walk already resolved to reach this cursor (e.g.
+/// `graphicData` itself, for the `ObjectFields { schema_ref: "GraphicData" }` cursor) -- when
+/// `partial` doesn't exactly resolve to one of `schema_ref`'s own fields (an empty segment right
+/// after a trailing slash, or a still-being-typed prefix), this is kept as the best-effort
+/// resolved field rather than discarded to `None`, matching every other cursor kind's
+/// "in-progress typing still resolves to the last known-good field" behavior (see
+/// `SchemaCursor::ListItem`/`KeyedMapEntry`'s `literal_segment_completion` callers).
+fn object_field_completion(
+    catalog: &SchemaCatalog,
+    schema_ref: &str,
+    def_type: &str,
+    target: XPathTarget,
+    replace_from: usize,
+    partial: &str,
+    container_field: Option<XPathResolvedField>,
+) -> XPathCompletionResult {
+    if !is_ident_prefix(partial) {
+        return XPathCompletionResult::new(
+            replace_from,
+            Vec::new(),
+            vec![XPathDiagnostic::warning(
+                "xpath_autocomplete_unsupported_pattern",
+                "Field segment must be a plain element name; attribute-node targeting and functions are not supported here.",
+            )],
+            target,
+            container_field,
+        );
+    }
+
+    let needle = partial.to_lowercase();
+    let mut items = Vec::new();
+    push_matching_field_items(
+        collect_object_fields_ordered(catalog, schema_ref),
+        &needle,
+        &mut items,
+    );
+    items.sort_by(|a, b| a.label.cmp(&b.label));
+
+    let resolved_field = lookup_object_field_with_alias(catalog, schema_ref, partial)
+        .map(|(canonical, field)| XPathResolvedField {
+            def_type: def_type.to_string(),
+            field_name: canonical.to_string(),
+            field: field.clone(),
+        })
+        .or(container_field);
+
+    XPathCompletionResult::capped(
+        replace_from,
+        items,
+        COMPLETION_ITEM_LIMIT,
+        Vec::new(),
+        target,
+        resolved_field,
+    )
+}
+
+/// Completion for the segment currently being typed at a `ListItem`/`KeyedMapLi` cursor: the
+/// structural `li` suggestion while `partial` is still a plain identifier prefix (`""`, `"l"`,
+/// `"li"`), and -- once brackets appear -- [`parse_list_item_step`]'s classification instead. A
+/// complete, valid positional predicate (`li[1]`) or one still being typed (`li[`, `li[1`) yields
+/// no items and no diagnostic; a completed invalid predicate yields the same
+/// `xpath_autocomplete_unsupported_pattern` diagnostic a fully-typed invalid segment gets from
+/// [`resolve_and_transition`], so invalid syntax reads the same whether or not a `/` follows it.
+fn list_item_step_completion(
+    target: XPathTarget,
+    replace_from: usize,
+    partial: &str,
+    resolved_field: Option<XPathResolvedField>,
+) -> XPathCompletionResult {
+    if is_ident_prefix(partial) {
+        return literal_segment_completion(
+            &["li"],
+            XPathCompletionItemKind::ListItem,
+            target,
+            replace_from,
+            partial,
+            resolved_field,
+        );
+    }
+    match parse_list_item_step(partial) {
+        ListItemStep::Valid | ListItemStep::Incomplete => {
+            XPathCompletionResult::new(replace_from, Vec::new(), Vec::new(), target, resolved_field)
+        }
+        ListItemStep::Invalid => XPathCompletionResult::new(
+            replace_from,
+            Vec::new(),
+            vec![unsupported_child_segment()],
+            target,
+            resolved_field,
+        ),
+    }
+}
+
+/// Suggest a fixed set of structural literal segments (`li`, or `key`/`value`) matching `partial`
+/// as a plain-text prefix. Shared by the `ListItem`/`KeyedMapLi` and `KeyedMapEntry` cursors --
+/// only the candidate literals and item kind differ.
+fn literal_segment_completion(
+    literals: &[&str],
+    kind: XPathCompletionItemKind,
+    target: XPathTarget,
+    replace_from: usize,
+    partial: &str,
+    resolved_field: Option<XPathResolvedField>,
+) -> XPathCompletionResult {
+    if !is_ident_prefix(partial) {
+        return XPathCompletionResult::new(
+            replace_from,
+            Vec::new(),
+            Vec::new(),
+            target,
+            resolved_field,
+        );
+    }
+    let items = literals
+        .iter()
+        .filter(|l| l.starts_with(partial))
+        .map(|l| XPathCompletionItem {
+            insert_text: l.to_string(),
+            label: l.to_string(),
+            detail: None,
+            kind,
+        })
+        .collect();
+    XPathCompletionResult::new(replace_from, items, Vec::new(), target, resolved_field)
+}
+
+// ---------------------------------------------------------------------------
 // Shared small helpers
 // ---------------------------------------------------------------------------
 
@@ -861,23 +1428,17 @@ fn is_ident_prefix(s: &str) -> bool {
 }
 
 fn terminal(replace_from: usize, diagnostic: XPathDiagnostic) -> XPathCompletionResult {
-    XPathCompletionResult {
+    XPathCompletionResult::new(
         replace_from,
-        items: Vec::new(),
-        diagnostics: vec![diagnostic],
-        target: XPathTarget::Unsupported,
-        resolved_field: None,
-    }
+        Vec::new(),
+        vec![diagnostic],
+        XPathTarget::Unsupported,
+        None,
+    )
 }
 
 fn empty(replace_from: usize, target: XPathTarget) -> XPathCompletionResult {
-    XPathCompletionResult {
-        replace_from,
-        items: Vec::new(),
-        diagnostics: Vec::new(),
-        target,
-        resolved_field: None,
-    }
+    XPathCompletionResult::new(replace_from, Vec::new(), Vec::new(), target, None)
 }
 
 #[cfg(test)]

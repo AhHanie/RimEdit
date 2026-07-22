@@ -42,9 +42,12 @@ describe("PatchOperationForm", () => {
     render(
       <PatchOperationForm node={addNode()} catalog={null} readOnly={false} projectId={null} onChange={onChange} />,
     );
-    fireEvent.change(screen.getByDisplayValue('Defs/ThingDef[defName="Wall"]'), {
-      target: { value: 'Defs/ThingDef[defName="Steel"]' },
-    });
+    const input = screen.getByDisplayValue('Defs/ThingDef[defName="Wall"]');
+    fireEvent.change(input, { target: { value: 'Defs/ThingDef[defName="Steel"]' } });
+    // The xpath field is a staged editor (Plan.md's tree-mutation-per-keystroke fix): typing
+    // updates the local draft immediately but only commits (calling `onChange`) at a boundary
+    // like blur, not on every keystroke.
+    fireEvent.blur(input);
     expect(onChange).toHaveBeenCalled();
     const updater = onChange.mock.calls[0][0] as (n: PatchOperationNode) => PatchOperationNode;
     const updated = updater(addNode());
@@ -99,9 +102,9 @@ describe("PatchOperationForm", () => {
       kind: { type: "conditional", data: { xpath: "Defs/ThingDef", matchOp: null, nomatchOp: null } },
     });
     render(<PatchOperationForm node={node} catalog={null} readOnly={false} projectId={null} onChange={onChange} />);
-    fireEvent.change(screen.getByDisplayValue("Defs/ThingDef"), {
-      target: { value: "Defs/ThingDef/statBases" },
-    });
+    const input = screen.getByDisplayValue("Defs/ThingDef");
+    fireEvent.change(input, { target: { value: "Defs/ThingDef/statBases" } });
+    fireEvent.blur(input);
     const updater = onChange.mock.calls[0][0] as (n: PatchOperationNode) => PatchOperationNode;
     const updated = updater(node);
     expect(updated.kind.type).toBe("conditional");

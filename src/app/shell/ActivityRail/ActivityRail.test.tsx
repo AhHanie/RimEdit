@@ -8,6 +8,7 @@ function defaultProps(
   return {
     activeView: null as Parameters<typeof ActivityRail>[0]["activeView"],
     onSelectView: vi.fn(),
+    onOpenPreferences: vi.fn(),
     ...overrides,
   };
 }
@@ -17,32 +18,27 @@ describe("ActivityRail", () => {
     render(<ActivityRail {...defaultProps()} />);
     expect(screen.getByRole("button", { name: "Explorer" })).toBeDefined();
     expect(screen.getByRole("button", { name: "Search" })).toBeDefined();
-    expect(screen.getByRole("button", { name: "Settings" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Preferences" })).toBeDefined();
   });
 
-  it("Settings button is enabled", () => {
+  it("Preferences button is enabled", () => {
     render(<ActivityRail {...defaultProps()} />);
-    const btn = screen.getByRole("button", { name: "Settings" }) as HTMLButtonElement;
+    const btn = screen.getByRole("button", { name: "Preferences" }) as HTMLButtonElement;
     expect(btn.disabled).toBe(false);
   });
 
-  it("calls onSelectView with 'settings' when Settings is clicked", () => {
-    const onSelectView = vi.fn();
-    render(<ActivityRail {...defaultProps({ onSelectView })} />);
-    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
-    expect(onSelectView).toHaveBeenCalledWith("settings");
+  it("calls onOpenPreferences when the gear is clicked", () => {
+    const onOpenPreferences = vi.fn();
+    render(<ActivityRail {...defaultProps({ onOpenPreferences })} />);
+    fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
+    expect(onOpenPreferences).toHaveBeenCalledOnce();
   });
 
-  it("Settings button has active styling when activeView is settings", () => {
-    render(<ActivityRail {...defaultProps({ activeView: "settings" })} />);
-    const btn = screen.getByRole("button", { name: "Settings" });
-    expect(btn.className).toContain("btnActive");
-  });
-
-  it("Settings button does not have active styling when another view is active", () => {
+  it("Preferences button is never rendered as an activity pane / pressed state", () => {
     render(<ActivityRail {...defaultProps({ activeView: "explorer" })} />);
-    const btn = screen.getByRole("button", { name: "Settings" });
+    const btn = screen.getByRole("button", { name: "Preferences" });
     expect(btn.className).not.toContain("btnActive");
+    expect(btn.hasAttribute("aria-pressed")).toBe(false);
   });
 
   it("calls onSelectView with 'explorer' when Explorer is clicked", () => {

@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // Generates src/i18n/generated/translation-keys.ts from src/i18n/resources/en/*.json.
 // Usage: node scripts/i18n/generate-translation-keys.mjs
 
