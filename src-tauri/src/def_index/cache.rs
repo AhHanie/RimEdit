@@ -2,7 +2,7 @@ use crate::project_model::{AppError, ProjectSettings};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
-use super::builder::{build_def_index, DefIndexBuildOptions};
+use super::builder::{build_def_index, build_def_index_with_progress, DefIndexBuildOptions};
 use super::fingerprint::{file_fingerprints, settings_fingerprint, IndexedFileFingerprint};
 use super::model::DefIndex;
 
@@ -75,10 +75,21 @@ pub fn rebuild_and_store_def_index(
     settings: &ProjectSettings,
     options: DefIndexBuildOptions<'_>,
 ) -> Result<DefIndex, DefIndexCacheError> {
+    rebuild_and_store_def_index_with_progress(app_data_dir, settings, options, None)
+}
+
+/// Same as `rebuild_and_store_def_index`, but threads a live-progress callback through to
+/// `build_def_index_with_progress` -- see that function's doc comment.
+pub fn rebuild_and_store_def_index_with_progress(
+    app_data_dir: &Path,
+    settings: &ProjectSettings,
+    options: DefIndexBuildOptions<'_>,
+    on_file_indexed: Option<&dyn Fn()>,
+) -> Result<DefIndex, DefIndexCacheError> {
     let should_store = options.replacement.is_none();
     let settings_hash = settings_fingerprint(settings, &options);
     let files = file_fingerprints(settings, &options).unwrap_or_default();
-    let index = build_def_index(settings, options);
+    let index = build_def_index_with_progress(settings, options, on_file_indexed);
 
     if should_store {
         let cache = DefIndexCacheFile {

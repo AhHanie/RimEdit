@@ -350,6 +350,135 @@ fn steam_workshop_collection_scans_defs_from_every_immediate_item_directory() {
 }
 
 #[test]
+fn steam_workshop_collection_isolates_diagnostics_per_item_with_deterministic_ordering() {
+    let collection_root = temp_dir();
+
+    // Item "111": valid, no LoadFolders.xml, no diagnostics.
+    let item_ok = collection_root.join("111");
+    fs::create_dir_all(item_ok.join("Defs")).unwrap();
+    fs::write(item_ok.join("Defs").join("Ok.xml"), "<Defs/>").unwrap();
+
+    // Item "222": LoadFolders.xml references a folder that doesn't exist.
+    let item_missing_folder = collection_root.join("222");
+    fs::create_dir_all(item_missing_folder.join("Defs")).unwrap();
+    fs::write(
+        item_missing_folder.join("LoadFolders.xml"),
+        r#"<loadFolders><v1.6><li>NoSuchFolder</li></v1.6></loadFolders>"#,
+    )
+    .unwrap();
+
+    // Item "333": unrelated files alongside its Defs folder don't affect resolution.
+    let item_unrelated_files = collection_root.join("333");
+    fs::create_dir_all(item_unrelated_files.join("Defs")).unwrap();
+    fs::write(item_unrelated_files.join("About.txt"), "not xml").unwrap();
+    fs::write(item_unrelated_files.join("Defs").join("Ok.xml"), "<Defs/>").unwrap();
+
+    let settings = ProjectSettings {
+        schema_version: 3,
+        game_version: "1.6".to_string(),
+        locale: "en".to_string(),
+        locations: vec![make_steam_workshop_location(
+            "workshop",
+            "Steam Workshop",
+            &collection_root,
+        )],
+        active_project_id: None,
+    };
+
+    let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
+
+    // Item isolation: only item "222"'s diagnostic is present, scoped to that item.
+    assert_eq!(scan.diagnostics.len(), 1, "diagnostics: {:?}", scan.diagnostics);
+    let diagnostic = &scan.diagnostics[0];
+    assert_eq!(diagnostic.scope, "222");
+    assert_eq!(diagnostic.code, "load_folder_missing");
+    assert_eq!(
+        diagnostic.args.get("folder"),
+        Some(&crate::diagnostics::DiagnosticArgValue::Text(
+            "NoSuchFolder".to_string()
+        ))
+    );
+
+    // No cross-item shadowing regression: items "111" and "333" still resolve their own Defs.
+    let paths: Vec<&str> = scan
+        .files
+        .iter()
+        .map(|file| file.relative_path.as_str())
+        .collect();
+    assert!(paths.contains(&"111/Defs/Ok.xml"));
+    assert!(paths.contains(&"333/Defs/Ok.xml"));
+
+    fs::remove_dir_all(&collection_root).ok();
+}
+
+#[test]
+fn ordinary_mod_load_folders_diagnostic_keeps_the_filename_not_just_none() {
+    // A plain (non-Workshop) source whose LoadFolders.xml references a missing folder must
+    // still report a relative path pointing at LoadFolders.xml -- not `None` just because this
+    // location's diagnostic `scope` is empty (regression: `scope.is_empty()` used to be
+    // (mis)used as "no relative path available" rather than "no scope prefix needed").
+    let mod_root = temp_dir();
+    fs::create_dir_all(mod_root.join("Defs")).unwrap();
+    fs::write(
+        mod_root.join("LoadFolders.xml"),
+        r#"<loadFolders><v1.6><li>NoSuchFolder</li></v1.6></loadFolders>"#,
+    )
+    .unwrap();
+
+    let mut location = make_location("src1", "Ordinary Mod", &mod_root, LocationKind::Source, true);
+    location.source_type = SourceType::Folder;
+    let settings = ProjectSettings {
+        schema_version: 3,
+        game_version: "1.6".to_string(),
+        locale: "en".to_string(),
+        locations: vec![location.clone()],
+        active_project_id: None,
+    };
+
+    let scan = scan_indexable_def_xml_files(&settings, &location).unwrap();
+
+    assert_eq!(scan.diagnostics.len(), 1, "diagnostics: {:?}", scan.diagnostics);
+    assert_eq!(scan.diagnostics[0].code, "load_folder_missing");
+    assert_eq!(scan.diagnostics[0].scope, "");
+    assert_eq!(
+        scan.diagnostics[0].relative_path.as_deref(),
+        Some("LoadFolders.xml")
+    );
+
+    fs::remove_dir_all(&mod_root).ok();
+}
+
+#[test]
+fn steam_workshop_collection_with_no_item_folders_reports_a_location_level_diagnostic() {
+    let collection_root = temp_dir();
+    // Registered as SteamWorkshop but the root has no direct child directories at all -- most
+    // likely misconfigured (pointing at a single mod root or an empty/unrelated directory).
+
+    let settings = ProjectSettings {
+        schema_version: 3,
+        game_version: "1.6".to_string(),
+        locale: "en".to_string(),
+        locations: vec![make_steam_workshop_location(
+            "workshop",
+            "Steam Workshop",
+            &collection_root,
+        )],
+        active_project_id: None,
+    };
+
+    let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
+
+    assert!(scan.files.is_empty());
+    assert_eq!(scan.diagnostics.len(), 1, "diagnostics: {:?}", scan.diagnostics);
+    let diagnostic = &scan.diagnostics[0];
+    assert_eq!(diagnostic.code, "steam_workshop_collection_empty");
+    // Location-level, not scoped to any particular item.
+    assert_eq!(diagnostic.scope, "");
+
+    fs::remove_dir_all(&collection_root).ok();
+}
+
+#[test]
 fn steam_workshop_collection_keeps_same_relative_filename_from_different_items() {
     let collection_root = temp_dir();
     let item_a = collection_root.join("111");

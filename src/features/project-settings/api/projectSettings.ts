@@ -4,6 +4,7 @@ import type {
   ProjectSettingsLoadResult,
   RegisteredLocationDraft,
   RegisteredLocationUpdate,
+  SourceFolderClassification,
 } from "../types";
 
 export function getProjectSettings(): Promise<ProjectSettingsLoadResult> {
@@ -44,6 +45,10 @@ export function updateProjectGameVersion(
 
 export function updateAppLocale(locale: string): Promise<ProjectSettings> {
   return invoke<ProjectSettings>("update_app_locale", { locale });
+}
+
+export function classifySourceFolder(path: string): Promise<SourceFolderClassification> {
+  return invoke<SourceFolderClassification>("classify_source_folder_cmd", { path });
 }
 
 export function listInstalledSchemaGameVersions(

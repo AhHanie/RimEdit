@@ -28,10 +28,6 @@ const srcRoot = join(repoRoot, "src-tauri", "src");
 // Struct names that legitimately carry a `code`/`message` pair without an `args` field, with the
 // reason inline. Adding a name here must be a deliberate, reviewed decision -- not a default.
 const EXEMPTIONS = {
-  // Never serialized to the frontend: `LoadFolderResolution.diagnostics` is explicitly
-  // `#[allow(dead_code)]` ("Reserved for future surfacing"), so there is no wire contract to
-  // localize yet. Revisit (remove this exemption and add `args`) once it is actually surfaced.
-  LoadFolderDiagnostic: "not yet surfaced to the frontend (see rimworld_load_folders.rs)",
   // Never reaches the wire as a structured object: `patches::dom::parse_fragment` callers collapse
   // this to a plain `String` before it ever reaches an `AppError`/command result (see
   // commands/patches.rs::parse_patch_value_xml), so it has no `code` to attach args to either.

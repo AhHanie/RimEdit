@@ -15,6 +15,21 @@ pub enum IndexingPhase {
     Failed,
 }
 
+/// Coarse stage within a `Running` full rebuild, for status-bar progress display on large
+/// (e.g. Steam Workshop) collections. `None` outside a full rebuild (incremental file-change
+/// jobs and every other phase leave `current_stage` unset).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub enum IndexingStage {
+    /// Cheap, parse-free directory-listing pass computing scan statistics (locations, resolved
+    /// Workshop items, selected load folders, discovered file count) before the slower
+    /// read/parse phase -- see `def_index::discover_scan_stats`.
+    Discovering,
+    /// Reading and parsing the discovered Def XML files (and, internally, persisting the
+    /// resulting index once every file has been attempted) -- see `builder::build_def_index_with_progress`.
+    Indexing,
+}
+
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct IndexingStatus {
@@ -27,6 +42,24 @@ pub struct IndexingStatus {
     pub errors: usize,
     pub message: Option<String>,
     pub updated_at_unix_ms: i64,
+    /// Total files discovered for this full rebuild, known once the `Discovering` stage
+    /// completes. `None` before discovery finishes, during incremental jobs, or once the
+    /// rebuild reaches `Complete`/`Failed` (superseded by `indexed_defs`/`errors` at that point).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub total_files: Option<usize>,
+    /// Ticks up as each discovered file is attempted (read+parsed or failed to read), throttled
+    /// to a bounded number of emissions per rebuild -- see
+    /// `services::indexing::jobs::execute_full_rebuild`'s progress closure and
+    /// `builder::build_def_index_with_progress`. `Some(0)` immediately after `total_files` is
+    /// set, ticking toward (and clamped to) `total_files` as parsing proceeds.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub processed_files: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub current_stage: Option<IndexingStage>,
+    /// Display name only -- never a filesystem path. `Some` only while discovering a specific
+    /// location's scan stats.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub current_location_name: Option<String>,
 }
 
 impl IndexingStatus {
@@ -41,6 +74,10 @@ impl IndexingStatus {
             errors: 0,
             message: None,
             updated_at_unix_ms: now_ms(),
+            total_files: None,
+            processed_files: None,
+            current_stage: None,
+            current_location_name: None,
         }
     }
 }
@@ -152,6 +189,10 @@ impl DefIndexState {
                 errors: 0,
                 message: None,
                 updated_at_unix_ms: now_ms(),
+                total_files: None,
+                processed_files: None,
+                current_stage: None,
+                current_location_name: None,
             };
         }
     }
@@ -168,7 +209,75 @@ impl DefIndexState {
                 errors: 0,
                 message: None,
                 updated_at_unix_ms: now_ms(),
+                total_files: None,
+                processed_files: None,
+                current_stage: None,
+                current_location_name: None,
             };
+        }
+    }
+
+    /// Enters the `Discovering` sub-stage of a `Running` full rebuild -- see
+    /// `def_index::discover_scan_stats`. `current_location_name` is display-name-only.
+    pub fn set_status_discovering(&self, project_id: Option<String>, current_location_name: Option<String>) {
+        if let Ok(mut guard) = self.inner.lock() {
+            guard.status = IndexingStatus {
+                project_id,
+                phase: IndexingPhase::Running,
+                pending_files: 0,
+                indexed_defs: 0,
+                project_defs: 0,
+                source_defs: 0,
+                errors: 0,
+                message: None,
+                updated_at_unix_ms: now_ms(),
+                total_files: None,
+                processed_files: None,
+                current_stage: Some(IndexingStage::Discovering),
+                current_location_name,
+            };
+        }
+    }
+
+    /// Enters the `Indexing` sub-stage of a `Running` full rebuild once discovery has produced
+    /// a total file count.
+    pub fn set_status_indexing(&self, project_id: Option<String>, total_files: usize) {
+        if let Ok(mut guard) = self.inner.lock() {
+            guard.status = IndexingStatus {
+                project_id,
+                phase: IndexingPhase::Running,
+                pending_files: 0,
+                indexed_defs: 0,
+                project_defs: 0,
+                source_defs: 0,
+                errors: 0,
+                message: None,
+                updated_at_unix_ms: now_ms(),
+                total_files: Some(total_files),
+                processed_files: Some(0),
+                current_stage: Some(IndexingStage::Indexing),
+                current_location_name: None,
+            };
+        }
+    }
+
+    /// Ticks `processed_files` up during the `Indexing` sub-stage, leaving every other field
+    /// (`total_files`, `phase`, `current_stage`, ...) untouched. `processed_files` is clamped to
+    /// `total_files` (if set) so a discovery/indexing file-count mismatch -- e.g. a file added or
+    /// removed on disk between the two passes -- can never render as "over 100%". A no-op if the
+    /// rebuild has already left the `Indexing` stage (e.g. a stale/superseded progress tick
+    /// arriving after `set_status_complete`/`set_status_failed`).
+    pub fn set_status_indexing_progress(&self, processed_files: usize) {
+        if let Ok(mut guard) = self.inner.lock() {
+            if guard.status.current_stage != Some(IndexingStage::Indexing) {
+                return;
+            }
+            let clamped = match guard.status.total_files {
+                Some(total) => processed_files.min(total),
+                None => processed_files,
+            };
+            guard.status.processed_files = Some(clamped);
+            guard.status.updated_at_unix_ms = now_ms();
         }
     }
 
@@ -195,6 +304,10 @@ impl DefIndexState {
                 errors: index.errors.len(),
                 message: None,
                 updated_at_unix_ms: now_ms(),
+                total_files: None,
+                processed_files: None,
+                current_stage: None,
+                current_location_name: None,
             };
         }
     }
@@ -211,6 +324,10 @@ impl DefIndexState {
                 errors: 0,
                 message: Some(message),
                 updated_at_unix_ms: now_ms(),
+                total_files: None,
+                processed_files: None,
+                current_stage: None,
+                current_location_name: None,
             };
         }
     }
@@ -220,5 +337,98 @@ impl DefIndexState {
             .lock()
             .map(|g| g.status.clone())
             .unwrap_or_else(|_| IndexingStatus::idle())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn discovering_then_indexing_then_complete_progresses_through_expected_stages() {
+        let state = DefIndexState::default();
+
+        state.set_status_discovering(Some("proj".to_string()), None);
+        let discovering = state.status();
+        assert_eq!(discovering.phase, IndexingPhase::Running);
+        assert_eq!(discovering.current_stage, Some(IndexingStage::Discovering));
+        assert_eq!(discovering.total_files, None);
+        assert_eq!(discovering.processed_files, None);
+
+        state.set_status_indexing(Some("proj".to_string()), 42);
+        let indexing = state.status();
+        assert_eq!(indexing.phase, IndexingPhase::Running);
+        assert_eq!(indexing.current_stage, Some(IndexingStage::Indexing));
+        assert_eq!(indexing.total_files, Some(42));
+        assert_eq!(indexing.processed_files, Some(0));
+
+        state.set_status_complete(&DefIndex::default());
+        let complete = state.status();
+        assert_eq!(complete.phase, IndexingPhase::Complete);
+        assert_eq!(complete.current_stage, None);
+        assert_eq!(complete.total_files, None);
+        assert_eq!(complete.processed_files, None);
+    }
+
+    #[test]
+    fn indexing_progress_ticks_up_without_disturbing_other_fields() {
+        let state = DefIndexState::default();
+        state.set_status_indexing(Some("proj".to_string()), 100);
+
+        state.set_status_indexing_progress(37);
+        let status = state.status();
+        assert_eq!(status.processed_files, Some(37));
+        assert_eq!(status.total_files, Some(100));
+        assert_eq!(status.current_stage, Some(IndexingStage::Indexing));
+        assert_eq!(status.phase, IndexingPhase::Running);
+        assert_eq!(status.project_id.as_deref(), Some("proj"));
+    }
+
+    #[test]
+    fn indexing_progress_is_clamped_to_total_files() {
+        let state = DefIndexState::default();
+        state.set_status_indexing(None, 10);
+        state.set_status_indexing_progress(15);
+        assert_eq!(state.status().processed_files, Some(10));
+    }
+
+    #[test]
+    fn indexing_progress_is_a_no_op_once_the_rebuild_has_completed() {
+        let state = DefIndexState::default();
+        state.set_status_indexing(None, 10);
+        state.set_status_complete(&DefIndex::default());
+
+        state.set_status_indexing_progress(5);
+
+        let status = state.status();
+        assert_eq!(status.phase, IndexingPhase::Complete);
+        assert_eq!(status.processed_files, None, "a stale tick must not resurrect progress fields");
+    }
+
+    #[test]
+    fn indexing_progress_is_a_no_op_during_discovering() {
+        let state = DefIndexState::default();
+        state.set_status_discovering(None, None);
+        state.set_status_indexing_progress(5);
+        assert_eq!(state.status().processed_files, None);
+    }
+
+    #[test]
+    fn discovering_carries_a_display_name_only_location_hint() {
+        let state = DefIndexState::default();
+        state.set_status_discovering(None, Some("My Mod".to_string()));
+        let status = state.status();
+        assert_eq!(status.current_location_name.as_deref(), Some("My Mod"));
+    }
+
+    #[test]
+    fn failed_status_clears_progress_fields() {
+        let state = DefIndexState::default();
+        state.set_status_indexing(None, 100);
+        state.set_status_failed(None, "boom".to_string());
+        let status = state.status();
+        assert_eq!(status.phase, IndexingPhase::Failed);
+        assert_eq!(status.current_stage, None);
+        assert_eq!(status.total_files, None);
     }
 }

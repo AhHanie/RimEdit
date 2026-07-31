@@ -100,14 +100,11 @@ export function findOrphanedCatalogCodes(catalogCodes, codeLikeStringSets) {
  * `Error`-suffix generalization that also covers types outside this list (`GraphicPreviewWarning`,
  * ...) without a large false-positive surface (a bare `\bAnything::new\(` would still be rejected --
  * `new` alone is far too common on unrelated Rust types: `Vec::new()`, `PathBuf::new()`, ...).
- * `LoadFolderDiagnostic` (src-tauri/src/rimworld_load_folders.rs, itself struct-literal
- * constructed, not `::new(`-constructed, so the suffix exception above is moot for it anyway) is
- * deliberately NOT included in this list: its `code`/`message` fields are `#[allow(dead_code)]`,
- * it is never `Serialize`d, and it never crosses the Tauri IPC boundary -- "reserved for future
- * surfacing" per its own doc comment, not a currently-produced user-facing diagnostic.
- * `findProducedDiagnosticCodes` excludes its whole file by path (see this function's `filePath`
- * param doc comment) so its `code: "..."` struct-literal fields don't false-positive against
- * `CODE_FIELD_PATTERN` either. */
+ * `LoadFolderDiagnostic` (src-tauri/src/rimworld_load_folders.rs) is deliberately NOT included in
+ * this list either: it is struct-literal constructed, not `::new(`-constructed, so the suffix
+ * exception above is moot for it -- but its `code: "..."` struct-literal fields are still picked
+ * up by the separate `CODE_FIELD_PATTERN` scan below (it is now wire-facing: `def_index::builder`
+ * converts every `LoadFolderDiagnostic` into a `DefIndexError`). */
 const DIAGNOSTIC_FAMILY_TYPES = [
   "AppError",
   "ParseDiagnostic",
@@ -257,20 +254,19 @@ function extractBalancedBraces(sourceText, fromIndex) {
  * first), but a relative path/message argument is never itself code-shaped (paths contain `.`/`/`,
  * messages contain spaces), so the first code-shaped literal in the call reliably is the code.
  *
- * `filePath` (optional) excludes `src-tauri/src/rimworld_load_folders.rs`'s `LoadFolderDiagnostic`
- * struct: its `code`/`message` fields are `#[allow(dead_code)]`, it is never `Serialize`d, and it
- * never crosses the Tauri IPC boundary ("reserved for future surfacing" per its own doc comment) --
- * so its `code: "..."` field literals would otherwise false-positive against `CODE_FIELD_PATTERN`,
- * which (unlike `CONSTRUCTOR_CALL_START_PATTERN`) has no way to tell which struct a bare `code:`
- * field belongs to.
+ * `filePath` is accepted for symmetry with other scanners in this module (and so a future
+ * file-scoped exclusion can be added without changing every call site) but is currently unused --
+ * `src-tauri/src/rimworld_load_folders.rs`'s `LoadFolderDiagnostic` used to be excluded here
+ * (its `code`/`message` fields were `#[allow(dead_code)]` and never crossed the Tauri IPC
+ * boundary), but `def_index::builder::add_location_to_index` now converts every
+ * `LoadFolderDiagnostic` into a `DefIndexError` returned by the `get_def_index_errors` command,
+ * so its `code: "..."` struct-literal fields are genuine, wire-facing produced codes like any
+ * other `CODE_FIELD_PATTERN` match.
  */
 export function findProducedDiagnosticCodes(sourceText, filePath) {
-  const normalizedPath = (filePath ?? "").replace(/\\/g, "/");
-  const isNonWireDiagnosticFile = normalizedPath.endsWith("rimworld_load_folders.rs");
+  void filePath;
   const stripped = stripCfgTestModules(sourceText);
   const found = new Set();
-
-  if (isNonWireDiagnosticFile) return found;
 
   for (const match of stripped.matchAll(CODE_FIELD_PATTERN)) {
     if (looksLikeDiagnosticCode(match[1])) found.add(match[1]);

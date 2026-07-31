@@ -43,6 +43,12 @@ export interface ProjectSettingsLoadResult {
   missingActiveProject?: MissingActiveProjectNotice;
 }
 
+export interface SourceFolderClassification {
+  suggestedSourceType: SourceType;
+  highConfidence: boolean;
+  numericItemCount: number;
+}
+
 export interface RegisteredLocationDraft {
   displayName: string;
   rootPath: string;

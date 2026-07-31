@@ -1,7 +1,9 @@
 use crate::project_files::scan_indexable_def_xml_files;
-use crate::project_model::{LocationKind, ProjectSettings, RegisteredLocation};
+use crate::project_model::{LocationKind, ProjectSettings, RegisteredLocation, SourceType};
+use crate::rimworld_load_folders::resolve_load_folders;
 use crate::xml_document::model::{XmlDocument, XmlNodeId, XmlNodeKind};
 use crate::xml_document::parse_to_document;
+use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use time::OffsetDateTime;
 
@@ -29,7 +31,28 @@ impl<'a> DefIndexBuildOptions<'a> {
     }
 }
 
+/// Plain (no-progress) entry point. Every production call site now goes through
+/// `rebuild_and_store_def_index_with_progress`'s `None` path instead (see
+/// `rebuild_and_store_def_index`), so this is only reachable from tests today -- kept as the
+/// simplest possible public API for them rather than forcing every test call site to pass
+/// `None` explicitly to `build_def_index_with_progress`.
+#[cfg_attr(not(test), allow(dead_code))]
 pub fn build_def_index(settings: &ProjectSettings, options: DefIndexBuildOptions<'_>) -> DefIndex {
+    build_def_index_with_progress(settings, options, None)
+}
+
+/// Same as `build_def_index`, but invokes `on_file_indexed` once for every discovered Def XML
+/// file it attempts (successfully parsed or not), for live progress reporting during a full
+/// rebuild's `Indexing` stage (see `def_index::IndexingStage` and
+/// `services::indexing::jobs::execute_full_rebuild`). `on_file_indexed: None` behaves identically
+/// to `build_def_index`; this is a separate function (rather than a new `DefIndexBuildOptions`
+/// field) so the ~15 other call sites that construct `DefIndexBuildOptions` by struct literal
+/// don't need to change.
+pub fn build_def_index_with_progress(
+    settings: &ProjectSettings,
+    options: DefIndexBuildOptions<'_>,
+    on_file_indexed: Option<&dyn Fn()>,
+) -> DefIndex {
     let mut index = DefIndex {
         defs: Vec::new(),
         errors: Vec::new(),
@@ -38,11 +61,67 @@ pub fn build_def_index(settings: &ProjectSettings, options: DefIndexBuildOptions
     };
 
     for location in included_locations(settings, &options) {
-        add_location_to_index(&mut index, settings, location, options.replacement.as_ref());
+        add_location_to_index(
+            &mut index,
+            settings,
+            location,
+            options.replacement.as_ref(),
+            on_file_indexed,
+        );
     }
 
     index.rebuild_computed_fields();
     index
+}
+
+/// Cheap, parse-free scan statistics for a full rebuild's `Discovering` stage (see
+/// `def_index::IndexingStage`) -- computed by directory listing only, never reading or parsing
+/// XML content. No absolute paths or file/mod names: aggregate counts only.
+#[derive(Debug, Clone, Default)]
+pub struct ScanDiscoveryStats {
+    pub included_locations: usize,
+    pub resolved_workshop_item_count: usize,
+    pub selected_load_folder_count: usize,
+    pub discovered_files: usize,
+}
+
+/// Discovers scan statistics for every location that would be included in a full rebuild with
+/// `options`, without parsing any XML. Reuses the same `resolve_load_folders`/
+/// `scan_indexable_def_xml_files` calls the real build performs (see `add_location_to_index`) --
+/// so this walks each location's directories twice per rebuild. Intentionally not deduplicated
+/// yet (Plan.md: "only make that optimization after the timing shows it is a material
+/// bottleneck") -- this function exists purely to make discovery observable before parsing
+/// starts, per `IndexingStage::Discovering`.
+pub fn discover_scan_stats(
+    settings: &ProjectSettings,
+    options: &DefIndexBuildOptions<'_>,
+) -> ScanDiscoveryStats {
+    let locations = included_locations(settings, options);
+    let mut stats = ScanDiscoveryStats {
+        included_locations: locations.len(),
+        ..Default::default()
+    };
+
+    for location in locations {
+        let resolution = resolve_load_folders(location, settings);
+        stats.selected_load_folder_count += resolution.selected_folders.len();
+
+        if location.source_type == SourceType::SteamWorkshop {
+            let item_scopes: HashSet<&str> = resolution
+                .selected_folders
+                .iter()
+                .map(|f| f.scope.as_str())
+                .filter(|s| !s.is_empty())
+                .collect();
+            stats.resolved_workshop_item_count += item_scopes.len();
+        }
+
+        if let Ok(scan) = scan_indexable_def_xml_files(settings, location) {
+            stats.discovered_files += scan.files.len();
+        }
+    }
+
+    stats
 }
 
 pub(super) fn included_locations<'a>(
@@ -64,6 +143,7 @@ fn add_location_to_index(
     settings: &ProjectSettings,
     location: &RegisteredLocation,
     replacement: Option<&DefIndexReplacement<'_>>,
+    on_file_indexed: Option<&dyn Fn()>,
 ) {
     let scan = match scan_indexable_def_xml_files(settings, location) {
         Ok(scan) => scan,
@@ -75,16 +155,39 @@ fn add_location_to_index(
                 error.to_string(),
                 None,
                 None,
+                crate::diagnostics::DiagnosticArgs::new(),
             ));
             return;
         }
     };
+
+    // Non-fatal load-folder resolution and directory-walk diagnostics (malformed
+    // `LoadFolders.xml`, missing referenced folder, an unreadable file/directory, ...), scoped
+    // per content pack. One malformed Workshop item's `LoadFolders.xml` -- or one unwalkable
+    // entry anywhere in the collection -- never aborts indexing for the rest of the collection:
+    // the other items' folders were still resolved and scanned normally above/below, this only
+    // records what went wrong for the affected item. `relative_path` is already fully resolved
+    // relative to the location root (see `LoadFolderDiagnostic::relative_path`'s doc comment).
+    for diagnostic in &scan.diagnostics {
+        index.errors.push(index_error_for_location(
+            location,
+            diagnostic.relative_path.clone(),
+            &diagnostic.code,
+            diagnostic.message.clone(),
+            None,
+            None,
+            diagnostic.args.clone(),
+        ));
+    }
 
     let source = indexed_source_for_location(location);
     let root = PathBuf::from(scan.root_path);
     let replacement_relative_path = replacement.map(|r| normalize_relative_path(r.relative_path));
 
     for file in scan.files {
+        if let Some(cb) = on_file_indexed {
+            cb();
+        }
         if replacement.map(|r| r.location_id) == Some(location.id.as_str())
             && replacement_relative_path.as_deref() == Some(file.relative_path.as_str())
         {
@@ -101,6 +204,7 @@ fn add_location_to_index(
                 error.to_string(),
                 None,
                 None,
+                crate::diagnostics::DiagnosticArgs::new(),
             )),
         }
     }
@@ -229,6 +333,7 @@ fn index_error_for_location(
     message: String,
     line: Option<usize>,
     column: Option<usize>,
+    args: crate::diagnostics::DiagnosticArgs,
 ) -> DefIndexError {
     DefIndexError {
         location_id: location.id.clone(),
@@ -239,7 +344,7 @@ fn index_error_for_location(
         message,
         line,
         column,
-        args: crate::diagnostics::DiagnosticArgs::new(),
+        args,
     }
 }
 

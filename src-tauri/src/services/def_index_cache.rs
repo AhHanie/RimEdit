@@ -1,5 +1,5 @@
 use crate::def_index::{
-    cache_state_inputs, load_or_rebuild_def_index, rebuild_and_store_def_index,
+    cache_state_inputs, load_or_rebuild_def_index, rebuild_and_store_def_index_with_progress,
     settings_fingerprint, store_prebuilt_index, summarize_index, DefIndex, DefIndexBuildOptions,
     DefIndexState, DefIndexSummary,
 };
@@ -103,6 +103,18 @@ pub(crate) fn rebuild_for_project(
     settings: &ProjectSettings,
     project_id: Option<&str>,
 ) -> Result<DefIndexSummary, AppError> {
+    rebuild_for_project_with_progress(app, settings, project_id, None)
+}
+
+/// Same as `rebuild_for_project`, but threads a live-progress callback through to
+/// `rebuild_and_store_def_index_with_progress` -- see
+/// `def_index::build_def_index_with_progress`'s doc comment.
+pub(crate) fn rebuild_for_project_with_progress(
+    app: &AppHandle,
+    settings: &ProjectSettings,
+    project_id: Option<&str>,
+    on_file_indexed: Option<&dyn Fn()>,
+) -> Result<DefIndexSummary, AppError> {
     let app_data_dir = app_paths::app_storage_dir(app, "def_index_rebuild_failed")?;
     let effective_project_id = project_id.or(settings.active_project_id.as_deref());
     let options = DefIndexBuildOptions {
@@ -111,7 +123,12 @@ pub(crate) fn rebuild_for_project(
         replacement: None,
         force_rebuild: true,
     };
-    let index = rebuild_and_store_def_index(&app_data_dir, settings, options)?;
+    let index = rebuild_and_store_def_index_with_progress(
+        &app_data_dir,
+        settings,
+        options,
+        on_file_indexed,
+    )?;
     let summary = summarize_index(&index);
     // Update in-memory state so subsequent query calls return the fresh index.
     let state = app.state::<DefIndexState>();

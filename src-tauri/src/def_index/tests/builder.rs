@@ -1,6 +1,7 @@
 use crate::def_index::{
-    apply_replacement_overlay, build_def_index, settings_fingerprint, DefIdentityKey, DefIndex,
-    DefIndexBuildOptions, DefIndexReplacement, IndexedDef, IndexedSourceKind,
+    apply_replacement_overlay, build_def_index, build_def_index_with_progress,
+    discover_scan_stats, settings_fingerprint, DefIdentityKey, DefIndex, DefIndexBuildOptions,
+    DefIndexReplacement, IndexedDef, IndexedSourceKind,
 };
 use crate::project_model::{LocationKind, ProjectSettings, RegisteredLocation, SourceType};
 use std::fs;
@@ -206,6 +207,188 @@ fn indexes_project_and_steam_workshop_collection_defs() {
     let item_b_def = &index.find_by_key("ThingDef", "WorkshopItemBThing")[0];
     assert_eq!(item_b_def.relative_path, "222/1.6/Defs/b.xml");
     assert_eq!(item_b_def.source.location_id, "workshop");
+
+    fs::remove_dir_all(&project_dir).ok();
+    fs::remove_dir_all(&collection_dir).ok();
+}
+
+#[test]
+fn discover_scan_stats_counts_locations_workshop_items_and_files_without_parsing() {
+    let project_dir = temp_dir();
+    let collection_dir = temp_dir();
+    fs::create_dir(project_dir.join("Defs")).unwrap();
+    fs::write(
+        project_dir.join("Defs").join("a.xml"),
+        "<Defs><ThingDef><defName>ProjectThing</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+
+    let item_a = collection_dir.join("111");
+    fs::create_dir_all(item_a.join("Defs")).unwrap();
+    fs::write(item_a.join("Defs").join("a.xml"), "<Defs><ThingDef><defName>A</defName></ThingDef></Defs>").unwrap();
+
+    let item_b = collection_dir.join("222");
+    fs::create_dir_all(item_b.join("1.6").join("Defs")).unwrap();
+    fs::write(
+        item_b.join("LoadFolders.xml"),
+        r#"<loadFolders><v1.6><li>1.6</li></v1.6></loadFolders>"#,
+    )
+    .unwrap();
+    fs::write(item_b.join("1.6").join("Defs").join("b.xml"), "<Defs><ThingDef><defName>B</defName></ThingDef></Defs>").unwrap();
+
+    let settings = settings_with_steam_workshop_source(&project_dir, &collection_dir);
+    let options = DefIndexBuildOptions::for_project("project");
+
+    let stats = discover_scan_stats(&settings, &options);
+
+    assert_eq!(stats.included_locations, 2, "project + workshop source");
+    assert_eq!(stats.resolved_workshop_item_count, 2);
+    // 1 project location's own selected folder + item_a's 1 + item_b's 1.
+    assert_eq!(stats.selected_load_folder_count, 3);
+    assert_eq!(stats.discovered_files, 3, "ProjectThing + A + B");
+
+    // Discovery is parse-free: it must not itself index any Defs (that's `build_def_index`'s job).
+    let built = build_def_index(&settings, DefIndexBuildOptions::for_project("project"));
+    assert_eq!(built.defs.len(), 3, "errors: {:?}", built.errors);
+
+    fs::remove_dir_all(&project_dir).ok();
+    fs::remove_dir_all(&collection_dir).ok();
+}
+
+#[test]
+fn discover_scan_stats_excludes_sources_when_include_sources_is_false() {
+    let project_dir = temp_dir();
+    let source_dir = temp_dir();
+    fs::create_dir(project_dir.join("Defs")).unwrap();
+    fs::create_dir(source_dir.join("Defs")).unwrap();
+    fs::write(source_dir.join("Defs").join("a.xml"), "<Defs/>").unwrap();
+
+    let settings = settings_with_project(&project_dir, Some(&source_dir));
+    let options = DefIndexBuildOptions {
+        project_id: Some("project"),
+        include_sources: false,
+        replacement: None,
+        force_rebuild: false,
+    };
+
+    let stats = discover_scan_stats(&settings, &options);
+    assert_eq!(stats.included_locations, 1, "only the project location");
+
+    fs::remove_dir_all(&project_dir).ok();
+    fs::remove_dir_all(&source_dir).ok();
+}
+
+#[test]
+fn build_def_index_with_progress_invokes_the_callback_once_per_discovered_file() {
+    let project_dir = temp_dir();
+    fs::create_dir(project_dir.join("Defs")).unwrap();
+    fs::write(
+        project_dir.join("Defs").join("a.xml"),
+        "<Defs><ThingDef><defName>A</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+    fs::write(
+        project_dir.join("Defs").join("b.xml"),
+        "<Defs><ThingDef><defName>B</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+    // A file that fails to read (not valid UTF-8) still counts as "attempted" for progress
+    // purposes -- the callback fires unconditionally before the read is even tried.
+    fs::write(project_dir.join("Defs").join("c.xml"), [0xFF, 0xFE, 0x00]).unwrap();
+
+    let settings = settings_with_project(&project_dir, None);
+    let calls = std::cell::Cell::new(0usize);
+    let on_file_indexed = || calls.set(calls.get() + 1);
+
+    let index = build_def_index_with_progress(
+        &settings,
+        DefIndexBuildOptions::for_project("project"),
+        Some(&on_file_indexed),
+    );
+
+    assert_eq!(calls.get(), 3, "expected one callback invocation per discovered file");
+    assert_eq!(index.defs.len(), 2);
+    fs::remove_dir_all(&project_dir).ok();
+}
+
+#[test]
+fn build_def_index_with_progress_none_behaves_identically_to_build_def_index() {
+    let project_dir = temp_dir();
+    fs::create_dir(project_dir.join("Defs")).unwrap();
+    fs::write(
+        project_dir.join("Defs").join("a.xml"),
+        "<Defs><ThingDef><defName>A</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+    let settings = settings_with_project(&project_dir, None);
+
+    let via_plain = build_def_index(&settings, DefIndexBuildOptions::for_project("project"));
+    let via_progress = build_def_index_with_progress(
+        &settings,
+        DefIndexBuildOptions::for_project("project"),
+        None,
+    );
+
+    assert_eq!(via_plain.defs.len(), via_progress.defs.len());
+    fs::remove_dir_all(&project_dir).ok();
+}
+
+#[test]
+fn malformed_workshop_item_load_folders_xml_is_isolated_and_does_not_block_other_items() {
+    let project_dir = temp_dir();
+    let collection_dir = temp_dir();
+    fs::create_dir(project_dir.join("Defs")).unwrap();
+    fs::write(
+        project_dir.join("Defs").join("a.xml"),
+        "<Defs><ThingDef><defName>ProjectThing</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+
+    // A valid Workshop item with no LoadFolders.xml (conventional fallback).
+    let item_valid = collection_dir.join("111");
+    fs::create_dir_all(item_valid.join("Defs")).unwrap();
+    fs::write(
+        item_valid.join("Defs").join("a.xml"),
+        "<Defs><ThingDef><defName>ValidItemThing</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+
+    // A malformed Workshop item: `LoadFolders.xml` exists but cannot be read as a file (it's a
+    // directory here, standing in for a permissions/encoding failure). Its own Defs are
+    // unreachable (the resolver could not determine which folders to load), but it must not
+    // prevent the other, valid item from being indexed.
+    let item_broken = collection_dir.join("222");
+    fs::create_dir_all(item_broken.join("Defs")).unwrap();
+    fs::create_dir(item_broken.join("LoadFolders.xml")).unwrap();
+    fs::write(
+        item_broken.join("Defs").join("b.xml"),
+        "<Defs><ThingDef><defName>BrokenItemThing</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+
+    let settings = settings_with_steam_workshop_source(&project_dir, &collection_dir);
+    let index = build_def_index(&settings, DefIndexBuildOptions::for_project("project"));
+
+    assert_eq!(
+        index.find_by_key("ThingDef", "ProjectThing").len(),
+        1,
+        "errors: {:?}",
+        index.errors
+    );
+    assert_eq!(index.find_by_key("ThingDef", "ValidItemThing").len(), 1);
+    assert!(index.find_by_key("ThingDef", "BrokenItemThing").is_empty());
+
+    let load_folders_error = index
+        .errors
+        .iter()
+        .find(|e| e.code == "load_folders_read_failed")
+        .unwrap_or_else(|| panic!("expected a load_folders_read_failed error: {:?}", index.errors));
+    assert_eq!(load_folders_error.source_kind, IndexedSourceKind::Source);
+    assert_eq!(load_folders_error.location_id, "workshop");
+    assert_eq!(
+        load_folders_error.relative_path.as_deref(),
+        Some("222/LoadFolders.xml")
+    );
 
     fs::remove_dir_all(&project_dir).ok();
     fs::remove_dir_all(&collection_dir).ok();

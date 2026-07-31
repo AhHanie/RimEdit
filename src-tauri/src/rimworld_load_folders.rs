@@ -1,3 +1,4 @@
+use crate::diagnostics::{diagnostic_args, DiagnosticArgs};
 use crate::project_model::{parse_major_minor, ProjectSettings, RegisteredLocation, SourceType};
 
 /// Parse a `LoadFolders.xml` version key to `(major, minor)`, tolerating:
@@ -51,18 +52,30 @@ pub enum LoadFolderSource {
 
 #[derive(Debug, Clone)]
 pub struct LoadFolderDiagnostic {
-    #[allow(dead_code)]
     pub code: String,
-    #[allow(dead_code)]
     pub message: String,
+    /// Which independent content pack this diagnostic belongs to: empty for an ordinary
+    /// single-mod source, or a Steam Workshop item's directory name (see
+    /// `ResolvedLoadFolder::scope`) for one item within a collection. Lets a consumer isolate a
+    /// malformed item's `LoadFolders.xml` to that item instead of the whole collection.
+    pub scope: String,
+    /// The path this diagnostic concerns, relative to the *location root* (never absolute) --
+    /// e.g. `Some("LoadFolders.xml")` for an ordinary single-mod source, `Some("222/LoadFolders.xml")`
+    /// for one Steam Workshop item, or `None` when the diagnostic isn't about one specific file
+    /// (e.g. "no load folders resolved at all" or "collection has no item folders"). Diagnostics
+    /// pushed while `mod_root`-relative (i.e. before the containing `resolve_mod_load_folders`
+    /// call knows its final `scope`) are pushed with just the mod-root-relative filename (e.g.
+    /// `"LoadFolders.xml"`); `resolve_mod_load_folders` prefixes it with `scope` once known, so
+    /// by the time a `LoadFolderResolution` is returned this is always already location-root-relative.
+    pub relative_path: Option<String>,
+    /// Typed, literal interpolation arguments for `code` (see `crate::diagnostics` module docs).
+    pub args: DiagnosticArgs,
 }
 
 #[derive(Debug)]
 pub struct LoadFolderResolution {
     pub root_path: PathBuf,
     pub selected_folders: Vec<ResolvedLoadFolder>,
-    /// Reserved for future surfacing in project explorer / index error reporting.
-    #[allow(dead_code)]
     pub diagnostics: Vec<LoadFolderDiagnostic>,
     pub shadow_by_relative_path: bool,
 }
@@ -161,6 +174,7 @@ fn resolve_mod_load_folders(
     scope: &str,
 ) -> Vec<ResolvedLoadFolder> {
     let load_folders_xml = mod_root.join("LoadFolders.xml");
+    let diagnostics_start = diagnostics.len();
     let mut folders = if load_folders_xml.exists() {
         resolve_from_load_folders_xml(
             mod_root,
@@ -172,6 +186,16 @@ fn resolve_mod_load_folders(
     } else {
         resolve_conventional_fallback(mod_root, selected_version, selected_ver, diagnostics)
     };
+    for diagnostic in &mut diagnostics[diagnostics_start..] {
+        diagnostic.scope = scope.to_string();
+        if let Some(rel) = diagnostic.relative_path.take() {
+            diagnostic.relative_path = Some(if scope.is_empty() {
+                rel
+            } else {
+                format!("{}/{}", scope, rel)
+            });
+        }
+    }
     for folder in &mut folders {
         folder.scope = scope.to_string();
     }
@@ -207,6 +231,26 @@ fn resolve_steam_workshop_collection(
         })
         .collect();
     item_dirs.sort_by(|a, b| a.0.cmp(&b.0));
+
+    if item_dirs.is_empty() {
+        // A Workshop collection root has no direct child directories at all -- most likely this
+        // location was registered as `SteamWorkshop` by mistake and actually points at a single
+        // mod's content-pack root (or an unrelated/empty directory) rather than the collection
+        // root itself (normally `.../steamapps/workshop/content/294100`, where every immediate
+        // child is one subscribed mod's id-named folder). Non-fatal: other locations still index
+        // normally, but this location contributes no Defs and the reason should be explained
+        // rather than silently scanning nothing.
+        diagnostics.push(LoadFolderDiagnostic {
+            code: "steam_workshop_collection_empty".to_string(),
+            message: "This Steam Workshop source has no subscribed item folders. Expected a \
+                collection root such as \".../steamapps/workshop/content/294100\", where every \
+                immediate child is one subscribed mod."
+                .to_string(),
+            scope: String::new(),
+            relative_path: None,
+            args: DiagnosticArgs::new(),
+        });
+    }
 
     let mut selected_folders = Vec::new();
     for (item_id, item_root) in &item_dirs {
@@ -272,6 +316,9 @@ fn resolve_from_load_folders_xml(
             diagnostics.push(LoadFolderDiagnostic {
                 code: "load_folders_read_failed".to_string(),
                 message: format!("Cannot read LoadFolders.xml: {}", e),
+                scope: String::new(),
+                relative_path: Some("LoadFolders.xml".to_string()),
+                args: DiagnosticArgs::new(),
             });
             return vec![];
         }
@@ -283,6 +330,9 @@ fn resolve_from_load_folders_xml(
             diagnostics.push(LoadFolderDiagnostic {
                 code: "load_folders_parse_failed".to_string(),
                 message: format!("Cannot parse LoadFolders.xml: {}", e),
+                scope: String::new(),
+                relative_path: Some("LoadFolders.xml".to_string()),
+                args: DiagnosticArgs::new(),
             });
             return vec![];
         }
@@ -298,6 +348,9 @@ fn resolve_from_load_folders_xml(
                 "LoadFolders.xml has no block matching version {}",
                 selected_version
             ),
+            scope: String::new(),
+            relative_path: Some("LoadFolders.xml".to_string()),
+            args: diagnostic_args([("version", selected_version.into())]),
         });
         return vec![];
     }
@@ -318,6 +371,9 @@ fn resolve_from_load_folders_xml(
             diagnostics.push(LoadFolderDiagnostic {
                 code: "load_folder_missing".to_string(),
                 message: format!("LoadFolders.xml references missing folder: {}", rel),
+                scope: String::new(),
+                relative_path: Some("LoadFolders.xml".to_string()),
+                args: diagnostic_args([("folder", rel.as_str().into())]),
             });
             continue;
         }
@@ -440,6 +496,9 @@ fn resolve_conventional_fallback(
         diagnostics.push(LoadFolderDiagnostic {
             code: "load_folder_no_folders_resolved".to_string(),
             message: format!("No load folders resolved for version {}", selected_version),
+            scope: String::new(),
+            relative_path: None,
+            args: diagnostic_args([("version", selected_version.into())]),
         });
     }
 

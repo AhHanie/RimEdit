@@ -1,8 +1,8 @@
 use crate::def_index::{
     get_facet_summary, resolve_def_reference, search_def_results, suggest_def_references,
-    DefDuplicateQueryResult, DefIndexFacetSummary, DefIndexSearchQuery, DefIndexSummary,
-    DefReferenceResolution, DefReferenceSuggestion, IndexedDefSearchResult, IndexedSourceKind,
-    IndexingPhase, IndexingStatus,
+    DefDuplicateQueryResult, DefIndexError, DefIndexFacetSummary, DefIndexSearchQuery,
+    DefIndexSummary, DefReferenceResolution, DefReferenceSuggestion, IndexedDefSearchResult,
+    IndexedSourceKind, IndexingPhase, IndexingStatus,
 };
 use crate::project_files::validate_and_resolve_location;
 use crate::project_model::AppError;
@@ -18,6 +18,18 @@ use tauri::AppHandle;
 pub struct DefXmlPreview {
     pub raw_xml: String,
     pub def_line: Option<usize>,
+}
+
+/// Maximum number of `DefIndexError` records returned by `get_def_index_errors` in a single
+/// response, so a badly broken collection cannot create an unbounded frontend payload.
+const DEF_INDEX_ERRORS_LIMIT: usize = 200;
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DefIndexErrorsResponse {
+    pub errors: Vec<DefIndexError>,
+    pub total: usize,
+    pub truncated: bool,
 }
 
 #[tauri::command]
@@ -98,6 +110,40 @@ pub fn get_def_index_facets(
     let settings = load_settings(&app)?;
     let index = def_index_cache::load_for_project_query(&app, &settings, &project_id)?;
     Ok(get_facet_summary(&index, include_sources.unwrap_or(true)))
+}
+
+/// Sorts (deterministically, by location name / relative path / line / column / code) and caps
+/// `errors` to `DEF_INDEX_ERRORS_LIMIT`, reporting the true total and whether it was truncated.
+/// A pure mapper so it is directly unit-testable without an `AppHandle`.
+fn build_def_index_errors_response(mut errors: Vec<DefIndexError>) -> DefIndexErrorsResponse {
+    errors.sort_by(|a, b| {
+        a.location_name
+            .cmp(&b.location_name)
+            .then_with(|| a.relative_path.cmp(&b.relative_path))
+            .then_with(|| a.line.cmp(&b.line))
+            .then_with(|| a.column.cmp(&b.column))
+            .then_with(|| a.code.cmp(&b.code))
+    });
+    let total = errors.len();
+    let truncated = total > DEF_INDEX_ERRORS_LIMIT;
+    errors.truncate(DEF_INDEX_ERRORS_LIMIT);
+    DefIndexErrorsResponse {
+        errors,
+        total,
+        truncated,
+    }
+}
+
+#[tauri::command]
+pub fn get_def_index_errors(
+    app: AppHandle,
+    project_id: String,
+) -> Result<DefIndexErrorsResponse, AppError> {
+    let settings = load_settings(&app)?;
+    // Data-only read: never forces a scan or rebuild, and serves the prior completed index
+    // (possibly stale) while a rebuild is in progress, same as other query-only commands.
+    let index = def_index_cache::load_for_project_query(&app, &settings, &project_id)?;
+    Ok(build_def_index_errors_response(index.errors.clone()))
 }
 
 #[tauri::command]
@@ -233,4 +279,97 @@ pub fn read_indexed_def_xml(
         )]),
     })?;
     Ok(DefXmlPreview { raw_xml, def_line })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn error(
+        location_name: &str,
+        relative_path: Option<&str>,
+        line: Option<usize>,
+        column: Option<usize>,
+        code: &str,
+    ) -> DefIndexError {
+        DefIndexError {
+            location_id: location_name.to_lowercase(),
+            location_name: location_name.to_string(),
+            source_kind: IndexedSourceKind::Source,
+            relative_path: relative_path.map(str::to_string),
+            code: code.to_string(),
+            message: format!("{} message", code),
+            line,
+            column,
+            args: crate::diagnostics::DiagnosticArgs::new(),
+        }
+    }
+
+    #[test]
+    fn sorts_deterministically_by_location_path_line_column_then_code() {
+        let response = build_def_index_errors_response(vec![
+            error("Zeta", Some("b.xml"), None, None, "code_z"),
+            error("Alpha", Some("b.xml"), Some(2), None, "code_a"),
+            error("Alpha", Some("a.xml"), None, None, "code_b"),
+            error("Alpha", Some("b.xml"), Some(1), None, "code_c"),
+            error("Alpha", Some("b.xml"), Some(1), Some(5), "code_a"),
+            error("Alpha", Some("b.xml"), Some(1), Some(5), "code_b"),
+        ]);
+        let ordering: Vec<(&str, Option<&str>, Option<usize>, Option<usize>, &str)> = response
+            .errors
+            .iter()
+            .map(|e| {
+                (
+                    e.location_name.as_str(),
+                    e.relative_path.as_deref(),
+                    e.line,
+                    e.column,
+                    e.code.as_str(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            ordering,
+            vec![
+                ("Alpha", Some("a.xml"), None, None, "code_b"),
+                ("Alpha", Some("b.xml"), Some(1), None, "code_c"),
+                ("Alpha", Some("b.xml"), Some(1), Some(5), "code_a"),
+                ("Alpha", Some("b.xml"), Some(1), Some(5), "code_b"),
+                ("Alpha", Some("b.xml"), Some(2), None, "code_a"),
+                ("Zeta", Some("b.xml"), None, None, "code_z"),
+            ]
+        );
+        assert_eq!(response.total, 6);
+        assert!(!response.truncated);
+    }
+
+    #[test]
+    fn caps_returned_errors_but_reports_true_total_and_truncated_flag() {
+        let errors: Vec<DefIndexError> = (0..(DEF_INDEX_ERRORS_LIMIT + 37))
+            .map(|i| error("Loc", Some("f.xml"), Some(i), None, "some_code"))
+            .collect();
+        let response = build_def_index_errors_response(errors);
+        assert_eq!(response.errors.len(), DEF_INDEX_ERRORS_LIMIT);
+        assert_eq!(response.total, DEF_INDEX_ERRORS_LIMIT + 37);
+        assert!(response.truncated);
+    }
+
+    #[test]
+    fn does_not_truncate_when_exactly_at_the_limit() {
+        let errors: Vec<DefIndexError> = (0..DEF_INDEX_ERRORS_LIMIT)
+            .map(|i| error("Loc", Some("f.xml"), Some(i), None, "some_code"))
+            .collect();
+        let response = build_def_index_errors_response(errors);
+        assert_eq!(response.errors.len(), DEF_INDEX_ERRORS_LIMIT);
+        assert_eq!(response.total, DEF_INDEX_ERRORS_LIMIT);
+        assert!(!response.truncated);
+    }
+
+    #[test]
+    fn empty_errors_produce_an_empty_non_truncated_response() {
+        let response = build_def_index_errors_response(Vec::new());
+        assert!(response.errors.is_empty());
+        assert_eq!(response.total, 0);
+        assert!(!response.truncated);
+    }
 }

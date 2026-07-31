@@ -132,5 +132,6 @@ pub(crate) fn scan_indexable_patch_xml_files(
         read_only: location.read_only,
         mod_id: location.mod_id.clone(),
         files,
+        diagnostics: resolution.diagnostics.clone(),
     })
 }

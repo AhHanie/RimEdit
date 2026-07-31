@@ -78,6 +78,8 @@ export const enResources = {
       "ready": "Ready",
       "noProject": "No project",
       "indexPending": "Index pending",
+      "indexDiscovering": "Discovering files…",
+      "indexingProgress": "Indexing {{processed}} / {{total}} files…",
       "indexing": "Indexing…",
       "indexErrors_one": "{{count}} index error",
       "indexErrors_other": "{{count}} index errors",
@@ -136,6 +138,10 @@ export const enResources = {
       "projectNotFound": "Project folder not found: {{displayName}} ({{rootPath}})",
       "dismiss": "Dismiss project notice"
     },
+    "workshopRootNotice": {
+      "message": "\"{{displayName}}\" was added as a Folder source. If this is a Steam Workshop collection root (e.g. \".../steamapps/workshop/content/294100\"), set its type to Steam Workshop in Preferences so every subscribed mod is indexed.",
+      "dismiss": "Dismiss Workshop root notice"
+    },
     "confirm": {
       "discardChangesTitle": "Discard unsaved changes?",
       "openAnotherProject": "Open another project and discard unsaved changes?",
@@ -184,6 +190,18 @@ export const enResources = {
         "rename": "Rename",
         "delete": "Delete"
       }
+    },
+    "indexErrorsDialog": {
+      "dialogAriaLabel": "Index Errors",
+      "title": "Index Errors",
+      "loading": "Loading errors…",
+      "loadFailed": "Failed to load index errors",
+      "empty": "No index errors",
+      "listAriaLabel": "Index errors",
+      "locationScan": "Location scan",
+      "truncatedNotice": "Showing {{shown}} of {{total}} errors",
+      "copyDetails": "Copy details",
+      "copied": "Copied"
     },
     "search": {
       "title": "Def Search",
@@ -998,8 +1016,15 @@ export const enResources = {
       "def_index_rebuild_failed": "Could not resolve the app storage directory to rebuild the Def index.",
       "def_index_location_scan_failed": "This location could not be scanned for Def files.",
       "def_index_file_read_failed": "A file could not be read while building the Def index.",
+      "def_index_file_walk_failed": "A file or directory could not be scanned while building the Def index.",
       "def_index_parse_error": "This file has a parse error and was skipped while building the Def index.",
       "def_index_overlay_location_missing": "The location \"{{locationId}}\" could not be found while applying an index update.",
+      "load_folders_read_failed": "This item's LoadFolders.xml could not be read.",
+      "load_folders_parse_failed": "This item's LoadFolders.xml could not be parsed.",
+      "load_folders_no_matching_block": "This item's LoadFolders.xml has no block matching game version {{version}}.",
+      "load_folder_missing": "This item's LoadFolders.xml references a missing folder: {{folder}}.",
+      "load_folder_no_folders_resolved": "No load folders could be resolved for game version {{version}}.",
+      "steam_workshop_collection_empty": "This Steam Workshop source has no subscribed item folders.",
       "patch_index_cache_write_failed": "The patch index cache could not be saved.",
       "patch_index_load_failed": "Could not resolve the app storage directory for the patch index.",
       "patch_index_rebuild_failed": "Could not resolve the app storage directory to rebuild the patch index.",

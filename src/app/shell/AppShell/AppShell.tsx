@@ -141,6 +141,11 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
+  // Non-blocking reminder shown after adding a source folder that looked like it could be a
+  // Steam Workshop collection root but wasn't confidently detected as one (see
+  // `pickSourceFolder`'s `ambiguousWorkshopRoot`) -- holds the new location's display name, or
+  // `null` when dismissed/not applicable.
+  const [workshopRootNotice, setWorkshopRootNotice] = useState<string | null>(null);
   const [createDefSignal, setCreateDefSignal] = useState(0);
   const activeEditorCommandsRef = useRef<ActiveEditorCommands | null>(null);
   const handleActiveCommandsChange = useCallback(
@@ -257,6 +262,11 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
       const result = await pickSourceFolder(settings);
       if (!result) return;
       replaceSettings(result.settings);
+      if (result.ambiguousWorkshopRoot) {
+        setWorkshopRootNotice(
+          result.settings.locations.find((l) => l.id === result.locationId)?.displayName ?? null,
+        );
+      }
     } catch (e: unknown) {
       console.error("Failed to add source folder:", e);
     }
@@ -546,6 +556,22 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
             </button>
           </div>
         )}
+        {workshopRootNotice && (
+          <div className={styles.startupNotice}>
+            <span className={styles.startupNoticeMessage}>
+              {t("shell:workshopRootNotice.message", { displayName: workshopRootNotice })}
+            </span>
+            <button
+              className="icon-btn"
+              style={{ width: 20, height: 20, flexShrink: 0 }}
+              onClick={() => setWorkshopRootNotice(null)}
+              aria-label={t("shell:workshopRootNotice.dismiss")}
+              title={t("shell:workshopRootNotice.dismiss")}
+            >
+              <X size={12} />
+            </button>
+          </div>
+        )}
         <div
           className={styles.workspace}
           ref={workspaceRef}
@@ -706,6 +732,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         activeFilePath={activeFilePath}
         activeFileSizeBytes={activeFileEntry?.sizeBytes ?? null}
         indexingStatus={indexingStatus}
+        projectId={activeProjectId}
       />
       <CommandPalette
         open={paletteOpen}

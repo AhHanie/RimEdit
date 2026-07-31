@@ -14,9 +14,9 @@ mod xml_save;
 
 pub use create_def::create_def_from_template;
 pub use def_index::{
-    get_def_index_facets, get_indexing_status, query_def_duplicates, read_indexed_def_xml,
-    rebuild_def_index, resolve_def_reference_cmd, search_defs, start_background_indexing,
-    suggest_def_references_cmd,
+    get_def_index_errors, get_def_index_facets, get_indexing_status, query_def_duplicates,
+    read_indexed_def_xml, rebuild_def_index, resolve_def_reference_cmd, search_defs,
+    start_background_indexing, suggest_def_references_cmd,
 };
 pub use def_templates::{
     create_def_from_indexed_def, create_def_from_user_template, delete_user_def_template,
@@ -39,8 +39,8 @@ pub use project_files::{
     read_project_xml_file, rename_project_path_cmd, scan_project_files,
 };
 pub use project_settings::{
-    get_project_settings, remove_location, set_active_project, update_app_locale, update_location,
-    update_project_game_version, upsert_location,
+    classify_source_folder_cmd, get_project_settings, remove_location, set_active_project,
+    update_app_locale, update_location, update_project_game_version, upsert_location,
 };
 pub use project_validation::validate_project;
 pub use schema_catalog::{list_installed_schema_game_versions_cmd, load_schema_catalog};

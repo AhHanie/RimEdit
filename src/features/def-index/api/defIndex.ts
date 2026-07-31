@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { measureAsync } from "../../../instrumentation";
 import type {
   DefDuplicateQueryResult,
+  DefIndexErrorsResponse,
   DefIndexFacetSummary,
   DefIndexSummary,
   DefReferenceResolution,
@@ -28,6 +29,10 @@ export function getDefIndexFacets(
   includeSources?: boolean,
 ): Promise<DefIndexFacetSummary> {
   return invoke("get_def_index_facets", { projectId, includeSources });
+}
+
+export function getDefIndexErrors(projectId: string): Promise<DefIndexErrorsResponse> {
+  return invoke("get_def_index_errors", { projectId });
 }
 
 export function searchDefs(

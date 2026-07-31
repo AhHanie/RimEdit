@@ -17,11 +17,12 @@ mod settings_store;
 mod xml_document;
 
 use commands::{
-    apply_xml_editor_edit, apply_xml_editor_edits, complete_patch_operation_xpath,
-    create_custom_form_view, create_def_from_indexed_def, create_def_from_template,
-    create_def_from_user_template, create_project_file_cmd, create_project_folder_cmd,
-    delete_custom_form_view, delete_project_path_cmd, delete_user_def_template,
-    get_def_index_facets, get_indexing_status, get_instrumentation_config,
+    apply_xml_editor_edit, apply_xml_editor_edits, classify_source_folder_cmd,
+    complete_patch_operation_xpath, create_custom_form_view, create_def_from_indexed_def,
+    create_def_from_template, create_def_from_user_template, create_project_file_cmd,
+    create_project_folder_cmd, delete_custom_form_view, delete_project_path_cmd,
+    delete_user_def_template,
+    get_def_index_errors, get_def_index_facets, get_indexing_status, get_instrumentation_config,
     get_last_selected_form_view, get_project_settings, list_custom_form_views,
     list_installed_schema_game_versions_cmd, list_user_def_templates, load_schema_catalog,
     parse_patch_operations, parse_patch_value_xml, parse_xml_editor_buffer, preview_def_patches,
@@ -153,6 +154,8 @@ pub fn run() {
             query_def_duplicates,
             search_defs,
             get_def_index_facets,
+            get_def_index_errors,
+            classify_source_folder_cmd,
             suggest_def_references_cmd,
             resolve_def_reference_cmd,
             read_indexed_def_xml,
