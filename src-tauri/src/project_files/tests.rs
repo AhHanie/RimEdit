@@ -49,6 +49,13 @@ fn make_base_game_location(id: &str, display_name: &str, root: &Path) -> Registe
     location
 }
 
+fn make_steam_workshop_location(id: &str, display_name: &str, root: &Path) -> RegisteredLocation {
+    let mut location = make_location(id, display_name, root, LocationKind::Source, true);
+    location.source_type = SourceType::SteamWorkshop;
+    location.mod_id = None;
+    location
+}
+
 fn temp_dir() -> PathBuf {
     let dir = std::env::temp_dir().join(format!("rimedit_test_{}", uuid::Uuid::new_v4()));
     fs::create_dir_all(&dir).unwrap();
@@ -294,6 +301,122 @@ fn mod_load_folder_scan_still_shadows_duplicate_relative_paths() {
 
     assert_eq!(paths, vec!["High/Defs/Same.xml"]);
     fs::remove_dir_all(&mod_dir).ok();
+}
+
+#[test]
+fn steam_workshop_collection_scans_defs_from_every_immediate_item_directory() {
+    let collection_root = temp_dir();
+
+    // Item 1234567890: plain root Defs/ (no LoadFolders.xml, no version folder).
+    let item_a = collection_root.join("1234567890");
+    fs::create_dir_all(item_a.join("Defs")).unwrap();
+    fs::write(item_a.join("Defs").join("ItemA.xml"), "<Defs/>").unwrap();
+
+    // Item 9876543210: LoadFolders.xml selecting a versioned Defs/ folder.
+    let item_b = collection_root.join("9876543210");
+    fs::create_dir_all(item_b.join("1.6").join("Defs")).unwrap();
+    fs::write(
+        item_b.join("LoadFolders.xml"),
+        r#"<loadFolders><v1.6><li>1.6</li></v1.6></loadFolders>"#,
+    )
+    .unwrap();
+    fs::write(item_b.join("1.6").join("Defs").join("ItemB.xml"), "<Defs/>").unwrap();
+
+    let settings = ProjectSettings {
+        schema_version: 3,
+        game_version: "1.6".to_string(),
+        locale: "en".to_string(),
+        locations: vec![make_steam_workshop_location(
+            "workshop",
+            "Steam Workshop",
+            &collection_root,
+        )],
+        active_project_id: None,
+    };
+
+    let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
+    let paths: Vec<&str> = scan
+        .files
+        .iter()
+        .map(|file| file.relative_path.as_str())
+        .collect();
+
+    assert!(paths.contains(&"1234567890/Defs/ItemA.xml"));
+    assert!(paths.contains(&"9876543210/1.6/Defs/ItemB.xml"));
+    assert!(paths
+        .iter()
+        .all(|p| p.starts_with("1234567890/") || p.starts_with("9876543210/")));
+    fs::remove_dir_all(&collection_root).ok();
+}
+
+#[test]
+fn steam_workshop_collection_keeps_same_relative_filename_from_different_items() {
+    let collection_root = temp_dir();
+    let item_a = collection_root.join("111");
+    let item_b = collection_root.join("222");
+    fs::create_dir_all(item_a.join("Defs")).unwrap();
+    fs::create_dir_all(item_b.join("Defs")).unwrap();
+    fs::write(item_a.join("Defs").join("Shared.xml"), "<Defs/>").unwrap();
+    fs::write(item_b.join("Defs").join("Shared.xml"), "<Defs/>").unwrap();
+
+    let settings = ProjectSettings {
+        schema_version: 3,
+        game_version: "1.6".to_string(),
+        locale: "en".to_string(),
+        locations: vec![make_steam_workshop_location(
+            "workshop",
+            "Steam Workshop",
+            &collection_root,
+        )],
+        active_project_id: None,
+    };
+
+    let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
+    let paths: Vec<&str> = scan
+        .files
+        .iter()
+        .map(|file| file.relative_path.as_str())
+        .collect();
+
+    assert_eq!(paths, vec!["111/Defs/Shared.xml", "222/Defs/Shared.xml"]);
+    fs::remove_dir_all(&collection_root).ok();
+}
+
+#[test]
+fn steam_workshop_item_still_shadows_duplicate_relative_paths_within_itself() {
+    let collection_root = temp_dir();
+    let item = collection_root.join("333");
+    fs::create_dir_all(item.join("Low").join("Defs")).unwrap();
+    fs::create_dir_all(item.join("High").join("Defs")).unwrap();
+    fs::write(
+        item.join("LoadFolders.xml"),
+        r#"<loadFolders><v1.6><li>Low</li><li>High</li></v1.6></loadFolders>"#,
+    )
+    .unwrap();
+    fs::write(item.join("Low").join("Defs").join("Same.xml"), "<Defs/>").unwrap();
+    fs::write(item.join("High").join("Defs").join("Same.xml"), "<Defs/>").unwrap();
+
+    let settings = ProjectSettings {
+        schema_version: 3,
+        game_version: "1.6".to_string(),
+        locale: "en".to_string(),
+        locations: vec![make_steam_workshop_location(
+            "workshop",
+            "Steam Workshop",
+            &collection_root,
+        )],
+        active_project_id: None,
+    };
+
+    let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
+    let paths: Vec<&str> = scan
+        .files
+        .iter()
+        .map(|file| file.relative_path.as_str())
+        .collect();
+
+    assert_eq!(paths, vec!["333/High/Defs/Same.xml"]);
+    fs::remove_dir_all(&collection_root).ok();
 }
 
 #[test]

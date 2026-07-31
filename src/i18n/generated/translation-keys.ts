@@ -247,6 +247,12 @@ export const enResources = {
         "steamWorkshop": "Steam Workshop",
         "folder": "Folder"
       },
+      "sourceTypeHelp": {
+        "baseGame": "The RimWorld Data folder, containing one subfolder per official content pack (Core, Royalty, Ideology, …).",
+        "localMod": "One individual mod folder (its About/ and Defs/ folders live directly under this path).",
+        "steamWorkshop": "The Workshop collection root, e.g. \".../steamapps/workshop/content/294100\" -- every immediate subfolder is treated as one subscribed mod.",
+        "folder": "One individual mod folder (its About/ and Defs/ folders live directly under this path)."
+      },
       "kindProject": "project",
       "kindSource": "source",
       "active": "Active",

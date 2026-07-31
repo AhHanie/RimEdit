@@ -75,6 +75,13 @@ pub(crate) enum WatcherRawEvent {
         location_id: String,
         folder_prefix: String,
     },
+    /// A direct child of a `SteamWorkshop` collection root was created, removed, or renamed --
+    /// i.e. the set of subscribed Workshop items changed. Always routed to a full rebuild (see
+    /// `watchers::is_workshop_collection_membership_change`).
+    CollectionMembershipChanged {
+        #[allow(dead_code)]
+        location_id: String,
+    },
 }
 
 fn job_generation(job: &IndexJob) -> u64 {
@@ -243,6 +250,14 @@ fn route_watcher_event(
             immediate_jobs.push(IndexJob::FolderDeleted {
                 location_id,
                 folder_prefix,
+                generation: gen,
+                reason: IndexJobReason::WatcherEvent,
+            });
+        }
+        WatcherRawEvent::CollectionMembershipChanged { .. } => {
+            let gen = app.state::<DefIndexState>().current_generation();
+            immediate_jobs.push(IndexJob::FullRebuild {
+                project_id: None,
                 generation: gen,
                 reason: IndexJobReason::WatcherEvent,
             });

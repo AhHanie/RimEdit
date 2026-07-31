@@ -29,6 +29,14 @@ pub struct ResolvedLoadFolder {
     /// Reserved for project-explorer active/inactive file display.
     #[allow(dead_code)]
     pub source: LoadFolderSource,
+    /// Identifies the independent content pack this folder belongs to, for shadowing purposes.
+    /// Empty for an ordinary single-mod source (all its folders shadow each other by relative
+    /// path, as before). For a `SteamWorkshop` collection root, this is the Workshop item's
+    /// directory name (e.g. a published file id) -- folders from different items never shadow
+    /// each other even when they share the same path relative to their own load folder.
+    /// Internal implementation detail: consumers should combine this with a load-folder-relative
+    /// identity path to form their shadow key, not use it alone.
+    pub scope: String,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -93,6 +101,7 @@ pub fn resolve_load_folders(
                         absolute_path: path,
                         relative_folder: rel,
                         source: LoadFolderSource::BaseGame,
+                        scope: String::new(),
                     })
                 } else {
                     None
@@ -108,6 +117,7 @@ pub fn resolve_load_folders(
                 absolute_path: root.clone(),
                 relative_folder: String::new(),
                 source: LoadFolderSource::BaseGame,
+                scope: String::new(),
             });
         }
 
@@ -122,29 +132,97 @@ pub fn resolve_load_folders(
     let selected_version = &settings.game_version;
     let selected_ver = parse_major_minor(selected_version);
 
-    let load_folders_xml = root.join("LoadFolders.xml");
-    if load_folders_xml.exists() {
-        let folders = resolve_from_load_folders_xml(
-            &root,
-            &load_folders_xml,
-            selected_version,
-            selected_ver,
-            &mut diagnostics,
-        );
-        return LoadFolderResolution {
-            root_path: root,
-            selected_folders: folders,
-            diagnostics,
-            shadow_by_relative_path: true,
-        };
+    if location.source_type == SourceType::SteamWorkshop {
+        return resolve_steam_workshop_collection(&root, selected_version, selected_ver);
     }
 
-    // Conventional fallback: version folder, Common, root.
     let folders =
-        resolve_conventional_fallback(&root, selected_version, selected_ver, &mut diagnostics);
+        resolve_mod_load_folders(&root, selected_version, selected_ver, &mut diagnostics, "");
     LoadFolderResolution {
         root_path: root,
         selected_folders: folders,
+        diagnostics,
+        shadow_by_relative_path: true,
+    }
+}
+
+/// Resolve the load folders for one ordinary content-pack root (a single mod, or one Workshop
+/// item within a collection), tagging every resolved folder with `scope`.
+///
+/// Uses `LoadFolders.xml` when present at `mod_root`, otherwise the conventional version-folder
+/// fallback -- the same two-step rule `resolve_load_folders` has always applied to a whole
+/// non-BaseGame source, just scoped to a single content-pack root here so it can be reused once
+/// per Workshop item.
+fn resolve_mod_load_folders(
+    mod_root: &Path,
+    selected_version: &str,
+    selected_ver: Option<(u16, u16)>,
+    diagnostics: &mut Vec<LoadFolderDiagnostic>,
+    scope: &str,
+) -> Vec<ResolvedLoadFolder> {
+    let load_folders_xml = mod_root.join("LoadFolders.xml");
+    let mut folders = if load_folders_xml.exists() {
+        resolve_from_load_folders_xml(
+            mod_root,
+            &load_folders_xml,
+            selected_version,
+            selected_ver,
+            diagnostics,
+        )
+    } else {
+        resolve_conventional_fallback(mod_root, selected_version, selected_ver, diagnostics)
+    };
+    for folder in &mut folders {
+        folder.scope = scope.to_string();
+    }
+    folders
+}
+
+/// Resolve a `SteamWorkshop` collection root: every immediate child directory (a Workshop
+/// item) is an independent content pack, resolved on its own via [`resolve_mod_load_folders`]
+/// and tagged with a distinct shadow scope (its directory name, typically the published file
+/// id). `root_path` stays the registered collection root so relative paths built from these
+/// folders remain openable through the registered source location (see module docs).
+///
+/// One malformed or unreadable item's `LoadFolders.xml` only affects that item's diagnostics;
+/// it never aborts resolution for the rest of the collection.
+fn resolve_steam_workshop_collection(
+    root: &Path,
+    selected_version: &str,
+    selected_ver: Option<(u16, u16)>,
+) -> LoadFolderResolution {
+    let mut diagnostics = Vec::new();
+
+    let mut item_dirs: Vec<(String, PathBuf)> = std::fs::read_dir(root)
+        .into_iter()
+        .flatten()
+        .flatten()
+        .filter_map(|entry| {
+            let path = entry.path();
+            if path.is_dir() {
+                Some((entry.file_name().to_string_lossy().to_string(), path))
+            } else {
+                None
+            }
+        })
+        .collect();
+    item_dirs.sort_by(|a, b| a.0.cmp(&b.0));
+
+    let mut selected_folders = Vec::new();
+    for (item_id, item_root) in &item_dirs {
+        let item_folders = resolve_mod_load_folders(
+            item_root,
+            selected_version,
+            selected_ver,
+            &mut diagnostics,
+            item_id,
+        );
+        selected_folders.extend(item_folders);
+    }
+
+    LoadFolderResolution {
+        root_path: root.to_path_buf(),
+        selected_folders,
         diagnostics,
         shadow_by_relative_path: true,
     }
@@ -247,6 +325,7 @@ fn resolve_from_load_folders_xml(
             absolute_path: abs,
             relative_folder: rel,
             source: LoadFolderSource::LoadFoldersXml,
+            scope: String::new(),
         });
     }
     result
@@ -318,6 +397,7 @@ fn resolve_conventional_fallback(
             absolute_path: exact_dir,
             relative_folder: selected_version.to_string(),
             source: LoadFolderSource::VersionFolderExact,
+            scope: String::new(),
         });
     } else if let Some(sel) = selected_ver {
         // 2. Highest parseable version folder ≤ selected.
@@ -327,6 +407,7 @@ fn resolve_conventional_fallback(
                 absolute_path: abs,
                 relative_folder: rel,
                 source: LoadFolderSource::VersionFolderFallback,
+                scope: String::new(),
             });
         }
     }
@@ -338,6 +419,7 @@ fn resolve_conventional_fallback(
             absolute_path: common,
             relative_folder: "Common".to_string(),
             source: LoadFolderSource::CommonFolder,
+            scope: String::new(),
         });
     }
 
@@ -351,6 +433,7 @@ fn resolve_conventional_fallback(
         absolute_path: root.to_path_buf(),
         relative_folder: String::new(),
         source: LoadFolderSource::Root,
+        scope: String::new(),
     });
 
     if result.is_empty() {

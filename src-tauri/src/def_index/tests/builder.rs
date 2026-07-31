@@ -46,6 +46,26 @@ fn settings_with_base_game_source(
     }
 }
 
+fn settings_with_steam_workshop_source(
+    project_dir: &std::path::Path,
+    collection_dir: &std::path::Path,
+) -> ProjectSettings {
+    let mut workshop = location(collection_dir, "workshop", LocationKind::Source);
+    workshop.display_name = "Steam Workshop".to_string();
+    workshop.source_type = SourceType::SteamWorkshop;
+    workshop.mod_id = None;
+    ProjectSettings {
+        schema_version: 3,
+        game_version: "1.6".to_string(),
+        locale: "en".to_string(),
+        locations: vec![
+            location(project_dir, "project", LocationKind::Project),
+            workshop,
+        ],
+        active_project_id: Some("project".to_string()),
+    }
+}
+
 #[test]
 fn indexes_project_and_source_defs_separately() {
     let project_dir = temp_dir();
@@ -136,6 +156,59 @@ fn indexes_core_defs_when_base_game_packs_share_relative_paths() {
     );
     fs::remove_dir_all(&project_dir).ok();
     fs::remove_dir_all(&data_dir).ok();
+}
+
+#[test]
+fn indexes_project_and_steam_workshop_collection_defs() {
+    let project_dir = temp_dir();
+    let collection_dir = temp_dir();
+    fs::create_dir(project_dir.join("Defs")).unwrap();
+    fs::write(
+        project_dir.join("Defs").join("a.xml"),
+        "<Defs><ThingDef><defName>ProjectThing</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+
+    let item_a = collection_dir.join("111");
+    fs::create_dir_all(item_a.join("Defs")).unwrap();
+    fs::write(
+        item_a.join("Defs").join("a.xml"),
+        "<Defs><ThingDef><defName>WorkshopItemAThing</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+
+    let item_b = collection_dir.join("222");
+    fs::create_dir_all(item_b.join("1.6").join("Defs")).unwrap();
+    fs::write(
+        item_b.join("LoadFolders.xml"),
+        r#"<loadFolders><v1.6><li>1.6</li></v1.6></loadFolders>"#,
+    )
+    .unwrap();
+    fs::write(
+        item_b.join("1.6").join("Defs").join("b.xml"),
+        "<Defs><ThingDef><defName>WorkshopItemBThing</defName></ThingDef></Defs>",
+    )
+    .unwrap();
+
+    let settings = settings_with_steam_workshop_source(&project_dir, &collection_dir);
+    let index = build_def_index(&settings, DefIndexBuildOptions::for_project("project"));
+
+    assert_eq!(index.defs.len(), 3, "errors: {:?}", index.errors);
+    assert_eq!(index.find_by_key("ThingDef", "ProjectThing").len(), 1);
+    assert_eq!(index.find_by_key("ThingDef", "WorkshopItemAThing").len(), 1);
+    assert_eq!(index.find_by_key("ThingDef", "WorkshopItemBThing").len(), 1);
+
+    let item_a_def = &index.find_by_key("ThingDef", "WorkshopItemAThing")[0];
+    assert_eq!(item_a_def.relative_path, "111/Defs/a.xml");
+    assert_eq!(item_a_def.source.location_id, "workshop");
+    assert_eq!(item_a_def.source.source_type, SourceType::SteamWorkshop);
+
+    let item_b_def = &index.find_by_key("ThingDef", "WorkshopItemBThing")[0];
+    assert_eq!(item_b_def.relative_path, "222/1.6/Defs/b.xml");
+    assert_eq!(item_b_def.source.location_id, "workshop");
+
+    fs::remove_dir_all(&project_dir).ok();
+    fs::remove_dir_all(&collection_dir).ok();
 }
 
 #[test]
