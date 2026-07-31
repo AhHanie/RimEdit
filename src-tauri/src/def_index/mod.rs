@@ -18,8 +18,9 @@ pub use builder::{
     ScanDiscoveryStats,
 };
 pub use cache::{
-    cache_state_inputs, load_or_rebuild_def_index, rebuild_and_store_def_index,
-    rebuild_and_store_def_index_with_progress, store_prebuilt_index, DefIndexCacheError,
+    cache_state_inputs, load_cached_index_only, load_or_rebuild_def_index,
+    rebuild_and_store_def_index, rebuild_and_store_def_index_with_progress, store_prebuilt_index,
+    CachedDefIndex, DefIndexCacheError,
 };
 pub(crate) use fingerprint::settings_fingerprint;
 pub use fingerprint::IndexedFileFingerprint;

@@ -86,6 +86,34 @@ fn now_ms() -> i64 {
     OffsetDateTime::now_utc().unix_timestamp_nanos() as i64 / 1_000_000
 }
 
+fn complete_status(project_id: Option<String>, index: &DefIndex) -> IndexingStatus {
+    let project_defs = index
+        .defs
+        .iter()
+        .filter(|d| d.source.source_kind == IndexedSourceKind::Project)
+        .count();
+    let source_defs = index
+        .defs
+        .iter()
+        .filter(|d| d.source.source_kind == IndexedSourceKind::Source)
+        .count();
+    IndexingStatus {
+        project_id,
+        phase: IndexingPhase::Complete,
+        pending_files: 0,
+        indexed_defs: index.defs.len(),
+        project_defs,
+        source_defs,
+        errors: index.errors.len(),
+        message: None,
+        updated_at_unix_ms: now_ms(),
+        total_files: None,
+        processed_files: None,
+        current_stage: None,
+        current_location_name: None,
+    }
+}
+
 struct DefIndexStateEntry {
     settings_fingerprint: String,
     file_fingerprints: Vec<IndexedFileFingerprint>,
@@ -219,7 +247,11 @@ impl DefIndexState {
 
     /// Enters the `Discovering` sub-stage of a `Running` full rebuild -- see
     /// `def_index::discover_scan_stats`. `current_location_name` is display-name-only.
-    pub fn set_status_discovering(&self, project_id: Option<String>, current_location_name: Option<String>) {
+    pub fn set_status_discovering(
+        &self,
+        project_id: Option<String>,
+        current_location_name: Option<String>,
+    ) {
         if let Ok(mut guard) = self.inner.lock() {
             guard.status = IndexingStatus {
                 project_id,
@@ -282,33 +314,18 @@ impl DefIndexState {
     }
 
     pub fn set_status_complete(&self, index: &DefIndex) {
-        let project_defs = index
-            .defs
-            .iter()
-            .filter(|d| d.source.source_kind == IndexedSourceKind::Project)
-            .count();
-        let source_defs = index
-            .defs
-            .iter()
-            .filter(|d| d.source.source_kind == IndexedSourceKind::Source)
-            .count();
         if let Ok(mut guard) = self.inner.lock() {
             let project_id = guard.status.project_id.clone();
-            guard.status = IndexingStatus {
-                project_id,
-                phase: IndexingPhase::Complete,
-                pending_files: 0,
-                indexed_defs: index.defs.len(),
-                project_defs,
-                source_defs,
-                errors: index.errors.len(),
-                message: None,
-                updated_at_unix_ms: now_ms(),
-                total_files: None,
-                processed_files: None,
-                current_stage: None,
-                current_location_name: None,
-            };
+            guard.status = complete_status(project_id, index);
+        }
+    }
+
+    /// Same as `set_status_complete`, but explicitly assigns `project_id` instead of carrying
+    /// it forward from the prior status. Used to report a hydrated disk-cache hit as completed
+    /// indexing for the active project, since fresh state begins with `project_id: None`.
+    pub fn set_status_complete_for_project(&self, project_id: Option<String>, index: &DefIndex) {
+        if let Ok(mut guard) = self.inner.lock() {
+            guard.status = complete_status(project_id, index);
         }
     }
 
@@ -343,6 +360,70 @@ impl DefIndexState {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::def_index::{DefIdentityKey, IndexedDef, IndexedDefSource};
+    use crate::project_model::SourceType;
+
+    fn indexed_def(def_name: &str, kind: IndexedSourceKind) -> IndexedDef {
+        IndexedDef {
+            key: DefIdentityKey {
+                def_type: "ThingDef".to_string(),
+                def_name: def_name.to_string(),
+            },
+            def_type: "ThingDef".to_string(),
+            def_name: def_name.to_string(),
+            label: None,
+            parent_name: None,
+            relative_path: "a.xml".to_string(),
+            node_id: None,
+            line: None,
+            column: None,
+            source: IndexedDefSource {
+                location_id: "loc".to_string(),
+                location_name: "loc".to_string(),
+                source_kind: kind,
+                source_type: SourceType::Folder,
+                read_only: false,
+                mod_id: None,
+                game_version: None,
+                expansion_name: None,
+            },
+            fields: Vec::new(),
+            def_name_lower: def_name.to_lowercase(),
+            label_lower: String::new(),
+        }
+    }
+
+    #[test]
+    fn set_status_complete_for_project_reports_the_supplied_project_id_and_counts() {
+        let state = DefIndexState::default();
+        // Fresh state begins with `project_id: None`; `set_status_complete` alone would carry
+        // that forward instead of reporting the hydrated project.
+        let index = DefIndex {
+            defs: vec![
+                indexed_def("Steel", IndexedSourceKind::Project),
+                indexed_def("Wood", IndexedSourceKind::Source),
+                indexed_def("Plastic", IndexedSourceKind::Source),
+            ],
+            errors: Vec::new(),
+            built_at_unix_ms: 1234,
+            by_type: Default::default(),
+        };
+
+        state.set_status_complete_for_project(Some("proj".to_string()), &index);
+
+        let status = state.status();
+        assert_eq!(status.phase, IndexingPhase::Complete);
+        assert_eq!(status.project_id.as_deref(), Some("proj"));
+        assert_eq!(status.indexed_defs, 3);
+        assert_eq!(status.project_defs, 1);
+        assert_eq!(status.source_defs, 2);
+        assert_eq!(status.errors, 0);
+        assert_eq!(status.pending_files, 0);
+        assert_eq!(status.total_files, None);
+        assert_eq!(status.processed_files, None);
+        assert_eq!(status.current_stage, None);
+        assert_eq!(status.current_location_name, None);
+    }
 
     #[test]
     fn discovering_then_indexing_then_complete_progresses_through_expected_stages() {
@@ -402,7 +483,10 @@ mod tests {
 
         let status = state.status();
         assert_eq!(status.phase, IndexingPhase::Complete);
-        assert_eq!(status.processed_files, None, "a stale tick must not resurrect progress fields");
+        assert_eq!(
+            status.processed_files, None,
+            "a stale tick must not resurrect progress fields"
+        );
     }
 
     #[test]

@@ -21,21 +21,20 @@ use commands::{
     complete_patch_operation_xpath, create_custom_form_view, create_def_from_indexed_def,
     create_def_from_template, create_def_from_user_template, create_project_file_cmd,
     create_project_folder_cmd, delete_custom_form_view, delete_project_path_cmd,
-    delete_user_def_template,
-    get_def_index_errors, get_def_index_facets, get_indexing_status, get_instrumentation_config,
-    get_last_selected_form_view, get_project_settings, list_custom_form_views,
-    list_installed_schema_game_versions_cmd, list_user_def_templates, load_schema_catalog,
-    parse_patch_operations, parse_patch_value_xml, parse_xml_editor_buffer, preview_def_patches,
-    preview_project_xml_save, query_def_duplicates, query_patch_operations_for_def,
-    read_indexed_def_xml, read_location_xml_editor_document, read_project_xml_document,
-    read_project_xml_editor_document, read_project_xml_file, rebuild_def_index,
-    rebuild_patch_index, remove_location, rename_project_path_cmd, reset_custom_form_view_store,
-    resolve_def_reference_cmd, resolve_graphic_preview_assets, save_project_xml_file,
-    save_user_def_template, scan_project_files, search_defs, serialize_patch_operations,
-    serialize_patch_value_fragment, set_active_project, set_instrumentation_enabled,
-    set_last_selected_form_view, start_background_indexing, suggest_def_references_cmd,
-    update_app_locale, update_custom_form_view, update_location, update_project_game_version,
-    upsert_location, validate_project,
+    delete_user_def_template, get_def_index_errors, get_def_index_facets, get_indexing_status,
+    get_instrumentation_config, get_last_selected_form_view, get_project_settings,
+    list_custom_form_views, list_installed_schema_game_versions_cmd, list_user_def_templates,
+    load_schema_catalog, parse_patch_operations, parse_patch_value_xml, parse_xml_editor_buffer,
+    preview_def_patches, preview_project_xml_save, query_def_duplicates,
+    query_patch_operations_for_def, read_indexed_def_xml, read_location_xml_editor_document,
+    read_project_xml_document, read_project_xml_editor_document, read_project_xml_file,
+    rebuild_def_index, rebuild_patch_index, remove_location, rename_project_path_cmd,
+    reset_custom_form_view_store, resolve_def_reference_cmd, resolve_graphic_preview_assets,
+    save_project_xml_file, save_user_def_template, scan_project_files, search_defs,
+    serialize_patch_operations, serialize_patch_value_fragment, set_active_project,
+    set_instrumentation_enabled, set_last_selected_form_view, start_background_indexing,
+    suggest_def_references_cmd, update_app_locale, update_custom_form_view, update_location,
+    update_project_game_version, upsert_location, validate_project,
 };
 use def_index::DefIndexState;
 use instrumentation::InstrumentationState;
@@ -44,6 +43,7 @@ use project_save::SaveValidationSecret;
 use schema_pack::SchemaCatalogCacheState;
 use services::graphic_preview::{self, AssetTokenCache};
 use services::indexing::{IndexWatcherState, IndexingServiceState};
+use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -114,13 +114,54 @@ pub fn run() {
                 services::project_settings::deactivate_missing_active_project(
                     &mut indexing_settings,
                 );
+                // Restart watchers/generation before hydrating so a cache hit still leaves the
+                // watcher live for subsequent file changes, and a stale generation can't let a
+                // job queued mid-hydration slip through under the old generation.
                 let _ = services::indexing::restart_for_settings(handle, &indexing_settings);
-                if let Some(ref pid) = indexing_settings.active_project_id {
-                    services::indexing::enqueue_full_rebuild(
-                        handle,
-                        Some(pid.clone()),
-                        services::indexing::IndexJobReason::InitialProjectOpen,
-                    );
+                if let Some(pid) = indexing_settings.active_project_id.clone() {
+                    // Cache-only hydration still walks every indexed file to verify content
+                    // fingerprints (see Plan.md's "Out of scope" note), which can take a while
+                    // for a large collection (e.g. Steam Workshop). `.setup()` runs on the main
+                    // thread before the window is shown, so that work must never happen inline
+                    // here -- do it on a blocking thread and let startup continue immediately.
+                    let hydrate_handle = handle.clone();
+                    let hydrate_settings = indexing_settings.clone();
+                    tauri::async_runtime::spawn(async move {
+                        let blocking_handle = hydrate_handle.clone();
+                        let blocking_settings = hydrate_settings.clone();
+                        let blocking_pid = pid.clone();
+                        let hydrated = tauri::async_runtime::spawn_blocking(move || {
+                            services::def_index_cache::hydrate_for_project(
+                                &blocking_handle,
+                                &blocking_settings,
+                                &blocking_pid,
+                            )
+                        })
+                        .await
+                        .ok()
+                        .and_then(Result::ok)
+                        .flatten();
+
+                        match hydrated {
+                            Some(index) => {
+                                let state = hydrate_handle.state::<DefIndexState>();
+                                state.set_status_complete_for_project(Some(pid), &index);
+                                services::indexing::events::emit_indexing_status(
+                                    &hydrate_handle,
+                                    &state.status(),
+                                );
+                            }
+                            None => {
+                                // Miss (including a failure to resolve the app storage
+                                // directory): fall back to the existing full-rebuild path.
+                                services::indexing::enqueue_full_rebuild(
+                                    &hydrate_handle,
+                                    Some(pid),
+                                    services::indexing::IndexJobReason::InitialProjectOpen,
+                                );
+                            }
+                        }
+                    });
                 }
             }
             Ok(())

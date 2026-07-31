@@ -8,8 +8,14 @@ use crate::xml_document::{
 };
 use tauri::AppHandle;
 
+// Every command below is `async` because it (transitively) calls `def_index_cache::load_for_project`,
+// whose fallback path can read/hash (or fully reparse) the collection. Tauri runs non-`async`
+// commands on the main WebView thread, so leaving any of these synchronous would freeze the UI
+// for that duration whenever the in-memory def index doesn't already match -- see
+// `services::def_index_cache::load_for_project`'s doc comment.
+
 #[tauri::command]
-pub fn read_project_xml_document(
+pub async fn read_project_xml_document(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -19,13 +25,8 @@ pub fn read_project_xml_document(
     let mut result = parse_xml_document(&relative_path, &content.contents);
     if result.document.is_some() {
         let mut doc = parse_to_document(&relative_path, &content.contents);
-        validation::validate_doc_for_project(
-            &app,
-            &settings,
-            &project_id,
-            &relative_path,
-            &mut doc,
-        )?;
+        validation::validate_doc_for_project(&app, &settings, &project_id, &relative_path, &mut doc)
+            .await?;
         result.validation_diagnostics = doc.validation_diagnostics;
     }
     result.project_id = project_id;
@@ -33,7 +34,7 @@ pub fn read_project_xml_document(
 }
 
 #[tauri::command]
-pub fn read_project_xml_editor_document(
+pub async fn read_project_xml_editor_document(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -46,11 +47,11 @@ pub fn read_project_xml_editor_document(
             ("sourceKind".to_string(), "project".to_string()),
         ],
     );
-    xml_editor_service::read_editor_document(&app, project_id, relative_path)
+    xml_editor_service::read_editor_document(&app, project_id, relative_path).await
 }
 
 #[tauri::command]
-pub fn read_location_xml_editor_document(
+pub async fn read_location_xml_editor_document(
     app: AppHandle,
     project_id: String,
     location_id: String,
@@ -65,10 +66,11 @@ pub fn read_location_xml_editor_document(
         ],
     );
     xml_editor_service::read_location_editor_document(&app, project_id, location_id, relative_path)
+        .await
 }
 
 #[tauri::command]
-pub fn parse_xml_editor_buffer(
+pub async fn parse_xml_editor_buffer(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -79,11 +81,11 @@ pub fn parse_xml_editor_buffer(
         "commands.parseXmlEditorBuffer",
         [("relativePath".to_string(), relative_path.clone())],
     );
-    xml_editor_service::parse_editor_buffer(&app, project_id, relative_path, raw_xml)
+    xml_editor_service::parse_editor_buffer(&app, project_id, relative_path, raw_xml).await
 }
 
 #[tauri::command]
-pub fn apply_xml_editor_edit(
+pub async fn apply_xml_editor_edit(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -104,10 +106,11 @@ pub fn apply_xml_editor_edit(
         vec![edit],
         edit_context,
     )
+    .await
 }
 
 #[tauri::command]
-pub fn apply_xml_editor_edits(
+pub async fn apply_xml_editor_edits(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -123,12 +126,6 @@ pub fn apply_xml_editor_edits(
             ("batchSize".to_string(), edits.len().to_string()),
         ],
     );
-    xml_editor_service::apply_editor_edits(
-        &app,
-        project_id,
-        relative_path,
-        raw_xml,
-        edits,
-        edit_context,
-    )
+    xml_editor_service::apply_editor_edits(&app, project_id, relative_path, raw_xml, edits, edit_context)
+        .await
 }

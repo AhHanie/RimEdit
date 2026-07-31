@@ -1,20 +1,26 @@
 use crate::def_index::{
-    cache_state_inputs, load_or_rebuild_def_index, rebuild_and_store_def_index_with_progress,
-    settings_fingerprint, store_prebuilt_index, summarize_index, DefIndex, DefIndexBuildOptions,
-    DefIndexState, DefIndexSummary,
+    cache_state_inputs, load_cached_index_only, load_or_rebuild_def_index,
+    rebuild_and_store_def_index_with_progress, settings_fingerprint, store_prebuilt_index,
+    summarize_index, DefIndex, DefIndexBuildOptions, DefIndexState, DefIndexSummary,
 };
 use crate::project_model::{AppError, ProjectSettings};
 use crate::services::app_paths;
 use std::sync::Arc;
 use tauri::{AppHandle, Manager};
 
-pub(crate) fn load_for_project(
+/// `async` because the fallback path (a settings-fingerprint miss, or an explicit
+/// `force_rebuild`) reads and hashes every indexed file -- and, on a full cache miss, parses
+/// the whole collection. Tauri runs non-`async` commands on the main (WebView) thread, so every
+/// caller up to its `#[tauri::command]` entry point must be `async` too and `.await` this;
+/// otherwise opening/editing/saving a Def file would freeze the UI for the scan's duration. The
+/// hot path (an in-memory `DefIndexState` match, the common case once startup indexing has
+/// completed) stays synchronous and returns immediately.
+pub(crate) async fn load_for_project(
     app: &AppHandle,
     settings: &ProjectSettings,
     project_id: &str,
     force_rebuild: bool,
 ) -> Result<Arc<DefIndex>, AppError> {
-    let app_data_dir = app_paths::app_storage_dir(app, "def_index_load_failed")?;
     let state = app.state::<DefIndexState>();
     let options = DefIndexBuildOptions {
         project_id: Some(project_id),
@@ -32,17 +38,67 @@ pub(crate) fn load_for_project(
         }
     }
 
-    let index = load_or_rebuild_def_index(&app_data_dir, settings, options)?;
+    let blocking_app = app.clone();
+    let blocking_settings = settings.clone();
+    let blocking_project_id = project_id.to_string();
+    tauri::async_runtime::spawn_blocking(move || -> Result<Arc<DefIndex>, AppError> {
+        let app_data_dir = app_paths::app_storage_dir(&blocking_app, "def_index_load_failed")?;
+        let options = DefIndexBuildOptions {
+            project_id: Some(&blocking_project_id),
+            include_sources: true,
+            replacement: None,
+            force_rebuild,
+        };
+        let index = load_or_rebuild_def_index(&app_data_dir, &blocking_settings, options)?;
+        let options = DefIndexBuildOptions {
+            project_id: Some(&blocking_project_id),
+            include_sources: true,
+            replacement: None,
+            force_rebuild: false,
+        };
+        let state = blocking_app.state::<DefIndexState>();
+        if let Some((settings_hash, file_hashes)) = cache_state_inputs(&blocking_settings, &options)
+        {
+            return Ok(state.store(settings_hash, file_hashes, index));
+        }
+        Ok(Arc::new(index))
+    })
+    .await
+    .map_err(|e| AppError {
+        code: "def_index_load_join_failed".to_string(),
+        message: format!("Def index load task failed: {}", e),
+        details: None,
+        args: crate::diagnostics::DiagnosticArgs::new(),
+    })?
+}
+
+/// Cache-only startup hydration: reads a valid disk-cached def index for `project_id` straight
+/// into `DefIndexState`, without ever reading/parsing Def XML or writing the cache. Returns
+/// `Ok(Some(index))` on a hit (already stored in `DefIndexState`) or `Ok(None)` on a benign
+/// miss, leaving the in-memory state untouched. Unlike `load_for_project`, a miss here never
+/// falls back to a synchronous rebuild -- callers decide whether to enqueue one.
+pub(crate) fn hydrate_for_project(
+    app: &AppHandle,
+    settings: &ProjectSettings,
+    project_id: &str,
+) -> Result<Option<Arc<DefIndex>>, AppError> {
+    let app_data_dir = app_paths::app_storage_dir(app, "def_index_hydrate_failed")?;
     let options = DefIndexBuildOptions {
         project_id: Some(project_id),
         include_sources: true,
         replacement: None,
         force_rebuild: false,
     };
-    if let Some((settings_hash, file_hashes)) = cache_state_inputs(settings, &options) {
-        return Ok(state.store(settings_hash, file_hashes, index));
-    }
-    Ok(Arc::new(index))
+    let Some(cached) = load_cached_index_only(&app_data_dir, settings, &options) else {
+        return Ok(None);
+    };
+    let state = app.state::<DefIndexState>();
+    let index = state.store(
+        cached.settings_fingerprint,
+        cached.file_fingerprints,
+        cached.index,
+    );
+    Ok(Some(index))
 }
 
 pub(crate) fn load_for_project_query(

@@ -37,6 +37,49 @@ impl From<DefIndexCacheError> for AppError {
     }
 }
 
+/// A cache hit from [`load_cached_index_only`]: the deserialized index plus the fingerprints
+/// that were computed to validate it, so callers can populate `DefIndexState` without
+/// recomputing the (expensive) project-wide file-fingerprint scan.
+pub struct CachedDefIndex {
+    pub index: DefIndex,
+    pub settings_fingerprint: String,
+    pub file_fingerprints: Vec<IndexedFileFingerprint>,
+}
+
+/// Reads a valid disk-cached def index without ever building or writing anything. Returns
+/// `None` for any benign miss -- absent cache file, unreadable/malformed JSON, unsupported
+/// cache version, a fingerprint scan failure, or any fingerprint mismatch -- never as an error.
+///
+/// Ignores `options.replacement` / `options.force_rebuild`; callers that need those bypass
+/// semantics (like [`load_or_rebuild_def_index`]) must check them before calling this.
+pub fn load_cached_index_only(
+    app_data_dir: &Path,
+    settings: &ProjectSettings,
+    options: &DefIndexBuildOptions<'_>,
+) -> Option<CachedDefIndex> {
+    let expected_settings = settings_fingerprint(settings, options);
+    let expected_files = file_fingerprints(settings, options).ok()?;
+    let cache_path = cache_path(app_data_dir);
+    if !cache_path.exists() {
+        return None;
+    }
+    let raw = std::fs::read_to_string(&cache_path).ok()?;
+    let cache = serde_json::from_str::<DefIndexCacheFile>(&raw).ok()?;
+    if cache.version != CACHE_VERSION
+        || cache.settings_fingerprint != expected_settings
+        || cache.file_fingerprints != expected_files
+    {
+        return None;
+    }
+    let mut index = cache.index;
+    index.rebuild_computed_fields();
+    Some(CachedDefIndex {
+        index,
+        settings_fingerprint: expected_settings,
+        file_fingerprints: expected_files,
+    })
+}
+
 pub fn load_or_rebuild_def_index(
     app_data_dir: &Path,
     settings: &ProjectSettings,
@@ -46,25 +89,8 @@ pub fn load_or_rebuild_def_index(
         return rebuild_and_store_def_index(app_data_dir, settings, options);
     }
 
-    let expected_settings = settings_fingerprint(settings, &options);
-    let expected_files = file_fingerprints(settings, &options).ok();
-    let cache_path = cache_path(app_data_dir);
-
-    if let Some(expected_files) = expected_files {
-        if cache_path.exists() {
-            if let Ok(raw) = std::fs::read_to_string(&cache_path) {
-                if let Ok(cache) = serde_json::from_str::<DefIndexCacheFile>(&raw) {
-                    if cache.version == CACHE_VERSION
-                        && cache.settings_fingerprint == expected_settings
-                        && cache.file_fingerprints == expected_files
-                    {
-                        let mut index = cache.index;
-                        index.rebuild_computed_fields();
-                        return Ok(index);
-                    }
-                }
-            }
-        }
+    if let Some(cached) = load_cached_index_only(app_data_dir, settings, &options) {
+        return Ok(cached.index);
     }
 
     rebuild_and_store_def_index(app_data_dir, settings, options)

@@ -20,7 +20,7 @@ fn save_tags(trace_id: Option<&str>, relative_path: &str) -> Vec<(String, String
 }
 
 #[tauri::command]
-pub fn preview_project_xml_save(
+pub async fn preview_project_xml_save(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -51,7 +51,7 @@ pub fn preview_project_xml_save(
             "commands.previewProjectXmlSave.loadIndex",
             save_tags(tid, &relative_path),
         );
-        def_index_cache::load_for_project(&app, &settings, &project_id, false)?
+        def_index_cache::load_for_project(&app, &settings, &project_id, false).await?
     };
 
     let mut preview = {
@@ -121,7 +121,7 @@ pub fn preview_project_xml_save(
 }
 
 #[tauri::command]
-pub fn save_project_xml_file(
+pub async fn save_project_xml_file(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -248,7 +248,7 @@ pub fn save_project_xml_file(
             "commands.saveProjectXmlFile.slowPath.loadIndex",
             save_tags(tid, &relative_path),
         );
-        def_index_cache::load_for_project(&app, &settings, &project_id, false)?
+        def_index_cache::load_for_project(&app, &settings, &project_id, false).await?
     };
     let result = {
         let _s = crate::instrumentation::span_with_tags(
