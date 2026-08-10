@@ -11,14 +11,29 @@
 //! `XPathTarget` down to a specific `defName` from them, so they resolve to
 //! `XPathTarget::DefType` rather than `XPathTarget::Def`.
 //!
-//! The input is assumed to be a plain, no-cursor-tracking text field: every function here treats
-//! the *end* of the string as the position being completed (mirrors how `ReferencePicker` treats
-//! its whole current value as the live query). Completion is only offered for the conservative
-//! path shapes the issue documents; anything else -- axes, functions, wildcards, multiple
-//! predicates, `//`, attribute-node path segments -- is reported as [`XPathDiagnostic`] with code
+//! Completion is computed at a caret position ([`complete_patch_xpath_at`]'s `cursor` byte
+//! offset into `xpath`): only the text at or before the caret is analysed for structure (later
+//! path segments are never treated as already typed just because they exist after the caret), and
+//! a result's `replace_from`/`replace_to` describe the byte span of the *active* token the caret
+//! sits in or just before -- never anything beyond it. [`complete_patch_xpath`] is a thin
+//! convenience wrapper that completes at the end of the string, matching every existing caller
+//! that has no caret information (mirrors how `ReferencePicker` treats its whole current value as
+//! the live query). Completion is only offered for the conservative path shapes the issue
+//! documents; anything else -- axes, functions, wildcards, multiple predicates, `//`,
+//! attribute-node path segments -- is reported as [`XPathDiagnostic`] with code
 //! `xpath_autocomplete_unsupported_pattern` and an empty completion list, but is never rejected
 //! outright: the XPath stays editable and (per the Plan's XPath evaluation/autocomplete boundary)
 //! previewable by a fuller backend XML library later.
+//!
+//! Presentation whitespace is tolerated at path-segment boundaries: indentation right after a `/`
+//! and trailing whitespace right before the next `/` are stripped from a segment before it is
+//! inspected structurally (a Def type name, a field name, a structural `li`/`key`/`value` literal,
+//! or a predicate's own `[...]` body), via [`Segment::trimmed`]. Whitespace *inside* a predicate
+//! around `defName`/`=`/quote boundaries was already tolerated before caret-awareness landed (see
+//! `parse_predicate_content`/`parse_eq_quoted_value`/`predicate_completion`'s own trimming) and is
+//! unchanged here. Whitespace inside a quoted literal is never touched by either. A line break by
+//! itself is just more whitespace to this trimming and never triggers
+//! `xpath_autocomplete_unsupported_pattern` on its own.
 //!
 //! Field-segment depth is *not* capped: once the Def type/predicate segment resolves, a
 //! [`SchemaCursor`] walks every remaining segment against the merged [`SchemaCatalog`], descending
@@ -84,8 +99,9 @@ pub enum XPathCompletionItemKind {
 }
 
 /// One completion suggestion. `insert_text` replaces the input from the result's `replace_from`
-/// byte offset to the end of the string -- the frontend never needs its own XPath parsing to
-/// apply a suggestion, only string splicing.
+/// byte offset up to (not including) its `replace_to` byte offset -- the frontend never needs its
+/// own XPath parsing to apply a suggestion, only string splicing of
+/// `xpath[..replaceFrom] + item.insertText + xpath[replaceTo..]`.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct XPathCompletionItem {
@@ -164,8 +180,15 @@ pub struct XPathResolvedField {
 #[serde(rename_all = "camelCase")]
 pub struct XPathCompletionResult {
     /// Byte offset into the input XPath string that completion items replace from -- i.e. the
-    /// frontend applies a suggestion via `xpath[..replaceFrom] + item.insertText`.
+    /// frontend applies a suggestion via `xpath[..replaceFrom] + item.insertText + xpath[replaceTo..]`.
     pub replace_from: usize,
+    /// Byte offset into the input XPath string that completion items replace up to (exclusive).
+    /// Bounds the *active token*'s own text -- e.g. a Def type/field identifier run, or a
+    /// predicate value up to (not including) its closing quote -- never anything past it, so a
+    /// suffix already typed after the caret is preserved. Equals `replace_from` whenever `items`
+    /// is empty (there is nothing to apply). When the caret sits at the end of the string this
+    /// always equals `xpath.len()`, matching the pre-caret-aware contract exactly.
+    pub replace_to: usize,
     /// The bounded, display-ready suggestion list (see [`COMPLETION_ITEM_LIMIT`]).
     pub items: Vec<XPathCompletionItem>,
     /// How many suggestions matched before truncation -- always `>= items.len()`. The frontend
@@ -187,6 +210,7 @@ impl XPathCompletionResult {
     /// simply `items.len()` and `is_truncated` is always `false`.
     fn new(
         replace_from: usize,
+        replace_to: usize,
         items: Vec<XPathCompletionItem>,
         diagnostics: Vec<XPathDiagnostic>,
         target: XPathTarget,
@@ -195,6 +219,7 @@ impl XPathCompletionResult {
         let total_matches = items.len();
         Self {
             replace_from,
+            replace_to,
             items,
             total_matches,
             is_truncated: false,
@@ -208,6 +233,7 @@ impl XPathCompletionResult {
     /// caller) to `limit`, recording the true match count and truncation flag.
     fn capped(
         replace_from: usize,
+        replace_to: usize,
         mut items: Vec<XPathCompletionItem>,
         limit: usize,
         diagnostics: Vec<XPathDiagnostic>,
@@ -221,6 +247,7 @@ impl XPathCompletionResult {
         }
         Self {
             replace_from,
+            replace_to,
             items,
             total_matches,
             is_truncated,
@@ -231,15 +258,41 @@ impl XPathCompletionResult {
     }
 }
 
-/// Compute completions, diagnostics, and target/field inference for a `PatchPathInput` value.
+/// Compute completions, diagnostics, and target/field inference for a `PatchPathInput` value,
+/// treating the end of the string as the caret position. A thin convenience wrapper around
+/// [`complete_patch_xpath_at`] for callers with no caret information (e.g. existing tests and any
+/// future non-interactive use).
 pub fn complete_patch_xpath(
     catalog: &SchemaCatalog,
     def_index: &DefIndex,
     xpath: &str,
 ) -> XPathCompletionResult {
-    let mut segments = match split_segments(xpath) {
+    complete_patch_xpath_at(catalog, def_index, xpath, xpath.len())
+}
+
+/// Compute completions, diagnostics, and target/field inference for a `PatchPathInput` value at
+/// `cursor`, a byte offset into `xpath` (clamped to `xpath.len()` and to the nearest preceding
+/// char boundary if the caller passes an out-of-range or mid-character offset -- the Tauri command
+/// layer is the authority that rejects a bad offset outright with an `AppError`; this function
+/// stays panic-free for any input instead of duplicating that validation).
+///
+/// Only `xpath[..cursor]` is analysed for path/predicate structure: segments are split from this
+/// prefix alone, so a later path segment that happens to exist after the caret is never treated as
+/// already typed (see module docs). Every byte offset produced (`replace_from`, `replace_to`, and
+/// every position threaded into the split/resolve helpers below) is still an absolute offset into
+/// the original `xpath`, since `xpath[..cursor]` is a true prefix sharing the same byte indices.
+pub fn complete_patch_xpath_at(
+    catalog: &SchemaCatalog,
+    def_index: &DefIndex,
+    xpath: &str,
+    cursor: usize,
+) -> XPathCompletionResult {
+    let cursor = clamp_to_char_boundary(xpath, cursor);
+    let prefix = &xpath[..cursor];
+
+    let mut segments = match split_segments(prefix) {
         Ok(segments) => segments,
-        Err(diagnostic) => return terminal(xpath.len(), diagnostic),
+        Err(diagnostic) => return terminal(cursor, diagnostic),
     };
 
     // A single leading '/' is just absolute-path notation, not a `//` (descendant) step.
@@ -252,7 +305,7 @@ pub fn complete_patch_xpath(
     }
     if segments.iter().any(|s| s.start == s.end) {
         return terminal(
-            xpath.len(),
+            cursor,
             XPathDiagnostic::warning(
                 "xpath_autocomplete_unsupported_pattern",
                 "'//' (descendant axis) is not supported for autocomplete or target inference.",
@@ -260,10 +313,10 @@ pub fn complete_patch_xpath(
         );
     }
     if segments.is_empty() {
-        return root_completion(xpath.len());
+        return root_completion(xpath, cursor);
     }
 
-    let root_text = segments[0].text(xpath);
+    let (root_text, root_start) = segments[0].trimmed(xpath);
     if root_text != "Defs" {
         if segments.len() == 1
             && !trailing_slash
@@ -271,7 +324,8 @@ pub fn complete_patch_xpath(
             && "Defs".starts_with(root_text)
         {
             return XPathCompletionResult::new(
-                segments[0].start,
+                root_start,
+                identifier_token_end(xpath, root_start),
                 vec![XPathCompletionItem {
                     insert_text: "Defs".to_string(),
                     label: "Defs".to_string(),
@@ -284,7 +338,7 @@ pub fn complete_patch_xpath(
             );
         }
         return terminal(
-            xpath.len(),
+            cursor,
             XPathDiagnostic::warning(
                 "xpath_autocomplete_unsupported_root",
                 "XPath must be rooted at 'Defs' to be understood for autocomplete.",
@@ -294,9 +348,9 @@ pub fn complete_patch_xpath(
 
     if segments.len() == 1 {
         return if trailing_slash {
-            def_type_completion(catalog, xpath.len(), "")
+            def_type_completion(catalog, xpath, cursor, "")
         } else {
-            empty(xpath.len(), XPathTarget::Unsupported)
+            empty(cursor, XPathTarget::Unsupported)
         };
     }
 
@@ -305,6 +359,7 @@ pub fn complete_patch_xpath(
         catalog,
         def_index,
         xpath,
+        cursor,
         &segments[1],
         is_last_segment,
         trailing_slash,
@@ -315,9 +370,9 @@ pub fn complete_patch_xpath(
 
     if is_last_segment {
         return if trailing_slash {
-            field_completion(catalog, &def_type, target, xpath.len(), "")
+            field_completion(catalog, xpath, &def_type, target, cursor, "")
         } else {
-            empty(xpath.len(), target)
+            empty(cursor, target)
         };
     }
 
@@ -325,7 +380,7 @@ pub fn complete_patch_xpath(
     // Walk them left-to-right against a schema cursor that starts at the Def's direct fields and
     // descends through object/list/map shapes with no fixed depth limit -- see module docs.
     let field_segments = &segments[2..];
-    let mut cursor = SchemaCursor::DefFields {
+    let mut cursor_state = SchemaCursor::DefFields {
         def_type: def_type.clone(),
     };
     let mut resolved_field: Option<XPathResolvedField> = None;
@@ -338,12 +393,14 @@ pub fn complete_patch_xpath(
         field_segments.len() - 1
     };
     for seg in &field_segments[..complete_count] {
-        match resolve_and_transition(catalog, &mut cursor, &def_type, seg.text(xpath)) {
+        let (text, _) = seg.trimmed(xpath);
+        match resolve_and_transition(catalog, &mut cursor_state, &def_type, text) {
             Ok(Some(field)) => resolved_field = Some(field),
             Ok(None) => {}
             Err(diagnostic) => {
                 return XPathCompletionResult::new(
-                    xpath.len(),
+                    cursor,
+                    cursor,
                     Vec::new(),
                     vec![diagnostic],
                     target,
@@ -356,22 +413,25 @@ pub fn complete_patch_xpath(
     if trailing_slash {
         child_completion(
             catalog,
-            &cursor,
+            xpath,
+            &cursor_state,
             &def_type,
             target,
-            xpath.len(),
+            cursor,
             "",
             resolved_field,
         )
     } else {
         let final_seg = &field_segments[complete_count];
+        let (partial, partial_start) = final_seg.trimmed(xpath);
         child_completion(
             catalog,
-            &cursor,
+            xpath,
+            &cursor_state,
             &def_type,
             target,
-            final_seg.start,
-            final_seg.text(xpath),
+            partial_start,
+            partial,
             resolved_field,
         )
     }
@@ -390,6 +450,73 @@ impl Segment {
     fn text<'a>(&self, xpath: &'a str) -> &'a str {
         &xpath[self.start..self.end]
     }
+
+    /// This segment's token with symmetric leading/trailing whitespace trimmed, plus the absolute
+    /// byte offset the trimmed text starts at. Presentation whitespace immediately after the
+    /// preceding `/` (indentation) or immediately before the following `/` is never itself part
+    /// of an XPath grammar token, so every caller that inspects a segment's content structurally
+    /// (a Def type name, a field name, a structural `li`/`key`/`value` literal, or a predicate's
+    /// own `[...]` body) uses this rather than `text`/`start` directly. `start`/`end` remain the
+    /// raw byte range for anything keyed off segment boundaries themselves (e.g. detecting an
+    /// empty segment for `//`/trailing-slash).
+    fn trimmed<'a>(&self, xpath: &'a str) -> (&'a str, usize) {
+        let raw = self.text(xpath);
+        let leading = raw.len() - raw.trim_start().len();
+        (raw.trim(), self.start + leading)
+    }
+}
+
+/// Clamp `offset` to `xpath.len()` and then to the nearest char boundary at or before it, so
+/// slicing `xpath` at the result never panics regardless of what a caller passes in. The Tauri
+/// command layer independently rejects an out-of-range or mid-character `cursor_byte_offset`
+/// outright with an `AppError` before ever reaching here (see `commands::patches`); this is
+/// defense-in-depth for every other/direct caller of [`complete_patch_xpath_at`].
+fn clamp_to_char_boundary(xpath: &str, offset: usize) -> usize {
+    let offset = offset.min(xpath.len());
+    let mut offset = offset;
+    while offset > 0 && !xpath.is_char_boundary(offset) {
+        offset -= 1;
+    }
+    offset
+}
+
+/// The end of an identifier-like token starting at `from` (a Def type, field, root, or structural
+/// `li`/`key`/`value` literal): the first byte offset `>= from` whose character is not a valid
+/// identifier character (matching [`is_valid_identifier`]'s alphabet) -- naturally a `/`, `[`,
+/// whitespace, or end of string, so trailing indentation before the next path segment is excluded
+/// from the replacement span even though it is included when scanning past the caret into a
+/// suffix the user already typed.
+fn identifier_token_end(xpath: &str, from: usize) -> usize {
+    xpath[from..]
+        .char_indices()
+        .find(|(_, c)| !(c.is_ascii_alphanumeric() || *c == '_'))
+        .map(|(i, _)| from + i)
+        .unwrap_or(xpath.len())
+}
+
+/// The end of a predicate-key token (`defName`, `@Name`, `@ParentName`) starting at `from`: an
+/// optional leading `@` followed by identifier characters, matching [`identifier_token_end`]'s
+/// alphabet plus the one leading `@` these three keys can start with.
+fn predicate_key_token_end(xpath: &str, from: usize) -> usize {
+    let mut end = from;
+    for (i, c) in xpath[from..].char_indices() {
+        let allowed = c.is_ascii_alphanumeric() || c == '_' || (i == 0 && c == '@');
+        if !allowed {
+            break;
+        }
+        end = from + i + c.len_utf8();
+    }
+    end
+}
+
+/// The end of a quoted predicate value starting at `from` (just after its opening `quote_char`):
+/// the byte offset of the matching closing quote, or end of string if unterminated (still being
+/// typed past the caret too).
+fn quoted_value_end(xpath: &str, from: usize, quote_char: char) -> usize {
+    xpath[from..]
+        .find(quote_char)
+        .map(|i| from + i)
+        .unwrap_or(xpath.len())
 }
 
 /// Split `xpath` on `/` at bracket-depth 0 into byte ranges (possibly empty, e.g. for a leading,
@@ -494,27 +621,28 @@ fn resolve_def_segment(
     catalog: &SchemaCatalog,
     def_index: &DefIndex,
     xpath: &str,
+    cursor: usize,
     def_seg: &Segment,
     is_last_segment: bool,
     trailing_slash: bool,
 ) -> DefSegmentOutcome {
-    let text = def_seg.text(xpath);
+    let (text, trimmed_start) = def_seg.trimmed(xpath);
     let bracket_pos = text.find('[');
 
     let Some(bracket_pos) = bracket_pos else {
         // Still typing the def type name itself: nothing else has been typed yet, so keep
-        // offering completions against the partial text (see module docs on the "cursor is
-        // always at the end" assumption).
+        // offering completions against the partial text typed so far (up to the caret).
         if is_last_segment && !trailing_slash {
             return DefSegmentOutcome::Result(Box::new(def_type_completion(
                 catalog,
-                def_seg.start,
+                xpath,
+                trimmed_start,
                 text,
             )));
         }
         if !is_valid_identifier(text) {
             return DefSegmentOutcome::Result(Box::new(terminal(
-                xpath.len(),
+                cursor,
                 unsupported_def_type_diagnostic(),
             )));
         }
@@ -529,7 +657,7 @@ fn resolve_def_segment(
     let def_type_str = &text[..bracket_pos];
     if !is_valid_identifier(def_type_str) {
         return DefSegmentOutcome::Result(Box::new(terminal(
-            xpath.len(),
+            cursor,
             unsupported_def_type_diagnostic(),
         )));
     }
@@ -542,20 +670,23 @@ fn resolve_def_segment(
 
     match matching_close {
         None => {
-            // Open predicate, still being typed. Structurally guaranteed to be the last segment
-            // with no trailing slash: an unclosed '[' keeps bracket depth > 0 for the rest of the
-            // string, so `split_segments` can't have split any further '/' after this point.
+            // Open predicate, still being typed (as of the caret -- more of the predicate, or its
+            // closing bracket, may already exist past it). Structurally guaranteed to be the last
+            // segment with no trailing slash within the caret-truncated prefix: an unclosed '['
+            // keeps bracket depth > 0 for the rest of the prefix, so `split_segments` can't have
+            // split any further '/' after this point.
             let partial = &text[bracket_pos + 1..];
             DefSegmentOutcome::Result(Box::new(predicate_completion(
                 def_index,
+                xpath,
                 def_type_str,
                 partial,
-                def_seg.start + bracket_pos + 1,
+                trimmed_start + bracket_pos + 1,
             )))
         }
         Some(close_pos) if close_pos != text.len() - 1 => {
             DefSegmentOutcome::Result(Box::new(terminal(
-                xpath.len(),
+                cursor,
                 XPathDiagnostic::warning(
                     "xpath_autocomplete_unsupported_pattern",
                     "Multiple predicates or trailing content after ']' are not supported for autocomplete.",
@@ -584,7 +715,7 @@ fn resolve_def_segment(
                     }
                 }
                 None => DefSegmentOutcome::Result(Box::new(terminal(
-                    xpath.len(),
+                    cursor,
                     XPathDiagnostic::warning(
                         "xpath_autocomplete_unsupported_pattern",
                         "Predicate must be defName=\"...\", @Name=\"...\", or @ParentName=\"...\".",
@@ -638,6 +769,7 @@ fn parse_eq_quoted_value(rest: &str) -> Option<&str> {
 
 fn predicate_completion(
     def_index: &DefIndex,
+    xpath: &str,
     def_type: &str,
     partial: &str,
     base_offset: usize,
@@ -652,8 +784,10 @@ fn predicate_completion(
         let after_key_trimmed_start = after_key.len() - after_key.trim_start().len();
         let after_key_trimmed = &after_key[after_key_trimmed_start..];
         let Some(after_eq) = after_key_trimmed.strip_prefix('=') else {
+            let key_start = base_offset + trimmed_start;
             return XPathCompletionResult::new(
-                base_offset + trimmed_start,
+                key_start,
+                predicate_key_token_end(xpath, key_start),
                 vec![predicate_key_item(key)],
                 Vec::new(),
                 XPathTarget::DefType {
@@ -690,6 +824,7 @@ fn predicate_completion(
             + 1
             + after_eq_trimmed_start
             + 1;
+        let value_end = quoted_value_end(xpath, value_start, quote_char);
 
         if key == "defName" {
             let suggestions = suggest_def_references(
@@ -710,6 +845,7 @@ fn predicate_completion(
                 .collect();
             return XPathCompletionResult::new(
                 value_start,
+                value_end,
                 items,
                 Vec::new(),
                 XPathTarget::DefType {
@@ -722,6 +858,7 @@ fn predicate_completion(
         // index of inheritance-template `Name=`/`ParentName=` identifiers to suggest values from.
         return XPathCompletionResult::new(
             value_start,
+            value_end,
             Vec::new(),
             Vec::new(),
             XPathTarget::DefType {
@@ -746,8 +883,10 @@ fn predicate_completion(
             ),
         );
     }
+    let key_start = base_offset + trimmed_start;
     XPathCompletionResult::new(
-        base_offset + trimmed_start,
+        key_start,
+        predicate_key_token_end(xpath, key_start),
         items,
         Vec::new(),
         XPathTarget::DefType {
@@ -774,9 +913,10 @@ fn predicate_key_item(key: &str) -> XPathCompletionItem {
 // Def type / field completion
 // ---------------------------------------------------------------------------
 
-fn root_completion(replace_from: usize) -> XPathCompletionResult {
+fn root_completion(xpath: &str, replace_from: usize) -> XPathCompletionResult {
     XPathCompletionResult::new(
         replace_from,
+        identifier_token_end(xpath, replace_from),
         vec![XPathCompletionItem {
             insert_text: "Defs".to_string(),
             label: "Defs".to_string(),
@@ -791,6 +931,7 @@ fn root_completion(replace_from: usize) -> XPathCompletionResult {
 
 fn def_type_completion(
     catalog: &SchemaCatalog,
+    xpath: &str,
     replace_from: usize,
     partial: &str,
 ) -> XPathCompletionResult {
@@ -812,6 +953,7 @@ fn def_type_completion(
     items.sort_by(|a, b| a.label.cmp(&b.label));
     XPathCompletionResult::capped(
         replace_from,
+        identifier_token_end(xpath, replace_from),
         items,
         COMPLETION_ITEM_LIMIT,
         Vec::new(),
@@ -856,6 +998,7 @@ fn push_matching_field_items<'a>(
 
 fn field_completion(
     catalog: &SchemaCatalog,
+    xpath: &str,
     def_type: &str,
     target: XPathTarget,
     replace_from: usize,
@@ -863,6 +1006,7 @@ fn field_completion(
 ) -> XPathCompletionResult {
     if !is_ident_prefix(partial) {
         return XPathCompletionResult::new(
+            replace_from,
             replace_from,
             Vec::new(),
             vec![XPathDiagnostic::warning(
@@ -884,6 +1028,7 @@ fn field_completion(
     let (resolved_field, diagnostics) = resolve_field(catalog, def_type, partial);
     XPathCompletionResult::capped(
         replace_from,
+        identifier_token_end(xpath, replace_from),
         items,
         COMPLETION_ITEM_LIMIT,
         diagnostics,
@@ -1247,8 +1392,10 @@ fn inherited_field_diagnostic(name: &str, def_type: &str) -> XPathDiagnostic {
 
 /// Build the completion result for the segment currently being typed (in progress, or an empty
 /// segment right after a trailing slash), dispatching on the cursor's current position.
+#[allow(clippy::too_many_arguments)]
 fn child_completion(
     catalog: &SchemaCatalog,
+    xpath: &str,
     cursor: &SchemaCursor,
     def_type: &str,
     target: XPathTarget,
@@ -1258,10 +1405,11 @@ fn child_completion(
 ) -> XPathCompletionResult {
     match cursor {
         SchemaCursor::DefFields { def_type } => {
-            field_completion(catalog, def_type, target, replace_from, partial)
+            field_completion(catalog, xpath, def_type, target, replace_from, partial)
         }
         SchemaCursor::ObjectFields { schema_ref } => object_field_completion(
             catalog,
+            xpath,
             schema_ref,
             def_type,
             target,
@@ -1270,9 +1418,10 @@ fn child_completion(
             resolved_field,
         ),
         SchemaCursor::ListItem { .. } | SchemaCursor::KeyedMapLi { .. } => {
-            list_item_step_completion(target, replace_from, partial, resolved_field)
+            list_item_step_completion(xpath, target, replace_from, partial, resolved_field)
         }
         SchemaCursor::KeyedMapEntry { .. } => literal_segment_completion(
+            xpath,
             &["key", "value"],
             XPathCompletionItemKind::MapEntry,
             target,
@@ -1282,9 +1431,14 @@ fn child_completion(
         ),
         // DynamicKey: the key is data-dependent (e.g. a defName RimEdit has no index of) -- offer
         // no invented suggestions, per Plan.md's keyedObjectList row.
-        SchemaCursor::DynamicKey { .. } | SchemaCursor::Terminal => {
-            XPathCompletionResult::new(replace_from, Vec::new(), Vec::new(), target, resolved_field)
-        }
+        SchemaCursor::DynamicKey { .. } | SchemaCursor::Terminal => XPathCompletionResult::new(
+            replace_from,
+            replace_from,
+            Vec::new(),
+            Vec::new(),
+            target,
+            resolved_field,
+        ),
     }
 }
 
@@ -1300,8 +1454,10 @@ fn child_completion(
 /// resolved field rather than discarded to `None`, matching every other cursor kind's
 /// "in-progress typing still resolves to the last known-good field" behavior (see
 /// `SchemaCursor::ListItem`/`KeyedMapEntry`'s `literal_segment_completion` callers).
+#[allow(clippy::too_many_arguments)]
 fn object_field_completion(
     catalog: &SchemaCatalog,
+    xpath: &str,
     schema_ref: &str,
     def_type: &str,
     target: XPathTarget,
@@ -1311,6 +1467,7 @@ fn object_field_completion(
 ) -> XPathCompletionResult {
     if !is_ident_prefix(partial) {
         return XPathCompletionResult::new(
+            replace_from,
             replace_from,
             Vec::new(),
             vec![XPathDiagnostic::warning(
@@ -1341,6 +1498,7 @@ fn object_field_completion(
 
     XPathCompletionResult::capped(
         replace_from,
+        identifier_token_end(xpath, replace_from),
         items,
         COMPLETION_ITEM_LIMIT,
         Vec::new(),
@@ -1357,6 +1515,7 @@ fn object_field_completion(
 /// `xpath_autocomplete_unsupported_pattern` diagnostic a fully-typed invalid segment gets from
 /// [`resolve_and_transition`], so invalid syntax reads the same whether or not a `/` follows it.
 fn list_item_step_completion(
+    xpath: &str,
     target: XPathTarget,
     replace_from: usize,
     partial: &str,
@@ -1364,6 +1523,7 @@ fn list_item_step_completion(
 ) -> XPathCompletionResult {
     if is_ident_prefix(partial) {
         return literal_segment_completion(
+            xpath,
             &["li"],
             XPathCompletionItemKind::ListItem,
             target,
@@ -1373,10 +1533,16 @@ fn list_item_step_completion(
         );
     }
     match parse_list_item_step(partial) {
-        ListItemStep::Valid | ListItemStep::Incomplete => {
-            XPathCompletionResult::new(replace_from, Vec::new(), Vec::new(), target, resolved_field)
-        }
+        ListItemStep::Valid | ListItemStep::Incomplete => XPathCompletionResult::new(
+            replace_from,
+            replace_from,
+            Vec::new(),
+            Vec::new(),
+            target,
+            resolved_field,
+        ),
         ListItemStep::Invalid => XPathCompletionResult::new(
+            replace_from,
             replace_from,
             Vec::new(),
             vec![unsupported_child_segment()],
@@ -1390,6 +1556,7 @@ fn list_item_step_completion(
 /// as a plain-text prefix. Shared by the `ListItem`/`KeyedMapLi` and `KeyedMapEntry` cursors --
 /// only the candidate literals and item kind differ.
 fn literal_segment_completion(
+    xpath: &str,
     literals: &[&str],
     kind: XPathCompletionItemKind,
     target: XPathTarget,
@@ -1399,6 +1566,7 @@ fn literal_segment_completion(
 ) -> XPathCompletionResult {
     if !is_ident_prefix(partial) {
         return XPathCompletionResult::new(
+            replace_from,
             replace_from,
             Vec::new(),
             Vec::new(),
@@ -1416,7 +1584,14 @@ fn literal_segment_completion(
             kind,
         })
         .collect();
-    XPathCompletionResult::new(replace_from, items, Vec::new(), target, resolved_field)
+    XPathCompletionResult::new(
+        replace_from,
+        identifier_token_end(xpath, replace_from),
+        items,
+        Vec::new(),
+        target,
+        resolved_field,
+    )
 }
 
 // ---------------------------------------------------------------------------
@@ -1430,6 +1605,7 @@ fn is_ident_prefix(s: &str) -> bool {
 fn terminal(replace_from: usize, diagnostic: XPathDiagnostic) -> XPathCompletionResult {
     XPathCompletionResult::new(
         replace_from,
+        replace_from,
         Vec::new(),
         vec![diagnostic],
         XPathTarget::Unsupported,
@@ -1438,7 +1614,14 @@ fn terminal(replace_from: usize, diagnostic: XPathDiagnostic) -> XPathCompletion
 }
 
 fn empty(replace_from: usize, target: XPathTarget) -> XPathCompletionResult {
-    XPathCompletionResult::new(replace_from, Vec::new(), Vec::new(), target, None)
+    XPathCompletionResult::new(
+        replace_from,
+        replace_from,
+        Vec::new(),
+        Vec::new(),
+        target,
+        None,
+    )
 }
 
 #[cfg(test)]

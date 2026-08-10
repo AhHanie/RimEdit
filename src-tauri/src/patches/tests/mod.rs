@@ -81,6 +81,13 @@ fixture!(
     "unexpected_child_under_mods.xml"
 );
 
+/// A hand-formatted, multiline `<xpath>` value exercising Plan.md's "readable expression" example:
+/// indentation after `/` and inside a `[defName = "..."]` predicate. Intentionally not part of
+/// `ALL_BUILT_IN_FIXTURES` since a serializer round-trip is not required to be byte-for-byte for
+/// hand-formatted whitespace (see `round_trip::multiline_xpath_reparse_preserves_operation_data`).
+pub const MULTILINE_XPATH: &str =
+    "Defs/\n    ThingDef[\n      defName = \"Wall\"\n    ]/\n    statBases";
+
 /// Every built-in operation fixture that round-trips byte-for-byte through parse + serialize.
 pub const ALL_BUILT_IN_FIXTURES: &[(&str, &str)] = &[
     ("add.xml", ADD_XML),

@@ -240,6 +240,20 @@ fn parses_conditional_both() {
 }
 
 #[test]
+fn parses_multiline_xpath_and_retains_internal_newlines() {
+    let source = format!(
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Patch>\n  <Operation Class=\"PatchOperationAdd\">\n    <xpath>{MULTILINE_XPATH}</xpath>\n    <value>\n      <MoveSpeed>1</MoveSpeed>\n    </value>\n  </Operation>\n</Patch>\n"
+    );
+    let op = only_op(&source);
+    match op.kind {
+        PatchOperationKind::Add(inner) => {
+            assert_eq!(inner.xpath.as_deref(), Some(MULTILINE_XPATH));
+        }
+        other => panic!("expected Add, got {:?}", other),
+    }
+}
+
+#[test]
 fn parses_custom_operation_as_unknown_and_preserves_raw_xml() {
     let op = only_op(CUSTOM_OPERATION_XML);
     assert_eq!(op.class_name, "MyMod.PatchOperationFoo");

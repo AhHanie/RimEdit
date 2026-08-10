@@ -921,6 +921,7 @@ export const enResources = {
       "xpath_autocomplete_unsupported_pattern": "Autocomplete is not available for this XPath pattern.",
       "xpath_autocomplete_unsupported_root": "XPath must be rooted at \"Defs\" to be understood for autocomplete.",
       "xpath_autocomplete_inherited_field": "\"{{fieldName}}\" is declared on a schema parent of \"{{defType}}\", not on \"{{defType}}\" itself.",
+      "xpath_completion_invalid_cursor": "The cursor position for XPath completion is out of range or does not fall on a character boundary.",
       "patch_apply_xpath_no_match": "The XPath \"{{xpath}}\" did not match any node.",
       "patch_apply_xpath_error": "The XPath \"{{xpath}}\" failed to evaluate.",
       "patch_apply_missing_field": "This operation is missing its required \"{{fieldName}}\" field.",

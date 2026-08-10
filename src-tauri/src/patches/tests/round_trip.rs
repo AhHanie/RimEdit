@@ -37,3 +37,21 @@ fn nested_sequence_round_trips_with_stable_ids() {
     let second = parse_patch_file("sequence.xml", &serialized);
     assert_eq!(second.operations, first.operations);
 }
+
+#[test]
+fn multiline_xpath_reparse_preserves_operation_data() {
+    let source = format!(
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Patch>\n  <Operation Class=\"PatchOperationAdd\">\n    <xpath>{MULTILINE_XPATH}</xpath>\n    <value>\n      <MoveSpeed>1</MoveSpeed>\n    </value>\n  </Operation>\n</Patch>\n"
+    );
+    let first = parse_patch_file("multiline.xml", &source);
+    assert!(first.diagnostics.is_empty(), "{:?}", first.diagnostics);
+
+    let serialized = serialize_patch_file(&first);
+    assert!(
+        serialized.contains(MULTILINE_XPATH),
+        "expected serialized output to retain internal newlines verbatim:\n{serialized}"
+    );
+
+    let second = parse_patch_file("multiline.xml", &serialized);
+    assert_eq!(second.operations, first.operations);
+}

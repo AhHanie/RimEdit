@@ -29,9 +29,10 @@ export type XPathCompletionItemKind =
   | "listItem"
   | "mapEntry";
 
-/** One completion suggestion. Apply it by splicing `insertText` in place of everything from
- * `replaceFrom` (a byte offset into the xpath string) to the end -- no client-side XPath parsing
- * needed. */
+/** One completion suggestion. Apply it by splicing `insertText` in place of the xpath string's
+ * `[replaceFrom, replaceTo)` byte range (i.e. `xpath.slice(0, replaceFrom) + insertText +
+ * xpath.slice(replaceTo)`, after converting the UTF-8 byte offsets to UTF-16 string indices) --
+ * no client-side XPath parsing needed. */
 export interface XPathCompletionItem {
   insertText: string;
   label: string;
@@ -61,6 +62,11 @@ export interface XPathResolvedField {
 
 export interface XPathCompletionResult {
   replaceFrom: number;
+  /** Byte offset into the xpath string that completion items replace up to (exclusive). Bounds
+   * the active token's own text -- e.g. an identifier run, or a predicate value up to (not
+   * including) its closing quote -- never anything past it, so a suffix already typed after the
+   * caret is preserved. Equals `replaceFrom` whenever `items` is empty. */
+  replaceTo: number;
   /** The bounded, display-ready suggestion list -- see `totalMatches`/`isTruncated`. */
   items: XPathCompletionItem[];
   /** How many suggestions matched before truncation; always `>= items.length`. */
