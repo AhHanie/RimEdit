@@ -411,6 +411,35 @@ describe("PatchPathInput", () => {
     expect(onChange).toHaveBeenLastCalledWith("Defs/ThingDef/comps/li");
   });
 
+  it("renders and splices a booleanOperator continuation for a Def predicate", async () => {
+    // Proves PatchPathInput needs no special-case rendering/splicing for the new item kind: a
+    // `booleanOperator` suggestion (offered by the backend right after a completed predicate
+    // clause) is spliced exactly like any other item, using only the backend-provided
+    // [replaceFrom, replaceTo) range -- no client-side XPath parsing.
+    const value = 'Defs/ThingDef[defName="Wall"';
+    invokeMock.mockResolvedValue(
+      completionResult({
+        replaceFrom: value.length,
+        replaceTo: value.length,
+        items: [
+          { insertText: " or ", label: "or", detail: "Continue the predicate with another clause", kind: "booleanOperator" },
+          { insertText: " and ", label: "and", detail: "Continue the predicate with another clause", kind: "booleanOperator" },
+        ],
+        target: { kind: "def", defType: "ThingDef", defName: "Wall" },
+      }),
+    );
+
+    const onChange = vi.fn();
+    render(<PatchPathInput value={value} readOnly={false} label="XPath" projectId="proj1" onChange={onChange} />);
+
+    fireEvent.focus(textarea());
+    expect(await screen.findByText("or")).toBeTruthy();
+    const suggestion = screen.getByText("and");
+    fireEvent.mouseDown(suggestion);
+
+    expect(onChange).toHaveBeenLastCalledWith('Defs/ThingDef[defName="Wall" and ');
+  });
+
   it("renders and splices a nested field completion several levels deep", async () => {
     const value = "Defs/ThingDef/graphicData/texP";
     invokeMock.mockResolvedValue(

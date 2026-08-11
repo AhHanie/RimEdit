@@ -74,9 +74,12 @@ describe("resolveModExtensionsField", () => {
 });
 
 describe("targetDefType", () => {
-  it("extracts defType from def and defType targets", () => {
+  it("extracts defType from def, defType, and defs targets", () => {
     expect(targetDefType({ kind: "def", defType: "ThingDef", defName: "Wall" })).toBe("ThingDef");
     expect(targetDefType({ kind: "defType", defType: "ThingDef" })).toBe("ThingDef");
+    expect(
+      targetDefType({ kind: "defs", defType: "ThingDef", defNames: ["Wall", "Door"] }),
+    ).toBe("ThingDef");
   });
 
   it("returns null for unsupported/noXPath/null targets", () => {

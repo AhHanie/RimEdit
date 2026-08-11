@@ -11,6 +11,16 @@
 //! `XPathTarget` down to a specific `defName` from them, so they resolve to
 //! `XPathTarget::DefType` rather than `XPathTarget::Def`.
 //!
+//! A Def predicate may also chain 2+ equality clauses with lowercase `or`/`and` (see
+//! [`parse_boolean_chain`]/[`split_top_level_bool_terms`] for the finished-predicate grammar and
+//! [`predicate_completion`]/[`classify_tail`] for live completion while typing one). Target
+//! inference here is again more permissive than impact analysis: a 2+-term OR-only chain of
+//! `defName="..."` equalities resolves to `XPathTarget::Defs`, matching
+//! `impact_graph::infer_xpath_target`'s own OR-only-`defName` subset, while any other supported
+//! chain (an `and`, an `@Name`/`@ParentName` clause, or a mixture of operators/keys) still pins
+//! down the Def *type* -- `XPathTarget::DefType` -- rather than a specific Def or Def set (see
+//! [`classify_boolean_chain`]).
+//!
 //! Completion is computed at a caret position ([`complete_patch_xpath_at`]'s `cursor` byte
 //! offset into `xpath`): only the text at or before the caret is analysed for structure (later
 //! path segments are never treated as already typed just because they exist after the caret), and
@@ -85,6 +95,10 @@ pub enum XPathCompletionItemKind {
     PredicateKey,
     /// A `defName` value from the Def index.
     DefName,
+    /// An `or`/`and` boolean connective continuing a Def-predicate expression, offered either
+    /// right after a completed clause while still typing the predicate, or in place of an
+    /// already-closed predicate's `]` (see [`predicate_close_continuation`]).
+    BooleanOperator,
     /// A field declared directly on the target Def type, or -- once the cursor has descended
     /// into an object schema -- a field of that object type (own or inherited).
     Field,
@@ -355,7 +369,7 @@ pub fn complete_patch_xpath_at(
     }
 
     let is_last_segment = segments.len() == 2;
-    let (def_type, target) = match resolve_def_segment(
+    let (def_type, target, predicate_close) = match resolve_def_segment(
         catalog,
         def_index,
         xpath,
@@ -365,12 +379,18 @@ pub fn complete_patch_xpath_at(
         trailing_slash,
     ) {
         DefSegmentOutcome::Result(result) => return *result,
-        DefSegmentOutcome::Resolved { def_type, target } => (def_type, target),
+        DefSegmentOutcome::Resolved {
+            def_type,
+            target,
+            predicate_close,
+        } => (def_type, target, predicate_close),
     };
 
     if is_last_segment {
         return if trailing_slash {
             field_completion(catalog, xpath, &def_type, target, cursor, "")
+        } else if let Some(close_pos) = predicate_close {
+            predicate_close_continuation(xpath, close_pos, target)
         } else {
             empty(cursor, target)
         };
@@ -608,13 +628,35 @@ enum DefSegmentOutcome {
     Resolved {
         def_type: String,
         target: XPathTarget,
+        /// The absolute byte offset of the `]` that closes a *valid* boolean predicate chain --
+        /// `None` when there is no predicate at all (a bare `Defs/<DefType>` segment). Lets the
+        /// caller offer `or`/`and` continuation completion in place of that `]` when the caret
+        /// sits right after it with nothing typed beyond (see [`predicate_close_continuation`]).
+        predicate_close: Option<usize>,
     },
 }
 
-enum PredicateMatch {
-    DefName(String),
+/// One equality clause recognized inside a Def predicate (`defName="..."`, `@Name="..."`, or
+/// `@ParentName="..."`), as parsed by [`parse_single_clause`].
+#[derive(Debug, Clone)]
+struct ParsedClause {
+    key: PredicateKey,
+    value: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PredicateKey {
+    DefName,
     NameAttr,
     ParentNameAttr,
+}
+
+/// A boolean connective joining two predicate clauses, recognized only as a standalone lowercase
+/// token outside quoted values (see [`split_top_level_bool_terms`]).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum BoolOp {
+    Or,
+    And,
 }
 
 fn resolve_def_segment(
@@ -651,6 +693,7 @@ fn resolve_def_segment(
             target: XPathTarget::DefType {
                 def_type: text.to_string(),
             },
+            predicate_close: None,
         };
     };
 
@@ -695,30 +738,22 @@ fn resolve_def_segment(
         }
         Some(close_pos) => {
             let content = &text[bracket_pos + 1..close_pos];
-            match parse_predicate_content(content) {
-                Some(PredicateMatch::DefName(def_name)) => DefSegmentOutcome::Resolved {
+            match parse_boolean_chain(content) {
+                // A single `defName="A"` continues to return `XPathTarget::Def`; a single
+                // `@Name`/`@ParentName` clause identifies an inheritance-template node rather than
+                // a concrete `defName`-keyed Def, so it resolves to `XPathTarget::DefType` instead
+                // -- see [`classify_boolean_chain`] for the 2+-clause cases (OR-only `defName`
+                // chains -> `XPathTarget::Defs`, everything else supported -> `XPathTarget::DefType`).
+                Some((clauses, ops)) => DefSegmentOutcome::Resolved {
                     def_type: def_type_str.to_string(),
-                    target: XPathTarget::Def {
-                        def_type: def_type_str.to_string(),
-                        def_name,
-                    },
+                    target: classify_boolean_chain(def_type_str, &clauses, &ops),
+                    predicate_close: Some(trimmed_start + close_pos),
                 },
-                // `@Name`/`@ParentName` identify an inheritance-template node rather than a
-                // concrete `defName`-keyed Def, so we can't narrow to `XPathTarget::Def` -- but the
-                // Def *type* (and therefore its fields) is still known.
-                Some(PredicateMatch::NameAttr) | Some(PredicateMatch::ParentNameAttr) => {
-                    DefSegmentOutcome::Resolved {
-                        def_type: def_type_str.to_string(),
-                        target: XPathTarget::DefType {
-                            def_type: def_type_str.to_string(),
-                        },
-                    }
-                }
                 None => DefSegmentOutcome::Result(Box::new(terminal(
                     cursor,
                     XPathDiagnostic::warning(
                         "xpath_autocomplete_unsupported_pattern",
-                        "Predicate must be defName=\"...\", @Name=\"...\", or @ParentName=\"...\".",
+                        "Predicate must be defName=\"...\", @Name=\"...\", or @ParentName=\"...\", optionally joined by 'or'/'and'.",
                     ),
                 ))),
             }
@@ -726,28 +761,166 @@ fn resolve_def_segment(
     }
 }
 
+/// Resolves a fully-typed `defName="..."` / `@Name="..."` / `@ParentName="..."` equality clause,
+/// same conservatism as the old single-clause `parse_predicate_content`: an unquoted, empty, or
+/// otherwise malformed value fails the whole clause to `None` rather than guessing.
+fn parse_single_clause(content: &str) -> Option<ParsedClause> {
+    if let Some(rest) = content.strip_prefix("defName") {
+        let value = parse_eq_quoted_value(rest)?;
+        return (!value.is_empty()).then(|| ParsedClause {
+            key: PredicateKey::DefName,
+            value: value.to_string(),
+        });
+    }
+    if let Some(rest) = content.strip_prefix("@Name") {
+        let value = parse_eq_quoted_value(rest)?;
+        return (!value.is_empty()).then(|| ParsedClause {
+            key: PredicateKey::NameAttr,
+            value: value.to_string(),
+        });
+    }
+    if let Some(rest) = content.strip_prefix("@ParentName") {
+        let value = parse_eq_quoted_value(rest)?;
+        return (!value.is_empty()).then(|| ParsedClause {
+            key: PredicateKey::ParentNameAttr,
+            value: value.to_string(),
+        });
+    }
+    None
+}
+
+/// Parses a *complete* (already `]`-closed) predicate body into a chain of [`parse_single_clause`]
+/// clauses joined by top-level `or`/`and`. `None` for anything outside the conservative grammar --
+/// an unquoted value, an unsupported key, a leading/trailing/doubled operator (which leaves an
+/// empty term), nested grouping, or a function call -- same conservatism as the old
+/// single-clause-only `parse_predicate_content`, just extended across every term.
+fn parse_boolean_chain(content: &str) -> Option<(Vec<ParsedClause>, Vec<BoolOp>)> {
+    let (terms, ops) = split_top_level_bool_terms(content);
+    let clauses = terms
+        .iter()
+        .map(|t| parse_single_clause(content[t.start..t.end].trim()))
+        .collect::<Option<Vec<_>>>()?;
+    Some((clauses, ops))
+}
+
+/// Classifies a successfully-parsed boolean predicate chain into an [`XPathTarget`], per the
+/// module docs' target-inference guarantees: a single `defName="A"` targets exactly one Def; a
+/// 2+-term OR-only chain of `defName="..."` equalities targets exactly those Defs (matching
+/// `impact_graph::infer_xpath_target`'s own OR-only-`defName` subset, see module docs); anything
+/// else supported by the grammar (an `and`, an `@Name`/`@ParentName` clause, or a mixture of
+/// operators/keys) still pins down the Def *type* but not a specific Def or Def set.
+fn classify_boolean_chain(def_type: &str, clauses: &[ParsedClause], ops: &[BoolOp]) -> XPathTarget {
+    if let [only] = clauses {
+        return match only.key {
+            PredicateKey::DefName => XPathTarget::Def {
+                def_type: def_type.to_string(),
+                def_name: only.value.clone(),
+            },
+            PredicateKey::NameAttr | PredicateKey::ParentNameAttr => XPathTarget::DefType {
+                def_type: def_type.to_string(),
+            },
+        };
+    }
+    let all_or_def_names = ops.iter().all(|op| *op == BoolOp::Or)
+        && clauses.iter().all(|c| c.key == PredicateKey::DefName);
+    if all_or_def_names {
+        XPathTarget::Defs {
+            def_type: def_type.to_string(),
+            def_names: clauses.iter().map(|c| c.value.clone()).collect(),
+        }
+    } else {
+        XPathTarget::DefType {
+            def_type: def_type.to_string(),
+        }
+    }
+}
+
+/// One clause's byte range within a boolean predicate's content, as produced by
+/// [`split_top_level_bool_terms`].
+struct BoolTerm {
+    start: usize,
+    end: usize,
+}
+
+/// Splits predicate `content` into clause byte-ranges separated by standalone top-level `or`/`and`
+/// keyword tokens -- i.e. outside any quoted value and bounded by non-identifier characters on
+/// both sides, so a `defName` value containing "or"/"and" as a substring (`MN_NetworkController`)
+/// or a quoted value like `"A or B"` is never mistaken for a separator. `ops.len() ==
+/// terms.len() - 1` always; `terms` is never empty (`content` with no separators yields one term
+/// spanning it all, and a leading/trailing/doubled operator yields an empty term, which
+/// [`parse_boolean_chain`]'s per-term [`parse_single_clause`] call naturally rejects). Mirrors
+/// `impact_graph::split_top_level_or_terms`'s quote-/word-boundary scanning, generalized to
+/// recognize `and` as well -- kept as an independent implementation rather than a shared helper
+/// per the module docs (autocomplete's conservative subset is intentionally more permissive than
+/// impact inference's).
+fn split_top_level_bool_terms(content: &str) -> (Vec<BoolTerm>, Vec<BoolOp>) {
+    let bytes = content.as_bytes();
+    let mut terms = Vec::new();
+    let mut ops = Vec::new();
+    let mut term_start = 0usize;
+    let mut in_quote: Option<u8> = None;
+    let mut i = 0usize;
+    while i < bytes.len() {
+        let b = bytes[i];
+        match in_quote {
+            Some(q) => {
+                if b == q {
+                    in_quote = None;
+                }
+                i += 1;
+            }
+            None => {
+                if b == b'"' || b == b'\'' {
+                    in_quote = Some(b);
+                    i += 1;
+                    continue;
+                }
+                // `b'o'`/`b'a'` are single-byte ASCII, so whenever they match, `i` is guaranteed to
+                // already be a char boundary -- a UTF-8 continuation byte can never equal an ASCII
+                // value -- so `content[i..]` below never panics.
+                let candidate = if b == b'o' && content[i..].starts_with("or") {
+                    Some((BoolOp::Or, 2usize))
+                } else if b == b'a' && content[i..].starts_with("and") {
+                    Some((BoolOp::And, 3usize))
+                } else {
+                    None
+                };
+                if let Some((op, len)) = candidate {
+                    let before_ok = i == 0 || !is_identifier_byte(bytes[i - 1]);
+                    let after_idx = i + len;
+                    let after_ok =
+                        after_idx >= bytes.len() || !is_identifier_byte(bytes[after_idx]);
+                    if before_ok && after_ok {
+                        terms.push(BoolTerm {
+                            start: term_start,
+                            end: i,
+                        });
+                        ops.push(op);
+                        i = after_idx;
+                        term_start = i;
+                        continue;
+                    }
+                }
+                i += 1;
+            }
+        }
+    }
+    terms.push(BoolTerm {
+        start: term_start,
+        end: content.len(),
+    });
+    (terms, ops)
+}
+
+fn is_identifier_byte(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || b == b'_'
+}
+
 fn unsupported_def_type_diagnostic() -> XPathDiagnostic {
     XPathDiagnostic::warning(
         "xpath_autocomplete_unsupported_pattern",
         "Def type segment must be a plain element name; wildcards and functions are not supported for autocomplete.",
     )
-}
-
-fn parse_predicate_content(content: &str) -> Option<PredicateMatch> {
-    let trimmed = content.trim();
-    if let Some(rest) = trimmed.strip_prefix("defName") {
-        let value = parse_eq_quoted_value(rest)?;
-        return (!value.is_empty()).then(|| PredicateMatch::DefName(value.to_string()));
-    }
-    if let Some(rest) = trimmed.strip_prefix("@Name") {
-        let value = parse_eq_quoted_value(rest)?;
-        return (!value.is_empty()).then_some(PredicateMatch::NameAttr);
-    }
-    if let Some(rest) = trimmed.strip_prefix("@ParentName") {
-        let value = parse_eq_quoted_value(rest)?;
-        return (!value.is_empty()).then_some(PredicateMatch::ParentNameAttr);
-    }
-    None
 }
 
 fn parse_eq_quoted_value(rest: &str) -> Option<&str> {
@@ -767,7 +940,184 @@ fn parse_eq_quoted_value(rest: &str) -> Option<&str> {
 // Predicate key/value completion (open predicate: `[defName="Wa`, `[@Nam`, `[`, ...)
 // ---------------------------------------------------------------------------
 
+/// Completion for a still-open (unclosed `[`) Def predicate, up to the caret. Splits `partial`
+/// (the predicate content typed so far) on top-level `or`/`and` the same way
+/// [`split_top_level_bool_terms`] does for a finished predicate; every term but the last must
+/// already be a complete, valid clause (else the whole thing is an unsupported pattern, matching
+/// [`parse_boolean_chain`]'s conservatism), and the last term -- still being typed -- is
+/// classified by [`classify_tail`] into either "offer `or`/`and` continuation" or "fall through to
+/// the existing single-clause key/value completion" ([`key_or_value_completion`]).
 fn predicate_completion(
+    def_index: &DefIndex,
+    xpath: &str,
+    def_type: &str,
+    partial: &str,
+    base_offset: usize,
+) -> XPathCompletionResult {
+    let (terms, _ops) = split_top_level_bool_terms(partial);
+    let last_idx = terms.len() - 1;
+
+    for term in &terms[..last_idx] {
+        let text = partial[term.start..term.end].trim();
+        if parse_single_clause(text).is_none() {
+            return terminal(
+                base_offset + partial.len(),
+                XPathDiagnostic::warning(
+                    "xpath_autocomplete_unsupported_pattern",
+                    "Predicate must be defName=\"...\", @Name=\"...\", or @ParentName=\"...\", joined by 'or'/'and'.",
+                ),
+            );
+        }
+    }
+
+    let tail_term = &terms[last_idx];
+    let tail = &partial[tail_term.start..tail_term.end];
+    let tail_base = base_offset + tail_term.start;
+    let target = XPathTarget::DefType {
+        def_type: def_type.to_string(),
+    };
+
+    match classify_tail(tail) {
+        TailState::Continuation { prefix, start } => {
+            let abs_start = tail_base + start;
+            let replace_to = identifier_token_end(xpath, abs_start);
+            let items = boolean_operator_items(xpath, abs_start, prefix);
+            XPathCompletionResult::new(abs_start, replace_to, items, Vec::new(), target, None)
+        }
+        TailState::Invalid => terminal(
+            base_offset + partial.len(),
+            XPathDiagnostic::warning(
+                "xpath_autocomplete_unsupported_pattern",
+                "Predicate clause must be defName=\"...\", @Name=\"...\", or @ParentName=\"...\".",
+            ),
+        ),
+        TailState::Incomplete => {
+            key_or_value_completion(def_index, xpath, def_type, tail, tail_base)
+        }
+    }
+}
+
+/// How the predicate's last (still-being-typed) term reads, classified by [`classify_tail`].
+enum TailState<'a> {
+    /// Still typing this clause's key or value (no `=` yet, no opening quote yet, or an
+    /// unterminated value) -- the caller falls through to [`key_or_value_completion`], which is
+    /// exactly the old single-clause `predicate_completion` behavior.
+    Incomplete,
+    /// A complete, valid clause (its value's closing quote is present) followed only by
+    /// whitespace and/or a partial `or`/`and` word. `prefix` is that trailing word (trailing
+    /// whitespace of its own already stripped) and `start` its byte offset within the tail.
+    Continuation { prefix: &'a str, start: usize },
+    /// A complete clause followed by content that is neither whitespace nor an `or`/`and` prefix.
+    Invalid,
+}
+
+/// Classifies a predicate's last, still-being-typed term (see [`TailState`]). Reuses the same
+/// key/`=`/quote scanning shape as [`key_or_value_completion`] just to detect whether the value's
+/// closing quote has *already* been typed -- once it has, what matters here is only what comes
+/// after it, not re-deriving completion items (that stays the incomplete-tail caller's job).
+fn classify_tail(tail: &str) -> TailState<'_> {
+    let content_start = tail.len() - tail.trim_start().len();
+    let content = &tail[content_start..];
+    for key in ["defName", "@Name", "@ParentName"] {
+        let Some(rest) = content.strip_prefix(key) else {
+            continue;
+        };
+        let mut pos = key.len();
+        let ws1 = rest.len() - rest.trim_start().len();
+        let rest = &rest[ws1..];
+        pos += ws1;
+        let Some(rest) = rest.strip_prefix('=') else {
+            return TailState::Incomplete;
+        };
+        pos += 1;
+        let ws2 = rest.len() - rest.trim_start().len();
+        let rest = &rest[ws2..];
+        pos += ws2;
+        let mut chars = rest.chars();
+        let Some(quote_char) = chars.next().filter(|c| *c == '"' || *c == '\'') else {
+            return TailState::Incomplete;
+        };
+        pos += quote_char.len_utf8();
+        let after_quote = &content[pos..];
+        let Some(close_rel) = after_quote.find(quote_char) else {
+            return TailState::Incomplete; // value still open -- key/value completion continues it
+        };
+        let value = &after_quote[..close_rel];
+        if value.is_empty() || value.contains(['"', '\'']) {
+            return TailState::Invalid;
+        }
+        pos += close_rel + quote_char.len_utf8();
+        let after_value = &content[pos..];
+        let ws3 = after_value.len() - after_value.trim_start().len();
+        let op_word = after_value[ws3..].trim_end();
+        return if op_word.is_empty() || is_operator_prefix(op_word) {
+            TailState::Continuation {
+                prefix: op_word,
+                start: content_start + pos + ws3,
+            }
+        } else {
+            TailState::Invalid
+        };
+    }
+    TailState::Incomplete
+}
+
+fn is_operator_prefix(s: &str) -> bool {
+    let lower = s.to_lowercase();
+    "or".starts_with(&lower) || "and".starts_with(&lower)
+}
+
+/// `or`/`and` completion items, filtered by `filter_prefix` (case-insensitive; empty matches
+/// both). `replace_from` is where the items' replacement span starts -- right after a completed
+/// clause's closing quote, right after any whitespace already typed past it, or at an
+/// already-closed predicate's own `]` (see [`predicate_close_continuation`]) -- so a leading space
+/// is added to `insert_text` only when the character immediately before it isn't already
+/// whitespace, keeping `defName="Wall" or `/`defName="Wall"or ` both spliced to the same one
+/// separating space either way.
+fn boolean_operator_items(xpath: &str, replace_from: usize, filter_prefix: &str) -> Vec<XPathCompletionItem> {
+    let needs_leading_space =
+        replace_from == 0 || !xpath.as_bytes()[replace_from - 1].is_ascii_whitespace();
+    let needle = filter_prefix.to_lowercase();
+    ["or", "and"]
+        .into_iter()
+        .filter(|op| op.starts_with(&needle))
+        .map(|op| {
+            let insert_text = if needs_leading_space {
+                format!(" {op} ")
+            } else {
+                format!("{op} ")
+            };
+            XPathCompletionItem {
+                insert_text,
+                label: op.to_string(),
+                detail: Some("Continue the predicate with another clause".to_string()),
+                kind: XPathCompletionItemKind::BooleanOperator,
+            }
+        })
+        .collect()
+}
+
+/// Offers `or`/`and` continuation completion in place of the `]` that closes an already-valid
+/// predicate, for a caret positioned immediately after that `]` with nothing else typed --
+/// `complete_patch_xpath_at`'s `is_last_segment && !trailing_slash` boundary. Accepting a
+/// suggestion here replaces exactly that one `]` character, per the plan's "preserve the simple-
+/// predicate workflow" design: selecting a `defName` suggestion still finishes the predicate
+/// (`defName="Wall"]`), and only from *there* -- caret right after the now-typed `]` -- does the
+/// user get offered a way back into it via `or`/`and`.
+fn predicate_close_continuation(
+    xpath: &str,
+    close_pos: usize,
+    target: XPathTarget,
+) -> XPathCompletionResult {
+    let items = boolean_operator_items(xpath, close_pos, "");
+    XPathCompletionResult::new(close_pos, close_pos + 1, items, Vec::new(), target, None)
+}
+
+/// Completion for a predicate clause still being typed -- its key, or its value up to an
+/// unterminated quote. Unchanged from the pre-boolean-chain single-clause `predicate_completion`:
+/// callers now reach this only for the *last* term of a (possibly multi-clause) predicate, via
+/// [`predicate_completion`]/[`TailState::Incomplete`].
+fn key_or_value_completion(
     def_index: &DefIndex,
     xpath: &str,
     def_type: &str,

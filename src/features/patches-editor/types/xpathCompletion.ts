@@ -18,12 +18,16 @@ export type XPathTarget =
 
 /** `listItem`/`mapEntry` are structural XML container names (the literal `li` that opens a
  * `listOfLi`/`keyedObjectMap` entry, or the literal `key`/`value` inside a `keyedObjectMap`
- * entry) -- kept distinct from `field`/`fieldAlias` since they don't name a schema field. */
+ * entry) -- kept distinct from `field`/`fieldAlias` since they don't name a schema field.
+ * `booleanOperator` is an `or`/`and` continuation for a Def predicate's boolean clause chain,
+ * offered either right after a completed clause while still typing the predicate or in place of
+ * an already-closed predicate's `]`. */
 export type XPathCompletionItemKind =
   | "root"
   | "defType"
   | "predicateKey"
   | "defName"
+  | "booleanOperator"
   | "field"
   | "fieldAlias"
   | "listItem"

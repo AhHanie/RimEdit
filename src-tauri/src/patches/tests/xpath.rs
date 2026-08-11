@@ -1296,3 +1296,406 @@ fn caret_at_end_matches_complete_patch_xpath_exactly() {
         );
     }
 }
+
+// ---------------------------------------------------------------------------
+// Boolean predicate chains (`or`/`and`)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn suggests_def_names_in_second_and_third_or_clause() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
+    let second = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Wall" or defName="Wa"#,
+    );
+    let names: Vec<&str> = second.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(names.contains(&"Wall"), "{names:?}");
+    assert!(names.contains(&"WallStone"), "{names:?}");
+    assert!(!names.contains(&"Door"), "{names:?}");
+    assert!(second
+        .items
+        .iter()
+        .all(|i| i.kind == XPathCompletionItemKind::DefName));
+
+    let third = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Wall" or defName="Door" or defName="Wa"#,
+    );
+    let names: Vec<&str> = third.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(names.contains(&"Wall"), "{names:?}");
+    assert!(names.contains(&"WallStone"), "{names:?}");
+}
+
+#[test]
+fn selecting_a_def_name_in_a_later_clause_still_auto_closes_the_predicate() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Wall" or defName="Do"#,
+    );
+    let door = result
+        .items
+        .iter()
+        .find(|i| i.label == "Door")
+        .expect("Door suggested");
+    assert_eq!(door.insert_text, "Door\"]");
+}
+
+#[test]
+fn offers_operator_continuation_right_after_a_completed_quoted_value() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, r#"Defs/ThingDef[defName="Wall""#);
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert_eq!(labels, vec!["or", "and"]);
+    assert!(result
+        .items
+        .iter()
+        .all(|i| i.kind == XPathCompletionItemKind::BooleanOperator));
+    // No whitespace was typed before the caret -- the item must supply its own leading space.
+    let or_item = result.items.iter().find(|i| i.label == "or").unwrap();
+    assert_eq!(or_item.insert_text, " or ");
+    assert_eq!(
+        result.target,
+        XPathTarget::DefType {
+            def_type: "ThingDef".to_string()
+        }
+    );
+}
+
+#[test]
+fn filters_operator_suggestions_by_a_partial_o_or_a() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+
+    let o = complete_patch_xpath(&catalog, &index, r#"Defs/ThingDef[defName="Wall" o"#);
+    let labels: Vec<&str> = o.items.iter().map(|i| i.label.as_str()).collect();
+    assert_eq!(labels, vec!["or"]);
+    // Whitespace already separates the value from "o" -- no extra leading space needed.
+    assert_eq!(o.items[0].insert_text, "or ");
+
+    let a = complete_patch_xpath(&catalog, &index, r#"Defs/ThingDef[defName="Wall" a"#);
+    let labels: Vec<&str> = a.items.iter().map(|i| i.label.as_str()).collect();
+    assert_eq!(labels, vec!["and"]);
+}
+
+#[test]
+fn a_complete_operator_offers_the_next_clauses_key_templates() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, r#"Defs/ThingDef[defName="Wall" or"#);
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"defName=\"...\""), "{labels:?}");
+    assert!(labels.contains(&"@Name=\"...\""), "{labels:?}");
+    assert!(labels.contains(&"@ParentName=\"...\""), "{labels:?}");
+    assert!(result
+        .items
+        .iter()
+        .all(|i| i.kind == XPathCompletionItemKind::PredicateKey));
+}
+
+#[test]
+fn a_partial_predicate_key_after_an_operator_is_filtered_like_the_first_clause() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, r#"Defs/ThingDef[defName="Wall" or @Pa"#);
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert_eq!(labels, vec!["@ParentName=\"...\""]);
+}
+
+#[test]
+fn continuation_from_an_auto_closed_predicate_replaces_only_the_closing_bracket() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let input = r#"Defs/ThingDef[defName="Wall"]"#;
+    let result = complete_patch_xpath(&catalog, &index, input);
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert_eq!(labels, vec!["or", "and"]);
+    assert!(result
+        .items
+        .iter()
+        .all(|i| i.kind == XPathCompletionItemKind::BooleanOperator));
+
+    // The replacement span must bound exactly the closing ']', nothing more.
+    assert_eq!(&input[result.replace_from..result.replace_to], "]");
+    assert_eq!(
+        &input[..result.replace_from],
+        r#"Defs/ThingDef[defName="Wall""#
+    );
+
+    let or_item = result.items.iter().find(|i| i.label == "or").unwrap();
+    let spliced = format!(
+        "{}{}{}",
+        &input[..result.replace_from],
+        or_item.insert_text,
+        &input[result.replace_to..]
+    );
+    assert_eq!(spliced, r#"Defs/ThingDef[defName="Wall" or "#);
+
+    assert_eq!(
+        result.target,
+        XPathTarget::Def {
+            def_type: "ThingDef".to_string(),
+            def_name: "Wall".to_string(),
+        }
+    );
+}
+
+#[test]
+fn no_continuation_is_offered_once_a_field_segment_follows_the_closed_predicate() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, r#"Defs/ThingDef[defName="Wall"]/"#);
+    assert!(result
+        .items
+        .iter()
+        .all(|i| i.kind != XPathCompletionItemKind::BooleanOperator));
+}
+
+#[test]
+fn completed_or_only_def_name_chain_resolves_to_defs_target_in_source_order() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Wall" or defName="Door" or defName="WallStone"]/"#,
+    );
+    assert_eq!(
+        result.target,
+        XPathTarget::Defs {
+            def_type: "ThingDef".to_string(),
+            def_names: vec![
+                "Wall".to_string(),
+                "Door".to_string(),
+                "WallStone".to_string(),
+            ],
+        }
+    );
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"comps"), "{labels:?}");
+}
+
+#[test]
+fn completed_two_term_or_chain_still_resolves_a_field_after_it() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Wall" or defName="Door"]/comps"#,
+    );
+    let resolved = result.resolved_field.expect("comps should resolve");
+    assert_eq!(resolved.field_name, "comps");
+    assert_eq!(
+        result.target,
+        XPathTarget::Defs {
+            def_type: "ThingDef".to_string(),
+            def_names: vec!["Wall".to_string(), "Door".to_string()],
+        }
+    );
+}
+
+#[test]
+fn and_chain_of_def_names_resolves_to_def_type_not_defs() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Wall" and defName="Door"]/comps"#,
+    );
+    assert_eq!(
+        result.target,
+        XPathTarget::DefType {
+            def_type: "ThingDef".to_string()
+        }
+    );
+    assert!(result.resolved_field.is_some());
+}
+
+#[test]
+fn mixed_key_chain_resolves_to_def_type() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Wall" or @ParentName="BaseThing"]/"#,
+    );
+    assert_eq!(
+        result.target,
+        XPathTarget::DefType {
+            def_type: "ThingDef".to_string()
+        }
+    );
+    let labels: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(labels.contains(&"comps"), "{labels:?}");
+}
+
+#[test]
+fn mixed_operator_chain_resolves_to_def_type() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Wall" or defName="Door" and defName="WallStone"]/"#,
+    );
+    assert_eq!(
+        result.target,
+        XPathTarget::DefType {
+            def_type: "ThingDef".to_string()
+        }
+    );
+}
+
+#[test]
+fn whitespace_and_newlines_around_operators_complete_like_the_compact_equivalent() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let compact = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="Wall" or defName="Door"]/"#,
+    );
+    let spaced = complete_patch_xpath(
+        &catalog,
+        &index,
+        "Defs/ThingDef[\n  defName = \"Wall\"\n  or\n  defName = \"Door\"\n]/",
+    );
+    assert_eq!(compact.target, spaced.target);
+    let compact_labels: Vec<&str> = compact.items.iter().map(|i| i.label.as_str()).collect();
+    let spaced_labels: Vec<&str> = spaced.items.iter().map(|i| i.label.as_str()).collect();
+    assert_eq!(compact_labels, spaced_labels);
+}
+
+#[test]
+fn a_defname_value_containing_the_substring_or_is_not_mistaken_for_an_operator() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="MN_NetworkController" or defName="Wa"#,
+    );
+    assert!(result.diagnostics.is_empty(), "{:?}", result.diagnostics);
+    let names: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(names.contains(&"Wall"), "{names:?}");
+}
+
+#[test]
+fn a_quoted_value_containing_or_and_and_is_not_split_as_an_operator() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(
+        &catalog,
+        &index,
+        r#"Defs/ThingDef[defName="A or B and C"]/"#,
+    );
+    assert_eq!(
+        result.target,
+        XPathTarget::Def {
+            def_type: "ThingDef".to_string(),
+            def_name: "A or B and C".to_string(),
+        }
+    );
+}
+
+#[test]
+fn caret_inside_a_later_clause_value_with_a_suffix_replaces_only_the_value() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let xpath = r#"Defs/ThingDef[defName="Wall" or defName="Wall"]"#;
+    let marker = r#"or defName="Wa"#;
+    let cursor = xpath.find(marker).unwrap() + marker.len();
+    let result = complete_patch_xpath_at(&catalog, &index, xpath, cursor);
+    let names: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(names.contains(&"WallStone"), "{names:?}");
+    assert_eq!(&xpath[result.replace_from..result.replace_to], "Wall");
+}
+
+#[test]
+fn multibyte_def_name_in_an_earlier_clause_keeps_later_offsets_aligned() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let xpath = r#"Defs/ThingDef[defName="café" or defName="Wa"#;
+    let result = complete_patch_xpath(&catalog, &index, xpath);
+    let names: Vec<&str> = result.items.iter().map(|i| i.label.as_str()).collect();
+    assert!(names.contains(&"Wall"), "{names:?}");
+    assert_eq!(
+        &xpath[..result.replace_from],
+        r#"Defs/ThingDef[defName="café" or defName=""#
+    );
+}
+
+#[test]
+fn garbage_after_a_completed_clause_value_while_still_typing_is_unsupported() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    let result = complete_patch_xpath(&catalog, &index, r#"Defs/ThingDef[defName="Wall" xyz"#);
+    assert!(result.items.is_empty());
+    assert_eq!(result.diagnostics.len(), 1, "{:?}", result.diagnostics);
+    assert_eq!(
+        result.diagnostics[0].code,
+        "xpath_autocomplete_unsupported_pattern"
+    );
+}
+
+#[test]
+fn malformed_boolean_chains_are_rejected_with_the_unsupported_pattern_diagnostic() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    for input in [
+        r#"Defs/ThingDef[or defName="A"]"#,
+        r#"Defs/ThingDef[defName="A" or]"#,
+        r#"Defs/ThingDef[defName="A" or or defName="B"]"#,
+        r#"Defs/ThingDef[defName=A or defName="B"]"#,
+        r#"Defs/ThingDef[foo="A" or defName="B"]"#,
+        r#"Defs/ThingDef[(defName="A" or defName="B")]"#,
+        r#"Defs/ThingDef[contains(defName,"A") or defName="B"]"#,
+    ] {
+        let result = complete_patch_xpath(&catalog, &index, input);
+        assert!(result.items.is_empty(), "for {input}: {:?}", result.items);
+        assert_eq!(
+            result.diagnostics.len(),
+            1,
+            "for {input}: {:?}",
+            result.diagnostics
+        );
+        assert_eq!(
+            result.diagnostics[0].severity,
+            XPathDiagnosticSeverity::Warning,
+            "for {input}"
+        );
+        assert_eq!(
+            result.diagnostics[0].code, "xpath_autocomplete_unsupported_pattern",
+            "for {input}"
+        );
+        assert_eq!(result.target, XPathTarget::Unsupported, "for {input}");
+    }
+}
+
+#[test]
+fn boolean_predicate_edge_cases_never_panic() {
+    let catalog = test_catalog();
+    let index = test_def_index();
+    for input in [
+        r#"Defs/ThingDef[defName="Wall" o"#,
+        r#"Defs/ThingDef[defName="Wall" or"#,
+        r#"Defs/ThingDef[defName="Wall" or "#,
+        r#"Defs/ThingDef[defName="Wall"o"#,
+        r#"Defs/ThingDef[defName="Wall" or defName="#,
+        r#"Defs/ThingDef[defName="Wall" or defName="A" or "#,
+        r#"Defs/ThingDef[defName="Wall" andand defName="A"]"#,
+        r#"Defs/ThingDef[defName="Wall"]"#,
+    ] {
+        let _ = complete_patch_xpath(&catalog, &index, input);
+    }
+}

@@ -52,10 +52,15 @@ export function resolveModExtensionsField(catalog: SchemaCatalog | null): FieldS
 }
 
 /** The Def type an Add/Insert/AddModExtension operation's xpath resolves to, when it names a
- * concrete Def type or Def (not a deeper field) -- the case where the value editor should offer a
- * field picker instead of a single fixed target. */
+ * concrete Def type, Def, or OR-only chain of Defs (not a deeper field) -- the case where the
+ * value editor should offer a field picker instead of a single fixed target. `"defs"` (a
+ * `Defs/<DefType>[defName="A" or defName="B"]`-style predicate) resolves the same Def type as
+ * `"def"`/`"defType"`: which specific Defs the predicate matches doesn't change what fields the
+ * targeted Def type has. */
 export function targetDefType(target: XPathTarget | null): string | null {
   if (!target) return null;
-  if (target.kind === "def" || target.kind === "defType") return target.defType;
+  if (target.kind === "def" || target.kind === "defType" || target.kind === "defs") {
+    return target.defType;
+  }
   return null;
 }

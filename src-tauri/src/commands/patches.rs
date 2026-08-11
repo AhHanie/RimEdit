@@ -191,6 +191,7 @@ fn completion_context_tag(result: &XPathCompletionResult) -> &'static str {
         Some(XPathCompletionItemKind::PredicateKey) | Some(XPathCompletionItemKind::DefName) => {
             "defName"
         }
+        Some(XPathCompletionItemKind::BooleanOperator) => "booleanOperator",
         Some(XPathCompletionItemKind::Field) | Some(XPathCompletionItemKind::FieldAlias) => "field",
         Some(XPathCompletionItemKind::ListItem) | Some(XPathCompletionItemKind::MapEntry) => {
             "structural"
