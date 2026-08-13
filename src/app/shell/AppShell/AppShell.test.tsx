@@ -1,8 +1,11 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithI18n as render } from "../../../i18n/testing/renderWithI18n";
 import { AppShell } from "./AppShell";
+import { pickSourceFolder } from "../../../features/project-settings";
 import type { ProjectSettings } from "../../../features/project-settings";
+
+const pickSourceFolderMock = vi.mocked(pickSourceFolder);
 
 // AppShell orchestrates several heavy features (project explorer, editor workspace, def search,
 // schema catalog). This test only exercises the Preferences-dialog wiring described in Plan.md
@@ -162,5 +165,54 @@ describe("AppShell Preferences integration", () => {
     expect(screen.getByRole("dialog", { name: "Preferences" })).toBeDefined();
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("dialog", { name: "Preferences" })).toBeNull();
+  });
+});
+
+describe("AppShell add source folder", () => {
+  it("shows a dismissible reminder when the picked folder is an ambiguous Workshop root", async () => {
+    const user = userEvent.setup();
+    pickSourceFolderMock.mockResolvedValue({
+      settings: {
+        ...settings,
+        locations: [
+          {
+            id: "src-1",
+            displayName: "WeirdFolder",
+            rootPath: "C:/mods/WeirdFolder",
+            kind: "source",
+            sourceType: "folder",
+            readOnly: true,
+            createdAt: "",
+            updatedAt: "",
+          },
+        ],
+      },
+      locationId: "src-1",
+      ambiguousWorkshopRoot: true,
+    });
+    render(<AppShell />);
+
+    await user.click(screen.getByRole("button", { name: "Add source folder" }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/was added as a Folder source/)).toBeDefined();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Dismiss Workshop root notice" }));
+    expect(screen.queryByText(/was added as a Folder source/)).toBeNull();
+  });
+
+  it("shows no reminder when the picked folder was not ambiguous", async () => {
+    pickSourceFolderMock.mockResolvedValue({
+      settings: { ...settings, locations: [] },
+      locationId: "src-1",
+      ambiguousWorkshopRoot: false,
+    });
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    await user.click(screen.getByRole("button", { name: "Add source folder" }));
+
+    expect(screen.queryByText(/was added as a Folder source/)).toBeNull();
   });
 });

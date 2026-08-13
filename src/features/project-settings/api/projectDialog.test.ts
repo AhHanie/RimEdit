@@ -1,7 +1,7 @@
 import { open } from "@tauri-apps/plugin-dialog";
-import { upsertLocation } from "./projectSettings";
+import { classifySourceFolder, upsertLocation } from "./projectSettings";
 import { pickSourceFolder } from "./projectDialog";
-import type { ProjectSettings, RegisteredLocation } from "../types";
+import type { ProjectSettings, RegisteredLocation, SourceFolderClassification } from "../types";
 
 vi.mock("@tauri-apps/plugin-dialog", () => ({
   open: vi.fn(),
@@ -9,10 +9,18 @@ vi.mock("@tauri-apps/plugin-dialog", () => ({
 
 vi.mock("./projectSettings", () => ({
   upsertLocation: vi.fn(),
+  classifySourceFolder: vi.fn(),
 }));
 
 const openMock = vi.mocked(open);
 const upsertMock = vi.mocked(upsertLocation);
+const classifyMock = vi.mocked(classifySourceFolder);
+
+const notWorkshop: SourceFolderClassification = {
+  suggestedSourceType: "folder",
+  highConfidence: false,
+  numericItemCount: 0,
+};
 
 function makeLocation(overrides: Partial<RegisteredLocation> = {}): RegisteredLocation {
   return {
@@ -34,6 +42,7 @@ function makeSettings(locations: RegisteredLocation[] = []): ProjectSettings {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  classifyMock.mockResolvedValue(notWorkshop);
 });
 
 describe("pickSourceFolder", () => {
@@ -44,7 +53,7 @@ describe("pickSourceFolder", () => {
     expect(upsertMock).not.toHaveBeenCalled();
   });
 
-  it("calls upsertLocation with kind:source and sourceType:folder", async () => {
+  it("calls upsertLocation with kind:source and sourceType:folder for an ordinary mod folder", async () => {
     openMock.mockResolvedValue("C:\\mods\\CoreMod");
     upsertMock.mockResolvedValue(
       makeSettings([makeLocation({ id: "src-1", rootPath: "C:/mods/CoreMod" })]),
@@ -52,9 +61,80 @@ describe("pickSourceFolder", () => {
 
     await pickSourceFolder(makeSettings());
 
+    expect(classifyMock).toHaveBeenCalledWith("C:\\mods\\CoreMod");
     expect(upsertMock).toHaveBeenCalledWith(
       expect.objectContaining({ kind: "source", sourceType: "folder" }),
     );
+  });
+
+  it("uses sourceType:steamWorkshop for a high-confidence Workshop collection root", async () => {
+    openMock.mockResolvedValue("C:\\SteamLibrary\\steamapps\\workshop\\content\\294100");
+    classifyMock.mockResolvedValue({
+      suggestedSourceType: "steamWorkshop",
+      highConfidence: true,
+      numericItemCount: 42,
+    });
+    upsertMock.mockResolvedValue(
+      makeSettings([
+        makeLocation({
+          id: "workshop-1",
+          sourceType: "steamWorkshop",
+          rootPath: "C:/SteamLibrary/steamapps/workshop/content/294100",
+        }),
+      ]),
+    );
+
+    const result = await pickSourceFolder(makeSettings());
+
+    expect(upsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: "source", sourceType: "steamWorkshop" }),
+    );
+    expect(result?.ambiguousWorkshopRoot).toBe(false);
+  });
+
+  it("keeps sourceType:folder and flags ambiguousWorkshopRoot for a low-confidence match", async () => {
+    openMock.mockResolvedValue("C:\\mods\\WeirdFolder");
+    classifyMock.mockResolvedValue({
+      suggestedSourceType: "folder",
+      highConfidence: false,
+      numericItemCount: 1,
+    });
+    upsertMock.mockResolvedValue(
+      makeSettings([makeLocation({ id: "src-1", rootPath: "C:/mods/WeirdFolder" })]),
+    );
+
+    const result = await pickSourceFolder(makeSettings());
+
+    expect(upsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: "source", sourceType: "folder" }),
+    );
+    expect(result?.ambiguousWorkshopRoot).toBe(true);
+  });
+
+  it("does not flag ambiguousWorkshopRoot for an ordinary mod folder with no numeric children", async () => {
+    openMock.mockResolvedValue("C:\\mods\\CoreMod");
+    upsertMock.mockResolvedValue(
+      makeSettings([makeLocation({ id: "src-1", rootPath: "C:/mods/CoreMod" })]),
+    );
+
+    const result = await pickSourceFolder(makeSettings());
+
+    expect(result?.ambiguousWorkshopRoot).toBe(false);
+  });
+
+  it("falls back to sourceType:folder when classification fails (e.g. no Tauri backend)", async () => {
+    openMock.mockResolvedValue("C:\\mods\\CoreMod");
+    classifyMock.mockRejectedValue(new Error("no backend"));
+    upsertMock.mockResolvedValue(
+      makeSettings([makeLocation({ id: "src-1", rootPath: "C:/mods/CoreMod" })]),
+    );
+
+    const result = await pickSourceFolder(makeSettings());
+
+    expect(upsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: "source", sourceType: "folder" }),
+    );
+    expect(result?.ambiguousWorkshopRoot).toBe(false);
   });
 
   it("resolves the location by canonical path match", async () => {

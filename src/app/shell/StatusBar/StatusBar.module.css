@@ -47,3 +47,20 @@
 .icon {
   opacity: 0.8;
 }
+
+.indexErrorsBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.indexErrorsBtn:hover,
+.indexErrorsBtn:focus-visible {
+  text-decoration: underline;
+}

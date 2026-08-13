@@ -64,6 +64,6 @@ pub use serializer::serialize_patch_file;
 pub use state::{PatchFilesState, PatchIndexState};
 pub use value_xml::{parse_value_fragment, serialize_initial_elements};
 pub use xpath::{
-    complete_patch_xpath, XPathCompletionItem, XPathCompletionItemKind, XPathCompletionResult,
-    XPathDiagnostic, XPathDiagnosticSeverity, XPathResolvedField,
+    complete_patch_xpath, complete_patch_xpath_at, XPathCompletionItem, XPathCompletionItemKind,
+    XPathCompletionResult, XPathDiagnostic, XPathDiagnosticSeverity, XPathResolvedField,
 };

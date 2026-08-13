@@ -70,7 +70,7 @@ fn require_writable_project(settings: &ProjectSettings, project_id: &str) -> Res
 }
 
 #[tauri::command]
-pub fn create_def_from_template(
+pub async fn create_def_from_template(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -190,7 +190,7 @@ pub fn create_def_from_template(
     }
 
     // Duplicate check via project index overlay (only when defName is present).
-    let base_index = def_index_cache::load_for_project(&app, &settings, &project_id, false)?;
+    let base_index = def_index_cache::load_for_project(&app, &settings, &project_id, false).await?;
     let def_index = apply_replacement_overlay(
         (*base_index).clone(),
         &settings,
@@ -240,7 +240,8 @@ pub fn create_def_from_template(
         &project_id,
         &relative_path,
         &mut fresh_doc,
-    )?;
+    )
+    .await?;
 
     // Find the inserted def's node ID (only possible when defName is known).
     let inserted_node_id = if let Some(ref dn) = def_name {

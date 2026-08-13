@@ -15,7 +15,9 @@ export function useIndexingStatus(
     getIndexingStatus().then(setStatus).catch(console.error);
   }, []);
 
-  // When the active project changes, kick off background indexing for it
+  // When the active project changes, kick off background indexing for it. The backend decides
+  // whether a rebuild is actually needed (e.g. a startup cache hydration already restored a
+  // matching index) -- this call is unconditional and always returns the current status.
   useEffect(() => {
     if (!activeProjectId) return;
     startBackgroundIndexing(activeProjectId).then(setStatus).catch(console.error);

@@ -47,6 +47,10 @@ export function LocationSettingsRow({
     return t(`settings:location.sourceTypeLabels.${type}`);
   }
 
+  function sourceTypeHelp(type: SourceType): string {
+    return t(`settings:location.sourceTypeHelp.${type}`);
+  }
+
   function startEdit() {
     setDraft(draftFromLocation(location));
     setEditing(true);
@@ -101,21 +105,24 @@ export function LocationSettingsRow({
             aria-label={t("settings:location.displayNameLabel")}
           />
           {location.kind === "source" && (
-            <select
-              className={styles.sourceTypeSelect}
-              value={draft.sourceType}
-              onChange={(e) =>
-                setDraft((d) => ({ ...d, sourceType: e.target.value as SourceType }))
-              }
-              disabled={saving}
-              aria-label={t("settings:location.sourceTypeLabel")}
-            >
-              {SOURCE_TYPE_OPTIONS.map((type) => (
-                <option key={type} value={type}>
-                  {sourceTypeLabel(type)}
-                </option>
-              ))}
-            </select>
+            <>
+              <select
+                className={styles.sourceTypeSelect}
+                value={draft.sourceType}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, sourceType: e.target.value as SourceType }))
+                }
+                disabled={saving}
+                aria-label={t("settings:location.sourceTypeLabel")}
+              >
+                {SOURCE_TYPE_OPTIONS.map((type) => (
+                  <option key={type} value={type}>
+                    {sourceTypeLabel(type)}
+                  </option>
+                ))}
+              </select>
+              <p className={styles.sourceTypeHint}>{sourceTypeHelp(draft.sourceType)}</p>
+            </>
           )}
           {location.kind === "source" && (
             <input

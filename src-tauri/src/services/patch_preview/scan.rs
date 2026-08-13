@@ -55,7 +55,7 @@ pub(super) fn scan_def_files_in_load_order(
 ) -> Vec<ScannedDefFile> {
     let resolution = resolve_load_folders(location, settings);
     let location_root = &resolution.root_path;
-    let mut seen: HashSet<String> = HashSet::new();
+    let mut seen: HashSet<(String, String)> = HashSet::new();
     let mut files: Vec<ScannedDefFile> = Vec::new();
 
     for folder in &resolution.selected_folders {
@@ -79,12 +79,15 @@ pub(super) fn scan_def_files_in_load_order(
                 continue;
             }
             if resolution.shadow_by_relative_path {
-                let key = entry
+                // Scope by content pack (see `ResolvedLoadFolder::scope`) so same-named Def
+                // files from two different Workshop items are both kept rather than
+                // cross-shadowing each other.
+                let identity_path = entry
                     .path()
                     .strip_prefix(&folder.absolute_path)
                     .map(|p| p.to_string_lossy().to_string())
                     .unwrap_or_else(|_| entry.path().to_string_lossy().to_string());
-                if !seen.insert(key) {
+                if !seen.insert((folder.scope.clone(), identity_path)) {
                     continue;
                 }
             }

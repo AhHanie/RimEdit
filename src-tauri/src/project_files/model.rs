@@ -1,4 +1,5 @@
 use crate::project_model::{LocationKind, SourceType};
+use crate::rimworld_load_folders::LoadFolderDiagnostic;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -54,6 +55,11 @@ pub struct LocationXmlFileScan {
     pub read_only: bool,
     pub mod_id: Option<String>,
     pub files: Vec<ProjectFileEntry>,
+    /// Non-fatal load-folder resolution diagnostics (malformed `LoadFolders.xml`, missing
+    /// referenced folder, ...), scoped per content pack. Internal only -- never crosses the
+    /// Tauri IPC boundary directly; `def_index::builder` converts these into `DefIndexError`s.
+    #[serde(skip)]
+    pub diagnostics: Vec<LoadFolderDiagnostic>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

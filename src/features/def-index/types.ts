@@ -53,6 +53,12 @@ export interface DefIndexError {
   args?: DiagnosticArgs;
 }
 
+export interface DefIndexErrorsResponse {
+  errors: DefIndexError[];
+  total: number;
+  truncated: boolean;
+}
+
 export interface DefIndexSummary {
   indexedDefs: number;
   projectDefs: number;
@@ -114,6 +120,8 @@ export interface DefXmlPreview {
 
 export type IndexingPhase = "idle" | "pending" | "running" | "complete" | "failed";
 
+export type IndexingStage = "discovering" | "indexing";
+
 export interface IndexingStatus {
   projectId?: string;
   phase: IndexingPhase;
@@ -124,4 +132,11 @@ export interface IndexingStatus {
   errors: number;
   message?: string;
   updatedAtUnixMs: number;
+  /** Total files discovered for the current full rebuild. Set once the `discovering` stage
+   * completes; absent before then, during incremental jobs, or once `complete`/`failed`. */
+  totalFiles?: number;
+  processedFiles?: number;
+  currentStage?: IndexingStage;
+  /** Display name only -- never a filesystem path. */
+  currentLocationName?: string;
 }

@@ -190,10 +190,14 @@ describe("findProducedDiagnosticCodes", () => {
     expect(findProducedDiagnosticCodes(source).has("some_code")).toBe(false);
   });
 
-  it("ignores an unrelated code:-shaped field on a non-diagnostic struct passed a filePath excluded by convention", () => {
+  it("detects LoadFolderDiagnostic's code: field as produced -- it is now wire-facing via DefIndexError", () => {
+    // `def_index::builder::add_location_to_index` converts every `LoadFolderDiagnostic` into a
+    // `DefIndexError` returned by the `get_def_index_errors` command, so this is a genuine
+    // produced code like any other `CODE_FIELD_PATTERN` match, and the `filePath` param is no
+    // longer used to exclude this file (see `findProducedDiagnosticCodes`'s doc comment).
     const source = 'LoadFolderDiagnostic { code: "load_folders_read_failed".to_string(), message: m }';
     const found = findProducedDiagnosticCodes(source, "src-tauri/src/rimworld_load_folders.rs");
-    expect(found.size).toBe(0);
+    expect(found.has("load_folders_read_failed")).toBe(true);
   });
 
   it("does not match an unrelated ::new( call on a non-diagnostic type", () => {

@@ -75,6 +75,13 @@ pub(crate) enum WatcherRawEvent {
         location_id: String,
         folder_prefix: String,
     },
+    /// A direct child of a `SteamWorkshop` collection root was created, removed, or renamed --
+    /// i.e. the set of subscribed Workshop items changed. Always routed to a full rebuild (see
+    /// `watchers::is_workshop_collection_membership_change`).
+    CollectionMembershipChanged {
+        #[allow(dead_code)]
+        location_id: String,
+    },
 }
 
 fn job_generation(job: &IndexJob) -> u64 {
@@ -243,6 +250,14 @@ fn route_watcher_event(
             immediate_jobs.push(IndexJob::FolderDeleted {
                 location_id,
                 folder_prefix,
+                generation: gen,
+                reason: IndexJobReason::WatcherEvent,
+            });
+        }
+        WatcherRawEvent::CollectionMembershipChanged { .. } => {
+            let gen = app.state::<DefIndexState>().current_generation();
+            immediate_jobs.push(IndexJob::FullRebuild {
+                project_id: None,
                 generation: gen,
                 reason: IndexJobReason::WatcherEvent,
             });
@@ -448,7 +463,7 @@ async fn execute_full_rebuild(app: &AppHandle, project_id: Option<String>) {
         }
     };
 
-    state.set_status_running(project_id.clone(), 0);
+    state.set_status_discovering(project_id.clone(), None);
     emit_indexing_status(app, &state.status());
 
     // Check generation hasn't changed while we set up
@@ -456,7 +471,80 @@ async fn execute_full_rebuild(app: &AppHandle, project_id: Option<String>) {
         return;
     }
 
-    match def_index_cache::rebuild_for_project(app, &settings, project_id.as_deref()) {
+    let discovery_options = DefIndexBuildOptions {
+        project_id: project_id
+            .as_deref()
+            .or(settings.active_project_id.as_deref()),
+        include_sources: true,
+        replacement: None,
+        force_rebuild: true,
+    };
+    let discovery = {
+        let mut discovery_span = crate::instrumentation::span_with_tags(
+            app,
+            "indexing.discoverScanStats",
+            [(
+                "projectPresent".to_string(),
+                project_id.is_some().to_string(),
+            )],
+        );
+        let discovery = crate::def_index::discover_scan_stats(&settings, &discovery_options);
+        discovery_span.set_tag(
+            "includedLocations",
+            discovery.included_locations.to_string(),
+        );
+        discovery_span.set_tag(
+            "resolvedWorkshopItemCount",
+            discovery.resolved_workshop_item_count.to_string(),
+        );
+        discovery_span.set_tag(
+            "selectedLoadFolderCount",
+            discovery.selected_load_folder_count.to_string(),
+        );
+        discovery_span.set_tag("discoveredFiles", discovery.discovered_files.to_string());
+        discovery
+    };
+
+    if state.current_generation() != current_gen {
+        return;
+    }
+
+    state.set_status_indexing(project_id.clone(), discovery.discovered_files);
+    emit_indexing_status(app, &state.status());
+
+    if state.current_generation() != current_gen {
+        return;
+    }
+
+    // Live progress: ticks `processed_files` as each discovered file is attempted, throttled to
+    // roughly 100 emissions for the whole rebuild (never per-file) regardless of collection
+    // size. `set_status_indexing_progress` itself no-ops once the rebuild has left the
+    // `Indexing` stage, and the generation check here additionally stops a stale tick from a
+    // superseded rebuild from being emitted at all -- belt-and-suspenders, since in practice the
+    // single-worker job queue never runs two full rebuilds concurrently.
+    let processed_counter = std::sync::atomic::AtomicUsize::new(0);
+    let total_files = discovery.discovered_files;
+    let emit_every = (total_files / 100).max(1);
+    let progress_app = app.clone();
+    let on_file_indexed = move || {
+        let n = processed_counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed) + 1;
+        if n % emit_every != 0 && n != total_files {
+            return;
+        }
+        let progress_state = progress_app.state::<DefIndexState>();
+        if progress_state.current_generation() != current_gen {
+            return;
+        }
+        progress_state.set_status_indexing_progress(n);
+        emit_indexing_status(&progress_app, &progress_state.status());
+    };
+
+    match def_index_cache::rebuild_for_project_with_progress(
+        app,
+        &settings,
+        project_id.as_deref(),
+        Some(&on_file_indexed),
+    ) {
         Ok(_summary) => {
             // The index was stored by rebuild_for_project; read it back via get_if_settings_match
             let options = DefIndexBuildOptions {

@@ -33,6 +33,8 @@
     "ready": "Ready",
     "noProject": "No project",
     "indexPending": "Index pending",
+    "indexDiscovering": "Discovering files…",
+    "indexingProgress": "Indexing {{processed}} / {{total}} files…",
     "indexing": "Indexing…",
     "indexErrors_one": "{{count}} index error",
     "indexErrors_other": "{{count}} index errors",
@@ -63,6 +65,10 @@
   "startupNotice": {
     "projectNotFound": "Project folder not found: {{displayName}} ({{rootPath}})",
     "dismiss": "Dismiss project notice"
+  },
+  "workshopRootNotice": {
+    "message": "\"{{displayName}}\" was added as a Folder source. If this is a Steam Workshop collection root (e.g. \".../steamapps/workshop/content/294100\"), set its type to Steam Workshop in Preferences so every subscribed mod is indexed.",
+    "dismiss": "Dismiss Workshop root notice"
   },
   "confirm": {
     "discardChangesTitle": "Discard unsaved changes?",
@@ -112,6 +118,18 @@
       "rename": "Rename",
       "delete": "Delete"
     }
+  },
+  "indexErrorsDialog": {
+    "dialogAriaLabel": "Index Errors",
+    "title": "Index Errors",
+    "loading": "Loading errors…",
+    "loadFailed": "Failed to load index errors",
+    "empty": "No index errors",
+    "listAriaLabel": "Index errors",
+    "locationScan": "Location scan",
+    "truncatedNotice": "Showing {{shown}} of {{total}} errors",
+    "copyDetails": "Copy details",
+    "copied": "Copied"
   },
   "search": {
     "title": "Def Search",

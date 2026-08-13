@@ -152,12 +152,14 @@ describe("PatchOperationForm", () => {
     expect(withAttr.attributes).toEqual([{ name: "", value: "" }]);
   });
 
-  it("disables all inputs when readOnly", () => {
+  it("disables/read-only-izes all inputs when readOnly", () => {
     render(
       <PatchOperationForm node={addNode()} catalog={null} readOnly={true} projectId={null} onChange={vi.fn()} />,
     );
+    // The XPath field uses `readOnly`, not `disabled`, so a read-only file's XPath remains
+    // selectable, copyable plain text rather than an inert control (Plan.md's contract).
     expect(
-      (screen.getByDisplayValue('Defs/ThingDef[defName="Wall"]') as HTMLInputElement).disabled,
+      (screen.getByDisplayValue('Defs/ThingDef[defName="Wall"]') as HTMLTextAreaElement).readOnly,
     ).toBe(true);
     expect((screen.getByDisplayValue("Normal") as HTMLSelectElement).disabled).toBe(true);
     expect(screen.queryByText("Add attribute")).toBeNull();

@@ -118,6 +118,13 @@
   color: var(--text-primary);
 }
 
+.sourceTypeHint {
+  font-size: 10.5px;
+  font-family: var(--font-ui);
+  color: var(--text-muted);
+  margin: 0;
+}
+
 .metaRow {
   display: flex;
   flex-wrap: wrap;

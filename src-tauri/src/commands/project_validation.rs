@@ -8,7 +8,7 @@ use crate::settings_store::load_settings;
 use tauri::AppHandle;
 
 #[tauri::command]
-pub fn validate_project(
+pub async fn validate_project(
     app: AppHandle,
     project_id: String,
 ) -> Result<ProjectValidationResult, AppError> {
@@ -19,6 +19,6 @@ pub fn validate_project(
     // mismatch" and issue 09.
     let roots = schema_pack_roots(&settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
-    let def_index = def_index_cache::load_for_project(&app, &settings, &project_id, false)?;
+    let def_index = def_index_cache::load_for_project(&app, &settings, &project_id, false).await?;
     validate_project_impl(&settings, &project_id, &catalog_result.catalog, &def_index)
 }

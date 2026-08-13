@@ -13,10 +13,14 @@ mod query;
 mod state;
 
 pub(crate) use builder::{apply_file_change, indexed_source_for_location, normalize_relative_path};
-pub use builder::{build_def_index, DefIndexBuildOptions};
+pub use builder::{
+    build_def_index, build_def_index_with_progress, discover_scan_stats, DefIndexBuildOptions,
+    ScanDiscoveryStats,
+};
 pub use cache::{
-    cache_state_inputs, load_or_rebuild_def_index, rebuild_and_store_def_index,
-    store_prebuilt_index, DefIndexCacheError,
+    cache_state_inputs, load_cached_index_only, load_or_rebuild_def_index,
+    rebuild_and_store_def_index, rebuild_and_store_def_index_with_progress, store_prebuilt_index,
+    CachedDefIndex, DefIndexCacheError,
 };
 pub(crate) use fingerprint::settings_fingerprint;
 pub use fingerprint::IndexedFileFingerprint;
@@ -31,7 +35,7 @@ pub use query::{
     get_facet_summary, resolve_def_reference, search_def_results, suggest_def_references,
     summarize_index,
 };
-pub use state::{DefIndexState, IndexingPhase, IndexingStatus};
+pub use state::{DefIndexState, IndexingPhase, IndexingStage, IndexingStatus};
 
 #[cfg(test)]
 mod tests;

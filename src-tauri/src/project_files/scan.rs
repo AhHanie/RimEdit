@@ -6,11 +6,25 @@ use super::{
     LocationXmlFileScan, ProjectFileEntry, ProjectFileError, ProjectFileKind, ProjectFileScan,
     ProjectFolderEntry,
 };
+use crate::diagnostics::DiagnosticArgs;
 use crate::project_model::{LocationKind, ProjectSettings, RegisteredLocation};
-use crate::rimworld_load_folders::resolve_load_folders;
+use crate::rimworld_load_folders::{resolve_load_folders, LoadFolderDiagnostic};
 use std::collections::HashSet;
 use std::path::Path;
 use walkdir::WalkDir;
+
+/// Renders a `walkdir::Error` without leaking the absolute path it embeds in its own `Display`
+/// impl (e.g. `"IO error for operation on <absolute path>: <os message>"`) -- callers that
+/// surface this text over the wire (e.g. `DefIndexError.message` via `get_def_index_errors`)
+/// must never expose the location root or any absolute filesystem path (Plan.md section 2/5).
+/// Falls back to a generic, still-path-free message when the underlying `io::Error` isn't
+/// available (e.g. a symlink loop, which `follow_links(false)` should make unreachable here).
+fn safe_walk_error_message(e: &walkdir::Error) -> String {
+    match e.io_error() {
+        Some(io_err) => format!("I/O error while scanning for Def XML files: {}", io_err),
+        None => "I/O error while scanning for Def XML files.".to_string(),
+    }
+}
 
 fn build_file_entry(
     path: &Path,
@@ -80,6 +94,7 @@ pub(crate) fn scan_location_xml_files(
         read_only: location.read_only,
         mod_id: location.mod_id.clone(),
         files,
+        diagnostics: Vec::new(),
     })
 }
 
@@ -165,9 +180,10 @@ pub(crate) fn scan_indexable_def_xml_files(
     let resolution = resolve_load_folders(location, settings);
     let location_root = &resolution.root_path;
 
-    let mut seen_keys: HashSet<String> = HashSet::new();
+    let mut seen_keys: HashSet<(String, String)> = HashSet::new();
     let should_shadow = resolution.shadow_by_relative_path;
     let mut files: Vec<ProjectFileEntry> = Vec::new();
+    let mut walk_diagnostics: Vec<LoadFolderDiagnostic> = Vec::new();
 
     for folder in &resolution.selected_folders {
         let defs_dir = folder.absolute_path.join("Defs");
@@ -176,21 +192,45 @@ pub(crate) fn scan_indexable_def_xml_files(
         }
 
         for result in WalkDir::new(&defs_dir).follow_links(false) {
-            let entry = result.map_err(|e| ProjectFileError::ScanFailed(e.to_string()))?;
+            let entry = match result {
+                Ok(entry) => entry,
+                Err(e) => {
+                    // A single unreadable/unwalkable entry (permission denied, a too-long path,
+                    // ...) must not abort the entire location's scan -- for a Steam Workshop
+                    // collection that would silently index zero Defs from every item, not just
+                    // the offending one (Plan.md section 5: isolate, don't abort). Record it as a
+                    // non-fatal, isolated diagnostic instead and keep walking.
+                    let relative_path = e
+                        .path()
+                        .and_then(|p| p.strip_prefix(location_root).ok())
+                        .map(relative_path_to_forward_slash);
+                    walk_diagnostics.push(LoadFolderDiagnostic {
+                        code: "def_index_file_walk_failed".to_string(),
+                        message: safe_walk_error_message(&e),
+                        scope: folder.scope.clone(),
+                        relative_path,
+                        args: DiagnosticArgs::new(),
+                    });
+                    continue;
+                }
+            };
             if !entry.file_type().is_file() || !is_xml_extension(entry.path()) {
                 continue;
             }
 
             if should_shadow {
-                // Identity key: path relative to the load folder (e.g. `Defs/Things/Foo.xml`).
-                let identity_key = entry
+                // Identity key: the folder's content-pack scope (empty for an ordinary source,
+                // distinct per Workshop item for a SteamWorkshop collection -- see
+                // `ResolvedLoadFolder::scope`) plus the path relative to the load folder (e.g.
+                // `Defs/Things/Foo.xml`). Two different content packs never shadow each other.
+                let identity_path = entry
                     .path()
                     .strip_prefix(&folder.absolute_path)
                     .map(relative_path_to_forward_slash)
                     .unwrap_or_else(|_| entry.path().to_string_lossy().to_string());
 
-                if !seen_keys.insert(identity_key) {
-                    // Shadowed by an earlier (higher-precedence) load folder.
+                if !seen_keys.insert((folder.scope.clone(), identity_path)) {
+                    // Shadowed by an earlier (higher-precedence) load folder in the same content pack.
                     continue;
                 }
             }
@@ -219,6 +259,8 @@ pub(crate) fn scan_indexable_def_xml_files(
     }
 
     files.sort_by(|a, b| a.relative_path.cmp(&b.relative_path));
+    let mut diagnostics = resolution.diagnostics.clone();
+    diagnostics.extend(walk_diagnostics);
 
     Ok(LocationXmlFileScan {
         location_id: location.id.clone(),
@@ -229,6 +271,7 @@ pub(crate) fn scan_indexable_def_xml_files(
         read_only: location.read_only,
         mod_id: location.mod_id.clone(),
         files,
+        diagnostics,
     })
 }
 

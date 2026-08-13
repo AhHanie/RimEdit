@@ -3,3 +3,4 @@ mod control_flow;
 mod mutations;
 mod outcomes;
 mod support;
+mod whitespace_xpath;

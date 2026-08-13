@@ -18,7 +18,7 @@ fn find_location_root(settings: &ProjectSettings, location_id: &str) -> Option<P
         .map(|l| PathBuf::from(&l.root_path))
 }
 
-pub(crate) fn validate_doc_for_project(
+pub(crate) async fn validate_doc_for_project(
     app: &AppHandle,
     settings: &ProjectSettings,
     project_id: &str,
@@ -47,7 +47,7 @@ pub(crate) fn validate_doc_for_project(
     // form/catalog UI actually renders -- see Plan.md section 15's "catalog-context mismatch".
     let roots = schema_pack_roots(settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
-    let base_index = def_index_cache::load_for_project(app, settings, project_id, false)?;
+    let base_index = def_index_cache::load_for_project(app, settings, project_id, false).await?;
     let def_index = apply_replacement_overlay(
         (*base_index).clone(),
         settings,
@@ -69,7 +69,7 @@ pub(crate) fn validate_doc_for_project(
 /// overlaying the document as a project entry. This avoids false duplicate
 /// or source diagnostics that would occur if the source file were treated as
 /// a project-owned file.
-pub(crate) fn validate_doc_for_source(
+pub(crate) async fn validate_doc_for_source(
     app: &AppHandle,
     settings: &ProjectSettings,
     project_id: &str,
@@ -86,7 +86,7 @@ pub(crate) fn validate_doc_for_source(
 
     let roots = schema_pack_roots(settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
-    let base_index = def_index_cache::load_for_project(app, settings, project_id, false)?;
+    let base_index = def_index_cache::load_for_project(app, settings, project_id, false).await?;
     let context = ValidationContext {
         catalog: &catalog_result.catalog,
         def_index: &base_index,

@@ -359,7 +359,7 @@ fn reject_missing_indexed_source(
 }
 
 #[tauri::command]
-pub fn create_def_from_user_template(
+pub async fn create_def_from_user_template(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -386,7 +386,7 @@ pub fn create_def_from_user_template(
     }
 
     // Duplicate check via the project index overlay, same approach as create_def_from_template.
-    let base_index = def_index_cache::load_for_project(&app, &settings, &project_id, false)?;
+    let base_index = def_index_cache::load_for_project(&app, &settings, &project_id, false).await?;
     let def_index = apply_replacement_overlay(
         (*base_index).clone(),
         &settings,
@@ -434,7 +434,8 @@ pub fn create_def_from_user_template(
         &project_id,
         &relative_path,
         &mut fresh_doc,
-    )?;
+    )
+    .await?;
 
     let inserted_node_id = fresh_doc
         .def_summaries
@@ -550,7 +551,7 @@ fn extract_indexed_def_xml(
 
 #[tauri::command]
 #[allow(clippy::too_many_arguments)]
-pub fn create_def_from_indexed_def(
+pub async fn create_def_from_indexed_def(
     app: AppHandle,
     project_id: String,
     relative_path: String,
@@ -579,7 +580,7 @@ pub fn create_def_from_indexed_def(
     }
 
     // Duplicate check via the project index overlay, same approach as create_def_from_user_template.
-    let base_index = def_index_cache::load_for_project(&app, &settings, &project_id, false)?;
+    let base_index = def_index_cache::load_for_project(&app, &settings, &project_id, false).await?;
     let def_index = apply_replacement_overlay(
         (*base_index).clone(),
         &settings,
@@ -665,7 +666,8 @@ pub fn create_def_from_indexed_def(
         &project_id,
         &relative_path,
         &mut fresh_doc,
-    )?;
+    )
+    .await?;
 
     let inserted_node_id = fresh_doc
         .def_summaries

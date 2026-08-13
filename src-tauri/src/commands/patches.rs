@@ -1,5 +1,5 @@
 use crate::patches::{
-    complete_patch_xpath, parse_patch_file, parse_value_fragment, serialize_initial_elements,
+    complete_patch_xpath_at, parse_patch_file, parse_value_fragment, serialize_initial_elements,
     serialize_patch_file, IndexedPatchOperation, PatchFile, PatchImpactGraph, PatchIndexSummary,
     XPathCompletionItemKind, XPathCompletionResult,
 };
@@ -116,20 +116,43 @@ pub fn query_patch_operations_for_def(
 /// work deterministic" -- so a runtime locale switch that has not yet finished persisting can never
 /// race a completion request into serving a stale locale's labels.
 ///
-/// This command fires on a per-keystroke (debounced) cadence from `PatchPathInput`, so -- unlike
-/// other `build_schema_catalog` callers -- it always serves the catalog from
-/// `SchemaCatalogCacheState`, keyed by `(gameVersion, locale, externalRootsSignature)`, rather than
-/// rebuilding (re-parsing every embedded/external schema JSON file) on every call. A project with
-/// registered locations gets its own cache entry per distinct root set, so external-pack fields
-/// still appear in completion exactly as they do in the display catalog (see `schema_pack::cache`'s
-/// module docs for the cache's invalidation policy).
+/// This command fires on a per-keystroke/per-caret-move (debounced) cadence from
+/// `PatchPathInput`, so -- unlike other `build_schema_catalog` callers -- it always serves the
+/// catalog from `SchemaCatalogCacheState`, keyed by `(gameVersion, locale, externalRootsSignature)`,
+/// rather than rebuilding (re-parsing every embedded/external schema JSON file) on every call. A
+/// project with registered locations gets its own cache entry per distinct root set, so
+/// external-pack fields still appear in completion exactly as they do in the display catalog (see
+/// `schema_pack::cache`'s module docs for the cache's invalidation policy).
+///
+/// `cursor_byte_offset` is the caret's byte offset into `xpath` (the frontend converts its DOM
+/// UTF-16 selection index to a UTF-8 byte offset before calling), defaulting to `xpath.len()` --
+/// today's "caret is always at the end" behavior -- when omitted, so older callers/tests keep
+/// working unchanged. An out-of-range offset or one that doesn't fall on a UTF-8 char boundary is
+/// rejected outright with `xpath_completion_invalid_cursor` rather than silently clamped: a
+/// mismatched offset almost always means the frontend's UTF-16-to-byte conversion and the `xpath`
+/// string it was computed against have drifted out of sync (e.g. a stale request racing a newer
+/// edit), which is a bug worth surfacing, not papering over.
 #[tauri::command]
 pub fn complete_patch_operation_xpath(
     app: AppHandle,
     project_id: String,
     xpath: String,
     locale: Option<String>,
+    cursor_byte_offset: Option<usize>,
 ) -> Result<XPathCompletionResult, AppError> {
+    let cursor = cursor_byte_offset.unwrap_or(xpath.len());
+    if cursor > xpath.len() || !xpath.is_char_boundary(cursor) {
+        return Err(AppError {
+            code: "xpath_completion_invalid_cursor".to_string(),
+            message: format!(
+                "cursor_byte_offset {cursor} is out of range or not on a char boundary for an XPath of {} bytes",
+                xpath.len()
+            ),
+            details: None,
+            args: crate::diagnostics::DiagnosticArgs::new(),
+        });
+    }
+
     let settings = load_settings(&app)?;
     let roots = schema_pack_roots(&settings);
     let mut span = crate::instrumentation::span_with_tags(
@@ -150,7 +173,7 @@ pub fn complete_patch_operation_xpath(
     span.set_tag("catalogCacheHit", cache_hit.to_string());
 
     let def_index = def_index_cache::load_for_project_query(&app, &settings, &project_id)?;
-    let result = complete_patch_xpath(&catalog, &def_index, &xpath);
+    let result = complete_patch_xpath_at(&catalog, &def_index, &xpath, cursor);
 
     span.set_tag("resultCount", result.items.len().to_string());
     span.set_tag("isTruncated", result.is_truncated.to_string());
@@ -168,6 +191,7 @@ fn completion_context_tag(result: &XPathCompletionResult) -> &'static str {
         Some(XPathCompletionItemKind::PredicateKey) | Some(XPathCompletionItemKind::DefName) => {
             "defName"
         }
+        Some(XPathCompletionItemKind::BooleanOperator) => "booleanOperator",
         Some(XPathCompletionItemKind::Field) | Some(XPathCompletionItemKind::FieldAlias) => "field",
         Some(XPathCompletionItemKind::ListItem) | Some(XPathCompletionItemKind::MapEntry) => {
             "structural"

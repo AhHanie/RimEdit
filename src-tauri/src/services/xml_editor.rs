@@ -8,7 +8,7 @@ use crate::xml_document::{
 };
 use tauri::AppHandle;
 
-pub(crate) fn read_editor_document(
+pub(crate) async fn read_editor_document(
     app: &AppHandle,
     project_id: String,
     relative_path: String,
@@ -17,18 +17,13 @@ pub(crate) fn read_editor_document(
     let content = read_xml_file(&settings, &project_id, &relative_path).map_err(AppError::from)?;
     let mut doc = parse_to_document(&relative_path, &content.contents);
     if !doc.had_fatal_parse_error {
-        validation::validate_doc_for_project(
-            app,
-            &settings,
-            &project_id,
-            &relative_path,
-            &mut doc,
-        )?;
+        validation::validate_doc_for_project(app, &settings, &project_id, &relative_path, &mut doc)
+            .await?;
     }
     Ok(build_editor_result(project_id, doc, content.contents))
 }
 
-pub(crate) fn read_location_editor_document(
+pub(crate) async fn read_location_editor_document(
     app: &AppHandle,
     project_id: String,
     location_id: String,
@@ -60,12 +55,13 @@ pub(crate) fn read_location_editor_document(
     if !doc.had_fatal_parse_error {
         // Use source validation (no replacement overlay) so the source file is
         // not inserted as a project entry, avoiding false duplicate diagnostics.
-        validation::validate_doc_for_source(app, &settings, &project_id, &location_id, &mut doc)?;
+        validation::validate_doc_for_source(app, &settings, &project_id, &location_id, &mut doc)
+            .await?;
     }
     Ok(build_editor_result(project_id, doc, contents))
 }
 
-pub(crate) fn parse_editor_buffer(
+pub(crate) async fn parse_editor_buffer(
     app: &AppHandle,
     project_id: String,
     relative_path: String,
@@ -74,18 +70,13 @@ pub(crate) fn parse_editor_buffer(
     let settings = load_settings(app)?;
     let mut doc = parse_to_document(&relative_path, &raw_xml);
     if !doc.had_fatal_parse_error {
-        validation::validate_doc_for_project(
-            app,
-            &settings,
-            &project_id,
-            &relative_path,
-            &mut doc,
-        )?;
+        validation::validate_doc_for_project(app, &settings, &project_id, &relative_path, &mut doc)
+            .await?;
     }
     Ok(build_editor_result(project_id, doc, raw_xml))
 }
 
-pub(crate) fn apply_editor_edits(
+pub(crate) async fn apply_editor_edits(
     app: &AppHandle,
     project_id: String,
     relative_path: String,
@@ -96,13 +87,8 @@ pub(crate) fn apply_editor_edits(
     let settings = load_settings(app)?;
     let mut doc = parse_to_document(&relative_path, &raw_xml);
     if !doc.had_fatal_parse_error {
-        validation::validate_doc_for_project(
-            app,
-            &settings,
-            &project_id,
-            &relative_path,
-            &mut doc,
-        )?;
+        validation::validate_doc_for_project(app, &settings, &project_id, &relative_path, &mut doc)
+            .await?;
     }
     if doc.had_fatal_parse_error {
         return Ok(build_editor_result(project_id, doc, raw_xml));
@@ -126,7 +112,8 @@ pub(crate) fn apply_editor_edits(
             &project_id,
             &relative_path,
             &mut fresh_doc,
-        )?;
+        )
+        .await?;
     }
     Ok(build_editor_result(project_id, fresh_doc, new_xml))
 }

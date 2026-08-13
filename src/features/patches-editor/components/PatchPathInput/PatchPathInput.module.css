@@ -17,19 +17,35 @@
 }
 
 .input {
+  display: block;
   width: 100%;
   font-family: var(--font-mono, monospace);
   font-size: 12px;
-  padding: 3px 6px;
+  line-height: 1.5;
+  padding: 4px 6px;
   border: 1px solid var(--border-subtle);
   border-radius: 3px;
   background: var(--surface-base, transparent);
   color: var(--text-primary);
   outline: none;
+  /* Grows vertically with content (or a manual drag) within a bounded range; a single very long,
+     unbroken segment scrolls horizontally instead of soft-wrapping and forcing the operation tree
+     wider -- `wrap="off"` on the element itself is what actually disables soft-wrap, this just
+     makes the resulting overflow scrollable rather than clipped. */
+  resize: vertical;
+  min-height: 28px;
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre;
+  tab-size: 2;
 }
 
 .input:focus {
   border-color: var(--border-focus);
+}
+
+.input:read-only {
+  cursor: text;
 }
 
 .dropdown {

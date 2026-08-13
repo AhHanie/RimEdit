@@ -1,5 +1,6 @@
 import { createRef } from "react";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { EditorSelection } from "@codemirror/state";
 import { renderWithI18n as render } from "../../../../i18n/testing/renderWithI18n";
 import { XmlRawEditor, type XmlRawEditorHandle } from "./XmlRawEditor";
 
@@ -196,5 +197,100 @@ describe("XmlRawEditor", () => {
 
     // ...but onChange must NOT have been called (syncAnnotation suppresses it).
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  describe("Tab / Shift-Tab indentation", () => {
+    async function setupEditor(value: string, options?: { readOnly?: boolean }) {
+      const onChange = vi.fn();
+      const handleRef = createRef<XmlRawEditorHandle>();
+      render(
+        <XmlRawEditor
+          ref={handleRef}
+          value={value}
+          onChange={onChange}
+          readOnly={options?.readOnly}
+        />,
+      );
+      const view = await waitFor(() => {
+        const v = handleRef.current?.view;
+        if (!v) throw new Error("view not ready");
+        return v;
+      });
+      return { onChange, view };
+    }
+
+    const loadFolders =
+      "<loadFolders>\n<v1.6>\n<li>1.6</li>\n</v1.6>\n</loadFolders>";
+    const loadFoldersLiIndented =
+      "<loadFolders>\n<v1.6>\n  <li>1.6</li>\n</v1.6>\n</loadFolders>";
+
+    it("indents the current line on Tab", async () => {
+      const { onChange, view } = await setupEditor(loadFolders);
+      const caretPos = loadFolders.indexOf("<li>");
+      view.dispatch({ selection: EditorSelection.cursor(caretPos) });
+
+      fireEvent.keyDown(view.contentDOM, { key: "Tab" });
+
+      expect(view.state.doc.toString()).toBe(loadFoldersLiIndented);
+      expect(onChange).toHaveBeenCalledWith(loadFoldersLiIndented);
+    });
+
+    it("outdents the current line on Shift+Tab", async () => {
+      const { onChange, view } = await setupEditor(loadFoldersLiIndented);
+      const caretPos = loadFoldersLiIndented.indexOf("<li>");
+      view.dispatch({ selection: EditorSelection.cursor(caretPos) });
+
+      fireEvent.keyDown(view.contentDOM, { key: "Tab", shiftKey: true });
+
+      expect(view.state.doc.toString()).toBe(loadFolders);
+      expect(onChange).toHaveBeenCalledWith(loadFolders);
+    });
+
+    it("indents and outdents every line touched by a multi-line selection", async () => {
+      const { onChange, view } = await setupEditor(loadFolders);
+      const from = loadFolders.indexOf("<v1.6>");
+      const to = loadFolders.indexOf("</v1.6>") + "</v1.6>".length;
+      view.dispatch({ selection: EditorSelection.range(from, to) });
+
+      fireEvent.keyDown(view.contentDOM, { key: "Tab" });
+
+      const indented =
+        "<loadFolders>\n  <v1.6>\n  <li>1.6</li>\n  </v1.6>\n</loadFolders>";
+      expect(view.state.doc.toString()).toBe(indented);
+      expect(onChange).toHaveBeenLastCalledWith(indented);
+
+      fireEvent.keyDown(view.contentDOM, {
+        key: "Tab",
+        shiftKey: true,
+      });
+
+      expect(view.state.doc.toString()).toBe(loadFolders);
+      expect(onChange).toHaveBeenLastCalledWith(loadFolders);
+    });
+
+    it("leaves an already left-aligned line unchanged on Shift+Tab", async () => {
+      const { onChange, view } = await setupEditor(loadFolders);
+      const caretPos = loadFolders.indexOf("<loadFolders>");
+      view.dispatch({ selection: EditorSelection.cursor(caretPos) });
+
+      fireEvent.keyDown(view.contentDOM, { key: "Tab", shiftKey: true });
+
+      expect(view.state.doc.toString()).toBe(loadFolders);
+      expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it("does not mutate a read-only editor on Tab or Shift+Tab", async () => {
+      const { onChange, view } = await setupEditor(loadFoldersLiIndented, {
+        readOnly: true,
+      });
+      const caretPos = loadFoldersLiIndented.indexOf("<li>");
+      view.dispatch({ selection: EditorSelection.cursor(caretPos) });
+
+      fireEvent.keyDown(view.contentDOM, { key: "Tab" });
+      fireEvent.keyDown(view.contentDOM, { key: "Tab", shiftKey: true });
+
+      expect(view.state.doc.toString()).toBe(loadFoldersLiIndented);
+      expect(onChange).not.toHaveBeenCalled();
+    });
   });
 });

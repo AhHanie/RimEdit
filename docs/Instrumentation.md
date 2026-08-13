@@ -226,6 +226,7 @@ commands.searchDefs
 commands.resolveGraphicPreviewAssets
 indexing.executeFullRebuild
 indexing.executeFileJobs
+indexing.discoverScanStats
 validation.validateDocForProject
 ```
 
@@ -237,6 +238,12 @@ validation.validateDocForProject
 [("queryLength".to_string(), query.len().to_string())]
 [("batchSize".to_string(), batch.len().to_string())]
 [("projectPresent".to_string(), project_id.is_some().to_string())]
+
+// indexing.discoverScanStats -- aggregate counts only, no location/mod names or paths
+[("includedLocations".to_string(), stats.included_locations.to_string())]
+[("resolvedWorkshopItemCount".to_string(), stats.resolved_workshop_item_count.to_string())]
+[("selectedLoadFolderCount".to_string(), stats.selected_load_folder_count.to_string())]
+[("discoveredFiles".to_string(), stats.discovered_files.to_string())]
 
 // Avoid
 [("rawXml".to_string(), raw_xml.clone())]      // file content

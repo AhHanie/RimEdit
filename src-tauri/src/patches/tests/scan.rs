@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::project_model::LocationKind;
+use crate::project_model::{LocationKind, SourceType};
 
 use super::super::scan::scan_indexable_patch_xml_files;
 
@@ -114,6 +114,45 @@ fn load_folders_xml_ignores_conditional_attributes() {
         .iter()
         .any(|f| f.relative_path == "1.6/Compat/Patches/b.xml"));
     fs::remove_dir_all(&root).ok();
+}
+
+#[test]
+fn steam_workshop_collection_discovers_patches_from_every_item_in_deterministic_order() {
+    let collection_root = temp_dir();
+
+    // Item 111: root Patches/ with two files, to prove alphabetical ordering within an item.
+    let item_a = collection_root.join("111");
+    fs::create_dir_all(item_a.join("Patches")).unwrap();
+    fs::write(item_a.join("Patches").join("a.xml"), "<Patch></Patch>").unwrap();
+    fs::write(item_a.join("Patches").join("shared.xml"), "<Patch></Patch>").unwrap();
+
+    // Item 222: same relative patch filename as item 111 -- both must be kept, not shadowed.
+    let item_b = collection_root.join("222");
+    fs::create_dir_all(item_b.join("Patches")).unwrap();
+    fs::write(item_b.join("Patches").join("shared.xml"), "<Patch></Patch>").unwrap();
+
+    let mut loc = location(&collection_root, "workshop", LocationKind::Source);
+    loc.source_type = SourceType::SteamWorkshop;
+    let settings = settings_with_locations(vec![loc.clone()], "workshop");
+
+    let scan = scan_indexable_patch_xml_files(&settings, &loc).unwrap();
+
+    // Deterministic item order (111 before 222, sorted by directory name), folder-major
+    // within an item, alphabetical file order within a folder.
+    let paths: Vec<&str> = scan
+        .files
+        .iter()
+        .map(|f| f.relative_path.as_str())
+        .collect();
+    assert_eq!(
+        paths,
+        vec![
+            "111/Patches/a.xml",
+            "111/Patches/shared.xml",
+            "222/Patches/shared.xml",
+        ]
+    );
+    fs::remove_dir_all(&collection_root).ok();
 }
 
 #[test]

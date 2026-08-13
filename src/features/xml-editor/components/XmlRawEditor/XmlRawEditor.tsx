@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { basicSetup } from "codemirror";
+import { indentLess, indentMore } from "@codemirror/commands";
 import { Annotation, Compartment, EditorState, Prec } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { xml } from "@codemirror/lang-xml";
@@ -85,6 +86,8 @@ export const XmlRawEditor = forwardRef<XmlRawEditorHandle, Props>(
               key: "Mod-w",
               run: () => Boolean(onShortcutRef.current?.("close")),
             },
+            { key: "Tab", run: indentMore },
+            { key: "Shift-Tab", run: indentLess },
           ]),
         ),
         basicSetup,
