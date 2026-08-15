@@ -1074,7 +1074,11 @@ fn is_operator_prefix(s: &str) -> bool {
 /// is added to `insert_text` only when the character immediately before it isn't already
 /// whitespace, keeping `defName="Wall" or `/`defName="Wall"or ` both spliced to the same one
 /// separating space either way.
-fn boolean_operator_items(xpath: &str, replace_from: usize, filter_prefix: &str) -> Vec<XPathCompletionItem> {
+fn boolean_operator_items(
+    xpath: &str,
+    replace_from: usize,
+    filter_prefix: &str,
+) -> Vec<XPathCompletionItem> {
     let needs_leading_space =
         replace_from == 0 || !xpath.as_bytes()[replace_from - 1].is_ascii_whitespace();
     let needle = filter_prefix.to_lowercase();

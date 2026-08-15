@@ -2,7 +2,7 @@ use crate::def_index::{apply_replacement_overlay, DefIndexReplacement};
 use crate::project_model::{AppError, ProjectSettings};
 use crate::rimworld_load_folders::read_load_folders_version_keys;
 use crate::schema_pack::{build_schema_catalog, schema_pack_roots};
-use crate::services::def_index_cache;
+use crate::services::def_index_cache::{self, IndexLoadPolicy};
 use crate::xml_document::{
     validate_about_metadata_document, validate_document, ValidationContext, XmlDocument,
     XmlDocumentProfile,
@@ -18,6 +18,11 @@ fn find_location_root(settings: &ProjectSettings, location_id: &str) -> Option<P
         .map(|l| PathBuf::from(&l.root_path))
 }
 
+/// Validates a project-owned document for the interactive editor (initial open, in-buffer
+/// parse/edit validation) -- see `services::xml_editor`'s callers. Loads the def index under
+/// `IndexLoadPolicy::Interactive`, so this must never be used for a save/commit decision or any
+/// path that needs a guaranteed-fresh index; those must load `RequireFresh` themselves and pass
+/// the resulting index/context through directly instead of going through this function.
 pub(crate) async fn validate_doc_for_project(
     app: &AppHandle,
     settings: &ProjectSettings,
@@ -47,7 +52,13 @@ pub(crate) async fn validate_doc_for_project(
     // form/catalog UI actually renders -- see Plan.md section 15's "catalog-context mismatch".
     let roots = schema_pack_roots(settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
-    let base_index = def_index_cache::load_for_project(app, settings, project_id, false).await?;
+    let base_index = def_index_cache::load_for_project_with_policy(
+        app,
+        settings,
+        project_id,
+        IndexLoadPolicy::Interactive,
+    )
+    .await?;
     let def_index = apply_replacement_overlay(
         (*base_index).clone(),
         settings,
@@ -68,7 +79,8 @@ pub(crate) async fn validate_doc_for_project(
 /// Validates a source location document using the project's index without
 /// overlaying the document as a project entry. This avoids false duplicate
 /// or source diagnostics that would occur if the source file were treated as
-/// a project-owned file.
+/// a project-owned file. Like `validate_doc_for_project`, this loads the def index under
+/// `IndexLoadPolicy::Interactive` and must only be used for the interactive editor path.
 pub(crate) async fn validate_doc_for_source(
     app: &AppHandle,
     settings: &ProjectSettings,
@@ -86,7 +98,13 @@ pub(crate) async fn validate_doc_for_source(
 
     let roots = schema_pack_roots(settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
-    let base_index = def_index_cache::load_for_project(app, settings, project_id, false).await?;
+    let base_index = def_index_cache::load_for_project_with_policy(
+        app,
+        settings,
+        project_id,
+        IndexLoadPolicy::Interactive,
+    )
+    .await?;
     let context = ValidationContext {
         catalog: &catalog_result.catalog,
         def_index: &base_index,

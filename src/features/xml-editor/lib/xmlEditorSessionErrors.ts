@@ -46,3 +46,18 @@ export function noActiveProjectError(message: string): DiagnosticError {
 export function formEditNoDocumentError(message: string): DiagnosticError {
   return new DiagnosticError("xml_editor_session_form_edit_no_document", message);
 }
+
+/** Builds the "buffer changed while an insert was in flight" diagnostic error, raised by
+ * `insertDefFromTemplate`/`insertDefFromUserTemplate`/`insertDefFromIndexedDef` when
+ * `latestRawXmlRef.current` no longer matches the buffer text that was sent to the backend. Each
+ * of these functions captures the current buffer, awaits a backend call that inserts a new Def
+ * into *that* text, and then applies the result as one atomic history entry
+ * (`past: [...prev.past, prev.present]`, `future: []`). If the user triggers an undo/redo (or
+ * otherwise changes the buffer) while the backend call is in flight -- none of these dialogs trap
+ * keyboard focus or block `AppShell`'s global Ctrl+Z/Ctrl+Y handler -- applying the stale result
+ * unconditionally would silently re-apply the undone edit and wipe the redo stack. Rejecting
+ * instead lets the caller (the create-def wizard) surface a retry prompt rather than corrupting
+ * history invisibly. */
+export function bufferChangedDuringInsertError(message: string): DiagnosticError {
+  return new DiagnosticError("xml_editor_session_buffer_changed_during_insert", message);
+}

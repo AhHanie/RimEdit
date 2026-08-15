@@ -46,6 +46,7 @@ import {
 } from "../../../features/project-explorer";
 import type { ProjectFileEntry } from "../../../features/project-explorer";
 import { DefSearchPanel, useIndexingStatus } from "../../../features/def-index";
+import type { IndexingStatus } from "../../../features/def-index";
 import type { ActivityView } from "../types";
 import type { CommandAction, MenuDescriptor } from "../../commands/commandTypes";
 import { AppTitleBar } from "../AppTitleBar/AppTitleBar";
@@ -57,6 +58,54 @@ import { ResizablePaneHandle } from "../ResizablePaneHandle/ResizablePaneHandle"
 import { usePersistentLayoutState } from "../layout/usePersistentLayoutState";
 import { LAYOUT_DEFAULTS } from "../layout/layoutState";
 import styles from "./AppShell.module.css";
+
+/** Pure decision for the `validationRefreshRevision` effect below, extracted so it's directly
+ * unit-testable without rendering `AppShell`. Distinct from `indexRevision`'s own condition: this
+ * only bumps after the index itself actually changes, never merely because a trusted hydrated
+ * cache becomes verified in the background (checking -> verified leaves the same `DefIndex` in
+ * place, untouched -- see `CacheVerification`).
+ *
+ * Compares `status.indexBuiltAtUnixMs` (the completed index's own build timestamp) against the
+ * value observed at the last "complete" status for the *same* active project (see the effect
+ * below, which resets `prevIndexBuiltAtUnixMs` to `null` whenever `activeProjectId` changes),
+ * rather than diffing phase transitions or def/error counts: the backend emits a separate status
+ * event per phase transition, but nothing guarantees the frontend observes each one as its own
+ * render -- a very fast rebuild's pending -> running -> complete events could in principle land
+ * close enough together to be batched into one commit, in which case a phase-transition check
+ * would miss it entirely. Comparing counts instead of a build timestamp has the same gap in the
+ * opposite direction: a genuine rebuild whose def/error counts happen to come out identical to the
+ * prior snapshot (e.g. one Def edited, none added/removed) would be indistinguishable from a
+ * verification-only confirmation. `indexBuiltAtUnixMs` only ever changes when the index was
+ * actually (re)built (a fresh full rebuild or an applied incremental update), never on a mere
+ * verification flag flip, so comparing it catches every real change and only real changes,
+ * regardless of how the intermediate phase events were batched.
+ *
+ * `prevIndexBuiltAtUnixMs === null` bumps unconditionally (rather than treating "no prior
+ * snapshot" as "nothing to compare, don't bump"): a document can already be open -- and validated
+ * against an empty/partial `IndexLoadPolicy::Interactive` fallback index -- before this component
+ * has ever observed a "complete" status at all (e.g. the window became interactive before the
+ * very first hydration/rebuild finished), so the *first* observed completion still needs to
+ * trigger a catch-up revalidation for any tab already open at that point. If nothing is open yet,
+ * bumping the revision is simply inert.
+ *
+ * `status.projectId !== activeProjectId` also refuses to act, independent of the ref-reset the
+ * calling effect does on a project switch: `useIndexingStatus` clears its own status to `null` on
+ * an active-project change, but that clear only takes effect on the *next* render -- the render
+ * where `activeProjectId` first changes still has the *previous* project's `indexingStatus` object
+ * in scope. Checking `projectId` directly here closes that gap regardless of render/effect
+ * ordering, rather than relying on the reset happening to land before this function is next
+ * evaluated.
+ */
+export function shouldBumpValidationRefreshRevision(
+  status: IndexingStatus | null | undefined,
+  prevIndexBuiltAtUnixMs: number | null,
+  activeProjectId: string | undefined,
+): boolean {
+  if (status?.phase !== "complete") return false;
+  if (status.indexBuiltAtUnixMs === undefined) return false;
+  if (status.projectId !== activeProjectId) return false;
+  return prevIndexBuiltAtUnixMs !== status.indexBuiltAtUnixMs;
+}
 
 export interface AppShellProps {
   /** Forwarded to `useProjectSettings` -- see that hook's doc comment. Set by `main.tsx`'s
@@ -179,6 +228,55 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     }
     prevIndexPhaseRef.current = indexingStatus?.phase;
   }, [indexingStatus?.phase]);
+
+  // Distinct from `indexRevision` above: this only bumps after a *rebuild* completes (a
+  // pending/running -> complete transition), never merely because a trusted hydrated cache
+  // becomes verified in the background (that transition never leaves `phase: "complete"`, so it
+  // can't trigger this effect at all -- see `CacheVerification`). Threaded down to open XML
+  // editor sessions so they can re-run validation against the rebuilt index without discarding
+  // in-progress edits/undo history/dirty state -- see `useXmlEditorSession`'s revalidation effect.
+  const [validationRefreshRevision, setValidationRefreshRevision] = useState(0);
+  // Tracks the completed index's own build timestamp as of the last observed "complete" status --
+  // see `shouldBumpValidationRefreshRevision`. Reset to `null` on every active-project change (see
+  // `prevValidationProjectIdRef` below): project A's and project B's `indexBuiltAtUnixMs` values
+  // are unrelated timestamps, so comparing across the switch would just be comparing arbitrary
+  // numbers rather than detecting a real rebuild -- resetting establishes a fresh baseline for
+  // whichever project just became active instead.
+  const prevIndexBuiltAtRef = useRef<number | null>(null);
+  const prevValidationProjectIdRef = useRef<string | undefined>(activeProjectId);
+  useEffect(() => {
+    if (prevValidationProjectIdRef.current !== activeProjectId) {
+      prevValidationProjectIdRef.current = activeProjectId;
+      prevIndexBuiltAtRef.current = null;
+    }
+    if (
+      shouldBumpValidationRefreshRevision(
+        indexingStatus,
+        prevIndexBuiltAtRef.current,
+        activeProjectId,
+      )
+    ) {
+      setValidationRefreshRevision((r) => r + 1);
+    }
+    // Guarded by the same `projectId` check as `shouldBumpValidationRefreshRevision`: a status
+    // object left over from the *previous* active project (possible on the very render
+    // `activeProjectId` changes, before `useIndexingStatus`'s own reset-to-null takes effect on
+    // the next render) must never seed the baseline for whichever project is actually current --
+    // otherwise a later, real status for the new project would be compared against another
+    // project's unrelated timestamp.
+    if (
+      indexingStatus?.phase === "complete" &&
+      indexingStatus.indexBuiltAtUnixMs !== undefined &&
+      indexingStatus.projectId === activeProjectId
+    ) {
+      prevIndexBuiltAtRef.current = indexingStatus.indexBuiltAtUnixMs;
+    }
+  }, [
+    activeProjectId,
+    indexingStatus?.phase,
+    indexingStatus?.indexBuiltAtUnixMs,
+    indexingStatus?.projectId,
+  ]);
 
   const fileTree = useMemo(
     () =>
@@ -710,6 +808,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
             projectId={activeProjectId}
             catalog={catalog}
             gameVersion={settings?.gameVersion}
+            validationRefreshRevision={validationRefreshRevision}
             createDefSignal={createDefSignal}
             onActivateTab={workspace.activateTab}
             onCloseTab={workspace.closeTab}

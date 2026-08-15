@@ -36,4 +36,6 @@ notify = "8"
 tokio = { version = "1", features = ["sync", "time", "macros"] }
 sxd-document = "0.3.2"
 sxd-xpath = "0.4.2"
+zstd = "0.13"
+ciborium = "0.2.2"
 

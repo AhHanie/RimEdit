@@ -1,7 +1,7 @@
 use crate::def_index::{
-    apply_replacement_overlay, build_def_index, build_def_index_with_progress,
-    discover_scan_stats, settings_fingerprint, DefIdentityKey, DefIndex, DefIndexBuildOptions,
-    DefIndexReplacement, IndexedDef, IndexedSourceKind,
+    apply_replacement_overlay, build_def_index, build_def_index_with_progress, discover_scan_stats,
+    settings_fingerprint, DefIdentityKey, DefIndex, DefIndexBuildOptions, DefIndexReplacement,
+    IndexedDef, IndexedSourceKind,
 };
 use crate::project_model::{LocationKind, ProjectSettings, RegisteredLocation, SourceType};
 use std::fs;
@@ -225,7 +225,11 @@ fn discover_scan_stats_counts_locations_workshop_items_and_files_without_parsing
 
     let item_a = collection_dir.join("111");
     fs::create_dir_all(item_a.join("Defs")).unwrap();
-    fs::write(item_a.join("Defs").join("a.xml"), "<Defs><ThingDef><defName>A</defName></ThingDef></Defs>").unwrap();
+    fs::write(
+        item_a.join("Defs").join("a.xml"),
+        "<Defs><ThingDef><defName>A</defName></ThingDef></Defs>",
+    )
+    .unwrap();
 
     let item_b = collection_dir.join("222");
     fs::create_dir_all(item_b.join("1.6").join("Defs")).unwrap();
@@ -234,7 +238,11 @@ fn discover_scan_stats_counts_locations_workshop_items_and_files_without_parsing
         r#"<loadFolders><v1.6><li>1.6</li></v1.6></loadFolders>"#,
     )
     .unwrap();
-    fs::write(item_b.join("1.6").join("Defs").join("b.xml"), "<Defs><ThingDef><defName>B</defName></ThingDef></Defs>").unwrap();
+    fs::write(
+        item_b.join("1.6").join("Defs").join("b.xml"),
+        "<Defs><ThingDef><defName>B</defName></ThingDef></Defs>",
+    )
+    .unwrap();
 
     let settings = settings_with_steam_workshop_source(&project_dir, &collection_dir);
     let options = DefIndexBuildOptions::for_project("project");
@@ -306,7 +314,11 @@ fn build_def_index_with_progress_invokes_the_callback_once_per_discovered_file()
         Some(&on_file_indexed),
     );
 
-    assert_eq!(calls.get(), 3, "expected one callback invocation per discovered file");
+    assert_eq!(
+        calls.get(),
+        3,
+        "expected one callback invocation per discovered file"
+    );
     assert_eq!(index.defs.len(), 2);
     fs::remove_dir_all(&project_dir).ok();
 }
@@ -382,7 +394,12 @@ fn malformed_workshop_item_load_folders_xml_is_isolated_and_does_not_block_other
         .errors
         .iter()
         .find(|e| e.code == "load_folders_read_failed")
-        .unwrap_or_else(|| panic!("expected a load_folders_read_failed error: {:?}", index.errors));
+        .unwrap_or_else(|| {
+            panic!(
+                "expected a load_folders_read_failed error: {:?}",
+                index.errors
+            )
+        });
     assert_eq!(load_folders_error.source_kind, IndexedSourceKind::Source);
     assert_eq!(load_folders_error.location_id, "workshop");
     assert_eq!(

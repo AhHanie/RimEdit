@@ -158,7 +158,6 @@ impl DiagnosticRef {
         self.args.insert(key.into(), value.into());
         self
     }
-
 }
 
 #[cfg(test)]

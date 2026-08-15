@@ -3,9 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { renderWithI18n as render } from "../../../i18n/testing/renderWithI18n";
 import { AppShell } from "./AppShell";
 import { pickSourceFolder } from "../../../features/project-settings";
+import { useIndexingStatus } from "../../../features/def-index";
 import type { ProjectSettings } from "../../../features/project-settings";
 
 const pickSourceFolderMock = vi.mocked(pickSourceFolder);
+const useIndexingStatusMock = vi.mocked(useIndexingStatus);
 
 // AppShell orchestrates several heavy features (project explorer, editor workspace, def search,
 // schema catalog). This test only exercises the Preferences-dialog wiring described in Plan.md
@@ -95,7 +97,7 @@ vi.mock("../../../features/def-index", async (importOriginal) => {
     DefSearchPanel: ({ visible }: { visible: boolean }) => (
       <div data-testid="search-panel" data-visible={visible} />
     ),
-    useIndexingStatus: () => null,
+    useIndexingStatus: vi.fn(() => null),
   };
 });
 
@@ -165,6 +167,58 @@ describe("AppShell Preferences integration", () => {
     expect(screen.getByRole("dialog", { name: "Preferences" })).toBeDefined();
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("dialog", { name: "Preferences" })).toBeNull();
+  });
+});
+
+// Phase 1 (Plan.md): the window must stay usable while Def-index initialization is still asynchronously
+// hydrating/rebuilding in the background -- this exercises the shell with the real (unmocked) StatusBar
+// receiving a live-looking `IndexingStatus`, unlike the suite above which stubs `useIndexingStatus` to `null`.
+describe("AppShell while the Def index is still initializing", () => {
+  afterEach(() => {
+    useIndexingStatusMock.mockReturnValue(null);
+  });
+
+  it("stays interactive and shows the hydrating-cache status while the background thread reads the disk cache", async () => {
+    useIndexingStatusMock.mockReturnValue({
+      phase: "running",
+      cacheVerification: "notRequired",
+      pendingFiles: 0,
+      indexedDefs: 0,
+      projectDefs: 0,
+      sourceDefs: 0,
+      errors: 0,
+      updatedAtUnixMs: 0,
+      currentStage: "hydratingCache",
+    });
+
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    expect(screen.getByText("Loading Def index cache…")).toBeDefined();
+    // The shell's other affordances must remain fully usable -- Phase 1's whole point is that
+    // initialization no longer blocks the window from accepting input.
+    await user.click(screen.getByRole("button", { name: "Preferences" }));
+    expect(screen.getByRole("dialog", { name: "Preferences" })).toBeDefined();
+  });
+
+  it("stays interactive while a Pending status precedes any hydration/discovery detail", async () => {
+    useIndexingStatusMock.mockReturnValue({
+      phase: "pending",
+      cacheVerification: "notRequired",
+      pendingFiles: 0,
+      indexedDefs: 0,
+      projectDefs: 0,
+      sourceDefs: 0,
+      errors: 0,
+      updatedAtUnixMs: 0,
+    });
+
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    expect(screen.getByText("Index pending")).toBeDefined();
+    await user.click(screen.getByRole("button", { name: "Preferences" }));
+    expect(screen.getByRole("dialog", { name: "Preferences" })).toBeDefined();
   });
 });
 

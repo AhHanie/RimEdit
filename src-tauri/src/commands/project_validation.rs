@@ -19,6 +19,9 @@ pub async fn validate_project(
     // mismatch" and issue 09.
     let roots = schema_pack_roots(&settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
-    let def_index = def_index_cache::load_for_project(&app, &settings, &project_id, false).await?;
+    // Deliberately RequireFresh, not Interactive: an explicit "validate the whole project"
+    // request must never report against a stale/partial index just because a background rebuild
+    // happens to be in flight.
+    let def_index = def_index_cache::load_fresh_for_project(&app, &settings, &project_id).await?;
     validate_project_impl(&settings, &project_id, &catalog_result.catalog, &def_index)
 }

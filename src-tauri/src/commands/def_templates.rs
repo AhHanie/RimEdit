@@ -386,7 +386,9 @@ pub async fn create_def_from_user_template(
     }
 
     // Duplicate check via the project index overlay, same approach as create_def_from_template.
-    let base_index = def_index_cache::load_for_project(&app, &settings, &project_id, false).await?;
+    // RequireFresh: this creates/writes a new Def, so the duplicate check must not miss a
+    // recently added Def just because a background rebuild happens to be in flight.
+    let base_index = def_index_cache::load_fresh_for_project(&app, &settings, &project_id).await?;
     let def_index = apply_replacement_overlay(
         (*base_index).clone(),
         &settings,
@@ -580,7 +582,9 @@ pub async fn create_def_from_indexed_def(
     }
 
     // Duplicate check via the project index overlay, same approach as create_def_from_user_template.
-    let base_index = def_index_cache::load_for_project(&app, &settings, &project_id, false).await?;
+    // RequireFresh: this creates/writes a new Def, so the duplicate check must not miss a
+    // recently added Def just because a background rebuild happens to be in flight.
+    let base_index = def_index_cache::load_fresh_for_project(&app, &settings, &project_id).await?;
     let def_index = apply_replacement_overlay(
         (*base_index).clone(),
         &settings,

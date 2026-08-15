@@ -388,7 +388,12 @@ fn steam_workshop_collection_isolates_diagnostics_per_item_with_deterministic_or
     let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
 
     // Item isolation: only item "222"'s diagnostic is present, scoped to that item.
-    assert_eq!(scan.diagnostics.len(), 1, "diagnostics: {:?}", scan.diagnostics);
+    assert_eq!(
+        scan.diagnostics.len(),
+        1,
+        "diagnostics: {:?}",
+        scan.diagnostics
+    );
     let diagnostic = &scan.diagnostics[0];
     assert_eq!(diagnostic.scope, "222");
     assert_eq!(diagnostic.code, "load_folder_missing");
@@ -425,7 +430,13 @@ fn ordinary_mod_load_folders_diagnostic_keeps_the_filename_not_just_none() {
     )
     .unwrap();
 
-    let mut location = make_location("src1", "Ordinary Mod", &mod_root, LocationKind::Source, true);
+    let mut location = make_location(
+        "src1",
+        "Ordinary Mod",
+        &mod_root,
+        LocationKind::Source,
+        true,
+    );
     location.source_type = SourceType::Folder;
     let settings = ProjectSettings {
         schema_version: 3,
@@ -437,7 +448,12 @@ fn ordinary_mod_load_folders_diagnostic_keeps_the_filename_not_just_none() {
 
     let scan = scan_indexable_def_xml_files(&settings, &location).unwrap();
 
-    assert_eq!(scan.diagnostics.len(), 1, "diagnostics: {:?}", scan.diagnostics);
+    assert_eq!(
+        scan.diagnostics.len(),
+        1,
+        "diagnostics: {:?}",
+        scan.diagnostics
+    );
     assert_eq!(scan.diagnostics[0].code, "load_folder_missing");
     assert_eq!(scan.diagnostics[0].scope, "");
     assert_eq!(
@@ -469,7 +485,12 @@ fn steam_workshop_collection_with_no_item_folders_reports_a_location_level_diagn
     let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
 
     assert!(scan.files.is_empty());
-    assert_eq!(scan.diagnostics.len(), 1, "diagnostics: {:?}", scan.diagnostics);
+    assert_eq!(
+        scan.diagnostics.len(),
+        1,
+        "diagnostics: {:?}",
+        scan.diagnostics
+    );
     let diagnostic = &scan.diagnostics[0];
     assert_eq!(diagnostic.code, "steam_workshop_collection_empty");
     // Location-level, not scoped to any particular item.

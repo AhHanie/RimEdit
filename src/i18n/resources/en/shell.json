@@ -33,6 +33,8 @@
     "ready": "Ready",
     "noProject": "No project",
     "indexPending": "Index pending",
+    "cacheChecking": "Using cached index - checking for updates…",
+    "indexHydratingCache": "Loading Def index cache…",
     "indexDiscovering": "Discovering files…",
     "indexingProgress": "Indexing {{processed}} / {{total}} files…",
     "indexing": "Indexing…",

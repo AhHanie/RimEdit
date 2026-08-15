@@ -12,6 +12,7 @@ function runningStatusLabel(
   locale: string,
 ): string {
   if (status.phase === "pending") return t("statusBar.indexPending");
+  if (status.currentStage === "hydratingCache") return t("statusBar.indexHydratingCache");
   if (status.currentStage === "discovering") return t("statusBar.indexDiscovering");
   if (status.currentStage === "indexing" && status.totalFiles !== undefined) {
     return t("statusBar.indexingProgress", {
@@ -79,6 +80,9 @@ export function StatusBar({
                   <span>{runningStatusLabel(indexingStatus, t, i18n.language)}</span>
                 </>
               ) : indexingStatus.phase === "complete" && indexingStatus.errors > 0 ? (
+                // Known errors take priority over the "checking" indicator below: a hydrated
+                // cache that already knows about errors from a prior session must stay
+                // inspectable while background verification runs, not hidden behind a spinner.
                 <button
                   type="button"
                   className={styles.indexErrorsBtn}
@@ -88,6 +92,12 @@ export function StatusBar({
                   <AlertCircle size={11} className={styles.icon} />
                   <span>{t("shell:statusBar.indexErrors", { count: indexingStatus.errors })}</span>
                 </button>
+              ) : indexingStatus.phase === "complete" &&
+                indexingStatus.cacheVerification === "checking" ? (
+                <>
+                  <Loader2 size={11} className={`${styles.icon} spin`} />
+                  <span>{t("shell:statusBar.cacheChecking")}</span>
+                </>
               ) : indexingStatus.phase === "complete" ? (
                 <>
                   <CheckCircle2 size={11} className={styles.icon} />

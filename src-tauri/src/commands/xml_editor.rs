@@ -8,11 +8,14 @@ use crate::xml_document::{
 };
 use tauri::AppHandle;
 
-// Every command below is `async` because it (transitively) calls `def_index_cache::load_for_project`,
-// whose fallback path can read/hash (or fully reparse) the collection. Tauri runs non-`async`
-// commands on the main WebView thread, so leaving any of these synchronous would freeze the UI
-// for that duration whenever the in-memory def index doesn't already match -- see
-// `services::def_index_cache::load_for_project`'s doc comment.
+// Every command below is `async` because each one (transitively) calls into
+// `services::xml_editor`/`services::validation`'s interactive document paths
+// (`validate_doc_for_project`, `read_editor_document`, etc.), which load the def index under
+// `IndexLoadPolicy::Interactive` -- never blocking on a project-wide file scan, but still async
+// because a cache-miss hydration runs via `spawn_blocking`. Tauri runs non-`async` commands on the
+// main WebView thread, so leaving any of these synchronous would freeze the UI for that duration.
+// Save/commit and explicit-validation paths use `IndexLoadPolicy::RequireFresh` directly (see
+// `commands::xml_save`, `commands::project_validation`) and do not go through this file.
 
 #[tauri::command]
 pub async fn read_project_xml_document(
@@ -25,8 +28,14 @@ pub async fn read_project_xml_document(
     let mut result = parse_xml_document(&relative_path, &content.contents);
     if result.document.is_some() {
         let mut doc = parse_to_document(&relative_path, &content.contents);
-        validation::validate_doc_for_project(&app, &settings, &project_id, &relative_path, &mut doc)
-            .await?;
+        validation::validate_doc_for_project(
+            &app,
+            &settings,
+            &project_id,
+            &relative_path,
+            &mut doc,
+        )
+        .await?;
         result.validation_diagnostics = doc.validation_diagnostics;
     }
     result.project_id = project_id;
@@ -126,6 +135,13 @@ pub async fn apply_xml_editor_edits(
             ("batchSize".to_string(), edits.len().to_string()),
         ],
     );
-    xml_editor_service::apply_editor_edits(&app, project_id, relative_path, raw_xml, edits, edit_context)
-        .await
+    xml_editor_service::apply_editor_edits(
+        &app,
+        project_id,
+        relative_path,
+        raw_xml,
+        edits,
+        edit_context,
+    )
+    .await
 }

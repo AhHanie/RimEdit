@@ -228,6 +228,10 @@ indexing.executeFullRebuild
 indexing.executeFileJobs
 indexing.discoverScanStats
 validation.validateDocForProject
+defIndex.cacheHydrate
+defIndex.cacheRead
+defIndex.cacheDeserialize
+defIndex.rebuildComputedFields
 ```
 
 ### Tags

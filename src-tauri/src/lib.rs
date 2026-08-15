@@ -43,7 +43,6 @@ use project_save::SaveValidationSecret;
 use schema_pack::SchemaCatalogCacheState;
 use services::graphic_preview::{self, AssetTokenCache};
 use services::indexing::{IndexWatcherState, IndexingServiceState};
-use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -119,49 +118,25 @@ pub fn run() {
                 // job queued mid-hydration slip through under the old generation.
                 let _ = services::indexing::restart_for_settings(handle, &indexing_settings);
                 if let Some(pid) = indexing_settings.active_project_id.clone() {
-                    // Cache-only hydration still walks every indexed file to verify content
-                    // fingerprints (see Plan.md's "Out of scope" note), which can take a while
-                    // for a large collection (e.g. Steam Workshop). `.setup()` runs on the main
-                    // thread before the window is shown, so that work must never happen inline
-                    // here -- do it on a blocking thread and let startup continue immediately.
-                    let hydrate_handle = handle.clone();
-                    let hydrate_settings = indexing_settings.clone();
-                    tauri::async_runtime::spawn(async move {
-                        let blocking_handle = hydrate_handle.clone();
-                        let blocking_settings = hydrate_settings.clone();
-                        let blocking_pid = pid.clone();
-                        let hydrated = tauri::async_runtime::spawn_blocking(move || {
-                            services::def_index_cache::hydrate_for_project(
-                                &blocking_handle,
-                                &blocking_settings,
-                                &blocking_pid,
-                            )
-                        })
-                        .await
-                        .ok()
-                        .and_then(Result::ok)
-                        .flatten();
-
-                        match hydrated {
-                            Some(index) => {
-                                let state = hydrate_handle.state::<DefIndexState>();
-                                state.set_status_complete_for_project(Some(pid), &index);
-                                services::indexing::events::emit_indexing_status(
-                                    &hydrate_handle,
-                                    &state.status(),
-                                );
-                            }
-                            None => {
-                                // Miss (including a failure to resolve the app storage
-                                // directory): fall back to the existing full-rebuild path.
-                                services::indexing::enqueue_full_rebuild(
-                                    &hydrate_handle,
-                                    Some(pid),
-                                    services::indexing::IndexJobReason::InitialProjectOpen,
-                                );
-                            }
-                        }
-                    });
+                    // `schedule_initialization` never reads/deserializes the disk-cache file or
+                    // scans the collection itself -- it publishes a `HydratingCache` status and
+                    // hands that work off to a named background thread
+                    // (`rimedit-def-index-hydrate`), returning immediately. This is what lets
+                    // `.setup()` return without waiting on a (potentially very large, for a Steam
+                    // Workshop-sized collection) disk read -- see `Plan.md`'s Phase 1. The window
+                    // becomes interactive first; the background thread keeps running and populates
+                    // `DefIndexState`/emits status updates whenever it completes. A cache hit
+                    // schedules a background `VerifyCache` job; a miss enqueues a single
+                    // `FullRebuild` -- both go through the same single-flight helper used by
+                    // `start_background_indexing` and interactive editor loads, so whichever caller
+                    // reaches it first is the only one that actually starts work. Timing for the
+                    // hydration itself is covered end-to-end by the `defIndex.cacheHydrate` span
+                    // inside `hydrate_unverified_for_project`, not here.
+                    let _ = services::def_index_cache::schedule_initialization(
+                        handle,
+                        &indexing_settings,
+                        Some(pid),
+                    );
                 }
             }
             Ok(())

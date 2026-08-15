@@ -33,6 +33,9 @@ interface Props {
    * `ProjectSettings.gameVersion` (`AppShell` -> `EditorWorkspace` -> here) so `useFormViews` can
    * resolve/persist selections against the right custom-view scope. */
   gameVersion?: string;
+  /** Bumped only after a completed index rebuild -- see `useXmlEditorSession`'s revalidation
+   * effect, which this is forwarded to unchanged. */
+  validationRefreshRevision?: number;
   hasOpenTabs: boolean;
   active?: boolean;
   selectedDefNodeId?: number;
@@ -49,6 +52,7 @@ export function XmlEditorPane({
   file,
   catalog,
   gameVersion,
+  validationRefreshRevision,
   hasOpenTabs,
   active,
   selectedDefNodeId,
@@ -65,7 +69,7 @@ export function XmlEditorPane({
   const [previewOpen, setPreviewOpen] = useState(false);
   const patchFlushRef = useRef<() => Promise<void>>(async () => undefined);
   const aboutFlushRef = useRef<() => Promise<void>>(async () => undefined);
-  const session = useXmlEditorSession(projectId, file);
+  const session = useXmlEditorSession(projectId, file, validationRefreshRevision);
   const editorSnapshot = session
     ? session.lastValidSnapshot ?? {
         rawXml: session.currentRawXml,
