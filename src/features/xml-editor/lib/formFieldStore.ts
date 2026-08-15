@@ -150,7 +150,7 @@ export class FormFieldStore {
   /**
    * Rebuild from a fresh model/field set (external change: undo/redo, raw edit, def
    * insert, file load, catalog reload). Preserves model + field-state identity for fields
-   * that are unchanged from the previous build (Step 5), and notifies only the fields that
+   * that are unchanged from the previous build, and notifies only the fields that
    * actually changed, plus structure and aggregate subscribers.
    */
   reset(

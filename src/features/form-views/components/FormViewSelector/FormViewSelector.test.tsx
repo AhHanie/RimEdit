@@ -179,7 +179,7 @@ describe("FormViewSelector", () => {
   });
 });
 
-// --- Issue 08: hidden validation feedback header/reveal UI ---------------------------------
+// --- Hidden validation feedback header/reveal UI ---------------------------------
 
 describe("FormViewSelector - hidden field issues summary and reveal (issue 08)", () => {
   it("renders no summary/reveal affordance when hiddenIssues is omitted", () => {

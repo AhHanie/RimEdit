@@ -1457,7 +1457,7 @@ describe("buildFormDescriptors – multi-level inherited fields", () => {
   });
 });
 
-// --- ThingDef schema-specific shape descriptor tests (Issue 05 / 06) ---
+// --- ThingDef schema-specific shape descriptor tests ---
 
 describe("buildFormDescriptors – intRange / floatRange field types", () => {
   it("intRange field maps to text control and is editable", () => {
@@ -2108,7 +2108,7 @@ describe("typedReferenceList form descriptors", () => {
   });
 });
 
-// --- Issue 1: XML alias element-name preservation ---
+// --- XML alias element-name preservation ---
 
 describe("buildFormDescriptors – xmlAliases element name preservation", () => {
   it("childElement path uses alias name when top-level field was matched via xmlAliases", () => {
@@ -2179,7 +2179,7 @@ describe("buildFormDescriptors – xmlAliases element name preservation", () => 
   });
 });
 
-// --- Issue 2: Object-list nested fields stored as readonly in ObjectListItemValue ---
+// --- Object-list nested fields stored as readonly in ObjectListItemValue ---
 
 function makeListItemView(
   children: XmlNestedChildView[],
@@ -2368,7 +2368,7 @@ describe("buildFormDescriptors – object-list item nested list fields rendered 
   });
 });
 
-// --- Issue 3: Discriminator resolution for single-object element fields ---
+// --- Discriminator resolution for single-object element fields ---
 
 describe("buildFormDescriptors – discriminator resolution for single-object elements", () => {
   function makeDiscriminatedObjectCatalog(): SchemaCatalog {
@@ -2871,7 +2871,7 @@ describe("buildFormDescriptors – keyedObjectMap", () => {
   });
 });
 
-// --- Issue 05: Form View top-level visibility filtering ---
+// --- Form View top-level visibility filtering ---
 //
 // `visibleTopLevelFieldIds` is an optional filter applied before expensive nested
 // expansion. `undefined`/`null` (or the argument omitted entirely) must reproduce today's
@@ -2958,8 +2958,8 @@ describe("buildFormDescriptors – Form View visibility filtering (issue 05)", (
   });
 
   it("treats two XML elements sharing the same name as a single top-level root for visibility (Plan.md section 5/12)", () => {
-    // Plan.md section 12: "Duplicate XML elements: ... Form Views neither fix nor worsen
-    // duplicate XML behavior. Treat all occurrences as a single top-level root for visibility."
+    // Duplicate XML elements: Form Views neither fix nor worsen
+    // duplicate XML behavior. Treat all occurrences as a single top-level root for visibility.
     // `def.children` already collapses same-named entries to one map key before the
     // visibility check runs (the existing `childByName` Map construction), so hiding/showing
     // `description` can never leave one occurrence visible and the other hidden - there is

@@ -17,7 +17,7 @@ import { FormViewSwitchConfirmDialog } from "../FormViewSwitchConfirmDialog/Form
 import styles from "./FormViewManagerDialog.module.css";
 
 /** The current selection's schema/catalog/live-XML context the field checklist needs to build
- * its row list (issue 07). `null` when Form Views aren't applicable for the current selection
+ * its row list. `null` when Form Views aren't applicable for the current selection
  * (mirrors `controller.applicable`) -- the checklist section renders nothing in that case,
  * matching every other Form View control's "no schema, no controls" contract. */
 export interface FormViewFieldChecklistTarget {
@@ -50,14 +50,12 @@ function sourceText(view: ResolvedFormView, t: TFunction<"editor">): string {
 }
 
 /**
- * The "Customize view" overlay (Plan.md section 8): lists every available view with its
+ * The "Customize view" overlay: lists every available view with its
  * source/read-only annotation, and provides create/duplicate/rename/delete for custom views.
  * Schema views and Default are never editable/deletable, only duplicable into a new custom
- * view (Plan.md section 17: "schema-defined views cannot be edited/deleted but can be
- * duplicated"). The per-field visibility checkbox grid (Plan.md section 8's "lists effective
- * top-level fields ... uses checkboxes for visible state") is issue 07's addition -- this
- * dialog's list/CRUD surface is real now; the customization area below it is an explicit
- * placeholder issue 07 replaces, not a silently-broken button.
+ * view. The per-field visibility checkbox grid lists effective top-level fields and uses
+ * checkboxes for visible state; it renders an explicit placeholder instead when no field
+ * checklist target is available.
  */
 export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarget }: Props) {
   // Two separate single-namespace hooks, not `useTranslation(["diagnostics", "editor"])` with
@@ -68,8 +66,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
   const containerRef = useRef<HTMLDivElement>(null);
   // Every close path (Escape via `useDialogKeyboard`, the header X, the footer Close button)
   // routes through `requestClose`, not `onClose` directly, so a dirty override is never silently
-  // discarded just because the user closed the dialog rather than switching views (issue 07 step
-  // 6: "use same decision model as view switch").
+  // discarded just because the user closed the dialog rather than switching views.
   useDialogKeyboard(containerRef, () => requestClose());
   const { requestSwitch, switchConfirmDialog } = useViewSwitchConfirmation(controller);
 
@@ -81,7 +78,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
   const [error, setError] = useState<string | null>(null);
   const [storeRecoveryBusy, setStoreRecoveryBusy] = useState(false);
   const [storeRecoveryMessage, setStoreRecoveryMessage] = useState<string | null>(null);
-  // Close-with-dirty-override confirmation (issue 07 step 6): reuses `FormViewSwitchConfirmDialog`
+  // Close-with-dirty-override confirmation: reuses `FormViewSwitchConfirmDialog`
   // verbatim -- the same three-way discard/save-as-custom/cancel decision `useViewSwitchConfirmation`
   // already presents for an ordinary view switch, not a second divergent confirmation UI.
   const [closeConfirmPending, setCloseConfirmPending] = useState(false);
@@ -269,7 +266,7 @@ export function FormViewManagerDialog({ controller, onClose, fieldChecklistTarge
     const selected = isSelected(view, selectedView);
     const busy = busyViewId === key;
     const isRenaming = opts.editable && renamingId === view.id;
-    // Plan.md section 6/12: nonblocking "derived from unavailable view" notice -- the view
+    // Nonblocking "derived from unavailable view" notice -- the view
     // itself stays fully selectable/usable either way (see `isCustomViewBaseUnavailable`'s doc
     // comment); this only decides whether to show the informational text below.
     const baseUnavailable = isCustomViewBaseUnavailable(view, availableViews);

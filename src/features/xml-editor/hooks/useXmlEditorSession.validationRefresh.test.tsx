@@ -9,7 +9,7 @@ import type {
 } from "../types/xmlDocument";
 import type { SavePreview } from "../types/projectSave";
 
-// Plan.md section 6: an open XML editor session must revalidate against a rebuilt def index
+// An open XML editor session must revalidate against a rebuilt def index
 // once `AppShell`'s `validationRefreshRevision` bumps (a completed pending/running -> complete
 // transition), without discarding unsaved edits, dirty state, or undo/redo history -- and it must
 // not do so through the debounced-typing `parse_xml_editor_buffer` path (which only fires on an

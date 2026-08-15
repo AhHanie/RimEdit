@@ -84,7 +84,7 @@ export function TypedReferenceListEditor({
     ]);
   }
 
-  // Same empty-list DOM-anchor fallback as `ReferenceListEditor` (issue 08, Plan.md section 8):
+  // Same empty-list DOM-anchor fallback as `ReferenceListEditor`:
   // `inputId` normally lands on the first row; with zero items there is no row to carry it, so
   // fall back to the container itself. Never set together with the row-level id.
   const containerId = items.length === 0 ? inputId : undefined;

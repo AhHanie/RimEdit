@@ -92,8 +92,8 @@ describe("PatchPathInput", () => {
 
     // The textbox reflects every keystroke immediately...
     expect(input.value).toBe("Def");
-    // ...but none of them reached the parent tree mutation (Plan.md's per-character-serialize
-    // fix): only a deliberate commit boundary (idle pause, blur, selection, flush) does.
+    // ...but none of them reached the parent tree mutation: only a deliberate commit boundary
+    // (idle pause, blur, selection, flush) does.
     expect(onChange).not.toHaveBeenCalled();
 
     await waitFor(() => expect(invokeMock).toHaveBeenCalledTimes(1));
@@ -153,7 +153,7 @@ describe("PatchPathInput", () => {
 
     const multiline = 'Defs/\n  ThingDef[\n    defName = "Wall"\n  ]/\n  comps';
     fireEvent.change(input, { target: { value: multiline } });
-    // Hard line breaks are stored as XPath text and never joined/normalized -- see Plan.md.
+    // Hard line breaks are stored as XPath text and never joined/normalized.
     expect(input.value).toBe(multiline);
 
     fireEvent.blur(input);
@@ -538,7 +538,7 @@ describe("PatchPathInput", () => {
 
     const input = textarea();
     // `readOnly`, not `disabled`: a read-only/source-location file's XPath must remain selectable,
-    // copyable plain text rather than an inert control (Plan.md's contract).
+    // copyable plain text rather than an inert control.
     expect(input.readOnly).toBe(true);
     expect(input.disabled).toBe(false);
     await new Promise((resolve) => setTimeout(resolve, 250));
@@ -547,8 +547,7 @@ describe("PatchPathInput", () => {
 
   it("forces dir=ltr on the input regardless of app locale direction", () => {
     // XPath is machine-readable syntax, not natural-language prose -- this must stay LTR even
-    // once a future RTL locale flips `dir` on `<html>` (docs/i18n/issues/08-editor-and-patch-ui-
-    // migration.md's "keep code editor/XML/XPath controls dir=ltr by semantic policy").
+    // once a future RTL locale flips `dir` on `<html>`.
     render(<PatchPathInput value="Defs/" readOnly={false} label="XPath" projectId="proj1" onChange={vi.fn()} />);
     expect(textarea().getAttribute("dir")).toBe("ltr");
   });

@@ -9,8 +9,8 @@ import { FormFieldStore } from "../../lib/formFieldStore";
 import { FORM_VIEW_SELECTOR_SELECT_ID } from "../../../form-views/components/FormViewSelector/FormViewSelector";
 import type { SchemaCatalog } from "../../../schema-catalog/types";
 
-// Covers issue 04's "patch file route detection" and "switch raw/form mode" acceptance
-// criteria at the XmlEditorPane routing layer. PatchEditorPane's own behavior (parsing,
+// Covers patch file route detection and "switch raw/form mode" behavior
+// at the XmlEditorPane routing layer. PatchEditorPane's own behavior (parsing,
 // editing, add operation, etc.) is covered separately by its own test file.
 vi.mock("../../hooks/useXmlEditorSession", () => ({ useXmlEditorSession: vi.fn() }));
 vi.mock("../../hooks/useXmlFormController", () => ({ useXmlFormController: vi.fn() }));
@@ -192,7 +192,7 @@ describe("XmlEditorPane - patch file routing", () => {
     expect(button.disabled).toBe(true);
   });
 
-  // Issue 09 (Plan.md section 11): Def `formViews` never apply to Patch mode -- it's an
+  // Def `formViews` never apply to Patch mode -- it's an
   // operation-tree editor, not `XmlFormEditor`, so `XmlFormEditor` (and the Form View selector
   // it owns) must never mount for a `<Patch>`-rooted file. `XmlFormEditor` is stubbed above, so
   // this also guards against a future change accidentally rendering the real

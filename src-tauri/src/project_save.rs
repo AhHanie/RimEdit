@@ -280,8 +280,7 @@ pub fn validate_proposed_xml_with_index(
         // (`services::validation::validate_doc_for_project`/`validate_doc_for_source`): every
         // registered location's root as a candidate external-schema-pack root, filtered by the
         // project's selected game version. Save preview/final save must not diverge from what
-        // the live form/editor already validated against -- see Plan.md section 15's
-        // "catalog-context mismatch" and issue 09.
+        // the live form/editor already validated against, to avoid a catalog-context mismatch.
         let roots = schema_pack_roots(settings);
         let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
         let def_index = apply_replacement_overlay(
@@ -1042,8 +1041,8 @@ mod tests {
     // consequence: with only the built-in "1.6" pack installed and no external roots, the
     // fallback here means "9.9" still resolves the FULL built-in catalog (not an empty one), so
     // `ThingDef` is recognized normally and save succeeds cleanly -- consistent with what the
-    // live editor/`validate_doc_for_project` already show for the same project (both fixed
-    // together in issue 09) rather than a new, save-specific regression.
+    // live editor/`validate_doc_for_project` already show for the same project, not a
+    // save-specific regression.
     #[test]
     fn save_validation_is_not_blocked_by_an_unresolvable_configured_game_version() {
         let project_dir = temp_dir();

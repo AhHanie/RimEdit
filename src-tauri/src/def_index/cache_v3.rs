@@ -1,4 +1,4 @@
-//! Compact on-disk def-index cache codec -- see `Plan.md`'s Phase 2.
+//! Compact on-disk def-index cache codec.
 //!
 //! Replaces the pretty-printed JSON `DefIndex` (a 158 MB real-world file for a large Steam
 //! Workshop collection) with a versioned, deduplicated, compressed encoding:
@@ -588,7 +588,7 @@ mod tests {
     fn v3_encoding_is_meaningfully_smaller_than_pretty_json_for_a_representative_collection() {
         // A synthetic stand-in for a large real-world collection: many Defs sharing a small
         // number of distinct locations/files, which is exactly the shape source/path
-        // deduplication targets -- see this module's doc comment and `Plan.md`'s Phase 2.
+        // deduplication targets -- see this module's doc comment.
         let mut defs = Vec::new();
         for i in 0..2000 {
             let location_id = format!("loc-{}", i % 20);

@@ -5,7 +5,7 @@ import type { XPathCompletionResult } from "../types/xpathCompletion";
  * is the frontend's active UI locale (`useLocale()`'s current value), passed explicitly -- like
  * `loadSchemaCatalog` -- rather than left for the backend to read from persisted settings, so a
  * runtime locale switch that has not finished persisting yet can never race a completion request
- * into serving a stale locale's labels (issue 06's explicit-locale-argument contract).
+ * into serving a stale locale's labels.
  *
  * `cursorByteOffset` is the caret's UTF-8 byte offset into `xpath` (see
  * `PatchPathInput`'s UTF-16-index-to-UTF-8-byte conversion) -- omit it to complete at the end of

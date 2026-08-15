@@ -29,7 +29,7 @@ interface Props {
   projectId: string | undefined;
   file: XmlEditorFileRef | undefined;
   catalog: SchemaCatalog | null;
-  /** Form Views (issue 06) are scoped by `{project, gameVersion, defType}` -- threaded down from
+  /** Form Views are scoped by `{project, gameVersion, defType}` -- threaded down from
    * `ProjectSettings.gameVersion` (`AppShell` -> `EditorWorkspace` -> here) so `useFormViews` can
    * resolve/persist selections against the right custom-view scope. */
   gameVersion?: string;
@@ -103,14 +103,14 @@ export function XmlEditorPane({
         : null,
   });
 
-  // Form Views (issue 05's `onFocusedFieldHidden` signal, wired up by issue 06): when a view
+  // Form Views' `onFocusedFieldHidden` signal: when a view
   // switch hides the top-level root of the field the user was actually focused in (real DOM
   // focus, not a click-triggered blur -- see the doc comment on `useXmlFormController`), that
   // control unmounts and focus would otherwise fall back to `document.body`/nowhere. Redirect it
   // to the Form View selector's `<select>` -- always present whenever Form View controls are
   // applicable at all -- so the user lands somewhere meaningful instead of losing focus outright
-  // (Plan.md section 7: "restore focus to the selector/customize control if the focused field is
-  // removed"). A plain DOM id lookup (rather than threading a ref through `XmlFormEditor` into
+  // (restore focus to the selector/customize control if the focused field is
+  // removed). A plain DOM id lookup (rather than threading a ref through `XmlFormEditor` into
   // `FormViewSelector`) keeps this a one-line, low-coupling fix; `FormViewSelector` already
   // exports this id for exactly this purpose.
   const onFocusedFieldHidden = useCallback(() => {

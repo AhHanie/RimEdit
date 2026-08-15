@@ -133,7 +133,7 @@ struct PackInfo {
     def_files: Vec<(String, String)>,
     obj_files: Vec<(String, String)>,
     patch_op_files: Vec<(String, String)>,
-    /// Locale sidecar JSON files (issue 05) discovered under the manifest's declared
+    /// Locale sidecar JSON files discovered under the manifest's declared
     /// `localesDirectory`, if any -- one flat file per BCP-47 locale tag (e.g. `locales/en.json`).
     locale_files: Vec<(String, String)>,
 }

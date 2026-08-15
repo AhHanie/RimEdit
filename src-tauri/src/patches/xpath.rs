@@ -1,15 +1,13 @@
-//! Schema-aware XPath completion and target inference for `PatchPathInput`, per
-//! `docs/patches-editor/05-xpath-autocomplete-and-target-inference.md`.
+//! Schema-aware XPath completion and target inference for `PatchPathInput`.
 //!
 //! This is a *different, more permissive* conservative subset than [`super::impact_graph`]'s
 //! static target inference: `impact_graph::infer_xpath_target` only trusts `Defs/<DefType>` and
 //! `Defs/<DefType>[defName="<Name>"]` because it feeds patch-conflict/impact analysis, where an
 //! `@Name`/`@ParentName` predicate can't be resolved to one concrete `defName`-keyed Def. Here,
 //! `@Name="..."`/`@ParentName="..."` predicates are recognized as *supported autocomplete syntax*
-//! (per the issue's "Supported First-Pass Patterns") because knowing the Def *type* alone is
-//! enough to keep offering field completions and a value-subform target -- we just can't narrow
-//! `XPathTarget` down to a specific `defName` from them, so they resolve to
-//! `XPathTarget::DefType` rather than `XPathTarget::Def`.
+//! because knowing the Def *type* alone is enough to keep offering field completions and a
+//! value-subform target -- we just can't narrow `XPathTarget` down to a specific `defName` from
+//! them, so they resolve to `XPathTarget::DefType` rather than `XPathTarget::Def`.
 //!
 //! A Def predicate may also chain 2+ equality clauses with lowercase `or`/`and` (see
 //! [`parse_boolean_chain`]/[`split_top_level_bool_terms`] for the finished-predicate grammar and
@@ -28,12 +26,11 @@
 //! sits in or just before -- never anything beyond it. [`complete_patch_xpath`] is a thin
 //! convenience wrapper that completes at the end of the string, matching every existing caller
 //! that has no caret information (mirrors how `ReferencePicker` treats its whole current value as
-//! the live query). Completion is only offered for the conservative path shapes the issue
-//! documents; anything else -- axes, functions, wildcards, multiple predicates, `//`,
+//! the live query). Completion is only offered for the conservative path shapes documented
+//! above; anything else -- axes, functions, wildcards, multiple predicates, `//`,
 //! attribute-node path segments -- is reported as [`XPathDiagnostic`] with code
 //! `xpath_autocomplete_unsupported_pattern` and an empty completion list, but is never rejected
-//! outright: the XPath stays editable and (per the Plan's XPath evaluation/autocomplete boundary)
-//! previewable by a fuller backend XML library later.
+//! outright: the XPath stays editable and previewable by a fuller backend XML library later.
 //!
 //! Presentation whitespace is tolerated at path-segment boundaries: indentation right after a `/`
 //! and trailing whitespace right before the next `/` are stripped from a segment before it is
@@ -78,10 +75,9 @@ const DEF_NAME_SUGGESTION_LIMIT: usize = 20;
 
 /// Conservative server-side cap on Def-type, direct-field, object-field, and field-alias
 /// suggestions, applied after deterministic sort and before serialization -- a short or empty
-/// prefix must never send hundreds of items over IPC just to render a dropdown (Plan.md's
-/// "bound completion production and dropdown rendering"). Chosen to comfortably exceed any
-/// single Def type's field count while staying small for keyboard navigation/DOM cost; revisit
-/// once profiled against real schema-pack cardinalities.
+/// prefix must never send hundreds of items over IPC just to render a dropdown. Chosen to
+/// comfortably exceed any single Def type's field count while staying small for keyboard
+/// navigation/DOM cost; revisit once profiled against real schema-pack cardinalities.
 pub(crate) const COMPLETION_ITEM_LIMIT: usize = 50;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -1395,8 +1391,7 @@ fn field_completion(
 /// Returns an `xpath_autocomplete_inherited_field` diagnostic when `name` is a real field but only
 /// reachable through the schema's `inherits` chain -- RimWorld applies patches before XML
 /// inheritance, so such a field cannot be targeted unless it is physically present in the XML
-/// being patched (which this module, having no access to the live combined document, can't check;
-/// see `docs/patches-editor/05-xpath-autocomplete-and-target-inference.md`).
+/// being patched (which this module, having no access to the live combined document, can't check).
 fn resolve_field(
     catalog: &SchemaCatalog,
     def_type: &str,
@@ -1520,8 +1515,8 @@ enum SchemaCursor {
 }
 
 /// Choose the next [`SchemaCursor`] after `field` resolves, from both its `field_type.kind` and
-/// `xml` shape together (see Plan.md's field-representation/continuation table). Falls back to
-/// [`SchemaCursor::Terminal`] for any shape with no statically known descendants, including an
+/// `xml` shape together. Falls back to [`SchemaCursor::Terminal`] for any shape with no
+/// statically known descendants, including an
 /// object/list field whose declared `schemaRef` isn't present in `catalog` -- an unknown ref stays
 /// editable but uncompleted rather than guessed at.
 fn cursor_after_field(catalog: &SchemaCatalog, field: &FieldSchema) -> SchemaCursor {
@@ -1784,7 +1779,7 @@ fn child_completion(
             resolved_field,
         ),
         // DynamicKey: the key is data-dependent (e.g. a defName RimEdit has no index of) -- offer
-        // no invented suggestions, per Plan.md's keyedObjectList row.
+        // no invented suggestions.
         SchemaCursor::DynamicKey { .. } | SchemaCursor::Terminal => XPathCompletionResult::new(
             replace_from,
             replace_from,

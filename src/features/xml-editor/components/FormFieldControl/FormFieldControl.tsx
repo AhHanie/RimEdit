@@ -30,8 +30,8 @@ interface Props {
 
 /** Stable DOM id for a field's primary input, derived from its canonical `FormFieldId`. Exported
  * so other components can look up/focus a control's DOM node without duplicating this
- * sanitization -- e.g. `XmlFormEditor`'s Form View "reveal and focus" flow (issue 08, Plan.md
- * section 8: "focuses/scrolls to the first rendered field" after `Reveal fields with issues`). */
+ * sanitization -- e.g. `XmlFormEditor`'s Form View "reveal and focus" flow ("focuses/scrolls to
+ * the first rendered field" after `Reveal fields with issues`). */
 export function fieldInputDomId(fieldId: string): string {
   return `field-${fieldId.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
 }
@@ -455,8 +455,8 @@ function ListEditor({ inputId, field, formApi }: ListEditorProps) {
 
   // `inputId` normally lands on the first row's input (below). With zero items there is no row
   // to carry it - fall back to the container itself as a DOM anchor Form Views' "reveal and
-  // focus" flow (issue 08, Plan.md section 8) can always find, even for a required-but-absent
-  // list field right after it is revealed. Never set together with the row-level id.
+  // focus" flow can always find, even for a required-but-absent list field right after it is
+  // revealed. Never set together with the row-level id.
   const containerId = items.length === 0 ? inputId : undefined;
 
   return (
@@ -627,8 +627,7 @@ function NamedMapEditor({ inputId, field, formApi }: NamedMapEditorProps) {
 
   // `inputId` normally lands on the first row's key input (below). With zero entries there is
   // no row to carry it - fall back to the container itself as a DOM anchor Form Views' "reveal
-  // and focus" flow (issue 08, Plan.md section 8) can always find. Never set together with the
-  // row-level id.
+  // and focus" flow can always find. Never set together with the row-level id.
   const containerId = entries.length === 0 ? inputId : undefined;
 
   return (

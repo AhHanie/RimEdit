@@ -49,7 +49,7 @@ pub(crate) async fn validate_doc_for_project(
     // external-schema-pack root (an embedded `SchemaPacks/<name>/` or `About/` folder). Building
     // an unfiltered, all-game-version catalog here (as this used to do) would validate against a
     // merge of every installed schema-pack game version at once, silently diverging from what the
-    // form/catalog UI actually renders -- see Plan.md section 15's "catalog-context mismatch".
+    // form/catalog UI actually renders.
     let roots = schema_pack_roots(settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
     let base_index = def_index_cache::load_for_project_with_policy(
@@ -135,13 +135,11 @@ mod tests {
         }
     }
 
-    // Issue 09 (Plan.md section 2/15's "catalog-context mismatch"): document schema resolution's
-    // catalog now uses the same "every registered location root" policy as
-    // `services::patch_preview::preview_def_for_project`, instead of always passing an empty root
-    // list. This is the prerequisite fix that lets `validate_doc_for_project`/
-    // `validate_doc_for_source` discover a mod-embedded `SchemaPacks/<name>/` or `About/` schema
-    // pack under any registered project/source location, matching what a future AppShell-wired
-    // `useSchemaCatalog` call would also need to resolve for the same project.
+    // Document schema resolution's catalog uses the same "every registered location root"
+    // policy as `services::patch_preview::preview_def_for_project`, instead of always passing an
+    // empty root list. This lets `validate_doc_for_project`/`validate_doc_for_source` discover a
+    // mod-embedded `SchemaPacks/<name>/` or `About/` schema pack under any registered
+    // project/source location.
     #[test]
     fn schema_pack_roots_collects_every_registered_location() {
         let mut settings = ProjectSettings::default();
@@ -254,8 +252,8 @@ mod tests {
         );
 
         // Not registered: no locations at all -- the old `build_schema_catalog(&[], None)`
-        // behavior this issue replaced. The same XML must now be flagged unknown, proving the
-        // roots plumbing is actually load-bearing rather than incidental.
+        // behavior this replaced. The same XML must now be flagged unknown, proving the roots
+        // plumbing is actually load-bearing rather than incidental.
         let settings_without_root = ProjectSettings::default();
         let roots_without = schema_pack_roots(&settings_without_root);
         assert!(roots_without.is_empty());

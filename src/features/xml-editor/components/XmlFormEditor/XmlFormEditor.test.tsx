@@ -687,9 +687,9 @@ describe("XmlFormEditor – GraphicDataPreview integration", () => {
   });
 });
 
-// --- Issue 05: XmlFormEditor is agnostic to Form View filtering, but a hidden root's
+// --- XmlFormEditor is agnostic to Form View filtering, but a hidden root's
 // models simply never reach it (that's the whole point of filtering upstream in
-// `buildFormDescriptors`/`useXmlFormController`, per Plan.md section 10). These tests
+// `buildFormDescriptors`/`useXmlFormController`). These tests
 // simulate that upstream outcome directly - a model list with the graphicData root
 // omitted - and prove XmlFormEditor never mounts its section header or the expensive
 // GraphicDataPreviewConnected/GraphicDataPreview subtree for it.
@@ -984,14 +984,14 @@ describe("XmlFormEditor - customize mode inline hide/show controls (issue 07)", 
       </XmlEditorContextProvider>,
     );
 
-    // No "Customize view" entry point at all when not applicable (issue 06 contract), so
+    // No "Customize view" entry point at all when not applicable, so
     // customize mode can never be entered and no inline controls ever render.
     expect(screen.queryByText("Customize view")).toBeNull();
     expect(screen.queryByLabelText("Hide Def Name")).toBeNull();
   });
 });
 
-// --- Issue 08: hidden validation feedback (header summary, reveal, focus-after-reveal) -----
+// --- Hidden validation feedback (header summary, reveal, focus-after-reveal) -----
 
 describe("XmlFormEditor - hidden field validation feedback (issue 08)", () => {
   // A Def-root-level diagnostic (`nodeId` equal to the Def's own node id, exactly like Rust's
@@ -1015,7 +1015,7 @@ describe("XmlFormEditor - hidden field validation feedback (issue 08)", () => {
   }
 
   // Only a top-level scalar field is present - as if `graphicData` were hidden by the active
-  // Form View and `buildFormDescriptors` skipped its expansion (issue 05's contract).
+  // Form View and `buildFormDescriptors` skipped its expansion.
   function fieldsWithGraphicDataHidden(): FormFieldState[] {
     return [
       makeField("defName", "defName", "Def Name", { kind: "childElement", childName: "defName" }, "text", 0),
@@ -1380,7 +1380,7 @@ describe("XmlFormEditor - hidden field validation feedback (issue 08)", () => {
   });
 });
 
-// --- Issue 08: reveal-focus never crosses into a different, mounted-but-inactive pane --------
+// --- Reveal-focus never crosses into a different, mounted-but-inactive pane --------
 
 describe("XmlFormEditor - reveal-focus is scoped per pane (issue 08 round 2)", () => {
   function hiddenGraphicDataDiagnostic(blocking: boolean) {
@@ -1474,7 +1474,7 @@ describe("XmlFormEditor - reveal-focus is scoped per pane (issue 08 round 2)", (
     // Pane B renders FIRST in document order and already has a "Tex Path" input mounted using
     // the exact SAME model id ("graphicData.texPath") that pane A's own reveal will produce -
     // i.e. the real DOM id collision `EditorWorkspace` keeping every open tab's pane mounted
-    // (Plan.md section 9) makes possible when two tabs share a Def identity/node id. If
+    // makes possible when two tabs share a Def identity/node id. If
     // reveal-focus used any GLOBAL `document.getElementById`/`querySelector` lookup, it would
     // find this (wrong, inactive-tab) element first, since it comes first in document order.
     const tree = (paneAFields: FormFieldState[], paneAViews: UseFormViewsResult) => (
@@ -1539,7 +1539,7 @@ describe("XmlFormEditor - reveal-focus is scoped per pane (issue 08 round 2)", (
   });
 });
 
-// --- Issue 08 round 3: reveal-focus reaches objectList-control top-level fields ------------
+// --- Reveal-focus reaches objectList-control top-level fields ------------
 //
 // `ObjectListEditor` (list-of-objects fields like `verbs`/`comps` - one of the most common
 // top-level field shapes in real RimWorld Def schemas) renders zero, one, or many nested item

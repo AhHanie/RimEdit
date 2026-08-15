@@ -11,7 +11,7 @@ import type {
 } from "../types/formViews";
 
 // Read-only: does not require a writable project (a read-only source tab can still list and
-// select a project's custom views, per Plan.md section 6).
+// select a project's custom views).
 export function listCustomFormViews(
   projectId: string,
   gameVersion?: string,

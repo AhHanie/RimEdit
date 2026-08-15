@@ -16,9 +16,9 @@ fn first_duplicate_in_list(items: &[String]) -> Option<&str> {
 
 /// Validate one Def-type file's own `formViews` declarations for internal shape/consistency:
 /// blank/reserved id, blank/missing label, impossible `disabled` combinations, and contradictory
-/// or duplicate-within-array `hiddenFields`/`unhideFields`. Every one of these is listed in
-/// Plan.md section 5 as fatal for the whole v3 Def schema file, so this returns diagnostics only
-/// (not a sanitized map): `parse_def_type_schema` rejects the entire file -- the same mechanism
+/// or duplicate-within-array `hiddenFields`/`unhideFields`. Every one of these is fatal for the
+/// whole v3 Def schema file, so this returns diagnostics only (not a sanitized map):
+/// `parse_def_type_schema` rejects the entire file -- the same mechanism
 /// already used for a genuinely malformed def file -- the moment this returns anything non-empty,
 /// rather than dropping just the offending declaration and keeping the rest.
 ///
@@ -26,8 +26,8 @@ fn first_duplicate_in_list(items: &[String]) -> Option<&str> {
 /// deserialization itself, by `model::deserialize_form_views` -- by the time a `formViews` map
 /// reaches this function, its keys are already known-unique.
 ///
-/// Deliberately out of scope here (issue 03's job): resolving `hiddenFields`/`unhideFields`
-/// deltas against an inherited base, validating field ids against the real known field universe,
+/// Deliberately out of scope here: resolving `hiddenFields`/`unhideFields` deltas against an
+/// inherited base, validating field ids against the real known field universe,
 /// and cross-pack/cross-type view precedence. This function only looks at one Def type's own
 /// declarations in isolation.
 pub(super) fn validate_form_view_declarations(
@@ -84,7 +84,7 @@ pub(super) fn validate_form_view_declarations(
         // "View-defining" metadata beyond the delta-only controls (hiddenFields/unhideFields/
         // replace/disabled). A declaration carrying only delta controls (or `disabled: true`
         // alone) is a legitimate amendment to an inherited view and needs no label of its own --
-        // issue 03 resolves it against the inherited base. A declaration carrying any of these is
+        // it is resolved against the inherited base. A declaration carrying any of these is
         // treated as defining a view outright and must have a nonblank label.
         let has_view_metadata = view.description.is_some()
             || view.icon.is_some()
@@ -96,7 +96,7 @@ pub(super) fn validate_form_view_declarations(
             || view.disabled.is_some();
 
         // `disabled: true` combined with any other meaningful content is an impossible
-        // declaration (Plan.md section 5). This check must run before the label checks below:
+        // declaration. This check must run before the label checks below:
         // e.g. `{ "disabled": true, "description": "..." }` must be diagnosed as
         // disabled-with-content, not misdiagnosed as a missing label.
         if view.disabled == Some(true) {

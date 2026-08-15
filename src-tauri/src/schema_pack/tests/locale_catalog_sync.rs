@@ -1,7 +1,7 @@
-//! Issue 06 -- locale-aware catalog command contract and caching. These tests exercise the
-//! explicit `locale` threading added on top of issue 05's sidecar mechanism: picking the
-//! requested locale's overlay at the `merge_packs_with_locale` layer, and the application
-//! locale-policy fallback applied by `build_schema_catalog_with_locale`/`resolve_catalog_locale`.
+//! Locale-aware catalog command contract and caching. These tests exercise the explicit `locale`
+//! threading built on top of the sidecar mechanism: picking the requested locale's overlay at
+//! the `merge_packs_with_locale` layer, and the application locale-policy fallback applied by
+//! `build_schema_catalog_with_locale`/`resolve_catalog_locale`.
 
 use super::super::loader::LoadedPack;
 use super::super::locale::SchemaLocaleOverlay;

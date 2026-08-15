@@ -141,9 +141,9 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
   // uses for document validation and patch preview (see `services::validation::schema_pack_roots`
   // and `services::patch_preview::preview_def_for_project`) -- there is no separate "configured
   // external schema roots" setting anywhere in `ProjectSettings`/`RegisteredLocation` today, so
-  // this reuses the same project-location data rather than inventing a second registry (Plan.md
-  // section 2/15, issue 09's "avoid inventing a second registry"). `schema_pack::loader` searches
-  // each root, its `About/`, and its `SchemaPacks/<name>/` for an embedded schema pack.
+  // this reuses the same project-location data rather than inventing a second registry.
+  // `schema_pack::loader` searches each root, its `About/`, and its `SchemaPacks/<name>/` for an
+  // embedded schema pack.
   // Memoized on `settings?.locations`'s own reference (not recomputed on every unrelated AppShell
   // re-render) so it doesn't churn `useSchemaCatalog`'s reload effect.
   const extraSchemaRoots = useMemo(
@@ -152,16 +152,16 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
   );
   const { mode: themeMode, setMode } = useTheme();
   const { locale, changeLocale } = useLocale();
-  // Locale is threaded through so catalog labels/descriptions reload for the active locale
-  // (issue 06); `useSchemaCatalog` discards any in-flight response superseded by a newer switch.
+  // Locale is threaded through so catalog labels/descriptions reload for the active locale;
+  // `useSchemaCatalog` discards any in-flight response superseded by a newer switch.
   const { catalog } = useSchemaCatalog(extraSchemaRoots, settings?.gameVersion, locale);
 
   // Defensive fallback only: `main.tsx` already resolves the persisted locale from the very same
   // `get_project_settings` call (via `initialProjectSettingsPromise` above) and passes it as
   // `LocaleProvider`'s `initialLocale` *before* this component -- and its locale-sensitive
   // `useSchemaCatalog` call above -- ever mounts, so `settings.locale` and `locale` already agree
-  // by the time this effect's condition is evaluated in the normal startup path (Plan.md: "the
-  // settings command returns the saved locale before locale-sensitive catalog loading"). This
+  // by the time this effect's condition is evaluated in the normal startup path: the settings
+  // command returns the saved locale before locale-sensitive catalog loading. This
   // only does anything when a caller renders `AppShell` without going through that bootstrap
   // (e.g. a future test harness that mounts it under a plain `LocaleProvider` default), in which
   // case it still reconciles the provider to the loaded settings' locale rather than leaving it

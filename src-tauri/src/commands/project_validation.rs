@@ -15,8 +15,7 @@ pub async fn validate_project(
     let settings = load_settings(&app)?;
     // Same catalog-context policy as live document/save validation (`schema_pack_roots` +
     // the project's selected game version) -- project-wide validation must not diverge from
-    // what per-document validation already reported. See Plan.md section 15's "catalog-context
-    // mismatch" and issue 09.
+    // what per-document validation already reported.
     let roots = schema_pack_roots(&settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
     // Deliberately RequireFresh, not Interactive: an explicit "validate the whole project"

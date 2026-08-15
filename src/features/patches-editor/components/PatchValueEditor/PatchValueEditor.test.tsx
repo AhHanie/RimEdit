@@ -121,8 +121,7 @@ describe("PatchValueEditor", () => {
     expect((screen.getByRole("button", { name: "Structured" }) as HTMLButtonElement).disabled).toBe(true);
     expect(screen.getByDisplayValue("<foo>bar</foo>")).toBeTruthy();
     // XML is machine-readable syntax, not natural-language prose -- this must stay LTR even once
-    // a future RTL locale flips `dir` on `<html>` (docs/i18n/issues/08-editor-and-patch-ui-
-    // migration.md's "keep code editor/XML/XPath controls dir=ltr by semantic policy").
+    // a future RTL locale flips `dir` on `<html>`.
     expect(screen.getByDisplayValue("<foo>bar</foo>").getAttribute("dir")).toBe("ltr");
   });
 

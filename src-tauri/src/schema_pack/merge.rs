@@ -17,17 +17,17 @@ use std::collections::HashSet;
 /// (`raw_form_view_layers`) or the sanitized form after unknown-field-reference filtering
 /// (`sanitize_form_view_layers`'s output) -- tagged with that pack's id, version, and the source
 /// file path of the Def-type JSON that declared it (`(pack_id, pack_version, path, decls)`).
-/// Plan.md section 5 requires recoverable diagnostics to expose pack, path, and field path so an
-/// author of an external pack can locate the offending file.
+/// Recoverable diagnostics expose pack, path, and field path so an author of an external pack
+/// can locate the offending file.
 type PackFormViewDecls = (String, String, String, BTreeMap<String, FormViewDef>);
 
 /// Test-only convenience wrapper around [`merge_packs_with_locale`] that always applies locale
-/// overlays for `crate::locale::FALLBACK_LOCALE`. Every real production call site now threads an
-/// explicit, caller-resolved locale through `merge_packs_with_locale` directly (issue 06 --
-/// see `schema_pack::build_schema_catalog_with_locale`); this wrapper exists only so the large
-/// pre-existing test surface (`schema_pack/tests/*`), which never varies locale and predates
-/// issue 06, doesn't need every one of its several dozen call sites touched to pass one
-/// explicitly. `#[cfg(test)]` because nothing outside `schema_pack/tests` calls it.
+/// overlays for `crate::locale::FALLBACK_LOCALE`. Every real production call site threads an
+/// explicit, caller-resolved locale through `merge_packs_with_locale` directly (see
+/// `schema_pack::build_schema_catalog_with_locale`); this wrapper exists only so the large
+/// pre-existing test surface (`schema_pack/tests/*`), which never varies locale, doesn't need
+/// every one of its several dozen call sites touched to pass one explicitly. `#[cfg(test)]`
+/// because nothing outside `schema_pack/tests` calls it.
 ///
 /// Precedence (applied in merge order, so last writer wins for scalars):
 ///   1. Lower `priority` merges first.
@@ -92,7 +92,7 @@ pub fn merge_packs_with_locale(
     let mut merged_patch_operations: BTreeMap<String, PatchOperationMetadata> = BTreeMap::new();
     let mut summaries: Vec<LoadedSchemaPackSummary> = Vec::new();
     // Per-scalar "pack that explicitly last set this label/description/message" provenance for
-    // locale-overlay ownership checks (issue 05). See `locale::LocaleOwnerMaps` doc comment for why
+    // locale-overlay ownership checks. See `locale::LocaleOwnerMaps` doc comment for why
     // this per-scalar granularity is required even for record kinds (fields, patch operations,
     // form views) that also carry their own coarser, always-overwritten `source_pack_id`/`source`.
     let mut locale_owners = LocaleOwnerMaps::default();
@@ -137,8 +137,8 @@ pub fn merge_packs_with_locale(
                     fields: BTreeMap::new(),
                     templates: BTreeMap::new(),
                     validation_rules: BTreeMap::new(),
-                    // Issue 01 scope only: resolution of FormViewDef declarations into
-                    // SchemaFormView entries is issue 03's job.
+                    // Resolution of FormViewDef declarations into SchemaFormView entries happens
+                    // in a separate pass (see `resolve_all_form_views` below), not here.
                     form_views: BTreeMap::new(),
                 });
 
@@ -290,7 +290,7 @@ pub fn merge_packs_with_locale(
         }
     }
 
-    // Resolve schema-defined Form Views (issue 03): fold pack-precedence overlays and Def-type
+    // Resolve schema-defined Form Views: fold pack-precedence overlays and Def-type
     // inheritance for every def type now that `merged_def_types` (fields + `inherits`) is
     // complete. See `resolve_all_form_views` for the algorithm.
     let resolved_form_views = resolve_all_form_views(
@@ -466,13 +466,13 @@ pub fn merge_packs_with_locale(
     }
 
     // Apply pack-owned locale sidecar overlays, strictly after every other merge/inheritance/
-    // validation pass above (see `locale` module docs and this issue's "Risks" section on merge
-    // provenance). `locale` is the caller-supplied, already-resolved locale (issue 06 threads this
-    // explicitly through `merge_packs_with_locale`/`build_schema_catalog_with_locale`/the
-    // `load_schema_catalog` Tauri command; `merge_packs` itself keeps defaulting to
-    // `crate::locale::FALLBACK_LOCALE` for the large existing test surface and every
-    // locale-neutral structural caller -- see issue 06's "Document that indexing, save/validation,
-    // patch computation, and diagnostic creation ... do not receive locale").
+    // validation pass above (see `locale` module docs on merge provenance). `locale` is the
+    // caller-supplied, already-resolved locale, threaded explicitly through
+    // `merge_packs_with_locale`/`build_schema_catalog_with_locale`/the `load_schema_catalog`
+    // Tauri command; `merge_packs` itself keeps defaulting to `crate::locale::FALLBACK_LOCALE`
+    // for the large existing test surface and every locale-neutral structural caller --
+    // indexing, save/validation, patch computation, and diagnostic creation do not receive
+    // locale.
     let locale_diags = apply_locale_overlays(
         &mut merged_def_types,
         &mut merged_object_types,
@@ -898,9 +898,9 @@ fn merge_field_order(current: &mut Vec<String>, incoming: &[String], new_fields:
 }
 
 // ---------------------------------------------------------------------------
-// Form View resolution (issue 03)
+// Form View resolution
 //
-// Plan.md section 5's resolution rules are implemented in three passes:
+// Resolution is implemented in three passes:
 //
 //   1. `sanitize_form_view_layers` validates every def type's own `hiddenFields`/`unhideFields`
 //      references against ITS OWN known top-level field universe (not any consuming descendant's
@@ -998,9 +998,9 @@ fn sanitize_form_view_layers(
         for (pack_id, pack_version, path, decls) in layers {
             let mut sanitized_decls: BTreeMap<String, FormViewDef> = BTreeMap::new();
             for (view_id, view_def) in decls {
-                // Defensive only: issue 02 already fatally rejects a "default" declared id at
+                // Defensive only: the loader already fatally rejects a "default" declared id at
                 // parse time, so this should never occur here -- but never let it silently
-                // participate in resolution if it somehow does (e.g. a future loader regression).
+                // participate in resolution if it somehow does (e.g. a loader regression).
                 if view_id == "default" {
                     continue;
                 }
@@ -1157,8 +1157,8 @@ fn fold_effective_layers(
 }
 
 /// Apply one `FormViewDef` amendment/new-declaration onto an optional existing resolved base view
-/// for the same `{defType, viewId}`, implementing Plan.md section 5's resolution rules 3-4:
-/// `disabled` first, then `replace` (clears the inherited hidden set), then `hiddenFields`
+/// for the same `{defType, viewId}`, resolved in this order: `disabled` first, then `replace`
+/// (clears the inherited hidden set), then `hiddenFields`
 /// additions / `unhideFields` removals on top; any explicitly provided
 /// label/description/icon/order/recommended overrides the inherited value, an omitted one
 /// inherits. The final declaration's pack id/version and def type become the view's provenance,
@@ -1177,8 +1177,8 @@ fn fold_effective_layers(
 /// unified rather than treated as separate merge stages.
 ///
 /// Returns `None` when the view is disabled/removed, or when a delta-only declaration (no label)
-/// has no base to amend -- Plan.md's recoverable "inherited view amendment with no inherited
-/// base" warning; the caller removes the id from the working set in that case.
+/// has no base to amend -- a recoverable "inherited view amendment with no inherited base"
+/// warning; the caller removes the id from the working set in that case.
 ///
 /// Locale-sidecar ownership of `label`/`description` is recorded into `owners`, keyed by
 /// `(consuming_def_type, view_id)` -- the SAME key `apply_locale_overlays` looks resources up by
@@ -1358,8 +1358,8 @@ fn diagnose_amendment_without_base(
 
 /// Filter `names` down to those present in `known_fields`, warning (not erroring) for each one
 /// that isn't. Never lets an unknown field id silently stay in an effective hidden/unhide set --
-/// Plan.md: "Unknown field references must never hide arbitrary current XML... warn once per
-/// catalog load."
+/// unknown field references must never hide arbitrary current XML, so this warns once per
+/// catalog load instead.
 #[allow(clippy::too_many_arguments)]
 fn filter_known_field_refs(
     names: &[String],

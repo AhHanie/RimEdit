@@ -7,8 +7,7 @@ import styles from "./AppMenuBar.module.css";
 interface AppMenuBarProps {
   /** The full flat command list `CommandPalette` also renders -- `menus` only references command
    * ids, so a menu item's label/icon/handler/disabled state always comes from this single source
-   * instead of being duplicated per menu (Plan.md section 3: "Do not duplicate translated visible
-   * labels in two separate registries"). */
+   * instead of being duplicated per menu. */
   commands: CommandAction[];
   menus: MenuDescriptor[];
 }
@@ -58,7 +57,7 @@ function resolveEntry(entry: MenuEntry, menuId: string, index: number, commandsB
 }
 
 /**
- * The header's File/View/Theme/Help menu bar (Plan.md: "Header Menu Bar Implementation Plan").
+ * The header's File/View/Theme/Help menu bar.
  * Renders as a `nav` with trigger buttons (`aria-haspopup="menu"`) and popup `role="menu"` lists.
  * Exactly one popup may be open at a time, tracked as a single `openMenuId`. Keyboard model:
  * ArrowDown/Up opens a menu or moves within it (wrapping, skipping disabled entries), Home/End

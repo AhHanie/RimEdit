@@ -1,8 +1,6 @@
 // Guards against a new backend diagnostic/error wire struct being added without the shared
 // code+args mechanism (`crate::diagnostics::DiagnosticArgs`, see `src-tauri/src/diagnostics.rs`
-// and `docs/i18n/diagnostic-codes.md`). Per
-// docs/i18n/issues/09-validation-and-diagnostic-migration.md step 6: "Add a guard/search-based CI
-// check preventing new public diagnostics from accepting bare message-only constructors."
+// and `docs/i18n/diagnostic-codes.md`).
 //
 // A "message-only constructor" here means a `pub struct ...Diagnostic` / `pub struct ...Error`
 // that carries a `code`/`message` pair but has no `args: ... DiagnosticArgs` field at all -- i.e.
@@ -13,8 +11,7 @@
 // This is a source-level structural check (does the struct declare an `args` field), not a
 // per-call-site check of whether every individual construction populates it -- many construction
 // sites legitimately omit args when the message wraps arbitrary third-party/IO text with no
-// literal identifier to extract (see Plan.md: "do not make arbitrary English library text a
-// translation key").
+// literal identifier to extract.
 //
 // Usage: node scripts/i18n/check-diagnostic-args.mjs
 

@@ -1,5 +1,5 @@
-// Pure Form View resolution logic (Plan.md section 7's `available`/`selected`/`effectiveHidden`
-// algorithm). No React, no Tauri `invoke`, no XML/session state -- `useFormViews` is the only
+// Pure Form View resolution logic: the `available`/`selected`/`effectiveHidden`
+// algorithm. No React, no Tauri `invoke`, no XML/session state -- `useFormViews` is the only
 // caller that wires this to live catalog/store/session data. Kept pure and colocated with its
 // own test file so the resolver contract (ordering, fallback, visibility intersection) is
 // independently verifiable without mounting hooks/components.
@@ -13,10 +13,10 @@ import {
   type ResolvedFormView,
 } from "../types/resolvedFormView";
 
-/** The immutable, always-selectable full form. Empty hidden set by construction (Plan.md
- * section 7: "Default View has an empty hidden set"). A plain module function, not a React
- * component, so there is no `useTranslation()` hook to call -- resolves the label from the
- * app-wide i18next singleton instead, same as `src/features/xml-editor/lib/objectDescriptors.ts`. */
+/** The immutable, always-selectable full form. Empty hidden set by construction. A plain module
+ * function, not a React component, so there is no `useTranslation()` hook to call -- resolves the
+ * label from the app-wide i18next singleton instead, same as
+ * `src/features/xml-editor/lib/objectDescriptors.ts`. */
 export function buildDefaultFormView(targetDefType: string): ResolvedFormView {
   return {
     id: DEFAULT_FORM_VIEW_ID,
@@ -31,9 +31,9 @@ export function buildDefaultFormView(targetDefType: string): ResolvedFormView {
 
 /**
  * Combines `[Default View, resolved schema views for defType, custom views for
- * project/game/defType]` into one ordered selectable list (Plan.md section 7/8): Default first,
+ * project/game/defType]` into one ordered selectable list: Default first,
  * then schema views ordered by `order` (ties broken by `recommended` then label), then custom
- * views ordered by creation time (Plan.md section 6: "Order is creation/updated time initially").
+ * views ordered by creation time.
  */
 export function buildAvailableFormViews(
   targetDefType: string,
@@ -83,7 +83,7 @@ export function buildAvailableFormViews(
 }
 
 /**
- * Plan.md section 7: `selected = valid persisted/current selection ? it : recommended schema
+ * `selected = valid persisted/current selection ? it : recommended schema
  * view ?? Default`. `available` is assumed to always contain the Default View (guaranteed by
  * `buildAvailableFormViews`); the final `available[0]` fallback only guards a malformed caller.
  */
@@ -104,14 +104,14 @@ export function resolveSelectedFormView(
 }
 
 /**
- * Plan.md section 7's `effectiveHidden`/`visibleTopLevel` computation. `knownTopLevel` must be
+ * The `effectiveHidden`/`visibleTopLevel` computation. `knownTopLevel` must be
  * the same canonical top-level field universe `buildFormDescriptors` renders from
  * (`collectEffectiveTopLevelDefFields`), so a stale/removed field reference in a persisted
  * custom view or a schema view amendment can never leak into the live visible set.
  *
  * Returns `visibleTopLevelFieldIds: null` whenever the effective hidden set is empty, matching
  * `useXmlFormController`'s "undefined/null means no filter, byte-identical to the full form"
- * contract (issue 05) exactly -- selecting Default View with no override must behave identically
+ * contract exactly -- selecting Default View with no override must behave identically
  * to today's unfiltered form, not merely compute an equivalent "hide nothing" Set.
  */
 export function computeEffectiveVisibility(args: {
@@ -139,12 +139,12 @@ export function computeEffectiveVisibility(args: {
 }
 
 /**
- * Issue 07's single toggle primitive: flips one field id's membership in a hidden-id set,
+ * The single toggle primitive: flips one field id's membership in a hidden-id set,
  * returning a fresh `Set` (never mutates `hidden` in place). Both `FormViewFieldChecklist`'s
  * per-row checkboxes AND `XmlFormEditor`'s inline in-form hide buttons call this exact function
  * against `controller.effectiveHidden` before handing the result to
  * `setOverrideHiddenFieldIds` -- one shared pure primitive, not two divergent toggle
- * implementations that could drift apart (Plan.md section 8: the inline affordances and the
+ * implementations that could drift apart (the inline affordances and the
  * checklist both mutate the same `FieldVisibilityOverride`).
  */
 export function toggleHiddenFieldId(
@@ -161,7 +161,7 @@ export function toggleHiddenFieldId(
 }
 
 /** Whether `hidden` differs from `selected`'s own resolved hidden set -- the `isDirty` flag on
- * `FieldVisibilityOverride` (Plan.md section 3). */
+ * `FieldVisibilityOverride`. */
 export function isHiddenSetDirty(
   hidden: ReadonlySet<string>,
   selected: ResolvedFormView,
@@ -175,13 +175,12 @@ export function isHiddenSetDirty(
 }
 
 /**
- * Plan.md section 6/12: "A missing/renamed base becomes a nonblocking 'derived from
- * unavailable view' notice, not a broken view" / "Show unavailable-base/missing-field notices
- * in manager." A custom view's `baseSchemaView` is pure, never-re-derived provenance (Plan.md
- * section 6) -- it is never used to recompute `hiddenFieldIds`, so this check exists purely to
- * decide whether to show an informational notice, never to alter the view's own resolved
- * visibility (which stays exactly as materialized, per `computeEffectiveVisibility`, regardless
- * of the answer here).
+ * A missing/renamed base becomes a nonblocking "derived from
+ * unavailable view" notice, not a broken view. A custom view's `baseSchemaView` is pure,
+ * never-re-derived provenance -- it is never used to recompute `hiddenFieldIds`, so this check
+ * exists purely to decide whether to show an informational notice, never to alter the view's own
+ * resolved visibility (which stays exactly as materialized, per `computeEffectiveVisibility`,
+ * regardless of the answer here).
  *
  * "Unavailable" means the base view id this custom view was originally duplicated/saved from no
  * longer resolves as a schema-defined view for the same target Def type -- covering both a
@@ -204,11 +203,11 @@ export function isCustomViewBaseUnavailable(
 
 /**
  * Stable per-Def-instance key so `useFormViews` can keep override/selection state isolated
- * across multiple Defs of the same type opened within one file/pane (Plan.md section 9).
+ * across multiple Defs of the same type opened within one file/pane.
  *
  * Includes `projectId`/`gameVersion`, not just `defType`/`ordinal`: custom views and the
- * persisted "last selected" preference are both scoped by `{project, gameVersion, defType}`
- * (Plan.md section 3/6). Omitting them here would let a game-version (or project) change reuse
+ * persisted "last selected" preference are both scoped by `{project, gameVersion, defType}`.
+ * Omitting them here would let a game-version (or project) change reuse
  * a `loaded: true` cache entry from the OLD scope's `get_last_selected_form_view` fetch, so the
  * hook would never re-fetch the NEW scope's real preference before its fallback-reconciliation
  * logic ran -- misreading "haven't checked yet" as "checked, and it's gone" and re-persisting a

@@ -93,7 +93,7 @@ interface Props {
   selectedDefNodeId: number | null;
   onSelectDef: (nodeId: number | null) => Promise<void>;
   formApi: XmlFormApi;
-  /** Form Views (issue 06) selection/resolution controller. `null`/`undefined` (or
+  /** Form Views selection/resolution controller. `null`/`undefined` (or
    * `applicable: false`) renders no Form View controls at all -- Patch/About/raw editors never
    * pass one, and a Def with no resolvable schema resolves `applicable: false` on its own. */
   formViews?: UseFormViewsResult | null;
@@ -112,7 +112,7 @@ function sectionStateKey(defNodeId: number, sectionPath: string[]): string {
 }
 
 /** Stable DOM id for a section's collapsible header button, derived from its `sectionStateKey`.
- * Shared by the header's own `id` and the issue 08 reveal-focus fallback below so the two never
+ * Shared by the header's own `id` and the reveal-focus fallback below so the two never
  * drift apart. */
 function sectionHeaderDomId(stateKey: string): string {
   return `section-header-${stateKey.replace(/[^a-z0-9]/gi, "-")}`;
@@ -138,13 +138,13 @@ function findScopedById(container: HTMLElement, id: string): HTMLElement | null 
 
 /**
  * Focuses and scrolls to a field's primary input by canonical `FormFieldId`, if it is currently
- * mounted. Returns whether an element was found (issue 08's reveal-focus flow uses this to decide
+ * mounted. Returns whether an element was found (the reveal-focus flow uses this to decide
  * whether to fall back to focusing the containing section's header instead).
  *
  * Deliberately scoped to `container` (this `XmlFormEditor` instance's own root DOM node) rather
  * than a global `document.getElementById` lookup: `EditorWorkspace` keeps every open tab's
- * `XmlEditorPane`/`XmlFormEditor` mounted (hidden, not unmounted) across tab switches (Plan.md
- * section 9), and the field DOM id derived from `FormFieldId` is NOT guaranteed globally unique
+ * `XmlEditorPane`/`XmlFormEditor` mounted (hidden, not unmounted) across tab switches, and the
+ * field DOM id derived from `FormFieldId` is NOT guaranteed globally unique
  * across panes - two open tabs on Defs that share a `defType`/`defName` (or both land on the same
  * node id) produce colliding ids. A global lookup would return whichever pane's element happens
  * to appear first in document order, regardless of which tab is actually active - silently
@@ -162,7 +162,7 @@ function focusFieldInput(container: HTMLElement | null, fieldId: string): boolea
 }
 
 /** Focuses and scrolls to a section header button by its `sectionStateKey`, if mounted - the
- * issue 08 reveal-focus fallback for when no focusable input exists for the revealed model even
+ * reveal-focus fallback for when no focusable input exists for the revealed model even
  * after its section was force-expanded. Scoped to `container` for the same cross-pane reason as
  * `focusFieldInput` above. */
 function focusSectionHeader(container: HTMLElement | null, stateKey: string): void {
@@ -257,12 +257,12 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
     Record<string, boolean>
   >({});
 
-  // Form Views (issue 06): "Customize view" opens this manager overlay. Local to the form
+  // "Customize view" opens this manager overlay. Local to the form
   // editor, not the controller -- it's pure UI open/closed state, not selection/override state.
   const [managerOpen, setManagerOpen] = useState(false);
 
   // Hoisted above the `!parsed`/no-Def early return below (rather than after it, as the rest of
-  // this function's plain derived values are) because issue 08's hooks (`useMemo`/`useEffect`
+  // this function's plain derived values are) because the hooks (`useMemo`/`useEffect`
   // just below) need it, and every hook in this component must run unconditionally on every
   // render regardless of which branch `parsed`/`selectedDefNodeId` puts this render in -
   // otherwise a render that flips between "has a Def" and "has none" for the SAME mounted
@@ -283,7 +283,7 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
   // for a real selected Def.
   const selectedDefId = selectedDef?.nodeId ?? -1;
 
-  // Issue 08 (Plan.md section 8 "Hidden validation feedback"): validation diagnostics for the
+  // Hidden validation feedback: validation diagnostics for the
   // selected Def that map to a currently-hidden top-level root. `null` whenever Form Views don't
   // apply at all (Patch/About/raw never pass a controller; a Def with no resolvable schema
   // resolves `applicable: false` on its own) or there is no selected Def yet.
@@ -297,7 +297,7 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formViews?.applicable, formViews?.effectiveHidden, snapshot.validationDiagnostics, selectedDef]);
 
-  // Focus-after-reveal (Plan.md section 8: "focuses/scrolls to the first rendered field"). Set
+  // Focus-after-reveal: focuses/scrolls to the first rendered field. Set
   // by `handleReveal` just below to the exact root ids it just unhid; consumed by the effect
   // beneath it the next time `models` gets a new structural identity (i.e. once the store has
   // actually rebuilt with those roots' fields present - `models` comes from
@@ -322,7 +322,7 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
   // This instance's own root DOM node - every reveal-focus DOM lookup is scoped to it (never a
   // global `document.getElementById`/`querySelector`) so a colliding field/section DOM id in a
   // different, hidden-but-still-mounted tab (`EditorWorkspace` keeps every open tab's pane
-  // mounted, per Plan.md section 9) can never steal focus away from the pane the user is
+  // mounted) can never steal focus away from the pane the user is
   // actually looking at. See `focusFieldInput`'s doc comment above for the full rationale.
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -341,7 +341,7 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
       // `buildFormDescriptors` produces zero models - not even a section header - for such a
       // field regardless of Form Views, so there is genuinely nothing in the DOM for THIS
       // field to focus. Fall back to the Form View selector control instead of silently doing
-      // nothing - the same fallback issue 05/06 already established for "the field that had
+      // nothing - the same fallback already established for "the field that had
       // focus just disappeared" (see `XmlEditorPane`'s `onFocusedFieldHidden`). Scoped to this
       // pane's own `containerRef` (via `findScopedById`, not a global lookup or a raw `#id`
       // selector) for the same cross-pane reason as `focusFieldInput` above -
@@ -403,9 +403,9 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
 
   const handleReveal = useCallback(() => {
     if (!formViews || !hiddenIssues || hiddenIssues.affectedRootIds.size === 0) return;
-    // Plan.md section 8: "adds a temporary override that unhides only affected top-level roots,
-    // leaves all other view rules intact" - computed as the CURRENT effective hidden set minus
-    // only the affected roots, then applied through the exact same override mechanism issue 07's
+    // Adds a temporary override that unhides only the affected top-level roots and
+    // leaves all other view rules intact - computed as the CURRENT effective hidden set minus
+    // only the affected roots, then applied through the exact same override mechanism the
     // checkboxes use (`setOverrideHiddenFieldIds`). Never touches Custom View storage, never
     // changes the selected view, never triggers the switch-confirmation prompt - identical
     // semantics to an unhide checkbox toggle.
@@ -429,17 +429,18 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
     .map((m) => store.getFieldState(m.id))
     .filter((f): f is NonNullable<typeof f> => !!f);
 
-  // Form Views (issue 07): the checklist inside `FormViewManagerDialog` needs the FULL
+  // The checklist inside `FormViewManagerDialog` needs the FULL
   // canonical top-level schema field universe, not `models` -- a hidden field's models never
-  // reach this component at all (issue 05 skips them upstream), so `fieldChecklistTarget` gives
-  // the dialog everything it needs (schema, catalog, live XML) to build that list itself.
+  // reach this component at all (the visibility filter skips them upstream), so
+  // `fieldChecklistTarget` gives the dialog everything it needs (schema, catalog, live XML) to
+  // build that list itself.
   const defSchema = catalog?.defTypes[selectedDef.defType] ?? null;
   const fieldChecklistTarget: FormViewFieldChecklistTarget | null =
     catalog && defSchema ? { def: selectedDef, defSchema, catalog } : null;
 
-  // "Customize mode" (Plan.md section 8: "Hide/show affordances in the form itself appear only
-  // in customize mode") is exactly "the manager dialog is open" -- entering customize mode opens
-  // the dialog, per Plan.md section 8's lifecycle, so there is no separate mode flag to track.
+  // "Customize mode" (hide/show affordances in the form itself appear only
+  // in customize mode) is exactly "the manager dialog is open" -- entering customize mode opens
+  // the dialog, so there is no separate mode flag to track.
   const customizeModeActive = managerOpen && !!formViews?.applicable;
 
   function toggleFieldHidden(fieldId: string) {
@@ -476,10 +477,10 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
       const sectionPath = getFieldSectionPath(model);
 
       if (!sectionPath || sectionPath.length <= depth) {
-        // Inline hide affordance (issue 07, Plan.md section 8: "on top-level scalar labels...")
+        // Inline hide affordance on top-level scalar labels
         // -- only for a genuinely top-level field (`depth === 0`, single-segment `fieldPath`),
         // and only while customize mode is active, so ordinary form rendering is byte-identical
-        // to before this issue.
+        // when customize mode is off.
         const topLevelFieldId =
           depth === 0 && model.fieldPath.length === 1 ? model.fieldPath[0] : null;
         const control = (
@@ -536,11 +537,10 @@ export const XmlFormEditor = React.memo(function XmlFormEditor({
         const safeKey = stateKey.replace(/[^a-z0-9]/gi, "-");
         const headerId = sectionHeaderDomId(stateKey);
         const sectionId = `section-content-${safeKey}`;
-        // Inline hide affordance for object-section headers (issue 07, Plan.md section 8:
-        // "...and object-section headers" / "object section header controls operate on its root
-        // ID") -- only the section's TOP-LEVEL root (`subPath.length === 1`) is hideable; a
-        // nested subsection inside an object is not independently hideable (non-goal: nested
-        // member/list-row hiding).
+        // Inline hide affordance for object-section headers -- object section header controls
+        // operate on its root ID -- only the section's TOP-LEVEL root (`subPath.length === 1`)
+        // is hideable; a nested subsection inside an object is not independently hideable
+        // (non-goal: nested member/list-row hiding).
         const topLevelSectionFieldId = subPath.length === 1 ? subPath[0] : null;
 
         const headerButton = (

@@ -57,8 +57,8 @@ fn require_writable_project(settings: &ProjectSettings, project_id: &str) -> Res
 /// read-only. This is the minimal check for the read-only commands below (`list_custom_form_views`,
 /// `get_last_selected_form_view`): they must still reject an arbitrary/nonexistent id rather than
 /// silently reading (or, worse, creating an empty store file for) a project that was never
-/// registered, but Plan.md section 6 explicitly does not require them to be *writable* --
-/// "Read-only source tabs can select project custom views but cannot save one." Mirrors the same
+/// registered, but does not require them to be *writable*: a read-only source tab can select
+/// project custom views but cannot save one. Mirrors the same
 /// "is this a real registered location" check already used by
 /// `commands::def_index::read_indexed_def_xml` (there is no existing shared helper for it; both
 /// call sites inline the same `locations.iter().any(...)` check).
@@ -103,9 +103,9 @@ pub struct ListCustomFormViewsResult {
 }
 
 /// Read-only: does NOT require a *writable* project, but does still call
-/// `require_registered_project` -- Plan.md section 6: "Read-only source tabs can select project
-/// custom views but cannot save one" -- so listing (and, below, `get_last_selected_form_view`)
-/// only needs `project_id` to resolve to *some* known registered location, not a writable one.
+/// `require_registered_project` -- a read-only source tab can select project custom views but
+/// cannot save one, so listing (and, below, `get_last_selected_form_view`) only needs
+/// `project_id` to resolve to *some* known registered location, not a writable one.
 /// Every mutation command in this file calls `require_writable_project` instead.
 #[tauri::command]
 pub fn list_custom_form_views(
@@ -223,8 +223,8 @@ pub struct ResetCustomFormViewStoreResult {
     pub backup_path: Option<String>,
 }
 
-/// Corruption/incompatible-version recovery per Plan.md section 12 and issue 04 step 6: "no
-/// overwrite; explicit backup-and-reset command/action." Any existing store file -- corrupt,
+/// Corruption/incompatible-version recovery: no overwrite, only an explicit backup-and-reset
+/// command/action. Any existing store file -- corrupt,
 /// project-id-mismatched, or an unreadable newer version -- is renamed to a timestamped `.bak`
 /// sibling (never deleted, so a user can still recover data by hand) and replaced with a fresh
 /// empty v1 store. Requires a writable project: this is a destructive, mutating disk operation,
@@ -246,9 +246,9 @@ pub fn reset_custom_form_view_store(
 /// Persists the last clean (non-overridden) view selection for a `{gameVersion, defType}`
 /// scope. This *does* require a writable project even though merely *selecting* a view to
 /// render doesn't otherwise need one: setting this preference is a real disk write, and
-/// Plan.md section 6 says "Form View preferences must be saved after successful
-/// selection/mutation" without carving out a read-only-project exception the way it does for
-/// listing/selecting-in-memory. A read-only source tab can still select and view a project's
+/// Form View preferences must be saved after successful selection/mutation, without carving
+/// out a read-only-project exception the way it does for listing/selecting-in-memory. A
+/// read-only source tab can still select and view a project's
 /// custom views; it just won't have anywhere durable to remember that choice. See
 /// `get_last_selected_form_view` below for the read side, which -- like listing -- does not
 /// require a writable project.

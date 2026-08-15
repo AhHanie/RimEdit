@@ -14,8 +14,7 @@ export interface UsePatchXPathCompletionResult {
 /** Debounced, stale-response-safe XPath completion fetcher shared by `PatchPathInput` (dropdown
  * items/diagnostics/replaceFrom) and, via a callback `PatchPathInput` reports its result through,
  * `PatchValueEditor` (`target`/`resolvedField`) -- so one settled XPath edit produces exactly one
- * `complete_patch_operation_xpath` request instead of two independent debounced fetches (Plan.md's
- * "share one completion result with value-target inference").
+ * `complete_patch_operation_xpath` request instead of two independent debounced fetches.
  *
  * Deliberately does not cache results client-side: this hook has no visibility into project
  * settings/schema-catalog changes (registered locations, game version), so a `(projectId, locale,

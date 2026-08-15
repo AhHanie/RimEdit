@@ -36,8 +36,7 @@ interface UseProjectSettingsReturn {
  * @param initialLoad When provided, the initial-load effect awaits this promise instead of
  * calling `getProjectSettings()` itself. `main.tsx` calls `getProjectSettings()` exactly once,
  * before mounting `LocaleProvider`, so the persisted locale is resolved and applied before any
- * locale-sensitive catalog request fires (Plan.md: "the settings command returns the saved locale
- * before locale-sensitive catalog loading"); threading that same in-flight promise down here
+ * locale-sensitive catalog request fires; threading that same in-flight promise down here
  * lets `AppShell` consume its result too without a second `get_project_settings` call, which
  * would silently re-run (and lose) the load-time missing-active-project side effect described
  * below. Omitted (e.g. in every existing test) it falls back to calling `getProjectSettings()`
@@ -59,7 +58,7 @@ export function useProjectSettings(
   // against that by only ever issuing the load once per component lifetime.
   const hasLoadedRef = useRef(false);
 
-  // Issue 09 finding: game-version discovery/selection must search every registered location's
+  // Game-version discovery/selection must search every registered location's
   // root as a candidate external-schema-pack root (mirrors `AppShell`'s `extraSchemaRoots`
   // derivation, `services::validation::schema_pack_roots` on the backend, and
   // `patch_preview::preview_def_for_project`'s existing pattern) -- otherwise a project whose
@@ -113,8 +112,7 @@ export function useProjectSettings(
   // content (add/remove/edit a location, e.g. adding a source folder with an embedded
   // `SchemaPacks/` folder) -- not on every unrelated settings change (active project switch,
   // etc.), via the root-paths key below. `JSON.stringify` (not a joined string) avoids both an
-  // ambiguous delimiter and a raw non-printable delimiter ending up in source -- see issue 05's
-  // analogous `getVisibilityId` fix.
+  // ambiguous delimiter and a raw non-printable delimiter ending up in source.
   const locationRootsKey = useMemo(
     () => JSON.stringify(settings?.locations.map((l) => l.rootPath) ?? []),
     [settings?.locations],

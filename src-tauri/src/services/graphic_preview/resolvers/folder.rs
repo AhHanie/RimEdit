@@ -106,7 +106,7 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
         }];
     }
 
-    // --- Phase 2: group by base stem, detecting direction suffixes ---
+    // --- Group by base stem, detecting direction suffixes ---
     struct GroupMember {
         relative: String,
         dir_role: Option<&'static str>,
@@ -141,7 +141,7 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
         });
     }
 
-    // --- Phase 3: apply FOLDER_VARIANT_CAP after grouping ---
+    // --- Apply FOLDER_VARIANT_CAP after grouping ---
     let truncated = groups.len() > FOLDER_VARIANT_CAP;
     let groups_to_emit: Vec<_> = groups.into_iter().take(FOLDER_VARIANT_CAP).collect();
     if truncated {
@@ -160,7 +160,7 @@ pub(in crate::services::graphic_preview) fn resolve_folder_collection(
         );
     }
 
-    // --- Phase 4: flatten groups into labelled variants ---
+    // --- Flatten groups into labelled variants ---
     let is_stack_count = graphic_class == "Graphic_StackCount";
     let mut variants = Vec::new();
 

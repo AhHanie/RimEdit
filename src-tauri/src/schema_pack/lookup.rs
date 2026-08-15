@@ -258,12 +258,11 @@ fn collect_object_fields_recursive(
 /// Ancestor-first, keep-first-occurrence collection of a Def type's effective top-level field
 /// names, mirroring the frontend form renderer's `getAllSchemaFields`
 /// (`src/features/xml-editor/lib/formDescriptors.ts`) rather than this module's own
-/// `lookup_field`, which searches own fields first. Plan.md section 5 explicitly flags this
-/// discrepancy and requires Form View field-reference validation (issue 03) to match whichever
-/// field definition the form actually renders when a Def type and one of its ancestors both
-/// declare a field with the same name -- that is the ancestor's definition, kept from the first
-/// (parent-first) occurrence, with the child's own same-named redeclaration ignored for identity
-/// purposes (though its presence still keeps the name itself known).
+/// `lookup_field`, which searches own fields first. Form View field-reference validation must
+/// match whichever field definition the form actually renders when a Def type and one of its
+/// ancestors both declare a field with the same name -- that is the ancestor's definition, kept
+/// from the first (parent-first) occurrence, with the child's own same-named redeclaration
+/// ignored for identity purposes (though its presence still keeps the name itself known).
 ///
 /// Returns `(name, field)` pairs in the same order `getAllSchemaFields` would build them, so a
 /// caller that needs the resolved `FieldSchema` (not just the name) for a duplicate-named field
@@ -271,9 +270,9 @@ fn collect_object_fields_recursive(
 /// name for a known/unknown-field-id membership check; use `.iter().map(|(n, _)| n)` for that.
 ///
 /// A cycle in `inherits` is guarded the same way `lookup_field_recursive` guards field lookup.
-// Only exercised from `schema_pack::tests` today; a public entry point for future consumers
-// (e.g. issue 05+ frontend-facing commands), matching `lookup_object_type`/`lookup_object_field`'s
-// existing `#[allow(dead_code)]` convention below for the same reason.
+// Only exercised from `schema_pack::tests` today; a public entry point for future frontend-facing
+// commands, matching `lookup_object_type`/`lookup_object_field`'s existing `#[allow(dead_code)]`
+// convention below for the same reason.
 #[allow(dead_code)]
 pub fn collect_effective_top_level_def_fields(
     catalog: &SchemaCatalog,

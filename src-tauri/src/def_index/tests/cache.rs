@@ -335,9 +335,9 @@ fn unverified_hydration_is_a_benign_miss_for_absent_malformed_and_version_mismat
 
 #[test]
 fn a_pre_phase_2_v2_json_cache_at_the_old_filename_is_silently_ignored_not_migrated() {
-    // Phase 2 replaces `index-cache-v1.json` with `index-cache-v3.bin.zst` at a *different*
-    // filename rather than converting in place -- a leftover pre-upgrade file must be a benign
-    // miss, exactly like any other absent cache, never read or migrated.
+    // `index-cache-v3.bin.zst` replaced `index-cache-v1.json` at a *different* filename rather
+    // than converting in place -- a leftover pre-upgrade file must be a benign miss, exactly
+    // like any other absent cache, never read or migrated.
     let project_dir = temp_dir();
     let app_dir = temp_dir();
     fs::create_dir(project_dir.join("Defs")).unwrap();

@@ -75,7 +75,7 @@ pub struct ProjectSettings {
     pub game_version: String,
     /// Global app UI locale (BCP-47, e.g. `"en"`). Validated against
     /// `crate::locale::SUPPORTED_LOCALES`. Despite `ProjectSettings`' name this
-    /// field is app-wide, not per-project -- see `docs/i18n/issues/02-global-locale-settings.md`.
+    /// field is app-wide, not per-project.
     pub locale: String,
     pub locations: Vec<RegisteredLocation>,
     pub active_project_id: Option<String>,

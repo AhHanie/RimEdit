@@ -43,8 +43,8 @@ use std::path::PathBuf;
 /// anywhere in `ProjectSettings`/`RegisteredLocation`, so every `build_schema_catalog` call site
 /// that needs a project's real catalog context (form rendering/`AppShell`, live document
 /// validation, save-preview/final-save validation, project-wide validation, patch preview) should
-/// call this rather than inventing its own roots list or passing an empty one (Plan.md section
-/// 2/15's "catalog-context mismatch", issue 09's "avoid inventing a second registry").
+/// call this rather than inventing its own roots list or passing an empty one, to avoid
+/// diverging from the catalog context other call sites resolve or inventing a second registry.
 pub fn schema_pack_roots(settings: &ProjectSettings) -> Vec<PathBuf> {
     settings
         .locations
@@ -148,9 +148,8 @@ fn filter_packs_by_game_version(
 /// merge everything, and return the catalog with all diagnostics.
 ///
 /// Locale-neutral: applies locale overlays for `crate::locale::FALLBACK_LOCALE` only (via
-/// `merge_packs`). This is intentional, not an oversight -- per Plan.md's "Locale state and
-/// synchronization" section and issue 06 ("locale-aware catalog synchronization"), indexing,
-/// save/validation, patch computation, and diagnostic creation are structural/code+args consumers
+/// `merge_packs`). This is intentional, not an oversight: indexing, save/validation, patch
+/// computation, and diagnostic creation are structural/code+args consumers
 /// of the catalog, not display consumers, so they stay locale-neutral and keep calling this
 /// function. Only a genuine catalog *display* consumer -- today, the `load_schema_catalog` Tauri
 /// command and the per-keystroke XPath-completion cache (`SchemaCatalogCacheState`) -- needs
@@ -166,8 +165,7 @@ pub fn build_schema_catalog(
 
 /// Same as [`build_schema_catalog`], but resolves `locale` through the application locale
 /// registry (`crate::locale::resolve_locale`, falling back to `crate::locale::FALLBACK_LOCALE`
-/// for `None`/unsupported values -- see issue 06's "validate/fallback according to the
-/// application locale policy") and threads the resolved locale into schema-overlay resolution.
+/// for `None`/unsupported values) and threads the resolved locale into schema-overlay resolution.
 ///
 /// `locale` here is the app's active UI locale (`ProjectSettings.locale`/the frontend's
 /// `useLocale()` value), not a schema pack's own declared sidecar locale tags -- those are a

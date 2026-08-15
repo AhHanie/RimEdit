@@ -2,8 +2,8 @@ export { XmlEditorPane } from "./components/XmlEditorPane/XmlEditorPane";
 export type { XmlEditorMode, XmlEditorSnapshot } from "./types/editorSession";
 export type { XmlEditorDocumentView, ParseDiagnostic } from "./types/xmlDocument";
 
-// Reusable schema-to-form descriptor helpers, exposed for `patches-editor`'s `PatchValueEditor`
-// (issue 06), which builds structured subforms for patch operation `<value>` payloads using the
+// Reusable schema-to-form descriptor helpers, exposed for `patches-editor`'s `PatchValueEditor`,
+// which builds structured subforms for patch operation `<value>` payloads using the
 // same shape dispatch and ObjectFieldValue tree the Def form editor uses, rather than a second,
 // parallel implementation.
 export {

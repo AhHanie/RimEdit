@@ -14,8 +14,8 @@ pub(crate) struct XmlSpan {
 
 /// A parse-time failure. `code` normalizes the underlying `quick-xml` failure into a stable,
 /// documented identifier (see `docs/i18n/diagnostic-codes.md`); `message` keeps the raw
-/// parser-library text as an English technical detail (Plan.md: "raw parser text stays as
-/// optional English technical detail for logs/support, not normal UI rendering").
+/// parser-library text as an optional English technical detail for logs/support, not for
+/// normal UI rendering.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParseDiagnostic {

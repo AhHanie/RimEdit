@@ -47,9 +47,8 @@ pub(crate) async fn load_for_project(
         // or rebuilding this exact collection -- e.g. startup's `schedule_initialization`
         // just enqueued a `FullRebuild` moments before the user opened a document that hit this
         // `RequireFresh` path. Await its result instead of always launching a second, fully
-        // independent scan for the same data. Per Plan.md: "If a full rebuild is already in
-        // flight, await the coordinated result rather than launching a second build... do not
-        // poll or busy-wait."
+        // independent scan for the same data: if a full rebuild is already in flight, await the
+        // coordinated result rather than launching a second build, and never poll or busy-wait.
         if let Some(index) = wait_for_in_flight_job(app, &state, project_id, &fp).await {
             return Ok(index);
         }
@@ -97,12 +96,11 @@ pub(crate) async fn load_for_project(
 /// Bounded wait for an in-flight worker job (`FullRebuild`/`VerifyCache`/a file-change batch)
 /// already scanning/rebuilding `project_id`'s collection under the *current* generation --
 /// `load_for_project`'s only caller, backing `IndexLoadPolicy::RequireFresh`, so it never launches
-/// a second, fully independent scan for data the worker is already producing (see Plan.md's
-/// explicit requirement, quoted at that call site). Returns `Some` once the wait sees a
-/// settings-matching verified entry (either because the in-flight job just produced one, or
-/// because it was already there when first checked); returns `None` if no job is (or remains) in
-/// flight for this exact scope, or if the bounded wait times out -- in both cases the caller falls
-/// through to its own independent scan/rebuild.
+/// a second, fully independent scan for data the worker is already producing. Returns `Some`
+/// once the wait sees a settings-matching verified entry (either because the in-flight job just
+/// produced one, or because it was already there when first checked); returns `None` if no job
+/// is (or remains) in flight for this exact scope, or if the bounded wait times out -- in both
+/// cases the caller falls through to its own independent scan/rebuild.
 ///
 /// Registers interest via `IndexingServiceState::job_completed_notified` *before* re-checking
 /// `get_verified_if_settings_match` each iteration, per the standard `tokio::sync::Notify` pattern:
@@ -310,7 +308,7 @@ pub(crate) enum InitializationOutcome {
 /// `wait_for_in_flight_job` sees it as in-flight immediately, not only once hydration eventually
 /// finishes), and hands the disk read/deserialize/rebuild off to a named background thread
 /// (`run_hydration`) -- returning `Scheduled` without waiting for that thread. This is what lets
-/// `.setup()` return immediately even against a very large cache: see `Plan.md`'s Phase 1.
+/// `.setup()` return immediately even against a very large cache.
 ///
 /// Untested directly (neither this function nor `run_hydration` has a unit test driving them
 /// end-to-end): both require a real `&AppHandle` for `app.state::<T>()`/instrumentation, and this

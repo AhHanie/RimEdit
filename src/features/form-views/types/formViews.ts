@@ -1,6 +1,6 @@
 // Wire types for the project-scoped custom Form View store (backend: `src-tauri/src/form_views/`).
-// Mirrors Plan.md section 6's JSON shape. Schema-defined views (`SchemaFormView`) and the
-// runtime `ResolvedFormView` union live in the schema-catalog / issue-05 resolver, not here --
+// Mirrors the backend's JSON shape. Schema-defined views (`SchemaFormView`) and the
+// runtime `ResolvedFormView` union live in the schema-catalog / resolver, not here --
 // this feature only owns user-editable custom views and the store's own preferences.
 
 import type { DiagnosticArgs } from "../../../lib/diagnostics";
@@ -11,8 +11,8 @@ export interface FormViewTarget {
 }
 
 // Optional provenance recorded when a custom view was copied/saved from a schema-defined view.
-// Purely informational: a missing/renamed base is surfaced as a nonblocking notice by a future
-// resolution layer (issue 05+), never used here to recompute `hiddenFieldIds`.
+// Purely informational: a missing/renamed base is surfaced as a nonblocking notice by the
+// resolution layer (`isCustomViewBaseUnavailable`), never used here to recompute `hiddenFieldIds`.
 export interface BaseSchemaViewReference {
   viewId: string;
   packId: string;

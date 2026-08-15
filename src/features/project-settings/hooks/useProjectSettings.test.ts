@@ -7,7 +7,7 @@ import {
 } from "../api/projectSettings";
 import type { ProjectSettings } from "../types";
 
-// Issue 09 finding 2: game-version discovery/selection must search every registered location's
+// Game-version discovery/selection must search every registered location's
 // root as a candidate external-schema-pack root, exactly like `AppShell`'s `extraSchemaRoots`
 // derivation and the backend's `schema_pack::schema_pack_roots`. Before this fix,
 // `listInstalledSchemaGameVersions()`/`updateProjectGameVersion(version)` were always called

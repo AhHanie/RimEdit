@@ -17,8 +17,7 @@ function unknownNode(rawXml: string): PatchOperationNode {
 describe("PatchOperationNodeRow", () => {
   it("forces dir=ltr on the raw XML textarea for an unknown/unsupported operation class", () => {
     // XML is machine-readable syntax, not natural-language prose -- this must stay LTR even once
-    // a future RTL locale flips `dir` on `<html>` (docs/i18n/issues/08-editor-and-patch-ui-
-    // migration.md's "keep code editor/XML/XPath controls dir=ltr by semantic policy").
+    // a future RTL locale flips `dir` on `<html>`.
     render(
       <ul>
         <PatchOperationNodeRow

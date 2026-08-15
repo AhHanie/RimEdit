@@ -156,9 +156,9 @@ pub fn compute_def_preview(
         // `Defs/ThingDef/label` classify identically to their predicate-less/no-further-segment
         // forms (`Defs/ThingDef[defName="Wall"]`, `Defs/ThingDef`) even though the former two only
         // actually match instances that physically have a `<label>` child. That's fine for the
-        // *impact graph*'s conflict/summary purposes, but this issue's own "patches that do not
-        // affect the selected Def are not shown in the normal preview control list" requirement
-        // needs real precision -- so every affecting operation is re-verified against the actual
+        // *impact graph*'s conflict/summary purposes, but patches that do not affect the selected
+        // Def must not be shown in the preview control list, which needs real precision -- so every
+        // affecting operation is re-verified against the actual
         // pre-patch document via `xpath_touches_target` (the same real-document evaluation already
         // used for the runtime-correlation loop below) before being trusted for *this* Def. A bare
         // `Defs/<DefType>[defName="..."]` or `Defs/<DefType>` (no further segment) always passes
@@ -205,8 +205,8 @@ pub fn compute_def_preview(
     // Runtime-correlate operations the impact graph could not statically resolve to a Def/DefType
     // (`XPathTarget::Unsupported`, e.g. an operation targeting an abstract parent by
     // `[@Name="..."]`) against the selected Def's pre-patch ancestor chain. Without this, a patch
-    // that mutates an abstract parent before inheritance -- one of this issue's own required
-    // fixtures -- would change the Def's final XML but never appear in its preview controls.
+    // that mutates an abstract parent before inheritance would change the Def's final XML but never
+    // appear in its preview controls.
     // Disable-only (not reorder-eligible): the static impact graph didn't vouch for these, so
     // reorder's "only touches slots already known to affect this Def" guarantee shouldn't extend
     // to an approximated match.

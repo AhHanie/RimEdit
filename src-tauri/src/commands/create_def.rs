@@ -45,8 +45,8 @@ fn app_error_with_args(
 /// `create_def_target_not_editable` (a real id that is read-only or not a project) -- because the
 /// two conditions have different causes and, unlike the "not found" case, the "not editable" case
 /// has no `projectId` to report if a bare code with no args were reused for both (see the sibling
-/// fix in `commands::def_templates`/`commands::form_views`, and Plan.md's "one code, one meaning"
-/// diagnostic-code contract).
+/// handling in `commands::def_templates`/`commands::form_views`, which follows the same
+/// one-code-one-meaning diagnostic-code contract).
 fn require_writable_project(settings: &ProjectSettings, project_id: &str) -> Result<(), AppError> {
     let location = settings
         .locations
@@ -340,7 +340,7 @@ fn build_field_lines(
     let mut included: Vec<String> = Vec::new();
     let mut included_set: HashSet<String> = HashSet::new();
 
-    // Step 1+2: merged_values fields in field_order, then remaining merged fields.
+    // First merged_values fields in field_order, then remaining merged fields.
     for name in &field_order {
         if !included_set.contains(name) && merged_values.contains_key(name) {
             included.push(name.clone());
@@ -354,7 +354,7 @@ fn build_field_lines(
         }
     }
 
-    // Step 3: required fields not yet included.
+    // Finally, required fields not yet included.
     if include_required {
         for name in &field_order {
             if included_set.contains(name) {

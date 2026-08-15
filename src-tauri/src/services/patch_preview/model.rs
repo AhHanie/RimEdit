@@ -72,7 +72,7 @@ pub struct PatchPreviewOperationSummary {
     pub status_args: crate::diagnostics::DiagnosticArgs,
     /// Whether preview-only reorder controls apply to this operation (top-level operations only
     /// -- see `docs/patches-editor/07-preview-engine.md`'s "Implementation Notes" for why nested
-    /// reorder is out of scope for this issue).
+    /// reorder is not supported).
     pub can_reorder: bool,
     pub default_order: usize,
     pub file_order: usize,
@@ -85,8 +85,8 @@ pub struct PatchPreviewOperationSummary {
     /// The statically inferred target of `xpath` (see `patches::impact_graph::XPathTarget`).
     /// `Def`/`DefType` means the impact graph vouches for this operation directly; `Unsupported`
     /// means it was included only via the pre-patch ancestor-chain runtime correlation in
-    /// `compute_def_preview` (see that function's comments) -- issue 08's UI uses this to show
-    /// such operations in a separate "unknown impact" group rather than the normal control list.
+    /// `compute_def_preview` (see that function's comments) -- the UI uses this to show such
+    /// operations in a separate "unknown impact" group rather than the normal control list.
     pub target: XPathTarget,
 }
 
@@ -151,8 +151,7 @@ pub struct PatchPreviewResult {
     /// Operations affecting the selected Def (any nesting depth), in default preview order.
     pub visible_operations: Vec<PatchPreviewOperationSummary>,
     /// Every operation actually visited while applying the full patch stream (not just
-    /// `visible_operations`), in visit order -- the full "operation trace" the issue's
-    /// Requirements section calls for.
+    /// `visible_operations`), in visit order.
     pub operation_trace: Vec<OperationTraceEntry>,
     pub apply_diagnostics: Vec<ApplyDiagnostic>,
     pub inheritance_diagnostics: Vec<InheritanceDiagnostic>,

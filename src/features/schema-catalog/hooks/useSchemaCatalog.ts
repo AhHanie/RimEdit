@@ -32,7 +32,7 @@ export function useSchemaCatalog(
   // Guards against an out-of-order response: a locale switch (or game-version/roots change)
   // fires a new `reload` before a previous in-flight one resolves. Only the response matching
   // the latest request token is ever applied, so a slow stale request can never clobber a
-  // faster newer one's result (see issue 06's "Risks" section).
+  // faster newer one's result.
   const requestTokenRef = useRef(0);
 
   const reload = useCallback(async () => {

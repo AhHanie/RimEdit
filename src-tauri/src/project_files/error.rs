@@ -40,8 +40,8 @@ impl From<ProjectFileError> for AppError {
             ProjectFileError::CannotModifyRoot => "cannot_modify_root",
         };
         // Only variants whose payload is a clean literal identifier (a project id or a relative
-        // path) get typed args; `ScanFailed` wraps arbitrary IO-error text, which Plan.md says to
-        // keep as unbounded English technical detail rather than force into a translation key.
+        // path) get typed args; `ScanFailed` wraps arbitrary IO-error text, which is kept as
+        // unbounded English technical detail rather than forced into a translation key.
         let args = match &e {
             ProjectFileError::ProjectNotFound(id) | ProjectFileError::ProjectNotEditable(id) => {
                 diagnostic_args([("projectId", id.as_str().into())])

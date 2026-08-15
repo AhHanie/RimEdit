@@ -36,8 +36,8 @@ interface PreferencesDialogProps {
 
 /**
  * File > Preferences / activity-rail gear modal. Replaces the old resizable Settings sidebar
- * (`ProjectSettingsPanel`) with an accessible dialog (Plan.md "Preferences window implementation
- * plan"). Mounted conditionally by `AppShell` (`{preferencesOpen && <PreferencesDialog .../>}`),
+ * (`ProjectSettingsPanel`) with an accessible dialog. Mounted conditionally by `AppShell`
+ * (`{preferencesOpen && <PreferencesDialog .../>}`),
  * matching `AboutDialog`'s convention -- this is what makes `useDialogKeyboard`'s mount-time focus
  * capture/restore and the "always defaults to General" requirement work for free on every open,
  * without a separate `open` prop toggling internal visibility.

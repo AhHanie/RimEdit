@@ -1,5 +1,5 @@
-// Shared "request a view switch, prompting if an override is dirty" behavior (Plan.md section 8
-// step 6), used identically by `FormViewSelector`'s dropdown/"Show full form" action and
+// Shared "request a view switch, prompting if an override is dirty" behavior, used identically
+// by `FormViewSelector`'s dropdown/"Show full form" action and
 // `FormViewManagerDialog`'s per-row "Use this view" action -- factored out once rather than
 // duplicated in both call sites.
 import { useState } from "react";

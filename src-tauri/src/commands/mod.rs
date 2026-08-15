@@ -10,6 +10,7 @@ mod project_files;
 mod project_settings;
 mod project_validation;
 mod schema_catalog;
+mod window;
 mod xml_editor;
 mod xml_save;
 
@@ -46,6 +47,7 @@ pub use project_settings::{
 };
 pub use project_validation::validate_project;
 pub use schema_catalog::{list_installed_schema_game_versions_cmd, load_schema_catalog};
+pub use window::signal_startup_ready;
 pub use xml_editor::{
     apply_xml_editor_edit, apply_xml_editor_edits, parse_xml_editor_buffer,
     read_location_xml_editor_document, read_project_xml_document, read_project_xml_editor_document,

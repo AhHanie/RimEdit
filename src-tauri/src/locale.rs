@@ -3,7 +3,7 @@
 //! Mirrors the supported-locale list in `src/i18n/locale.ts`. Rust does not
 //! import frontend code, so the two lists are kept in sync by hand; both
 //! currently contain only `"en"`. Add a locale to both places together when a
-//! second locale ships (see `docs/i18n/issues/02-global-locale-settings.md`).
+//! second locale ships.
 
 use crate::project_model::StoreError;
 

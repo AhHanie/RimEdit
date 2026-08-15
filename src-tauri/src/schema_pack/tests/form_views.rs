@@ -11,12 +11,11 @@ use super::super::model::{
 use std::collections::{BTreeMap, HashSet};
 use std::path::Path;
 
-// Issue 01 scope only: these tests prove the new parse-time `FormViewDef` shape deserializes
-// through the existing (unmodified) def-type file parser, and that the resolved `SchemaFormView`
-// / `FormViewSource` catalog types round-trip through serde. Loader-side validation (rejecting
-// the reserved "default" id, requiring formatVersion 3, blank-label/duplicate-id diagnostics,
-// etc.) and inheritance/pack-precedence merge resolution are explicitly out of scope until
-// issues 02 and 03.
+// These tests prove the parse-time `FormViewDef` shape deserializes through the existing
+// (unmodified) def-type file parser, and that the resolved `SchemaFormView` / `FormViewSource`
+// catalog types round-trip through serde. Loader-side validation (rejecting the reserved
+// "default" id, requiring formatVersion 3, blank-label/duplicate-id diagnostics, etc.) and
+// inheritance/pack-precedence merge resolution are covered separately below.
 
 #[test]
 fn form_views_deserialize_from_def_type_file() {
@@ -87,11 +86,10 @@ fn form_views_deserialize_from_def_type_file() {
 
 #[test]
 fn form_view_delta_fields_deserialize_without_a_label() {
-    // Mirrors the exact child-schema "delta" shape documented in Plan.md section 4
-    // (~line 117-127): a delta amendment to an inherited view can be valid with only
-    // hiddenFields/unhideFields, or just `{ "disabled": true }` -- no `label` key at all. Serde
-    // must not require `label` here; issue 02/03's validation layer (not Serde) is responsible
-    // for rejecting a *new* (non-delta) view that omits a label.
+    // A delta amendment to an inherited view can be valid with only hiddenFields/unhideFields,
+    // or just `{ "disabled": true }` -- no `label` key at all. Serde must not require `label`
+    // here; the declaration validation layer (not Serde) is responsible for rejecting a *new*
+    // (non-delta) view that omits a label.
     let json = r#"{
         "defType": "GunDef",
         "inherits": ["ThingDef"],
@@ -204,8 +202,8 @@ fn schema_form_view_omits_absent_source() {
 
 fn empty_def_type_schema() -> DefTypeSchema {
     // Mirrors how `DefTypeSchema` is built at every construction site today (merge.rs,
-    // patches::tests::xpath helper): `form_views` starts as an empty `BTreeMap` until issue 03
-    // implements resolution.
+    // patches::tests::xpath helper): `form_views` starts as an empty `BTreeMap` before
+    // resolution runs.
     DefTypeSchema {
         label: None,
         description: None,
@@ -221,10 +219,9 @@ fn empty_def_type_schema() -> DefTypeSchema {
 
 #[test]
 fn def_type_schema_always_serializes_form_views_key_even_when_empty() {
-    // Issue 03's "empty/no-view Def types serialize an empty map" requirement: the frontend must
-    // be able to rely on `formViews` always being present (as `{}` at minimum) to synthesize the
-    // Default View, rather than special-casing an absent key. This supersedes issue 01's
-    // placeholder `skip_serializing_if`, which predated real resolution.
+    // Empty/no-view Def types must still serialize an empty map: the frontend must be able to
+    // rely on `formViews` always being present (as `{}` at minimum) to synthesize the Default
+    // View, rather than special-casing an absent key.
     let schema = empty_def_type_schema();
     let json = serde_json::to_value(&schema).expect("serialize");
     assert_eq!(
@@ -258,13 +255,13 @@ fn def_type_schema_serializes_populated_form_views() {
 }
 
 // ---------------------------------------------------------------------------
-// Issue 02: manifest formatVersion gating + per-declaration validation.
+// Manifest formatVersion gating + per-declaration validation.
 //
 // These tests validate one Def-type file's own `formViews` declarations in isolation: manifest
 // version 1/2 rejection, blank/reserved id, blank/missing label, impossible `disabled`
 // combinations, and contradictory hiddenFields/unhideFields. They deliberately do NOT test
 // anything about inheritance/merge resolution or validating field ids against a real known
-// field universe -- that is issue 03's job.
+// field universe -- that is covered separately below.
 // ---------------------------------------------------------------------------
 
 fn v3_manifest(pack_id: &str) -> String {
@@ -536,8 +533,8 @@ fn v3_manifest_with_well_formed_view_has_no_errors() {
 
 #[test]
 fn blank_form_view_id_rejects_the_whole_def_file() {
-    // Plan.md section 5: blank/invalid id is fatal for the whole v3 Def schema file, not a
-    // recoverable per-declaration skip -- so `parse_def_type_schema` itself must return `None`
+    // A blank/invalid id is fatal for the whole v3 Def schema file, not a recoverable
+    // per-declaration skip -- so `parse_def_type_schema` itself must return `None`
     // (the same outcome as any other malformed def file), never reaching pack assembly at all.
     let def_json = r#"{
         "defType": "ThingDef",
@@ -617,9 +614,9 @@ fn missing_label_rejects_the_whole_def_file_when_declaration_carries_new_view_me
 
 #[test]
 fn label_less_pure_delta_declarations_are_accepted() {
-    // Mirrors the Plan.md section 4 delta shape: a declaration with only hiddenFields/
-    // unhideFields, or only `disabled: true`, is a legitimate amendment candidate and must not
-    // be rejected for missing a label (issue 03 resolves it against an inherited base).
+    // A declaration with only hiddenFields/unhideFields, or only `disabled: true`, is a
+    // legitimate amendment candidate and must not be rejected for missing a label (resolution
+    // applies it against an inherited base).
     let manifest_json = v3_manifest("test.formviews.delta");
     let def_json = r#"{
         "defType": "GunDef",
@@ -757,11 +754,10 @@ fn duplicate_entry_within_unhide_fields_rejects_the_whole_def_file() {
 
 #[test]
 fn a_single_bad_declaration_rejects_the_whole_def_file_even_with_other_valid_views_present() {
-    // Regression for the fatal/recoverable granularity fix: Plan.md section 5 lists blank/
-    // reserved id (among other structural issues) as fatal for the whole v3 Def schema file, not
-    // a recoverable per-declaration skip. A file with one perfectly valid view ("weapon") and one
-    // reserved-id violation ("default") must fail to load *all* of its formViews -- the valid
-    // "weapon" view must NOT survive.
+    // Blank/reserved id (among other structural issues) is fatal for the whole v3 Def schema
+    // file, not a recoverable per-declaration skip. A file with one perfectly valid view
+    // ("weapon") and one reserved-id violation ("default") must fail to load *all* of its
+    // formViews -- the valid "weapon" view must NOT survive.
     let def_json = r#"{
         "defType": "ThingDef",
         "fields": {},
@@ -903,11 +899,11 @@ fn v3_pack_with_well_formed_view_loads_via_fixture() {
 }
 
 // ---------------------------------------------------------------------------
-// Issue 03: inheritance + pack-precedence resolution into `DefTypeSchema.form_views`.
+// Inheritance + pack-precedence resolution into `DefTypeSchema.form_views`.
 //
-// These tests exercise `merge_packs` end to end (unlike the issue 01/02 tests above, which stop
-// at the raw per-file `FormViewDef` declarations) to prove the *resolved* `SchemaFormView` map is
-// correctly materialized per concrete def type.
+// These tests exercise `merge_packs` end to end (unlike the tests above, which stop at the raw
+// per-file `FormViewDef` declarations) to prove the *resolved* `SchemaFormView` map is correctly
+// materialized per concrete def type.
 // ---------------------------------------------------------------------------
 
 fn v3_manifest_with_priority(pack_id: &str, priority: i32) -> String {
@@ -1413,9 +1409,9 @@ fn diamond_inheritance_merges_both_parents_deltas_into_the_child() {
 fn collect_effective_top_level_def_fields_is_ancestor_first_keep_first_for_duplicate_names() {
     // Mirrors the frontend's ancestor-first-keep-first `getAllSchemaFields`
     // (src/features/xml-editor/lib/formDescriptors.ts), NOT Rust's own-fields-first
-    // `lookup_field`. Plan.md section 5 flags this exact discrepancy; Form View field-reference
-    // validation must use the ancestor-first-keep-first resolver so a hidden-field reference is
-    // judged against the same field universe/identity the form actually renders.
+    // `lookup_field`. Form View field-reference validation must use the ancestor-first-keep-first
+    // resolver so a hidden-field reference is judged against the same field universe/identity the
+    // form actually renders.
     let manifest_json = v3_manifest("test.formviews.canonicalorder");
     let parent_json = r#"{
         "defType": "BuildableDef",
@@ -1458,8 +1454,8 @@ fn collect_effective_top_level_def_fields_is_ancestor_first_keep_first_for_dupli
     );
 
     // Contrast with lookup_field's own-first policy on the SAME catalog: it deliberately picks
-    // the opposite (child-first) definition, which is exactly the discrepancy Plan.md section 5
-    // calls out. Form View validation must use the ancestor-first collector above, not this.
+    // the opposite (child-first) definition. Form View validation must use the ancestor-first
+    // collector above, not this.
     let own_first = lookup_field(&catalog, "GunDef", "range").expect("range must resolve");
     assert_eq!(own_first.label.as_deref(), Some("Child range override"));
 }
@@ -1469,8 +1465,8 @@ fn collect_effective_top_level_def_fields_is_ancestor_first_keep_first_for_dupli
 // which Def types declare views, which ids they use, or which fields any given view hides --
 // that's schema-pack *data*, which changes independently of this code and shouldn't be pinned by
 // a Rust test. Instead they validate that whatever the embedded Core pack currently declares
-// satisfies the Form View mechanism's own general contract (Plan.md's acceptance criteria),
-// against the real built-in pack rather than an inline fixture.
+// satisfies the Form View mechanism's own general contract, against the real built-in pack
+// rather than an inline fixture.
 // ---------------------------------------------------------------------------
 
 fn load_built_in_catalog() -> super::super::model::SchemaCatalog {

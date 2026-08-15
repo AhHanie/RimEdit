@@ -266,7 +266,7 @@ describe("useIndexingStatus", () => {
   });
 
   it("accepts a live hydratingCache event for the active project, before any file-scan status has ever been published", async () => {
-    // Regression for Phase 1's fire-and-forget setup: the very first status a project ever sees
+    // Regression for the indexing service's fire-and-forget setup: the very first status a project ever sees
     // can now be a `hydratingCache` event pushed straight from the backend's background thread,
     // with no preceding `startBackgroundIndexing`/`getIndexingStatus` response describing it.
     let eventCallback!: (event: { payload: IndexingStatus }) => void;

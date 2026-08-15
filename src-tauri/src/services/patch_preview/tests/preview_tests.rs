@@ -479,8 +479,7 @@ fn abstract_def_with_no_defname_can_be_previewed_by_its_name_attribute() {
     // Abstract parent templates are never deserialized as real Defs and so have no
     // `<defName>` -- only a `Name` attribute. The frontend has no `nodeId`-based lookup
     // available in this independently-parsed preview document, so `matches_selected_def`'s
-    // `Name`-attribute fallback is the only way issue 08's "preview by ... node identity"
-    // requirement can be satisfied for such a Def.
+    // `Name`-attribute fallback is the only way to preview such a Def by node identity.
     let root = temp_project_dir();
     write(
         &root,

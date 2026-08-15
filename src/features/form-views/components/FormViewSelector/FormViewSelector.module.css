@@ -80,7 +80,7 @@
   font-weight: 600;
 }
 
-/* Issue 08: accessible via wording ("N hidden field issue(s)", "(N blocking)"), not color alone.
+/* Accessible via wording ("N hidden field issue(s)", "(N blocking)"), not color alone.
  * `--text-error` mirrors `.persistWarning`'s tone -- a hidden validation issue is a real, if
  * non-blocking-to-view, problem the user should notice. */
 .hiddenIssuesIndicator {

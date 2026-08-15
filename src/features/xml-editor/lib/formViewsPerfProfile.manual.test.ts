@@ -1,6 +1,6 @@
-// Form Views (issue 10, Plan.md section 10): the "documented manual large-form profile" the
-// issue requires -- real, instrumented measurements (not a description of the memoization
-// mechanism) of form-open, view-switch, and typing cost against the large synthetic
+// A documented manual large-form profile -- real, instrumented measurements (not a
+// description of the memoization mechanism) of form-open, view-switch, and typing cost
+// against the large synthetic
 // ThingDef-shaped fixture (`../__fixtures__/largeThingDef.ts`, 135 top-level fields, 210
 // descriptors, one order of magnitude below the real `rimworld-core` ThingDef.json's ~196
 // fields but the same shape).
@@ -14,15 +14,14 @@
 // to this exact same function when enabled.
 //
 // This file deliberately does NOT assert wall-clock thresholds or compare two timings against
-// each other (per Plan.md's explicit "avoid fragile timing assertions" guidance -- even a
-// same-run relative comparison between two sub-millisecond operations is exactly the kind of
-// flaky assertion that guidance warns against). The structural/count-based proof that typing
-// stays O(1) and a view switch rebuilds at most once already lives in
-// `useXmlFormController.largeForm.test.tsx` (dirty-field-count and `store.reset` call-count
-// assertions). This file's only job is to PRINT real measured numbers -- via the timer's
-// `console.debug` events and the `console.info` summary below -- for the issue's acceptance-notes
-// record. Its own assertions are loose sanity bounds (durations are non-negative finite numbers,
-// field counts match the fixture) that could never meaningfully fail from ordinary timing noise.
+// each other -- avoid fragile timing assertions; even a same-run relative comparison between
+// two sub-millisecond operations is exactly the kind of flaky assertion to avoid. The
+// structural/count-based proof that typing stays O(1) and a view switch rebuilds at most once
+// already lives in `useXmlFormController.largeForm.test.tsx` (dirty-field-count and
+// `store.reset` call-count assertions). This file's only job is to PRINT real measured numbers
+// -- via the timer's `console.debug` events and the `console.info` summary below. Its own
+// assertions are loose sanity bounds (durations are non-negative finite numbers, field counts
+// match the fixture) that could never meaningfully fail from ordinary timing noise.
 import { act, renderHook } from "@testing-library/react";
 import { measure } from "../../../instrumentation/timer";
 import { buildFormFieldModels } from "./formDescriptors";
@@ -189,7 +188,7 @@ describe("Form Views manual large-form performance profile (issue 10, Plan.md se
     console.info("[rimedit:formViewsPerfProfile]", JSON.stringify(summary, null, 2));
 
     // Loose sanity bounds only -- not a CI performance gate, and no comparison between two
-    // timings (Plan.md's explicit "avoid fragile timing assertions" guidance).
+    // timings (avoid fragile timing assertions).
     for (const d of [...openDurations, ...switchToMinimalDurations, ...switchToFullDurations]) {
       expect(Number.isFinite(d)).toBe(true);
       expect(d).toBeGreaterThanOrEqual(0);

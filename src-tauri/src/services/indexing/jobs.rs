@@ -141,10 +141,9 @@ pub(crate) struct IndexingServiceState {
     /// `FullRebuild`, `VerifyCache`, or file-change job -- see `notify_job_completed`. Lets
     /// `IndexLoadPolicy::RequireFresh` callers (`def_index_cache::load_for_project`) wait for the
     /// worker's own in-flight scan/rebuild to finish instead of always launching a second,
-    /// independent one for the same collection, per Plan.md section 5: "If a full rebuild is
-    /// already in flight, await the coordinated result rather than launching a second build. Add
-    /// a completion notification/oneshot in the indexing coordinator if necessary; do not poll or
-    /// busy-wait." A single shared `Notify` (not scoped per project/generation) is deliberately
+    /// independent one for the same collection: if a full rebuild is already in flight, callers
+    /// await the coordinated result rather than launching a second build, and never poll or
+    /// busy-wait. A single shared `Notify` (not scoped per project/generation) is deliberately
     /// coarse: a waiter always re-checks the actual condition it cares about
     /// (`get_verified_if_settings_match`) after being woken, so an irrelevant job's completion
     /// merely costs one extra wasted wakeup+recheck, never a correctness issue -- and avoids the

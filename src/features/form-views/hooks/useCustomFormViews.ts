@@ -47,7 +47,7 @@ function errorMessage(e: unknown): string {
 /// a `{gameVersion, defType}` scope and exposes CRUD that reloads the list afterward. This is
 /// deliberately minimal -- the actual selection/override/resolution logic (which view is
 /// active, temporary field-visibility overrides, schema-view merging) belongs to
-/// `features/form-views`'s later `useFormViews` (issue 06), not here.
+/// `features/form-views`'s `useFormViews`, not here.
 export function useCustomFormViews(
   projectId: string | null,
   gameVersion: string,

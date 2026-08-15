@@ -241,7 +241,7 @@ describe("emptyFormValueForModel", () => {
   });
 });
 
-// --- Issue 1: objectList alias field-name preservation ---
+// --- objectList alias field-name preservation ---
 
 describe("fieldToXmlEdit – objectList alias field-name preservation", () => {
   function makeObjectListInput(

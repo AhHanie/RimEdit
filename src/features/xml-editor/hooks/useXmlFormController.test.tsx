@@ -1238,7 +1238,7 @@ describe("useXmlFormController", () => {
   });
 });
 
-// --- Step 4: skip the whole-form rebuild on a form-originated commit ---
+// --- Skip the whole-form rebuild on a form-originated commit ---
 
 describe("useXmlFormController – skip-rebuild on form commit (Step 4)", () => {
   afterEach(() => {
@@ -1876,12 +1876,11 @@ describe("clearField", () => {
   });
 });
 
-// --- Issue 05: Form View top-level visibility filtering plumbing ---
+// --- Form View top-level visibility filtering plumbing ---
 //
-// No real caller wires `visibleTopLevelFieldIds` in yet (issue 06 owns that); these tests
-// exercise the mechanism directly via a small test harness, per the issue's own testing
-// requirement. `makeSnapshot`/`makeCatalog` (defined above) describe a ThingDef with
-// `defName`, `description`, and `ingredients` top-level fields.
+// These tests exercise the mechanism directly via a small test harness rather than through
+// `useFormViews`/`XmlEditorPane`, the real callers. `makeSnapshot`/`makeCatalog` (defined
+// above) describe a ThingDef with `defName`, `description`, and `ingredients` top-level fields.
 describe("useXmlFormController – Form View visibility filtering (issue 05)", () => {
   type Props = Parameters<typeof useXmlFormController>[0];
 
@@ -2137,9 +2136,9 @@ describe("useXmlFormController – Form View visibility filtering (issue 05)", (
   });
 });
 
-// --- Issue 05: uncommitted drafts must survive a pure visibility rebuild ---
+// --- Uncommitted drafts must survive a pure visibility rebuild ---
 //
-// Plan.md section 7/9's "no value is discarded" guarantee covers the CURRENT in-memory form
+// The "no value is discarded" guarantee covers the CURRENT in-memory form
 // value (including an uncommitted/dirty draft the user hasn't flushed yet), not merely the
 // last-committed XML value. A visibility-only rebuild must never silently revert a dirty
 // field to its last-saved value, whether that field's own visibility changed or a sibling's
@@ -2377,7 +2376,7 @@ describe("useXmlFormController – uncommitted drafts survive a pure visibility 
   });
 });
 
-// --- Issue 05: visibility-set signature must not collide on delimiter reuse ---
+// --- Visibility-set signature must not collide on delimiter reuse ---
 describe("useXmlFormController – visibility signature collision safety (issue 05)", () => {
   type Props = Parameters<typeof useXmlFormController>[0];
 
@@ -2833,7 +2832,7 @@ describe("useXmlFormController - locale-aware rebuild", () => {
   });
 
   // The real app-wide i18next instance (`createI18nInstance`/`initI18n`) hard-codes
-  // `supportedLngs: ["en"]` since English is the only shipped locale (Plan.md) -- `changeLanguage`
+  // `supportedLngs: ["en"]` since English is the only shipped locale -- `changeLanguage`
   // to any other code on that instance silently stays resolved to "en". This test verifies the
   // underlying reactive-rebuild MECHANISM (the locale-aware rebuild fix above) independent of that current
   // product policy, so it builds its own two-locale i18next instance rather than reusing
@@ -2934,7 +2933,7 @@ describe("useXmlFormController - locale-aware rebuild", () => {
     expect(resetSpy).toHaveBeenCalledTimes(1);
 
     // A display-only (locale) rebuild must not discard the in-progress edit - same guarantee
-    // Form Views (issue 05) already established for a pure visibility-only rebuild.
+    // already established for a pure visibility-only rebuild.
     const afterLocaleSwitch = result.current.snapshot!.fields.find(
       (f) => f.model.key === "description",
     )!;
@@ -2950,7 +2949,7 @@ describe("useXmlFormController - locale-aware rebuild", () => {
 //
 // The fix above covers the case where the SAME `SchemaCatalog` object is reused across a
 // locale switch (`catalogId`/`docKey` unchanged) - `i18n.language` alone drives the rebuild there.
-// In the real app (issue 06), a locale switch also triggers `useSchemaCatalog` to re-fetch the
+// In the real app, a locale switch also triggers `useSchemaCatalog` to re-fetch the
 // catalog from the backend, which resolves `label`/`description`/`message` through the new locale
 // server-side (see `src-tauri/src/schema_pack/merge.rs`) and returns a brand-new `SchemaCatalog`
 // object with different translated text but the SAME field set/shape. Before this fix, `docKey`
@@ -3038,7 +3037,7 @@ describe("useXmlFormController - locale-only catalog reload preserves drafts", (
     });
     expect(result.current.hasDraftChanges).toBe(true);
 
-    // Simulate the real-app timing (issue 06): `i18n.language` flips first - `useTranslation`
+    // Simulate the real-app timing: `i18n.language` flips first - `useTranslation`
     // resubscribes the hook and re-renders it immediately, one render/reset before the
     // locale-aware catalog re-fetch it triggers has actually resolved.
     await act(async () => {

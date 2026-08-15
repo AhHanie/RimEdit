@@ -42,7 +42,7 @@ function toParseDiagnostics(diagnostics: PatchDiagnostic[], relativePath: string
  * reserializes to XML text and calls `onChangeRawXml`, exactly like the raw XML editor's
  * `onChange`.
  *
- * Form Views (`features/form-views`, Plan.md section 11) intentionally do not apply here and
+ * Form Views (`features/form-views`) intentionally do not apply here and
  * have no wiring into this component or `patchValueTarget.ts`. A complete Def's `formViews`
  * hide/show *canonical top-level `DefTypeSchema` fields*, but this tree edits an operation AST
  * (`xpath`, raw `valueXml`, nested operations) whose "value" fields are XPath-derived fragments

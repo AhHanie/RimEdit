@@ -7,7 +7,7 @@ import styles from "./FormViewSwitchConfirmDialog.module.css";
 
 interface Props {
   /** Number of fields the dirty override currently hides -- shown so the user knows what's at
-   * stake before discarding it (Plan.md section 8 step 6). */
+   * stake before discarding it. */
   hiddenCount: number;
   onDiscardAndSwitch: () => void;
   onSaveAsCustom: (name: string) => Promise<void>;
@@ -16,7 +16,7 @@ interface Props {
 
 /**
  * The three-way decision required whenever a Form View selection changes (or the customize
- * dialog closes) while a Field Visibility Override is dirty (Plan.md section 8 step 6): discard
+ * dialog closes) while a Field Visibility Override is dirty: discard
  * the override and switch, save it as a new custom view first, or cancel and keep editing. Never
  * auto-discards or auto-creates a custom view on its own.
  */

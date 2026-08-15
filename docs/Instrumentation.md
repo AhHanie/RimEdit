@@ -93,6 +93,8 @@ markTiming("xmlEditor.parseBuffer", performance.now() - start, {
 Use stable dotted names. Do not embed IDs, paths, or cardinality in the name - put those in tags.
 
 ```
+app.startup.startupScreenRendered
+app.startup.appRendered
 xmlEditor.loadProjectDocument
 xmlEditor.loadLocationDocument
 xmlEditor.parseBuffer

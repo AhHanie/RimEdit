@@ -357,7 +357,7 @@ export function useXmlEditorSession(
           if (changed) clearPreviewState();
 
           // Commit the post-commit history update synchronously. The form controller now
-          // skips the redundant whole-form rebuild for a form-originated commit (Step 4),
+          // skips the redundant whole-form rebuild for a form-originated commit,
           // so there is no longer an expensive render to defer here - the earlier
           // startTransition only added a small delay and is removed.
           setHistory((prev) => {

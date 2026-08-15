@@ -71,8 +71,8 @@ interface TopLevelOperationRowProps {
 
 /** Builds this row's `onChange`/`onRemove`/`onDuplicate`/`onMoveUp`/`onMoveDown` callbacks keyed
  * by the operation's stable id rather than its array index, so their identity survives a
- * `setOperations` update to a *different* row untouched (Plan.md's "operation-id-based
- * dispatcher") -- combined with `React.memo` on `PatchOperationNodeRow`, editing one row no longer
+ * `setOperations` update to a *different* row untouched -- combined with `React.memo` on
+ * `PatchOperationNodeRow`, editing one row no longer
  * forces every other row's subtree to re-render just because the top-level `operations` array got
  * a new reference. */
 const TopLevelOperationRow = memo(function TopLevelOperationRow({

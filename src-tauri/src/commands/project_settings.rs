@@ -113,8 +113,7 @@ fn trigger_settings_reindex(app: &AppHandle, settings: &ProjectSettings) {
     // Registered locations, game version, and active project all feed into the external schema
     // roots/game-version key `SchemaCatalogCacheState` builds catalogs from -- drop every cached
     // catalog so the next XPath completion (or built-in-only) request rebuilds against the new
-    // settings rather than serving one built for the prior root set (Plan.md's cache invalidation
-    // requirement).
+    // settings rather than serving one built for the prior root set.
     app.state::<SchemaCatalogCacheState>().invalidate_all();
 }
 

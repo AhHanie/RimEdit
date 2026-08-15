@@ -16,7 +16,7 @@ export interface OperationListDispatch {
  * rather than a closed-over array index. `setList`/`id`/`generateId` are the only dependencies, so
  * these callbacks keep the same identity across a `setList` update that only touched a *different*
  * operation -- the "operation-id-based dispatcher" `React.memo`'d rows rely on to avoid
- * re-rendering their whole subtree on an unrelated sibling's edit (Plan.md's tree-isolation goal).
+ * re-rendering their whole subtree on an unrelated sibling's edit.
  * `onMoveUp`/`onMoveDown` are always safe to call (a no-op at the list's boundary); callers gate
  * whether to offer them at all using the current index/length, which is expected to change (and
  * isn't meant to stay referentially stable) across reorders. */

@@ -41,7 +41,7 @@ interface Props {
    * natural `<input>` to carry this id -- it may render zero, one, or many nested item rows.
    * Placed on the root container (with `tabIndex={-1}` so it is programmatically focusable
    * without joining normal Tab order) instead of a specific child so Form Views' "reveal and
-   * focus" flow (issue 08, Plan.md section 8) has a stable, always-present target to scroll to
+   * focus" flow has a stable, always-present target to scroll to
    * and focus regardless of how many items this field currently has. */
   id?: string;
 }

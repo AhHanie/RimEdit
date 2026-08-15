@@ -1,6 +1,6 @@
-// Form Views (issue 10, Plan.md section 10/13): a synthetic, realistically-shaped "large
-// ThingDef" fixture -- many scalar top-level roots plus nested object/list roots -- for
-// count-based (not wall-clock) performance-shape regression guards. Real
+// A synthetic, realistically-shaped "large ThingDef" fixture -- many scalar top-level roots
+// plus nested object/list roots -- for count-based (not wall-clock) performance-shape
+// regression guards. Real
 // `src-tauri/schema-packs/rimworld-core/1.6/def-types/ThingDef.json` has ~196 top-level fields;
 // this fixture is the same order of magnitude, not a 2-3 field toy or a pathological outlier.
 //
@@ -286,7 +286,7 @@ export function buildLargeThingDefEditorView(): DefEditorView {
 /** Registers a throwing getter for `catalog.objectTypes[ref]` -- reading it (discriminator
  * lookup, nested-descriptor expansion, or object-list item construction) throws immediately.
  * Used at fixture scale to prove hidden object/object-list roots' schemas are never touched,
- * not merely that hidden descriptors are absent from the final array (issue 05's
+ * not merely that hidden descriptors are absent from the final array -- the
  * "hidden roots skip expensive expansion, not just post-hoc filtering" contract, exercised here
  * across many roots at once instead of one). */
 export function poisonObjectType(catalog: SchemaCatalog, ref: string): void {

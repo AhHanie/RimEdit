@@ -44,9 +44,8 @@ describe("PatchOperationForm", () => {
     );
     const input = screen.getByDisplayValue('Defs/ThingDef[defName="Wall"]');
     fireEvent.change(input, { target: { value: 'Defs/ThingDef[defName="Steel"]' } });
-    // The xpath field is a staged editor (Plan.md's tree-mutation-per-keystroke fix): typing
-    // updates the local draft immediately but only commits (calling `onChange`) at a boundary
-    // like blur, not on every keystroke.
+    // The xpath field is a staged editor: typing updates the local draft immediately but only
+    // commits (calling `onChange`) at a boundary like blur, not on every keystroke.
     fireEvent.blur(input);
     expect(onChange).toHaveBeenCalled();
     const updater = onChange.mock.calls[0][0] as (n: PatchOperationNode) => PatchOperationNode;
@@ -157,7 +156,7 @@ describe("PatchOperationForm", () => {
       <PatchOperationForm node={addNode()} catalog={null} readOnly={true} projectId={null} onChange={vi.fn()} />,
     );
     // The XPath field uses `readOnly`, not `disabled`, so a read-only file's XPath remains
-    // selectable, copyable plain text rather than an inert control (Plan.md's contract).
+    // selectable, copyable plain text rather than an inert control.
     expect(
       (screen.getByDisplayValue('Defs/ThingDef[defName="Wall"]') as HTMLTextAreaElement).readOnly,
     ).toBe(true);

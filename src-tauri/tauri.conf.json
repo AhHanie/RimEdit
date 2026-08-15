@@ -14,7 +14,9 @@
       {
         "title": "RimEdit",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "backgroundColor": "#f0f2f5",
+        "visible": false
       }
     ],
     "security": {

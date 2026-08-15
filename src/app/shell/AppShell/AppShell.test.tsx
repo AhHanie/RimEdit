@@ -16,10 +16,10 @@ vi.mock("../../commands/appDataCommands", () => ({
 }));
 
 // AppShell orchestrates several heavy features (project explorer, editor workspace, def search,
-// schema catalog). This test only exercises the Preferences-dialog wiring described in Plan.md
-// ("Preferences window implementation plan"): both entry points open the same dialog, and opening
-// it doesn't disturb the current activity pane or create a resize handle -- so every unrelated
-// feature is stubbed out to keep the test scoped and independent of their own IPC calls.
+// schema catalog). This test only exercises the Preferences-dialog wiring: both entry points open
+// the same dialog, and opening it doesn't disturb the current activity pane or create a resize
+// handle -- so every unrelated feature is stubbed out to keep the test scoped and independent of
+// their own IPC calls.
 
 const settings: ProjectSettings = {
   schemaVersion: 3,
@@ -176,7 +176,7 @@ describe("AppShell Preferences integration", () => {
   });
 });
 
-// Phase 1 (Plan.md): the window must stay usable while Def-index initialization is still asynchronously
+// The window must stay usable while Def-index initialization is still asynchronously
 // hydrating/rebuilding in the background -- this exercises the shell with the real (unmocked) StatusBar
 // receiving a live-looking `IndexingStatus`, unlike the suite above which stubs `useIndexingStatus` to `null`.
 describe("AppShell while the Def index is still initializing", () => {
@@ -201,8 +201,8 @@ describe("AppShell while the Def index is still initializing", () => {
     render(<AppShell />);
 
     expect(screen.getByText("Loading Def index cache…")).toBeDefined();
-    // The shell's other affordances must remain fully usable -- Phase 1's whole point is that
-    // initialization no longer blocks the window from accepting input.
+    // The shell's other affordances must remain fully usable -- initialization must not block
+    // the window from accepting input.
     await user.click(screen.getByRole("button", { name: "Preferences" }));
     expect(screen.getByRole("dialog", { name: "Preferences" })).toBeDefined();
   });

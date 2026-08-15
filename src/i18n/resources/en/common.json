@@ -2,6 +2,9 @@
   "app": {
     "name": "RimEdit"
   },
+  "startup": {
+    "loading": "Loading RimEdit…"
+  },
   "actions": {
     "ok": "OK",
     "cancel": "Cancel",

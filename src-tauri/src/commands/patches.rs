@@ -102,7 +102,7 @@ pub fn query_patch_operations_for_def(
     Ok(results)
 }
 
-/// Schema- and Def-index-aware XPath completions/target inference for `PatchPathInput` (issue 05).
+/// Schema- and Def-index-aware XPath completions/target inference for `PatchPathInput`.
 /// Builds the schema catalog the same way the project's already-loaded display catalog is built --
 /// including every registered location's root as a candidate external-schema-pack search root
 /// (`schema_pack_roots`, the same helper `services::validation`/`patch_preview` use), filtered by
@@ -111,10 +111,9 @@ pub fn query_patch_operations_for_def(
 /// non-blocking cached query path `suggest_def_references_cmd` uses.
 ///
 /// `locale` is the frontend's active UI locale (`useLocale()`'s current value), passed explicitly
-/// rather than read from persisted `settings.locale` -- see issue 06's "commands needing localized
-/// schema metadata receive an explicit, validated `locale` argument ... makes concurrent/background
-/// work deterministic" -- so a runtime locale switch that has not yet finished persisting can never
-/// race a completion request into serving a stale locale's labels.
+/// rather than read from persisted `settings.locale` -- an explicit, validated `locale` argument
+/// keeps concurrent/background work deterministic, so a runtime locale switch that has not yet
+/// finished persisting can never race a completion request into serving a stale locale's labels.
 ///
 /// This command fires on a per-keystroke/per-caret-move (debounced) cadence from
 /// `PatchPathInput`, so -- unlike other `build_schema_catalog` callers -- it always serves the
@@ -201,7 +200,7 @@ fn completion_context_tag(result: &XPathCompletionResult) -> &'static str {
 }
 
 /// Parse a patch operation's raw `<value>` inner XML into shape-classified child views for
-/// `PatchValueEditor` (issue 06). Stateless -- no filesystem/project access -- since the value
+/// `PatchValueEditor`. Stateless -- no filesystem/project access -- since the value
 /// fragment is never a real file, just a string held in the patch operation AST. Rejects when the
 /// fragment isn't well-formed XML at all, so the frontend can't silently offer (and later rewrite)
 /// structured editing over malformed content.
@@ -227,7 +226,7 @@ pub fn serialize_patch_value_fragment(elements: Vec<InitialElement>) -> String {
     serialize_initial_elements(&elements)
 }
 
-/// Preview a single Def's final, post-patch, post-inheritance XML (issue 07). Combines every
+/// Preview a single Def's final, post-patch, post-inheritance XML. Combines every
 /// indexable Def XML file into one document in RimWorld load order, applies every patch operation
 /// from every patch file (preview-only `request.disabled`/`request.order` scope only the
 /// operations that affect this Def -- see `services::patch_preview`'s module doc for why

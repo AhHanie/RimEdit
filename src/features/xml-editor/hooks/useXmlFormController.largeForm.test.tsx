@@ -1,5 +1,5 @@
-// Form Views (issue 10, Plan.md section 10/13): count-based, non-timing performance-shape
-// regression guards against the same large synthetic ThingDef-shaped fixture as
+// Count-based, non-timing performance-shape regression guards against the same
+// large synthetic ThingDef-shaped fixture as
 // `formDescriptors.largeForm.test.ts`, at the `useXmlFormController` store/rebuild layer.
 // Existing `useXmlFormController.test.tsx` "Form View visibility filtering" tests already prove
 // rebuild-once, draft-preservation, and no-XML-commit-on-visibility-change correctness at a

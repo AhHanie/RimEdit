@@ -1100,9 +1100,9 @@ fn whitespace_around_slash_and_predicate_tokens_completes_like_the_compact_equiv
 fn indentation_after_slash_before_def_type_still_resolves_the_def_type_and_field() {
     let catalog = test_catalog();
     let index = test_def_index();
-    // The motivating example from Plan.md's "multiline XPath" issue: indentation right after `/`
-    // and inside a `[defName = "..."]` predicate must not break Def type/predicate/field
-    // resolution -- a line break is just more presentation whitespace to the parser.
+    // Indentation right after `/` and inside a `[defName = "..."]` predicate must not break Def
+    // type/predicate/field resolution -- a line break is just more presentation whitespace to
+    // the parser.
     let xpath = "Defs/\n    ThingDef[\n      defName = \"Wall\"\n    ]/\n    comps";
     let result = complete_patch_xpath(&catalog, &index, xpath);
     assert_eq!(

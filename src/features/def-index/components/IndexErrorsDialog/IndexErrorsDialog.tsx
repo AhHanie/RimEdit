@@ -37,7 +37,7 @@ function describeMessage(error: DefIndexError, i18nInstance: I18nInstance): stri
 /**
  * Data-only errors panel: fetches on open (not on status-bar polling) via
  * `getDefIndexErrors`, and never exposes the location root or XML content -- only the
- * already-redacted fields persisted on `DefIndexError` (Plan.md section 2).
+ * already-redacted fields persisted on `DefIndexError`.
  */
 export function IndexErrorsDialog({ projectId, onClose }: IndexErrorsDialogProps) {
   const { t, i18n } = useTranslation(["shell", "common"]);

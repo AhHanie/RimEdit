@@ -32,9 +32,10 @@ use commands::{
     reset_custom_form_view_store, resolve_def_reference_cmd, resolve_graphic_preview_assets,
     save_project_xml_file, save_user_def_template, scan_project_files, search_defs,
     serialize_patch_operations, serialize_patch_value_fragment, set_active_project,
-    set_instrumentation_enabled, set_last_selected_form_view, start_background_indexing,
-    suggest_def_references_cmd, update_app_locale, update_custom_form_view, update_location,
-    update_project_game_version, upsert_location, validate_project,
+    set_instrumentation_enabled, set_last_selected_form_view, signal_startup_ready,
+    start_background_indexing, suggest_def_references_cmd, update_app_locale,
+    update_custom_form_view, update_location, update_project_game_version, upsert_location,
+    validate_project,
 };
 use def_index::DefIndexState;
 use instrumentation::InstrumentationState;
@@ -43,6 +44,7 @@ use project_save::SaveValidationSecret;
 use schema_pack::SchemaCatalogCacheState;
 use services::graphic_preview::{self, AssetTokenCache};
 use services::indexing::{IndexWatcherState, IndexingServiceState};
+use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -99,6 +101,23 @@ pub fn run() {
         })
         .setup(|app| {
             let handle = app.handle();
+            // `tauri.conf.json`'s window is created with `visible: false` and `backgroundColor`
+            // set to the light `--surface-app` value (`src/styles/tokens.css`); the frontend calls
+            // `signal_startup_ready` (`commands/window.rs`) to reveal it once real content has
+            // painted -- see that command's doc comment for why hiding the window, not just
+            // recoloring it, is what actually eliminates the startup white flash on Windows. For a
+            // dark-themed OS/window, override the background here to the dark `--surface-app`
+            // value first, before any other setup work, so the still-hidden window is already
+            // showing the right color once it's revealed. `theme()` already reflects the OS
+            // preference (no window `theme` override is configured), so no extra OS-theme-detection
+            // dependency is needed.
+            if let Some(window) = handle.get_webview_window("main") {
+                if matches!(window.theme(), Ok(tauri::Theme::Dark)) {
+                    let _ = window.set_background_color(Some(tauri::utils::config::Color(
+                        0x11, 0x13, 0x18, 0xFF,
+                    )));
+                }
+            }
             if let Err(e) = services::indexing::start_worker(handle) {
                 eprintln!("[rimedit] Failed to start indexing worker: {}", e.message);
             }
@@ -123,8 +142,8 @@ pub fn run() {
                     // hands that work off to a named background thread
                     // (`rimedit-def-index-hydrate`), returning immediately. This is what lets
                     // `.setup()` return without waiting on a (potentially very large, for a Steam
-                    // Workshop-sized collection) disk read -- see `Plan.md`'s Phase 1. The window
-                    // becomes interactive first; the background thread keeps running and populates
+                    // Workshop-sized collection) disk read. The window becomes interactive first;
+                    // the background thread keeps running and populates
                     // `DefIndexState`/emits status updates whenever it completes. A cache hit
                     // schedules a background `VerifyCache` job; a miss enqueues a single
                     // `FullRebuild` -- both go through the same single-flight helper used by
@@ -202,6 +221,7 @@ pub fn run() {
             set_last_selected_form_view,
             get_last_selected_form_view,
             open_app_data_folder,
+            signal_startup_ready,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

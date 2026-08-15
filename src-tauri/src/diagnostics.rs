@@ -2,8 +2,7 @@
 //! family (`AppError`, `ParseDiagnostic`, `ValidationDiagnostic`, `SchemaLoadDiagnostic`,
 //! `PatchDiagnostic`, `XPathDiagnostic`, `ApplyDiagnostic`, `InheritanceDiagnostic`,
 //! `PatchPreviewConflictDiagnostic`). See `docs/i18n/diagnostic-codes.md` for the code-ownership
-//! registry and `docs/i18n/issues/03-structured-backend-diagnostics.md` for the issue this
-//! implements.
+//! registry.
 //!
 //! ## Wire shape
 //!
@@ -11,8 +10,8 @@
 //! `args: DiagnosticArgs` field, omitted from JSON entirely when empty
 //! (`#[serde(skip_serializing_if = "DiagnosticArgs::is_empty")]`). `code` is a stable, namespaced
 //! identifier; `args` carries the same literal values already used to assemble the (still
-//! present, still English) `message`/`Display` text, so a future frontend renderer (issue 04) can
-//! look up `code` in a translation catalog and interpolate `args` without parsing `message`.
+//! present, still English) `message`/`Display` text, so a future frontend renderer can look up
+//! `code` in a translation catalog and interpolate `args` without parsing `message`.
 //! `message`, `thiserror` strings, `Display` impls, and `eprintln!`/log output all stay English --
 //! this module never localizes anything itself, and adding `args` to a family is never required
 //! to also translate anything.
@@ -25,9 +24,8 @@
 //! `patch_apply_xpath_no_match`, `inheritance_missing_parent`,
 //! `xpath_autocomplete_unsupported_pattern`. Many of these are already asserted on by exact string
 //! in existing tests and documented as stable in doc comments, so this module keeps that
-//! convention -- rather than introducing `Plan.md`'s illustrative dotted `domain.condition` form --
-//! instead of renaming already-shipped, already-tested identifiers. See this issue's
-//! "Implementation notes" for the full rationale. New codes should keep following the same
+//! convention -- rather than introducing a dotted `domain.condition` form -- instead of renaming
+//! already-shipped, already-tested identifiers. New codes should keep following the same
 //! pattern: pick the owning domain prefix from `docs/i18n/diagnostic-codes.md` (or add a new one
 //! there) and describe the specific condition after it.
 //!

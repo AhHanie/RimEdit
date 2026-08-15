@@ -45,9 +45,9 @@ export function ReferenceListEditor({
   }
 
   // `inputId` normally lands on the first row's `ReferencePicker` input (below). When there are
-  // no items at all, no row exists to carry it - fall back to the container itself (issue 08,
-  // Plan.md section 8: "reveal and focus" needs a DOM anchor for this field even when it
-  // currently has zero entries, e.g. right after a required-but-absent field is revealed).
+  // no items at all, no row exists to carry it - fall back to the container itself ("reveal and
+  // focus" needs a DOM anchor for this field even when it currently has zero entries, e.g.
+  // right after a required-but-absent field is revealed).
   // `tabIndex={-1}` makes the container programmatically focusable without joining normal Tab
   // order; never set together with the row-level id, so there is never a duplicate DOM id.
   const containerId = items.length === 0 ? inputId : undefined;

@@ -18,7 +18,7 @@ type VersionState =
 /**
  * Help > About dialog: shows the application name and the packaged Tauri app version, read at
  * runtime via `getVersion()` so it always reflects `src-tauri/tauri.conf.json` instead of a
- * hardcoded frontend copy (Plan.md section 5). Running under the Vite-only dev server (no Tauri
+ * hardcoded frontend copy. Running under the Vite-only dev server (no Tauri
  * backend) has no IPC to answer the call, so a rejection falls back to a localized "unavailable"
  * state rather than surfacing an unhandled promise rejection or blocking the dialog from closing.
  */

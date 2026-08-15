@@ -1,4 +1,4 @@
-//! Tests for issue 03 (custom patch operation metadata): metadata loading, merge-by-priority,
+//! Tests for custom patch operation metadata: metadata loading, merge-by-priority,
 //! diagnostics, and built-in operation metadata parity with the hardcoded AST model.
 
 use super::*;
@@ -247,8 +247,8 @@ fn unknown_preview_kind_is_normalized_to_unsupported_with_warning() {
     assert_eq!(merged.preview.kind, PatchOperationPreviewKind::Unsupported);
 }
 
-// --- 4b. Locale sidecar overrides a patch operation's preview.message (issue 05 grammar --
-// the key grammar had no shape for a preview message) ---
+// --- Locale sidecar overrides a patch operation's preview.message (the key grammar had no
+// shape for a preview message) ---
 
 #[test]
 fn locale_sidecar_overrides_patch_operation_preview_message() {

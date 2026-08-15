@@ -2,8 +2,7 @@
 // diagnostic-code catalog (src/i18n/resources/en/diagnostics.json's "codes" object, rendered by
 // src/i18n/diagnostics.ts) against every source tree that can originate a `code` string, so a
 // renamed/removed diagnostic code cannot silently leave a stale, unreachable entry behind in the
-// English catalog (docs/i18n/issues/10-formatting-rtl-and-release-tooling.md step 4:
-// "diagnostic-registry checks"). Complements scripts/i18n/check-diagnostic-args.mjs, which checks
+// English catalog. Complements scripts/i18n/check-diagnostic-args.mjs, which checks
 // the Rust *struct shape* (does a diagnostic family have an `args` field at all); this checks the
 // frontend *catalog contents* against the *code strings* that actually exist anywhere they can be
 // constructed.

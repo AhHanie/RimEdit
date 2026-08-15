@@ -4,8 +4,7 @@
 // Each namespace's English resource object below is embedded as a literal (not imported from its
 // `.json` file) so every string value keeps its literal TypeScript type, which activates i18next's
 // built-in per-key interpolation-argument checking on every `t(...)` call site -- see
-// `scripts/i18n/shared.mjs`'s `generateTranslationKeysSource` doc comment for the full mechanism,
-// and Plan.md's "Translation key and type-safety policy".
+// `scripts/i18n/shared.mjs`'s `generateTranslationKeysSource` doc comment for the full mechanism.
 
 export const defaultNamespace = "common" as const;
 
@@ -17,6 +16,9 @@ export const enResources = {
   common: {
     "app": {
       "name": "RimEdit"
+    },
+    "startup": {
+      "loading": "Loading RimEdit…"
     },
     "actions": {
       "ok": "OK",

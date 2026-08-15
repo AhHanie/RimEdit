@@ -5,7 +5,7 @@ use crate::schema_pack::{
 use std::path::PathBuf;
 use tauri::AppHandle;
 
-/// Load the schema catalog for display (issue 06). `locale` is the frontend's active UI locale
+/// Load the schema catalog for display. `locale` is the frontend's active UI locale
 /// (`useLocale()`'s current value); it is resolved against the application locale registry inside
 /// `build_schema_catalog_with_locale`, so an absent/unsupported value deterministically falls back
 /// to `crate::locale::FALLBACK_LOCALE` rather than erroring -- this command never fails because of
