@@ -1,7 +1,12 @@
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/utilities.css";
-import { getProjectSettings, updateAppLocale } from "./features/project-settings";
+// Imported from its own file rather than the `project-settings` barrel: the barrel also
+// re-exports `PreferencesDialog` (loaded lazily by `AppShell`), and Rollup treats a barrel's own
+// re-export statement as a static edge to that component regardless of which named export an
+// importer actually uses -- so importing the barrel here would pull `PreferencesDialog` (and its
+// dependents) back into the eagerly-loaded entry chunk.
+import { getProjectSettings, updateAppLocale } from "./features/project-settings/api/projectSettings";
 import { mountApp } from "./app/bootstrap";
 
 // Persists a runtime locale switch to the global host settings. Rejections

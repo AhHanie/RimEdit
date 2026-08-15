@@ -663,7 +663,7 @@ fn invalid_xml_records_error_and_indexes_valid_files() {
         index
             .errors
             .iter()
-            .any(|e| e.args.get("unclosedCount").is_some()),
+            .any(|e| e.args.contains_key("unclosedCount")),
         "expected the underlying ParseDiagnostic's typed args to propagate onto DefIndexError: {:?}",
         index.errors
     );

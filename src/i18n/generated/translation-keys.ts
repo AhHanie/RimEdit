@@ -211,6 +211,16 @@ export const enResources = {
       "copyDetails": "Copy details",
       "copied": "Copied"
     },
+    "chunkLoading": {
+      "editor": "Loading editor…",
+      "search": "Loading search…",
+      "preferences": "Loading preferences…",
+      "about": "Loading…"
+    },
+    "chunkLoad": {
+      "failed": "Failed to load this panel.",
+      "retry": "Retry"
+    },
     "search": {
       "title": "Def Search",
       "rebuildIndex": "Rebuild index",

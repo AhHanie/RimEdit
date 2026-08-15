@@ -18,12 +18,18 @@ import { FORM_VIEW_SELECTOR_SELECT_ID } from "../../../form-views/components/For
 import { XmlEditorContextProvider } from "../../context/XmlEditorContext";
 import { XmlEditorToolbar } from "../XmlEditorToolbar/XmlEditorToolbar";
 import { XmlFormEditor } from "../XmlFormEditor/XmlFormEditor";
-import { XmlRawEditor } from "../XmlRawEditor/XmlRawEditor";
 import { XmlDiagnosticsPanel } from "../XmlDiagnosticsPanel/XmlDiagnosticsPanel";
 import { SavePreviewDialog } from "../SavePreviewDialog/SavePreviewDialog";
 import { CreateDefWizard } from "../CreateDefWizard/CreateDefWizard";
 import { SaveDefTemplateDialog } from "../SaveDefTemplateDialog/SaveDefTemplateDialog";
+import { ChunkLoadBoundary } from "../../../../lib/ChunkLoadBoundary/ChunkLoadBoundary";
 import styles from "./XmlEditorPane.module.css";
+
+// CodeMirror (imported by `XmlRawEditor`) is only needed for the "Raw XML" view mode -- most
+// sessions default to and stay on the form editor (see `useXmlEditorSession`'s `mode` state) --
+// so it's loaded lazily rather than pulled into the editor workspace's chunk unconditionally.
+const loadXmlRawEditor = () =>
+  import("../XmlRawEditor/XmlRawEditor").then((m) => ({ default: m.XmlRawEditor }));
 
 interface Props {
   projectId: string | undefined;
@@ -493,35 +499,44 @@ export function XmlEditorPane({
             />
           </XmlEditorContextProvider>
         ) : (
-          <XmlRawEditor
-            value={activeSession.currentRawXml}
-            onChange={activeSession.updateRawXml}
-            readOnly={file.readOnly}
-            onShortcut={(shortcut) => {
-              if (shortcut === "undo") {
-                if (editorSession.canUndo) editorSession.undo();
-                return true;
-              }
-              if (shortcut === "redo") {
-                if (editorSession.canRedo) editorSession.redo();
-                return true;
-              }
-              if (shortcut === "save") {
-                if (commandCanSave) {
-                  const startedAt = performance.now();
-                  const traceId = generateTraceId();
-                  void measureAsync(
-                    "xmlEditor.previewSave.entrypoint",
-                    () => editorSession.requestSavePreview(traceId, "shortcut", startedAt),
-                    { traceId, relativePath: file.relativePath, source: "shortcut", mode: "raw" },
-                  );
+          <ChunkLoadBoundary
+            factory={loadXmlRawEditor}
+            loadingFallback={
+              <div className="state-loading">
+                <Loader2 size={14} className="spin" />
+                <span>{t("editorPane.loading")}</span>
+              </div>
+            }
+            componentProps={{
+              value: activeSession.currentRawXml,
+              onChange: activeSession.updateRawXml,
+              readOnly: file.readOnly,
+              onShortcut: (shortcut: "undo" | "redo" | "save" | "close") => {
+                if (shortcut === "undo") {
+                  if (editorSession.canUndo) editorSession.undo();
+                  return true;
                 }
-                return true;
-              }
-              if (shortcut === "close") {
-                void onCloseActiveTab?.();
-                return true;
-              }
+                if (shortcut === "redo") {
+                  if (editorSession.canRedo) editorSession.redo();
+                  return true;
+                }
+                if (shortcut === "save") {
+                  if (commandCanSave) {
+                    const startedAt = performance.now();
+                    const traceId = generateTraceId();
+                    void measureAsync(
+                      "xmlEditor.previewSave.entrypoint",
+                      () => editorSession.requestSavePreview(traceId, "shortcut", startedAt),
+                      { traceId, relativePath: file.relativePath, source: "shortcut", mode: "raw" },
+                    );
+                  }
+                  return true;
+                }
+                if (shortcut === "close") {
+                  void onCloseActiveTab?.();
+                  return true;
+                }
+              },
             }}
           />
         )}

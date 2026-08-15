@@ -2,7 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-import { IndexErrorsDialog, type IndexingStatus } from "../../../features/def-index";
+// Imported from their own files rather than the `def-index` barrel: the barrel also re-exports
+// `DefSearchPanel` (loaded lazily by `AppShell`), and Rollup treats a barrel's own re-export
+// statement as a static edge to that component regardless of which named export an importer
+// actually uses -- so importing the barrel here would pull `DefSearchPanel` back into the eagerly
+// loaded entry chunk.
+import { IndexErrorsDialog } from "../../../features/def-index/components/IndexErrorsDialog/IndexErrorsDialog";
+import type { IndexingStatus } from "../../../features/def-index/types";
 import { formatFileSize, formatNumber } from "../../../i18n/format";
 import styles from "./StatusBar.module.css";
 

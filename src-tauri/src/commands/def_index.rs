@@ -308,6 +308,14 @@ mod tests {
         }
     }
 
+    type ErrorOrdering<'a> = (
+        &'a str,
+        Option<&'a str>,
+        Option<usize>,
+        Option<usize>,
+        &'a str,
+    );
+
     #[test]
     fn sorts_deterministically_by_location_path_line_column_then_code() {
         let response = build_def_index_errors_response(vec![
@@ -318,7 +326,7 @@ mod tests {
             error("Alpha", Some("b.xml"), Some(1), Some(5), "code_a"),
             error("Alpha", Some("b.xml"), Some(1), Some(5), "code_b"),
         ]);
-        let ordering: Vec<(&str, Option<&str>, Option<usize>, Option<usize>, &str)> = response
+        let ordering: Vec<ErrorOrdering> = response
             .errors
             .iter()
             .map(|e| {

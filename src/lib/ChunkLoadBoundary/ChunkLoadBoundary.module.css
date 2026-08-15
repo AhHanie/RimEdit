@@ -1,0 +1,14 @@
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--surface-panel);
+  color: var(--text-error);
+  font-size: 12px;
+}
+
+.errorMessage {
+  flex: 1;
+  min-width: 0;
+}

@@ -1,7 +1,7 @@
-import { getProjectSettings } from "./features/project-settings";
+import { getProjectSettings } from "./features/project-settings/api/projectSettings";
 import { mountApp } from "./app/bootstrap";
 
-vi.mock("./features/project-settings", () => ({
+vi.mock("./features/project-settings/api/projectSettings", () => ({
   // Never resolves -- this test only asserts the call itself and what gets forwarded to
   // `mountApp`, not startup's async settling behavior (covered by `src/app/bootstrap.test.tsx`).
   getProjectSettings: vi.fn(() => new Promise(() => {})),

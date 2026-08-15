@@ -20,17 +20,18 @@ import {
   X,
 } from "lucide-react";
 import { openAppDataFolder } from "../../commands/appDataCommands";
-import {
-  pickProjectFolder,
-  pickSourceFolder,
-  useProjectSettings,
-  PreferencesDialog,
-  type ProjectSettingsLoadResult,
-} from "../../../features/project-settings";
-import {
-  EditorWorkspace,
-  useEditorWorkspace,
-} from "../../../features/editor-workspace";
+// Value imports below come from their own files rather than the `project-settings`,
+// `editor-workspace`, and `def-index` barrels: each barrel also re-exports a heavy
+// lazily-loaded component (`PreferencesDialog`, `EditorWorkspace`, `DefSearchPanel` --
+// see the `load*` factories below), and Rollup treats a barrel's own re-export statement as a
+// static edge to that component regardless of which named export an importer actually uses -- so
+// importing any of these barrels here would pull the lazy component (and, for `EditorWorkspace`,
+// all of CodeMirror) back into the eagerly-loaded entry chunk. Type-only imports are unaffected
+// (`import type` is erased before Rollup ever sees it), so those still use the barrels below.
+import { pickProjectFolder, pickSourceFolder } from "../../../features/project-settings/api/projectDialog";
+import { useProjectSettings } from "../../../features/project-settings/hooks/useProjectSettings";
+import type { ProjectSettingsLoadResult } from "../../../features/project-settings";
+import { useEditorWorkspace } from "../../../features/editor-workspace/hooks/useEditorWorkspace";
 import type {
   ActiveEditorCommands,
   OpenFileRef,
@@ -46,7 +47,7 @@ import {
   ProjectExplorerPanel,
 } from "../../../features/project-explorer";
 import type { ProjectFileEntry } from "../../../features/project-explorer";
-import { DefSearchPanel, useIndexingStatus } from "../../../features/def-index";
+import { useIndexingStatus } from "../../../features/def-index/hooks/useIndexingStatus";
 import type { IndexingStatus } from "../../../features/def-index";
 import type { ActivityView } from "../types";
 import type { CommandAction, MenuDescriptor } from "../../commands/commandTypes";
@@ -54,11 +55,36 @@ import { AppTitleBar } from "../AppTitleBar/AppTitleBar";
 import { ActivityRail } from "../ActivityRail/ActivityRail";
 import { StatusBar } from "../StatusBar/StatusBar";
 import { CommandPalette } from "../../commands/CommandPalette/CommandPalette";
-import { AboutDialog } from "../AboutDialog/AboutDialog";
 import { ResizablePaneHandle } from "../ResizablePaneHandle/ResizablePaneHandle";
 import { usePersistentLayoutState } from "../layout/usePersistentLayoutState";
 import { LAYOUT_DEFAULTS } from "../layout/layoutState";
+import { ChunkLoadBoundary } from "../../../lib/ChunkLoadBoundary/ChunkLoadBoundary";
 import styles from "./AppShell.module.css";
+
+// Stable module-scope factories for the lazily loaded panels/dialogs below -- `ChunkLoadBoundary`
+// keys its `lazy()` wrapper off the factory reference, so an inline arrow recreated every render
+// would refetch the chunk on every render instead of only on mount/retry.
+//
+// Each factory imports the component's own file directly rather than its feature's barrel
+// `index.ts`: this module also statically imports other named exports (hooks, helpers) from the
+// same barrels, and Rollup only creates a separate async chunk for a dynamic import() when the
+// imported module isn't *also* reachable via a static import path -- targeting the barrel here
+// would fold the whole lazy component (and, for `EditorWorkspace`, all of CodeMirror) back into
+// the main chunk instead of splitting it out.
+const loadPreferencesDialog = () =>
+  import(
+    "../../../features/project-settings/components/PreferencesDialog/PreferencesDialog"
+  ).then((m) => ({ default: m.PreferencesDialog }));
+const loadAboutDialog = () =>
+  import("../AboutDialog/AboutDialog").then((m) => ({ default: m.AboutDialog }));
+const loadDefSearchPanel = () =>
+  import("../../../features/def-index/components/DefSearchPanel/DefSearchPanel").then(
+    (m) => ({ default: m.DefSearchPanel }),
+  );
+const loadEditorWorkspace = () =>
+  import("../../../features/editor-workspace/components/EditorWorkspace/EditorWorkspace").then(
+    (m) => ({ default: m.EditorWorkspace }),
+  );
 
 /** Pure decision for the `validationRefreshRevision` effect below, extracted so it's directly
  * unit-testable without rendering `AppShell`. Distinct from `indexRevision`'s own condition: this
@@ -217,6 +243,14 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
 
   const explorerVisible = activeView === "explorer";
   const searchPanelVisible = activeView === "search";
+  // The Def search chunk is only requested the first time the Search activity is opened; once
+  // mounted it stays mounted (hidden via `searchPanelVisible`/`data-visible`, like
+  // `ProjectExplorerPanel`) so its query/results state survives switching to another activity and
+  // back, matching the prior always-mounted behavior for anyone who has opened it at least once.
+  const [searchPanelMounted, setSearchPanelMounted] = useState(false);
+  useEffect(() => {
+    if (searchPanelVisible) setSearchPanelMounted(true);
+  }, [searchPanelVisible]);
 
   const indexingStatus = useIndexingStatus(activeProjectId);
   const [indexRevision, setIndexRevision] = useState(0);
@@ -784,34 +818,47 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
               workspace.reconcileDelete(relativePath);
             }}
           />
-          <DefSearchPanel
-            visible={searchPanelVisible}
-            projectId={activeProjectId}
-            hasActiveProject={!!activeProjectId}
-            indexRevision={indexRevision}
-            onOpenProjectDef={(relativePath, nodeId) =>
-              activeProjectId &&
-              void workspace.openTab(
-                projectPathToOpenFileRef(relativePath),
-                nodeId !== undefined ? { selectedDefNodeId: nodeId } : undefined,
-              )
-            }
-            onOpenSourceDef={(locationId, locationName, relativePath, nodeId) =>
-              void workspace.openTab(
-                {
-                  locationId,
-                  locationName,
-                  sourceKind: "source",
-                  readOnly: true,
-                  relativePath,
-                },
-                nodeId !== undefined ? { selectedDefNodeId: nodeId } : undefined,
-              )
-            }
-            onOpenProject={handleOpenProject}
-            onAddSourceFolder={handleAddSourceFolder}
-            searchInputRef={defSearchInputRef}
-          />
+          {searchPanelMounted && (
+            <ChunkLoadBoundary
+              factory={loadDefSearchPanel}
+              loadingFallback={
+                <div className={styles.searchFallback}>
+                  {t("shell:chunkLoading.search")}
+                </div>
+              }
+              componentProps={{
+                visible: searchPanelVisible,
+                projectId: activeProjectId,
+                hasActiveProject: !!activeProjectId,
+                indexRevision,
+                onOpenProjectDef: (relativePath: string, nodeId?: number) =>
+                  activeProjectId &&
+                  void workspace.openTab(
+                    projectPathToOpenFileRef(relativePath),
+                    nodeId !== undefined ? { selectedDefNodeId: nodeId } : undefined,
+                  ),
+                onOpenSourceDef: (
+                  locationId: string,
+                  locationName: string | undefined,
+                  relativePath: string,
+                  nodeId?: number,
+                ) =>
+                  void workspace.openTab(
+                    {
+                      locationId,
+                      locationName,
+                      sourceKind: "source",
+                      readOnly: true,
+                      relativePath,
+                    },
+                    nodeId !== undefined ? { selectedDefNodeId: nodeId } : undefined,
+                  ),
+                onOpenProject: handleOpenProject,
+                onAddSourceFolder: handleAddSourceFolder,
+                searchInputRef: defSearchInputRef,
+              }}
+            />
+          )}
           {activeView !== null && (
             <ResizablePaneHandle
               width={explorerWidth}
@@ -821,24 +868,31 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
               onChange={setExplorerWidth}
             />
           )}
-          <EditorWorkspace
-            tabs={workspace.tabs}
-            activeTabKey={workspace.activeTabKey}
-            projectId={activeProjectId}
-            catalog={catalog}
-            gameVersion={settings?.gameVersion}
-            validationRefreshRevision={validationRefreshRevision}
-            createDefSignal={createDefSignal}
-            onActivateTab={workspace.activateTab}
-            onCloseTab={workspace.closeTab}
-            onTabDirtyChange={workspace.setTabDirty}
-            onNavigateDef={(fileRef, nodeId) =>
-              workspace.openTab(
-                fileRef,
-                nodeId !== null ? { selectedDefNodeId: nodeId } : undefined,
-              )
+          <ChunkLoadBoundary
+            factory={loadEditorWorkspace}
+            loadingFallback={
+              <div className={styles.editorFallback}>
+                {t("shell:chunkLoading.editor")}
+              </div>
             }
-            onActiveCommandsChange={handleActiveCommandsChange}
+            componentProps={{
+              tabs: workspace.tabs,
+              activeTabKey: workspace.activeTabKey,
+              projectId: activeProjectId,
+              catalog,
+              gameVersion: settings?.gameVersion,
+              validationRefreshRevision,
+              createDefSignal,
+              onActivateTab: workspace.activateTab,
+              onCloseTab: workspace.closeTab,
+              onTabDirtyChange: workspace.setTabDirty,
+              onNavigateDef: (fileRef: OpenFileRef, nodeId: number | null) =>
+                workspace.openTab(
+                  fileRef,
+                  nodeId !== null ? { selectedDefNodeId: nodeId } : undefined,
+                ),
+              onActiveCommandsChange: handleActiveCommandsChange,
+            }}
           />
         </div>
       </div>
@@ -857,25 +911,43 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         onClose={() => setPaletteOpen(false)}
         commands={commands}
       />
-      {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
+      {aboutOpen && (
+        <ChunkLoadBoundary
+          factory={loadAboutDialog}
+          loadingFallback={
+            <div className={styles.dialogFallbackOverlay}>
+              {t("shell:chunkLoading.about")}
+            </div>
+          }
+          componentProps={{ onClose: () => setAboutOpen(false) }}
+        />
+      )}
       {preferencesOpen && (
-        <PreferencesDialog
-          onClose={() => setPreferencesOpen(false)}
-          settings={settings}
-          loading={loading}
-          loadError={settingsLoadError}
-          hasDirtyTabs={hasDirtyTabs}
-          installedSchemaVersions={installedSchemaVersions}
-          locale={locale}
-          themeMode={themeMode}
-          onChangeTheme={setMode}
-          onEditLocation={editLocation}
-          onRemoveLocation={deleteLocation}
-          onUpdateGameVersion={updateGameVersion}
-          onUpdateBackupsEnabled={updateBackupsEnabled}
-          onChangeLocale={changeLocale}
-          onOpenProject={handleOpenProject}
-          onAddSourceFolder={handleAddSourceFolder}
+        <ChunkLoadBoundary
+          factory={loadPreferencesDialog}
+          loadingFallback={
+            <div className={styles.dialogFallbackOverlay}>
+              {t("shell:chunkLoading.preferences")}
+            </div>
+          }
+          componentProps={{
+            onClose: () => setPreferencesOpen(false),
+            settings,
+            loading,
+            loadError: settingsLoadError,
+            hasDirtyTabs,
+            installedSchemaVersions,
+            locale,
+            themeMode,
+            onChangeTheme: setMode,
+            onEditLocation: editLocation,
+            onRemoveLocation: deleteLocation,
+            onUpdateGameVersion: updateGameVersion,
+            onUpdateBackupsEnabled: updateBackupsEnabled,
+            onChangeLocale: changeLocale,
+            onOpenProject: handleOpenProject,
+            onAddSourceFolder: handleAddSourceFolder,
+          }}
         />
       )}
     </div>

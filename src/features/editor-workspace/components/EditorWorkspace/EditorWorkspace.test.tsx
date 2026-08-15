@@ -95,9 +95,12 @@ function getVisibleRawEditor() {
   return editor as HTMLTextAreaElement;
 }
 
+// `XmlRawEditor` is lazy-loaded (see `XmlEditorPane`'s `loadXmlRawEditor`), so after a tab switch
+// the newly active pane's editor can take a tick to resolve even though a previous tab's (now
+// hidden) editor is already in the DOM -- poll until a *visible* one appears rather than just any
+// match.
 async function findVisibleRawEditor() {
-  await screen.findAllByLabelText("Raw XML editor");
-  return getVisibleRawEditor();
+  return waitFor(() => getVisibleRawEditor());
 }
 
 function WorkspaceHarness({
@@ -185,7 +188,9 @@ describe("EditorWorkspace", () => {
     });
 
     fireEvent.click(screen.getByRole("button", { name: "A.xml" }));
-    expect(getVisibleRawEditor().value).toBe(editedXml);
+    await waitFor(() => {
+      expect(getVisibleRawEditor().value).toBe(editedXml);
+    });
   });
 
   it("shows a dirty marker for the edited tab", async () => {

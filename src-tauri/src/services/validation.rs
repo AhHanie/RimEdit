@@ -220,8 +220,10 @@ mod tests {
         // Registered: a project location whose root is the fixture pack directory, with the
         // matching game version -- exactly what `schema_pack_roots`/`settings.game_version`
         // produce for a real project with a mod-embedded external schema pack.
-        let mut settings_with_root = ProjectSettings::default();
-        settings_with_root.game_version = "1.6".to_string();
+        let mut settings_with_root = ProjectSettings {
+            game_version: "1.6".to_string(),
+            ..Default::default()
+        };
         settings_with_root
             .locations
             .push(make_location("proj", fixture_path.to_str().unwrap()));

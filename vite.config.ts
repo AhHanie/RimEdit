@@ -5,8 +5,22 @@ import react from "@vitejs/plugin-react";
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
-export default defineConfig(async () => ({
-  plugins: [react()],
+export default defineConfig(async ({ mode }) => ({
+  plugins: [
+    react(),
+    // Development-only bundle inspection, invoked via `pnpm build:analyze`. Emits
+    // dist/stats.html (a treemap of module sizes per chunk) instead of being part of the
+    // shipped app.
+    ...(mode === "analyze"
+      ? [
+          (await import("rollup-plugin-visualizer")).visualizer({
+            filename: "dist/stats.html",
+            gzipSize: true,
+            template: "treemap",
+          }),
+        ]
+      : []),
+  ],
   test: {
     environment: "jsdom",
     globals: true,
