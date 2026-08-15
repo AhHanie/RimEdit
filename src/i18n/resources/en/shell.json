@@ -62,7 +62,8 @@
     "focusSearch": { "label": "Focus Def Search", "keywords": "filter, find, search, def" },
     "createDef": { "label": "Create Def from Template", "keywords": "new, def, template, insert, create, add" },
     "openCommandPalette": { "label": "Command Palette", "keywords": "command, palette, search, actions" },
-    "showAbout": { "label": "About RimEdit", "keywords": "about, version, help, info" }
+    "showAbout": { "label": "About RimEdit", "keywords": "about, version, help, info" },
+    "openAppDataFolder": { "label": "Open RimEdit Data Folder", "keywords": "data, app data, settings, cache, storage, folder, explorer" }
   },
   "startupNotice": {
     "projectNotFound": "Project folder not found: {{displayName}} ({{rootPath}})",

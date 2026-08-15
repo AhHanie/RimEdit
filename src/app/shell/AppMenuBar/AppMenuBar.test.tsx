@@ -22,6 +22,13 @@ function sampleCommands(overrides: Partial<Record<string, Partial<CommandAction>
       run: vi.fn(),
     },
     {
+      id: "open-app-data-folder",
+      labelKey: "shell:commands.openAppDataFolder.label",
+      keywordsKey: "shell:commands.openAppDataFolder.keywords",
+      icon: FolderOpen,
+      run: vi.fn(),
+    },
+    {
       id: "refresh",
       labelKey: "shell:commands.refresh.label",
       keywordsKey: "shell:commands.refresh.keywords",
@@ -76,6 +83,7 @@ function sampleMenus(explorerVisible = false): MenuDescriptor[] {
       entries: [
         { kind: "command", commandId: "open-project" },
         { kind: "command", commandId: "add-source-folder" },
+        { kind: "command", commandId: "open-app-data-folder" },
         { kind: "separator" },
         { kind: "command", commandId: "open-settings" },
         { kind: "separator" },
@@ -117,8 +125,20 @@ describe("AppMenuBar", () => {
     expect(screen.getByRole("menu")).toBeDefined();
     expect(screen.getByRole("menuitem", { name: "Open Project" })).toBeDefined();
     expect(screen.getByRole("menuitem", { name: "Add Source Folder" })).toBeDefined();
+    expect(screen.getByRole("menuitem", { name: "Open RimEdit Data Folder" })).toBeDefined();
     expect(screen.getByRole("menuitem", { name: "Refresh Project Files" })).toBeDefined();
     expect(screen.getByRole("menuitem", { name: "Preferences" })).toBeDefined();
+  });
+
+  it("invokes File > Open RimEdit Data Folder exactly once and closes the menu", async () => {
+    const commands = sampleCommands();
+    const openAppDataFolder = commands.find((c) => c.id === "open-app-data-folder")!;
+    const user = userEvent.setup();
+    render(<AppMenuBar commands={commands} menus={sampleMenus()} />);
+    await user.click(screen.getByRole("button", { name: "File" }));
+    await user.click(screen.getByRole("menuitem", { name: "Open RimEdit Data Folder" }));
+    expect(openAppDataFolder.run).toHaveBeenCalledOnce();
+    expect(screen.queryByRole("menu")).toBeNull();
   });
 
   it("invokes the underlying command's run callback exactly once and closes the menu", async () => {
@@ -215,8 +235,8 @@ describe("AppMenuBar", () => {
 
   it("navigates items with ArrowDown/ArrowUp, wrapping at the ends and skipping disabled entries", async () => {
     // "Refresh Project Files" is disabled in `sampleCommands`, so the File menu's enabled items
-    // are [Open Project, Add Source Folder, Preferences] -- wrapping must skip over Refresh in
-    // both directions.
+    // are [Open Project, Add Source Folder, Open RimEdit Data Folder, Preferences] -- wrapping
+    // must skip over Refresh in both directions.
     const user = userEvent.setup();
     render(<AppMenuBar commands={sampleCommands()} menus={sampleMenus()} />);
     screen.getByRole("button", { name: "File" }).focus();

@@ -27,6 +27,30 @@ function makeCommands(overrides: Partial<CommandAction>[] = []): CommandAction[]
 }
 
 describe("CommandPalette", () => {
+  it("finds the Open RimEdit Data Folder command by its label and keywords, and invokes it once", async () => {
+    const run = vi.fn();
+    const commands: CommandAction[] = [
+      ...makeCommands(),
+      {
+        id: "open-app-data-folder",
+        labelKey: "shell:commands.openAppDataFolder.label",
+        keywordsKey: "shell:commands.openAppDataFolder.keywords",
+        icon: FileText,
+        run,
+      },
+    ];
+    renderWithI18n(<CommandPalette open onClose={vi.fn()} commands={commands} />);
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Search commands" }), {
+      target: { value: "storage" },
+    });
+    const option = screen.getByText("Open RimEdit Data Folder");
+    expect(option).toBeDefined();
+
+    fireEvent.click(option);
+    expect(run).toHaveBeenCalledOnce();
+  });
+
   it("renders translated labels for each command", () => {
     renderWithI18n(
       <CommandPalette open onClose={vi.fn()} commands={makeCommands()} />,

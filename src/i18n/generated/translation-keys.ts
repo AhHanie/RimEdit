@@ -134,6 +134,10 @@ export const enResources = {
       "showAbout": {
         "label": "About RimEdit",
         "keywords": "about, version, help, info"
+      },
+      "openAppDataFolder": {
+        "label": "Open RimEdit Data Folder",
+        "keywords": "data, app data, settings, cache, storage, folder, explorer"
       }
     },
     "startupNotice": {

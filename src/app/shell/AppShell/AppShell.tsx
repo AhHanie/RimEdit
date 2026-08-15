@@ -19,6 +19,7 @@ import {
   Info,
   X,
 } from "lucide-react";
+import { openAppDataFolder } from "../../commands/appDataCommands";
 import {
   pickProjectFolder,
   pickSourceFolder,
@@ -386,6 +387,14 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     }
   }, [activateProject, hasDirtyTabs, t]);
 
+  const handleOpenAppDataFolder = useCallback(async () => {
+    try {
+      await openAppDataFolder();
+    } catch (e: unknown) {
+      console.error("Failed to open RimEdit data folder:", e);
+    }
+  }, []);
+
   function fileEntryToOpenFileRef(file: ProjectFileEntry): OpenFileRef {
     return {
       locationId: file.locationId ?? activeProjectId!,
@@ -534,6 +543,13 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         run: handleAddSourceFolder,
       },
       {
+        id: "open-app-data-folder",
+        labelKey: "shell:commands.openAppDataFolder.label",
+        keywordsKey: "shell:commands.openAppDataFolder.keywords",
+        icon: FolderOpen,
+        run: handleOpenAppDataFolder,
+      },
+      {
         id: "refresh",
         labelKey: "shell:commands.refresh.label",
         keywordsKey: "shell:commands.refresh.keywords",
@@ -577,6 +593,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     [
       handleOpenProject,
       handleAddSourceFolder,
+      handleOpenAppDataFolder,
       workspace.refresh,
       activeProjectId,
       activeTab,
@@ -595,6 +612,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         entries: [
           { kind: "command", commandId: "open-project" },
           { kind: "command", commandId: "add-source-folder" },
+          { kind: "command", commandId: "open-app-data-folder" },
           { kind: "separator" },
           { kind: "command", commandId: "open-settings" },
           { kind: "separator" },

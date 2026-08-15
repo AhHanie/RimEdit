@@ -1,3 +1,4 @@
+mod app_data;
 mod create_def;
 mod def_index;
 mod def_templates;
@@ -12,6 +13,7 @@ mod schema_catalog;
 mod xml_editor;
 mod xml_save;
 
+pub use app_data::open_app_data_folder;
 pub use create_def::create_def_from_template;
 pub use def_index::{
     get_def_index_errors, get_def_index_facets, get_indexing_status, query_def_duplicates,

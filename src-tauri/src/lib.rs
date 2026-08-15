@@ -24,8 +24,8 @@ use commands::{
     delete_user_def_template, get_def_index_errors, get_def_index_facets, get_indexing_status,
     get_instrumentation_config, get_last_selected_form_view, get_project_settings,
     list_custom_form_views, list_installed_schema_game_versions_cmd, list_user_def_templates,
-    load_schema_catalog, parse_patch_operations, parse_patch_value_xml, parse_xml_editor_buffer,
-    preview_def_patches, preview_project_xml_save, query_def_duplicates,
+    load_schema_catalog, open_app_data_folder, parse_patch_operations, parse_patch_value_xml,
+    parse_xml_editor_buffer, preview_def_patches, preview_project_xml_save, query_def_duplicates,
     query_patch_operations_for_def, read_indexed_def_xml, read_location_xml_editor_document,
     read_project_xml_document, read_project_xml_editor_document, read_project_xml_file,
     rebuild_def_index, rebuild_patch_index, remove_location, rename_project_path_cmd,
@@ -201,6 +201,7 @@ pub fn run() {
             reset_custom_form_view_store,
             set_last_selected_form_view,
             get_last_selected_form_view,
+            open_app_data_folder,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

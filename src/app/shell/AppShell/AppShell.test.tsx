@@ -4,10 +4,16 @@ import { renderWithI18n as render } from "../../../i18n/testing/renderWithI18n";
 import { AppShell } from "./AppShell";
 import { pickSourceFolder } from "../../../features/project-settings";
 import { useIndexingStatus } from "../../../features/def-index";
+import { openAppDataFolder } from "../../commands/appDataCommands";
 import type { ProjectSettings } from "../../../features/project-settings";
 
 const pickSourceFolderMock = vi.mocked(pickSourceFolder);
 const useIndexingStatusMock = vi.mocked(useIndexingStatus);
+const openAppDataFolderMock = vi.mocked(openAppDataFolder);
+
+vi.mock("../../commands/appDataCommands", () => ({
+  openAppDataFolder: vi.fn(),
+}));
 
 // AppShell orchestrates several heavy features (project explorer, editor workspace, def search,
 // schema catalog). This test only exercises the Preferences-dialog wiring described in Plan.md
@@ -268,5 +274,51 @@ describe("AppShell add source folder", () => {
     await user.click(screen.getByRole("button", { name: "Add source folder" }));
 
     expect(screen.queryByText(/was added as a Folder source/)).toBeNull();
+  });
+});
+
+describe("AppShell open RimEdit data folder", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("invokes the app-data-folder IPC command from File > Open RimEdit Data Folder", async () => {
+    openAppDataFolderMock.mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    await user.click(screen.getByRole("button", { name: "File" }));
+    await user.click(screen.getByRole("menuitem", { name: "Open RimEdit Data Folder" }));
+
+    expect(openAppDataFolderMock).toHaveBeenCalledOnce();
+  });
+
+  it("catches a rejected invoke instead of leaving an unhandled rejection", async () => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    openAppDataFolderMock.mockRejectedValue(new Error("boom"));
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    await user.click(screen.getByRole("button", { name: "File" }));
+    await user.click(screen.getByRole("menuitem", { name: "Open RimEdit Data Folder" }));
+
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Failed to open RimEdit data folder:",
+        expect.any(Error),
+      );
+    });
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("is enabled with no active project", async () => {
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    await user.click(screen.getByRole("button", { name: "File" }));
+
+    expect(
+      screen.getByRole("menuitem", { name: "Open RimEdit Data Folder" }),
+    ).toHaveProperty("disabled", false);
   });
 });
