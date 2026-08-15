@@ -10,11 +10,12 @@ use super::{location, temp_dir};
 
 fn steel_project_settings(project_dir: &std::path::Path, game_version: &str) -> ProjectSettings {
     ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: game_version.to_string(),
         locale: "en".to_string(),
         locations: vec![location(project_dir, "project", LocationKind::Project)],
         active_project_id: Some("project".to_string()),
+        save_backups_enabled: false,
     }
 }
 
@@ -33,11 +34,12 @@ fn cache_roundtrip_preserves_defs() {
     )
     .unwrap();
     let settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![location(&project_dir, "project", LocationKind::Project)],
         active_project_id: Some("project".to_string()),
+        save_backups_enabled: false,
     };
 
     let first = rebuild_and_store_def_index(

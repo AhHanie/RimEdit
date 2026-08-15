@@ -43,7 +43,8 @@ pub use project_files::{
 };
 pub use project_settings::{
     classify_source_folder_cmd, get_project_settings, remove_location, set_active_project,
-    update_app_locale, update_location, update_project_game_version, upsert_location,
+    update_app_locale, update_location, update_project_game_version, update_save_backups_enabled,
+    upsert_location,
 };
 pub use project_validation::validate_project;
 pub use schema_catalog::{list_installed_schema_game_versions_cmd, load_schema_catalog};

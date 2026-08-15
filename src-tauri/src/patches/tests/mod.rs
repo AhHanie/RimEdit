@@ -32,11 +32,12 @@ pub(super) fn settings_with_locations(
     active: &str,
 ) -> ProjectSettings {
     ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations,
         active_project_id: Some(active.to_string()),
+        save_backups_enabled: false,
     }
 }
 

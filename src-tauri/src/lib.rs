@@ -34,8 +34,8 @@ use commands::{
     serialize_patch_operations, serialize_patch_value_fragment, set_active_project,
     set_instrumentation_enabled, set_last_selected_form_view, signal_startup_ready,
     start_background_indexing, suggest_def_references_cmd, update_app_locale,
-    update_custom_form_view, update_location, update_project_game_version, upsert_location,
-    validate_project,
+    update_custom_form_view, update_location, update_project_game_version,
+    update_save_backups_enabled, upsert_location, validate_project,
 };
 use def_index::DefIndexState;
 use instrumentation::InstrumentationState;
@@ -168,6 +168,7 @@ pub fn run() {
             update_location,
             update_project_game_version,
             update_app_locale,
+            update_save_backups_enabled,
             list_installed_schema_game_versions_cmd,
             scan_project_files,
             read_project_xml_file,

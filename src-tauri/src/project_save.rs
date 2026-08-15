@@ -16,7 +16,6 @@ use sha2::{Digest, Sha256};
 use similar::{ChangeTag, TextDiff};
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use time::OffsetDateTime;
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -35,7 +34,7 @@ pub struct SavePreview {
 pub struct SaveResult {
     pub project_id: String,
     pub relative_path: String,
-    pub backup_path: String,
+    pub backup_path: Option<String>,
     pub bytes_written: usize,
     pub current_hash: String,
 }
@@ -220,27 +219,92 @@ pub fn hash_file_fingerprints(fps: &[IndexedFileFingerprint]) -> String {
     format!("{:x}", hasher.finalize())
 }
 
-pub fn backup_path_from_base(
+/// Deterministic, single-version backup path: `backups/<project-id>/<relative-path>`, mirroring
+/// the project-relative XML path below the project's backup root. `relative_path` must already
+/// be validated (no `..`/absolute components) by the caller's `validate_and_resolve`.
+pub fn deterministic_backup_path(
     base_dir: &Path,
     project_id: &str,
     relative_path: &str,
-    now: OffsetDateTime,
-    suffix: &str,
 ) -> PathBuf {
-    let rel = Path::new(relative_path);
-    let parent = rel.parent().unwrap_or(Path::new(""));
-    let stem = rel.file_stem().and_then(|s| s.to_str()).unwrap_or("file");
-    let ts = format!(
-        "{:04}{:02}{:02}T{:02}{:02}{:02}Z",
-        now.year(),
-        now.month() as u8,
-        now.day(),
-        now.hour(),
-        now.minute(),
-        now.second(),
-    );
-    let backup_dir = base_dir.join("backups").join(project_id).join(parent);
-    backup_dir.join(format!("{}.{}.{}.xml", stem, ts, suffix))
+    base_dir
+        .join("backups")
+        .join(project_id)
+        .join(Path::new(relative_path))
+}
+
+/// True if `file_name` is a legacy timestamp/UUID backup file
+/// (`<stem>.<YYYYMMDDTHHMMSSZ>.<8-hex-char suffix>.xml`) for the given file stem.
+fn is_legacy_backup_file_name(file_name: &str, stem: &str) -> bool {
+    let Some(rest) = file_name.strip_prefix(stem) else {
+        return false;
+    };
+    let Some(rest) = rest.strip_prefix('.') else {
+        return false;
+    };
+    let Some(rest) = rest.strip_suffix(".xml") else {
+        return false;
+    };
+    let Some((timestamp, suffix)) = rest.split_once('.') else {
+        return false;
+    };
+    is_legacy_timestamp(timestamp) && is_legacy_suffix(suffix)
+}
+
+fn is_legacy_timestamp(ts: &str) -> bool {
+    let bytes = ts.as_bytes();
+    bytes.len() == 16
+        && bytes[..8].iter().all(u8::is_ascii_digit)
+        && bytes[8] == b'T'
+        && bytes[9..15].iter().all(u8::is_ascii_digit)
+        && bytes[15] == b'Z'
+}
+
+fn is_legacy_suffix(suffix: &str) -> bool {
+    suffix.len() == 8 && suffix.chars().all(|c| c.is_ascii_hexdigit())
+}
+
+/// Removes legacy timestamp/UUID backup files for `relative_path`'s stem from `backup_dir`
+/// (the deterministic backup's own mirrored parent directory). Non-recursive, never removes
+/// directories, and never touches the deterministic backup itself or backups for other files.
+fn prune_legacy_backups(
+    backup_dir: &Path,
+    relative_path: &str,
+    deterministic_path: &Path,
+) -> Result<(), ProjectSaveError> {
+    let stem = Path::new(relative_path)
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("file");
+
+    let entries = match std::fs::read_dir(backup_dir) {
+        Ok(entries) => entries,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(e) => {
+            return Err(ProjectSaveError::BackupFailed(format!(
+                "read backup dir: {}",
+                e
+            )))
+        }
+    };
+
+    for entry in entries {
+        let entry = entry
+            .map_err(|e| ProjectSaveError::BackupFailed(format!("read backup dir entry: {}", e)))?;
+        let path = entry.path();
+        if path == deterministic_path || !path.is_file() {
+            continue;
+        }
+        let Some(name) = path.file_name().and_then(|n| n.to_str()) else {
+            continue;
+        };
+        if is_legacy_backup_file_name(name, stem) {
+            std::fs::remove_file(&path).map_err(|e| {
+                ProjectSaveError::BackupFailed(format!("prune legacy backup: {}", e))
+            })?;
+        }
+    }
+    Ok(())
 }
 
 fn check_xml_well_formed(relative_path: &str, proposed_xml: &str) -> Result<(), ProjectSaveError> {
@@ -416,6 +480,7 @@ fn collapse_unchanged_runs(lines: Vec<DiffLine>, context: usize) -> Vec<DiffLine
     out
 }
 
+#[allow(clippy::too_many_arguments)]
 fn perform_file_write(
     app_data_dir: &Path,
     project_id: &str,
@@ -423,25 +488,45 @@ fn perform_file_write(
     canonical: &Path,
     current_xml: &str,
     proposed_xml: &str,
+    save_backups_enabled: bool,
 ) -> Result<SaveResult, ProjectSaveError> {
-    let now = OffsetDateTime::now_utc();
-    let suffix = &uuid::Uuid::new_v4().to_string()[..8];
-    let bpath = backup_path_from_base(app_data_dir, project_id, relative_path, now, suffix);
-
-    if let Some(bdir) = bpath.parent() {
+    let backup_path = if save_backups_enabled {
+        let bpath = deterministic_backup_path(app_data_dir, project_id, relative_path);
+        let bdir = bpath.parent().ok_or_else(|| {
+            ProjectSaveError::BackupFailed("backup path has no parent directory".to_string())
+        })?;
         std::fs::create_dir_all(bdir)
             .map_err(|e| ProjectSaveError::BackupFailed(format!("create backup dir: {}", e)))?;
-    }
-    {
-        let mut backup_file = std::fs::File::create(&bpath)
-            .map_err(|e| ProjectSaveError::BackupFailed(format!("create backup: {}", e)))?;
-        backup_file
+
+        // Stage the backup in a temp file and only replace the deterministic backup once the
+        // staged copy is durable, so a failed/partial write never corrupts the prior recovery
+        // copy.
+        let mut staged = tempfile::NamedTempFile::new_in(bdir)
+            .map_err(|e| ProjectSaveError::BackupFailed(format!("create backup temp: {}", e)))?;
+        staged
             .write_all(current_xml.as_bytes())
-            .map_err(|e| ProjectSaveError::BackupFailed(format!("write backup: {}", e)))?;
-        backup_file
+            .map_err(|e| ProjectSaveError::BackupFailed(format!("write backup temp: {}", e)))?;
+        staged
+            .flush()
+            .map_err(|e| ProjectSaveError::BackupFailed(format!("flush backup temp: {}", e)))?;
+        staged
+            .as_file()
             .sync_all()
-            .map_err(|e| ProjectSaveError::BackupFailed(format!("sync backup: {}", e)))?;
-    }
+            .map_err(|e| ProjectSaveError::BackupFailed(format!("sync backup temp: {}", e)))?;
+        staged
+            .persist(&bpath)
+            .map_err(|e| ProjectSaveError::BackupFailed(format!("persist backup: {}", e.error)))?;
+
+        // Only legacy timestamp/UUID backups for this same relative XML file are removed, and
+        // only after the replacement backup above is durable -- a pruning failure is surfaced as
+        // a backup failure before the project file is replaced, preserving the all-or-nothing
+        // save contract.
+        prune_legacy_backups(bdir, relative_path, &bpath)?;
+
+        Some(bpath.to_string_lossy().to_string())
+    } else {
+        None
+    };
 
     let target_dir = canonical.parent().ok_or_else(|| {
         ProjectSaveError::TempWriteFailed("target has no parent directory".to_string())
@@ -463,7 +548,7 @@ fn perform_file_write(
     Ok(SaveResult {
         project_id: project_id.to_string(),
         relative_path: relative_path.to_string(),
-        backup_path: bpath.to_string_lossy().to_string(),
+        backup_path,
         bytes_written: proposed_xml.len(),
         current_hash,
     })
@@ -581,6 +666,7 @@ pub fn try_save_with_fast_token(
         &canonical,
         &current,
         proposed_xml,
+        settings.save_backups_enabled,
     )?;
     Ok(Some(result))
 }
@@ -612,6 +698,7 @@ pub fn save_project_xml_with_index(
         &canonical,
         &current,
         proposed_xml,
+        settings.save_backups_enabled,
     )
 }
 
@@ -640,6 +727,7 @@ pub fn save_project_xml(
         &canonical,
         &current,
         proposed_xml,
+        settings.save_backups_enabled,
     )
 }
 
@@ -657,8 +745,12 @@ mod tests {
     }
 
     fn make_settings(root: &Path) -> ProjectSettings {
+        make_settings_with_backups(root, true)
+    }
+
+    fn make_settings_with_backups(root: &Path, save_backups_enabled: bool) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![RegisteredLocation {
@@ -675,6 +767,7 @@ mod tests {
                 updated_at: OffsetDateTime::now_utc(),
             }],
             active_project_id: Some("proj1".to_string()),
+            save_backups_enabled,
         }
     }
 
@@ -683,22 +776,42 @@ mod tests {
     const INVALID_XML: &str = "<Defs><ThingDef><defName>Rock</defName></Defs>";
 
     #[test]
-    fn backup_path_is_timestamped_and_unique() {
+    fn deterministic_backup_path_mirrors_relative_path_under_project_id() {
         let base = temp_dir();
-        let now = OffsetDateTime::now_utc();
-        let s1 = &uuid::Uuid::new_v4().to_string()[..8];
-        let s2 = &uuid::Uuid::new_v4().to_string()[..8];
-        let p1 = backup_path_from_base(&base, "proj1", "Defs/Items.xml", now, s1);
-        let p2 = backup_path_from_base(&base, "proj1", "Defs/Items.xml", now, s2);
+        let p1 = deterministic_backup_path(&base, "proj1", "Defs/Items.xml");
+        let p2 = deterministic_backup_path(&base, "proj1", "Defs/Items.xml");
 
-        let n1 = p1.file_name().unwrap().to_string_lossy();
-        let _n2 = p2.file_name().unwrap().to_string_lossy();
-
-        assert!(n1.starts_with("Items."), "stem missing: {}", n1);
-        assert!(n1.ends_with(".xml"), "extension missing: {}", n1);
-        assert!(n1.contains('T'), "timestamp missing: {}", n1);
-        assert_ne!(p1, p2, "two paths with different suffix should differ");
+        assert_eq!(p1, p2, "the deterministic path must be stable across calls");
+        assert_eq!(
+            p1,
+            base.join("backups")
+                .join("proj1")
+                .join("Defs")
+                .join("Items.xml")
+        );
         fs::remove_dir_all(&base).ok();
+    }
+
+    #[test]
+    fn legacy_backup_file_name_matcher_only_matches_the_exact_stem() {
+        assert!(is_legacy_backup_file_name(
+            "Items.20260101T000000Z.abcd1234.xml",
+            "Items"
+        ));
+        // A different (even prefix-overlapping) stem must not match.
+        assert!(!is_legacy_backup_file_name(
+            "Items.20260101T000000Z.abcd1234.xml",
+            "Item"
+        ));
+        assert!(!is_legacy_backup_file_name("Items.xml", "Items"));
+        assert!(!is_legacy_backup_file_name(
+            "Items.not-a-timestamp.abcd1234.xml",
+            "Items"
+        ));
+        assert!(!is_legacy_backup_file_name(
+            "Items.20260101T000000Z.nothex!!.xml",
+            "Items"
+        ));
     }
 
     #[test]
@@ -715,8 +828,14 @@ mod tests {
         let on_disk = fs::read_to_string(&file_path).unwrap();
         assert_eq!(on_disk, VALID_XML_2, "target should contain proposed XML");
 
-        let backup_content = fs::read_to_string(&result.backup_path).unwrap();
+        let backup_path = result.backup_path.expect("backup should have been made");
+        let backup_content = fs::read_to_string(&backup_path).unwrap();
         assert_eq!(backup_content, VALID_XML, "backup should contain old XML");
+        assert_eq!(
+            Path::new(&backup_path),
+            app_data_dir.join("backups").join("proj1").join("file.xml"),
+            "backup path should be deterministic"
+        );
 
         let temp_count = fs::read_dir(&project_dir)
             .unwrap()
@@ -727,6 +846,144 @@ mod tests {
             })
             .count();
         assert_eq!(temp_count, 0, "no temp files should remain");
+
+        fs::remove_dir_all(&project_dir).ok();
+        fs::remove_dir_all(&app_data_dir).ok();
+    }
+
+    #[test]
+    fn disabled_backups_write_xml_without_creating_backups_dir() {
+        let project_dir = temp_dir();
+        let app_data_dir = temp_dir();
+        let file_path = project_dir.join("file.xml");
+        fs::write(&file_path, VALID_XML).unwrap();
+
+        let settings = make_settings_with_backups(&project_dir, false);
+        let result =
+            save_project_xml(&settings, &app_data_dir, "proj1", "file.xml", VALID_XML_2).unwrap();
+
+        assert!(result.backup_path.is_none());
+        let on_disk = fs::read_to_string(&file_path).unwrap();
+        assert_eq!(on_disk, VALID_XML_2);
+        assert!(
+            !app_data_dir.join("backups").exists(),
+            "disabled saves must not create a backups directory"
+        );
+
+        fs::remove_dir_all(&project_dir).ok();
+        fs::remove_dir_all(&app_data_dir).ok();
+    }
+
+    #[test]
+    fn enabled_first_save_captures_prior_contents() {
+        let project_dir = temp_dir();
+        let app_data_dir = temp_dir();
+        let file_path = project_dir.join("file.xml");
+        fs::write(&file_path, VALID_XML).unwrap();
+
+        let settings = make_settings_with_backups(&project_dir, true);
+        let result =
+            save_project_xml(&settings, &app_data_dir, "proj1", "file.xml", VALID_XML_2).unwrap();
+
+        let backup_path = result.backup_path.expect("backup should have been made");
+        assert_eq!(fs::read_to_string(&backup_path).unwrap(), VALID_XML);
+
+        fs::remove_dir_all(&project_dir).ok();
+        fs::remove_dir_all(&app_data_dir).ok();
+    }
+
+    #[test]
+    fn two_enabled_saves_of_the_same_file_leave_one_deterministic_backup() {
+        let project_dir = temp_dir();
+        let app_data_dir = temp_dir();
+        let file_path = project_dir.join("file.xml");
+        fs::write(&file_path, VALID_XML).unwrap();
+
+        let settings = make_settings_with_backups(&project_dir, true);
+        let result1 =
+            save_project_xml(&settings, &app_data_dir, "proj1", "file.xml", VALID_XML_2).unwrap();
+        let backup_path = result1.backup_path.clone().unwrap();
+        assert_eq!(fs::read_to_string(&backup_path).unwrap(), VALID_XML);
+
+        let result2 =
+            save_project_xml(&settings, &app_data_dir, "proj1", "file.xml", VALID_XML).unwrap();
+        assert_eq!(result2.backup_path.as_deref(), Some(backup_path.as_str()));
+        assert_eq!(
+            fs::read_to_string(&backup_path).unwrap(),
+            VALID_XML_2,
+            "the single backup must now hold the version immediately before the second save"
+        );
+
+        let backup_dir = app_data_dir.join("backups").join("proj1");
+        let file_count = fs::read_dir(&backup_dir).unwrap().count();
+        assert_eq!(
+            file_count, 1,
+            "exactly one backup file should exist for this path"
+        );
+
+        fs::remove_dir_all(&project_dir).ok();
+        fs::remove_dir_all(&app_data_dir).ok();
+    }
+
+    #[test]
+    fn two_different_relative_paths_get_separate_backups() {
+        let project_dir = temp_dir();
+        let app_data_dir = temp_dir();
+        fs::create_dir_all(project_dir.join("Defs")).unwrap();
+        fs::write(project_dir.join("file.xml"), VALID_XML).unwrap();
+        fs::write(project_dir.join("Defs").join("Items.xml"), VALID_XML).unwrap();
+
+        let settings = make_settings_with_backups(&project_dir, true);
+        let r1 =
+            save_project_xml(&settings, &app_data_dir, "proj1", "file.xml", VALID_XML_2).unwrap();
+        let r2 = save_project_xml(
+            &settings,
+            &app_data_dir,
+            "proj1",
+            "Defs/Items.xml",
+            VALID_XML_2,
+        )
+        .unwrap();
+
+        assert_ne!(r1.backup_path, r2.backup_path);
+        assert_eq!(
+            fs::read_to_string(r1.backup_path.unwrap()).unwrap(),
+            VALID_XML
+        );
+        assert_eq!(
+            fs::read_to_string(r2.backup_path.unwrap()).unwrap(),
+            VALID_XML
+        );
+
+        fs::remove_dir_all(&project_dir).ok();
+        fs::remove_dir_all(&app_data_dir).ok();
+    }
+
+    #[test]
+    fn enabled_save_prunes_legacy_backups_for_the_saved_file_but_keeps_others() {
+        let project_dir = temp_dir();
+        let app_data_dir = temp_dir();
+        let file_path = project_dir.join("file.xml");
+        fs::write(&file_path, VALID_XML).unwrap();
+
+        let backup_dir = app_data_dir.join("backups").join("proj1");
+        fs::create_dir_all(&backup_dir).unwrap();
+        let legacy_this_file = backup_dir.join("file.20250101T000000Z.deadbeef.xml");
+        fs::write(&legacy_this_file, "old legacy content").unwrap();
+        let legacy_other_file = backup_dir.join("other.20250101T000000Z.deadbeef.xml");
+        fs::write(&legacy_other_file, "other legacy content").unwrap();
+
+        let settings = make_settings_with_backups(&project_dir, true);
+        save_project_xml(&settings, &app_data_dir, "proj1", "file.xml", VALID_XML_2).unwrap();
+
+        assert!(
+            !legacy_this_file.exists(),
+            "legacy snapshot for the saved file should be pruned"
+        );
+        assert!(
+            legacy_other_file.exists(),
+            "legacy snapshot for a different file must be preserved"
+        );
 
         fs::remove_dir_all(&project_dir).ok();
         fs::remove_dir_all(&app_data_dir).ok();

@@ -843,11 +843,12 @@ mod tests {
             updated_at: OffsetDateTime::now_utc(),
         };
         let settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![location],
             active_project_id: Some("proj-x".to_string()),
+            save_backups_enabled: false,
         };
 
         // A project-less (sources-only) hydration captured an empty fingerprint list, since only

@@ -129,6 +129,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     deleteLocation,
     editLocation,
     updateGameVersion,
+    updateBackupsEnabled,
     installedSchemaVersions,
   } = useProjectSettings(initialProjectSettingsPromise);
   const activeProjectId = settings?.activeProjectId;
@@ -871,6 +872,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
           onEditLocation={editLocation}
           onRemoveLocation={deleteLocation}
           onUpdateGameVersion={updateGameVersion}
+          onUpdateBackupsEnabled={updateBackupsEnabled}
           onChangeLocale={changeLocale}
           onOpenProject={handleOpenProject}
           onAddSourceFolder={handleAddSourceFolder}

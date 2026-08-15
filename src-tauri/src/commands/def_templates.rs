@@ -736,11 +736,12 @@ mod project_validation_tests {
 
     fn make_settings(locations: Vec<RegisteredLocation>) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations,
             active_project_id: None,
+            save_backups_enabled: false,
         }
     }
 
@@ -1211,11 +1212,12 @@ mod duplicate_check_pipeline_tests {
 
     fn make_settings(locations: Vec<RegisteredLocation>) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations,
             active_project_id: None,
+            save_backups_enabled: false,
         }
     }
 
@@ -1542,11 +1544,12 @@ mod source_existence_pipeline_tests {
 
     fn make_settings(locations: Vec<RegisteredLocation>) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations,
             active_project_id: None,
+            save_backups_enabled: false,
         }
     }
 

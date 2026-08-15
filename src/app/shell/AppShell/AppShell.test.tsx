@@ -22,11 +22,12 @@ vi.mock("../../commands/appDataCommands", () => ({
 // their own IPC calls.
 
 const settings: ProjectSettings = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   gameVersion: "1.6",
   locale: "en",
   locations: [],
   activeProjectId: undefined,
+  saveBackupsEnabled: false,
 };
 
 vi.mock("../../../features/project-settings", async (importOriginal) => {
@@ -45,6 +46,7 @@ vi.mock("../../../features/project-settings", async (importOriginal) => {
       editLocation: vi.fn(),
       activateProject: vi.fn(),
       updateGameVersion: vi.fn(),
+      updateBackupsEnabled: vi.fn(),
       replaceSettings: vi.fn(),
     }),
     pickProjectFolder: vi.fn(),

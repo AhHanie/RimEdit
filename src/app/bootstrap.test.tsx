@@ -60,11 +60,12 @@ afterEach(() => {
 
 const nonDefaultSettings: ProjectSettingsLoadResult = {
   settings: {
-    schemaVersion: 3,
+    schemaVersion: 4,
     gameVersion: "1.6",
     locale: "en",
     locations: [],
     activeProjectId: undefined,
+    saveBackupsEnabled: false,
   },
 };
 

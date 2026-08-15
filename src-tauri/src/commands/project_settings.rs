@@ -170,6 +170,17 @@ pub fn update_app_locale(app: AppHandle, locale: String) -> Result<ProjectSettin
 }
 
 #[tauri::command]
+pub fn update_save_backups_enabled(
+    app: AppHandle,
+    enabled: bool,
+) -> Result<ProjectSettings, AppError> {
+    let mut settings = load_settings(&app)?;
+    ps_service::update_save_backups_enabled(&mut settings, enabled);
+    save_settings(&app, &settings)?;
+    Ok(settings)
+}
+
+#[tauri::command]
 pub fn update_project_game_version(
     app: AppHandle,
     game_version: String,

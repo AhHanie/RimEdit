@@ -28,7 +28,7 @@ fn make_location(
 
 fn make_settings(root: &Path) -> ProjectSettings {
     ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![make_location(
@@ -39,6 +39,7 @@ fn make_settings(root: &Path) -> ProjectSettings {
             false,
         )],
         active_project_id: Some("proj1".to_string()),
+        save_backups_enabled: false,
     }
 }
 
@@ -237,11 +238,12 @@ fn base_game_scan_keeps_duplicate_def_paths_from_peer_content_packs() {
     .unwrap();
 
     let settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![make_base_game_location("base", "RimWorld Data", &data_dir)],
         active_project_id: None,
+        save_backups_enabled: false,
     };
 
     let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
@@ -279,7 +281,7 @@ fn mod_load_folder_scan_still_shadows_duplicate_relative_paths() {
     .unwrap();
 
     let settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![make_location(
@@ -290,6 +292,7 @@ fn mod_load_folder_scan_still_shadows_duplicate_relative_paths() {
             true,
         )],
         active_project_id: None,
+        save_backups_enabled: false,
     };
 
     let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
@@ -323,7 +326,7 @@ fn steam_workshop_collection_scans_defs_from_every_immediate_item_directory() {
     fs::write(item_b.join("1.6").join("Defs").join("ItemB.xml"), "<Defs/>").unwrap();
 
     let settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![make_steam_workshop_location(
@@ -332,6 +335,7 @@ fn steam_workshop_collection_scans_defs_from_every_immediate_item_directory() {
             &collection_root,
         )],
         active_project_id: None,
+        save_backups_enabled: false,
     };
 
     let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
@@ -374,7 +378,7 @@ fn steam_workshop_collection_isolates_diagnostics_per_item_with_deterministic_or
     fs::write(item_unrelated_files.join("Defs").join("Ok.xml"), "<Defs/>").unwrap();
 
     let settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![make_steam_workshop_location(
@@ -383,6 +387,7 @@ fn steam_workshop_collection_isolates_diagnostics_per_item_with_deterministic_or
             &collection_root,
         )],
         active_project_id: None,
+        save_backups_enabled: false,
     };
 
     let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
@@ -439,11 +444,12 @@ fn ordinary_mod_load_folders_diagnostic_keeps_the_filename_not_just_none() {
     );
     location.source_type = SourceType::Folder;
     let settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![location.clone()],
         active_project_id: None,
+        save_backups_enabled: false,
     };
 
     let scan = scan_indexable_def_xml_files(&settings, &location).unwrap();
@@ -471,7 +477,7 @@ fn steam_workshop_collection_with_no_item_folders_reports_a_location_level_diagn
     // likely misconfigured (pointing at a single mod root or an empty/unrelated directory).
 
     let settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![make_steam_workshop_location(
@@ -480,6 +486,7 @@ fn steam_workshop_collection_with_no_item_folders_reports_a_location_level_diagn
             &collection_root,
         )],
         active_project_id: None,
+        save_backups_enabled: false,
     };
 
     let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
@@ -510,7 +517,7 @@ fn steam_workshop_collection_keeps_same_relative_filename_from_different_items()
     fs::write(item_b.join("Defs").join("Shared.xml"), "<Defs/>").unwrap();
 
     let settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![make_steam_workshop_location(
@@ -519,6 +526,7 @@ fn steam_workshop_collection_keeps_same_relative_filename_from_different_items()
             &collection_root,
         )],
         active_project_id: None,
+        save_backups_enabled: false,
     };
 
     let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();
@@ -547,7 +555,7 @@ fn steam_workshop_item_still_shadows_duplicate_relative_paths_within_itself() {
     fs::write(item.join("High").join("Defs").join("Same.xml"), "<Defs/>").unwrap();
 
     let settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![make_steam_workshop_location(
@@ -556,6 +564,7 @@ fn steam_workshop_item_still_shadows_duplicate_relative_paths_within_itself() {
             &collection_root,
         )],
         active_project_id: None,
+        save_backups_enabled: false,
     };
 
     let scan = scan_indexable_def_xml_files(&settings, &settings.locations[0]).unwrap();

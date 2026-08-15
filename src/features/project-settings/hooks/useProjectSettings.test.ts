@@ -3,6 +3,7 @@ import { useProjectSettings } from "./useProjectSettings";
 import {
   getProjectSettings,
   updateProjectGameVersion,
+  updateSaveBackupsEnabled,
   listInstalledSchemaGameVersions,
 } from "../api/projectSettings";
 import type { ProjectSettings } from "../types";
@@ -20,18 +21,21 @@ vi.mock("../api/projectSettings", () => ({
   setActiveProject: vi.fn(),
   updateLocation: vi.fn(),
   updateProjectGameVersion: vi.fn(),
+  updateSaveBackupsEnabled: vi.fn(),
   listInstalledSchemaGameVersions: vi.fn(),
 }));
 
 const getProjectSettingsMock = vi.mocked(getProjectSettings);
 const updateProjectGameVersionMock = vi.mocked(updateProjectGameVersion);
+const updateSaveBackupsEnabledMock = vi.mocked(updateSaveBackupsEnabled);
 const listInstalledSchemaGameVersionsMock = vi.mocked(listInstalledSchemaGameVersions);
 
 function makeSettings(overrides: Partial<ProjectSettings> = {}): ProjectSettings {
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     gameVersion: "1.6",
     locale: "en",
+    saveBackupsEnabled: false,
     locations: [
       {
         id: "loc1",
@@ -124,5 +128,46 @@ describe("useProjectSettings - external schema root threading (issue 09)", () =>
     await waitFor(() =>
       expect(result.current.installedSchemaVersions).toEqual(["1.5", "1.6"]),
     );
+  });
+});
+
+describe("useProjectSettings - updateBackupsEnabled", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("updates local settings after the API call resolves", async () => {
+    getProjectSettingsMock.mockResolvedValue({ settings: makeSettings() });
+    listInstalledSchemaGameVersionsMock.mockResolvedValue(["1.6"]);
+    updateSaveBackupsEnabledMock.mockResolvedValue(
+      makeSettings({ saveBackupsEnabled: true }),
+    );
+
+    const { result } = renderHook(() => useProjectSettings());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.updateBackupsEnabled(true);
+    });
+
+    expect(updateSaveBackupsEnabledMock).toHaveBeenCalledWith(true);
+    expect(result.current.settings?.saveBackupsEnabled).toBe(true);
+  });
+
+  it("leaves state unchanged when the API call rejects", async () => {
+    getProjectSettingsMock.mockResolvedValue({ settings: makeSettings() });
+    listInstalledSchemaGameVersionsMock.mockResolvedValue(["1.6"]);
+    updateSaveBackupsEnabledMock.mockRejectedValue(new Error("persist failed"));
+
+    const { result } = renderHook(() => useProjectSettings());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await expect(result.current.updateBackupsEnabled(true)).rejects.toThrow(
+        "persist failed",
+      );
+    });
+
+    expect(result.current.settings?.saveBackupsEnabled).toBe(false);
   });
 });

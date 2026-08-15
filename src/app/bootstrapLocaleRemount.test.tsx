@@ -73,11 +73,12 @@ test("remounts LocaleProvider for the app render so a persisted locale from sett
   await act(async () => {
     deferred.resolve({
       settings: {
-        schemaVersion: 3,
+        schemaVersion: 4,
         gameVersion: "1.6",
         locale: "en",
         locations: [],
         activeProjectId: undefined,
+        saveBackupsEnabled: false,
       },
     });
     await mountPromise;

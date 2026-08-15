@@ -24,12 +24,14 @@ export interface RegisteredLocation {
 }
 
 export interface ProjectSettings {
-  schemaVersion: 3;
+  schemaVersion: 4;
   gameVersion: string;
   /** Global app UI locale (BCP-47, e.g. "en"). App-wide despite this type's name. */
   locale: string;
   locations: RegisteredLocation[];
   activeProjectId?: string;
+  /** Global preference: when true, XML saves retain one recovery copy per project file. */
+  saveBackupsEnabled: boolean;
 }
 
 export interface MissingActiveProjectNotice {

@@ -13,6 +13,7 @@ import {
   setActiveProject,
   updateLocation,
   updateProjectGameVersion,
+  updateSaveBackupsEnabled,
   listInstalledSchemaGameVersions,
 } from "../api/projectSettings";
 import { formatError } from "../../../lib/formatError";
@@ -29,6 +30,7 @@ interface UseProjectSettingsReturn {
   editLocation: (update: RegisteredLocationUpdate) => Promise<void>;
   activateProject: (id: string | undefined) => Promise<void>;
   updateGameVersion: (version: string) => Promise<void>;
+  updateBackupsEnabled: (enabled: boolean) => Promise<void>;
   replaceSettings: (settings: ProjectSettings) => void;
 }
 
@@ -171,6 +173,11 @@ export function useProjectSettings(
     setSettings(updated);
   }, []);
 
+  const updateBackupsEnabled = useCallback(async (enabled: boolean) => {
+    const updated = await updateSaveBackupsEnabled(enabled);
+    setSettings(updated);
+  }, []);
+
   const replaceSettings = useCallback((next: ProjectSettings) => {
     setSettings(next);
     setStartupNotice(null);
@@ -188,6 +195,7 @@ export function useProjectSettings(
     editLocation,
     activateProject,
     updateGameVersion,
+    updateBackupsEnabled,
     replaceSettings,
   };
 }

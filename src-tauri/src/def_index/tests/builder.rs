@@ -19,11 +19,12 @@ fn settings_with_project(
         locations.push(location(src, "source", LocationKind::Source));
     }
     ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations,
         active_project_id: Some("project".to_string()),
+        save_backups_enabled: false,
     }
 }
 
@@ -36,7 +37,7 @@ fn settings_with_base_game_source(
     base_game.source_type = SourceType::BaseGame;
     base_game.mod_id = None;
     ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![
@@ -44,6 +45,7 @@ fn settings_with_base_game_source(
             base_game,
         ],
         active_project_id: Some("project".to_string()),
+        save_backups_enabled: false,
     }
 }
 
@@ -56,7 +58,7 @@ fn settings_with_steam_workshop_source(
     workshop.source_type = SourceType::SteamWorkshop;
     workshop.mod_id = None;
     ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![
@@ -64,6 +66,7 @@ fn settings_with_steam_workshop_source(
             workshop,
         ],
         active_project_id: Some("project".to_string()),
+        save_backups_enabled: false,
     }
 }
 
@@ -472,11 +475,12 @@ fn replacement_overlay_does_not_mutate_base_index() {
 fn settings_fingerprint_changes_when_location_display_name_changes() {
     let project_dir = temp_dir();
     let mut settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![location(&project_dir, "project", LocationKind::Project)],
         active_project_id: Some("project".to_string()),
+        save_backups_enabled: false,
     };
     let options = DefIndexBuildOptions::for_project("project");
     let first = settings_fingerprint(&settings, &options);
@@ -492,11 +496,12 @@ fn settings_fingerprint_changes_when_location_display_name_changes() {
 fn settings_fingerprint_changes_when_game_version_changes() {
     let project_dir = temp_dir();
     let mut settings = ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![location(&project_dir, "project", LocationKind::Project)],
         active_project_id: Some("project".to_string()),
+        save_backups_enabled: false,
     };
     let options = DefIndexBuildOptions::for_project("project");
     let first = settings_fingerprint(&settings, &options);

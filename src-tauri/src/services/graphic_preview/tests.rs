@@ -128,11 +128,12 @@ fn make_settings(
     active_project_id: Option<&str>,
 ) -> ProjectSettings {
     ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations,
         active_project_id: active_project_id.map(str::to_owned),
+        save_backups_enabled: false,
     }
 }
 

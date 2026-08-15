@@ -15,11 +15,12 @@ fn settings_with_workshop_collection(collection_root: &Path) -> ProjectSettings 
     let mut loc = location(collection_root, "workshop", LocationKind::Source);
     loc.source_type = SourceType::SteamWorkshop;
     ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations: vec![loc],
         active_project_id: None,
+        save_backups_enabled: false,
     }
 }
 

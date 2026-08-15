@@ -153,7 +153,7 @@ mod tests {
         .unwrap();
 
         let settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![
@@ -175,6 +175,7 @@ mod tests {
                 ),
             ],
             active_project_id: Some("project".to_string()),
+            save_backups_enabled: false,
         };
         let catalog_result = build_schema_catalog(&[], Some("1.6"));
         let index = build_def_index(&settings, DefIndexBuildOptions::for_project("project"));

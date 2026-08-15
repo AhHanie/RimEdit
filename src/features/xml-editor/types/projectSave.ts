@@ -24,7 +24,7 @@ export interface SavePreview {
 export interface SaveResult {
   projectId: string;
   relativePath: string;
-  backupPath: string;
+  backupPath: string | null;
   bytesWritten: number;
   currentHash: string;
 }

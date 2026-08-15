@@ -248,6 +248,9 @@ export const enResources = {
       },
       "languageHeader": "Language",
       "languageAriaLabel": "Language",
+      "backupHeader": "Backup",
+      "backupDescription": "Keep one previous version per file, so you can recover from an XML save you didn't mean to make.",
+      "backupCheckboxLabel": "Create a backup before saving",
       "gameVersionHeader": "Game Version",
       "locationsDescription": "A location is either your active project (the mod you're editing) or a read-only source folder, such as the base game or another mod, registered so its Defs are available for reference, autocomplete, and validation without being editable."
     },

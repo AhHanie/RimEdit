@@ -211,11 +211,12 @@ mod tests {
         .unwrap();
 
         let settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![mod_location(&root)],
             active_project_id: None,
+            save_backups_enabled: false,
         };
 
         let custom_operations = custom_operations_for_settings(&settings);

@@ -18,6 +18,7 @@ fn settings_path(
 /// - v1 → v2: adds `gameVersion: "1.6"` if absent; converts `expansion` source
 ///   types to `folder` and removes `expansionName`.
 /// - v2 → v3: adds `locale: "en"` if absent.
+/// - v3 → v4: adds `saveBackupsEnabled: false` if absent.
 fn migrate_settings_json(raw: &str) -> Result<String, serde_json::Error> {
     let mut value: serde_json::Value = serde_json::from_str(raw)?;
 
@@ -27,8 +28,8 @@ fn migrate_settings_json(raw: &str) -> Result<String, serde_json::Error> {
             .and_then(|v| v.as_u64())
             .unwrap_or(0);
 
-        if schema_version < 3 {
-            obj.insert("schemaVersion".into(), serde_json::json!(3));
+        if schema_version < 4 {
+            obj.insert("schemaVersion".into(), serde_json::json!(4));
         }
         // Always insert a default gameVersion if it is absent, regardless of schemaVersion,
         // so partially-written or externally-edited files don't fail deserialization.
@@ -41,6 +42,11 @@ fn migrate_settings_json(raw: &str) -> Result<String, serde_json::Error> {
         // is normalized rather than rejected.
         let locale = obj.get("locale").and_then(|v| v.as_str()).unwrap_or("");
         obj.insert("locale".into(), serde_json::json!(resolve_locale(locale)));
+        // Always insert a default saveBackupsEnabled if it is absent, preserving an explicitly
+        // stored true/false value (including one written by a future build we're reading back).
+        if !obj.contains_key("saveBackupsEnabled") {
+            obj.insert("saveBackupsEnabled".into(), serde_json::json!(false));
+        }
 
         // Migrate expansion → folder source type records.
         if let Some(locations) = obj.get_mut("locations").and_then(|v| v.as_array_mut()) {
@@ -113,9 +119,10 @@ mod tests {
         let v1 = r#"{"schemaVersion":1,"locations":[],"activeProjectId":null}"#;
         let migrated: serde_json::Value =
             serde_json::from_str(&migrate_settings_json(v1).unwrap()).unwrap();
-        assert_eq!(migrated["schemaVersion"], 3);
+        assert_eq!(migrated["schemaVersion"], 4);
         assert_eq!(migrated["gameVersion"], "1.6");
         assert_eq!(migrated["locale"], "en");
+        assert_eq!(migrated["saveBackupsEnabled"], false);
     }
 
     #[test]
@@ -142,7 +149,7 @@ mod tests {
         let migrated: serde_json::Value =
             serde_json::from_str(&migrate_settings_json(v2_no_version).unwrap()).unwrap();
         assert_eq!(migrated["gameVersion"], "1.6");
-        assert_eq!(migrated["schemaVersion"], 3);
+        assert_eq!(migrated["schemaVersion"], 4);
     }
 
     #[test]
@@ -150,7 +157,7 @@ mod tests {
         let v2 = r#"{"schemaVersion":2,"gameVersion":"1.6","locations":[]}"#;
         let migrated: serde_json::Value =
             serde_json::from_str(&migrate_settings_json(v2).unwrap()).unwrap();
-        assert_eq!(migrated["schemaVersion"], 3);
+        assert_eq!(migrated["schemaVersion"], 4);
         assert_eq!(migrated["locale"], "en");
     }
 
@@ -168,6 +175,24 @@ mod tests {
         let migrated: serde_json::Value =
             serde_json::from_str(&migrate_settings_json(v3).unwrap()).unwrap();
         assert_eq!(migrated["locale"], "en");
+    }
+
+    #[test]
+    fn migration_adds_save_backups_disabled_to_v3_settings() {
+        let v3 = r#"{"schemaVersion":3,"gameVersion":"1.6","locale":"en","locations":[]}"#;
+        let migrated: serde_json::Value =
+            serde_json::from_str(&migrate_settings_json(v3).unwrap()).unwrap();
+        assert_eq!(migrated["schemaVersion"], 4);
+        assert_eq!(migrated["saveBackupsEnabled"], false);
+    }
+
+    #[test]
+    fn migration_preserves_explicit_save_backups_enabled_value() {
+        let v4 = r#"{"schemaVersion":4,"gameVersion":"1.6","locale":"en","locations":[],"saveBackupsEnabled":true}"#;
+        let migrated: serde_json::Value =
+            serde_json::from_str(&migrate_settings_json(v4).unwrap()).unwrap();
+        assert_eq!(migrated["schemaVersion"], 4);
+        assert_eq!(migrated["saveBackupsEnabled"], true);
     }
 
     #[test]
