@@ -11,7 +11,11 @@ import type {
   FieldSchema,
   TemplateFieldValue,
 } from "../../../schema-catalog/types";
-import { searchDefs } from "../../../def-index";
+// Imported from its own file rather than the `def-index` barrel: the barrel also re-exports
+// `DefSearchPanel` (loaded lazily by `AppShell`), and Rollup treats a barrel's own re-export
+// statement as a static edge to that component regardless of which named export an importer
+// actually uses -- see `AppShell.tsx`'s import comment for the full rationale.
+import { searchDefs } from "../../../def-index/api/defIndex";
 import type { IndexedDef, IndexedDefSearchResult } from "../../../def-index";
 import type { UseXmlEditorSessionReturn } from "../../hooks/useXmlEditorSession";
 import type { CreateDefResult } from "../../types/createDef";

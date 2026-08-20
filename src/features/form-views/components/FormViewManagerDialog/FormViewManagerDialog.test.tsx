@@ -149,9 +149,8 @@ describe("FormViewManagerDialog", () => {
     expect(screen.getByText("Delete")).toBeTruthy();
   });
 
-  // Plan.md section 6/12: "A missing/renamed base becomes a nonblocking 'derived from
-  // unavailable view' notice, not a broken view." / "Show unavailable-base/missing-field
-  // notices in manager."
+  // A missing/renamed base becomes a nonblocking "derived from unavailable view" notice, not a
+  // broken view.
   it("shows an unavailable-base notice for a custom view whose recorded base view was renamed/removed", () => {
     const defaultView = view();
     // No schema-origin view named "weapon" is in `availableViews` at all -- standing in for a

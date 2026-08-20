@@ -9,8 +9,8 @@ import type { XmlFormApi } from "../../hooks/useXmlFormController";
 import { FormFieldStore } from "../../lib/formFieldStore";
 import type { SchemaCatalog } from "../../../schema-catalog/types";
 
-// Covers issue 08's "Preview button appears for selected Def" and "Preview command is called
-// with selected Def identity" acceptance criteria at the XmlEditorPane wiring layer.
+// Covers the Preview button appearing for a selected Def and the Preview command being called
+// with the selected Def's identity, at the XmlEditorPane wiring layer.
 // PatchPreviewDialog's own behavior (fetch/disable/reorder/reset) is covered by its own test file.
 vi.mock("../../hooks/useXmlEditorSession", () => ({ useXmlEditorSession: vi.fn() }));
 vi.mock("../../hooks/useXmlFormController", () => ({ useXmlFormController: vi.fn() }));

@@ -26,7 +26,7 @@ impl From<&LocationKind> for IndexedSourceKind {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct IndexedDefSource {
     pub location_id: String,

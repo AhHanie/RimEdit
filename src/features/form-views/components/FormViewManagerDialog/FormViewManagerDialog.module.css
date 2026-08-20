@@ -215,7 +215,7 @@
   letter-spacing: 0.03em;
 }
 
-/* Nonblocking, informational only (Plan.md section 6/12): a custom view whose recorded schema
+/* Nonblocking, informational only: a custom view whose recorded schema
  * base no longer resolves. The view remains fully selectable/usable regardless -- this is never
  * an error/blocking state, so it deliberately does not reuse `.errorBanner`'s error color. */
 .rowBaseWarning {

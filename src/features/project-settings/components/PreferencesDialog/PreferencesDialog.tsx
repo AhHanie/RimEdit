@@ -29,6 +29,7 @@ interface PreferencesDialogProps {
   onEditLocation: (update: RegisteredLocationUpdate) => Promise<void>;
   onRemoveLocation: (id: string) => Promise<void>;
   onUpdateGameVersion: (version: string) => Promise<void>;
+  onUpdateBackupsEnabled: (enabled: boolean) => Promise<void>;
   onChangeLocale: (locale: string) => Promise<void>;
   onOpenProject: () => void;
   onAddSourceFolder: () => void;
@@ -36,8 +37,8 @@ interface PreferencesDialogProps {
 
 /**
  * File > Preferences / activity-rail gear modal. Replaces the old resizable Settings sidebar
- * (`ProjectSettingsPanel`) with an accessible dialog (Plan.md "Preferences window implementation
- * plan"). Mounted conditionally by `AppShell` (`{preferencesOpen && <PreferencesDialog .../>}`),
+ * (`ProjectSettingsPanel`) with an accessible dialog. Mounted conditionally by `AppShell`
+ * (`{preferencesOpen && <PreferencesDialog .../>}`),
  * matching `AboutDialog`'s convention -- this is what makes `useDialogKeyboard`'s mount-time focus
  * capture/restore and the "always defaults to General" requirement work for free on every open,
  * without a separate `open` prop toggling internal visibility.
@@ -55,6 +56,7 @@ export function PreferencesDialog({
   onEditLocation,
   onRemoveLocation,
   onUpdateGameVersion,
+  onUpdateBackupsEnabled,
   onChangeLocale,
   onOpenProject,
   onAddSourceFolder,
@@ -67,6 +69,7 @@ export function PreferencesDialog({
   const [panelError, setPanelError] = useState<string | null>(null);
   const [versionChangePending, setVersionChangePending] = useState(false);
   const [localeChangePending, setLocaleChangePending] = useState(false);
+  const [backupsChangePending, setBackupsChangePending] = useState(false);
 
   async function handleSaveLocation(update: RegisteredLocationUpdate) {
     setPanelError(null);
@@ -142,6 +145,19 @@ export function PreferencesDialog({
       setPanelError(formatError(err));
     } finally {
       setLocaleChangePending(false);
+    }
+  }
+
+  async function handleBackupsEnabledChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const enabled = e.target.checked;
+    setPanelError(null);
+    setBackupsChangePending(true);
+    try {
+      await onUpdateBackupsEnabled(enabled);
+    } catch (err) {
+      setPanelError(formatError(err));
+    } finally {
+      setBackupsChangePending(false);
     }
   }
 
@@ -316,6 +332,20 @@ export function PreferencesDialog({
                     ))}
                   </select>
                 </div>
+
+                <div className={styles.sectionHeader}>{t("settings:preferences.backupHeader")}</div>
+                <p className={styles.fieldDescription}>
+                  {t("settings:preferences.backupDescription")}
+                </p>
+                <label className={styles.radioOption}>
+                  <input
+                    type="checkbox"
+                    checked={settings?.saveBackupsEnabled ?? false}
+                    onChange={(e) => void handleBackupsEnabledChange(e)}
+                    disabled={loading || !settings || backupsChangePending}
+                  />
+                  <span>{t("settings:preferences.backupCheckboxLabel")}</span>
+                </label>
               </div>
             )}
 

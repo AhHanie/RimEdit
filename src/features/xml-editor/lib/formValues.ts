@@ -496,7 +496,7 @@ function buildInitialChildren(
   return result;
 }
 
-/** Exported for `patches-editor`'s `PatchValueEditor` (issue 06), which reuses this pure,
+/** Exported for `patches-editor`'s `PatchValueEditor`, which reuses this pure,
  * node-id-free builder to turn an edited `ObjectFieldValue` into an `XmlInitialElement` fragment
  * for a patch operation's `<value>` payload -- the same tree shape object-list item insertion
  * already sends over IPC, just serialized to a standalone XML string instead of applied as a
@@ -1289,7 +1289,7 @@ export function fieldToXmlEdit(field: FieldEditInput): XmlEdit[] {
 /**
  * Classifies whether an edit changes document node structure (inserts/removes/reorders
  * elements). Value-only edits keep parse-order node ids stable across a re-parse, which
- * lets the controller skip a full form rebuild after a form-originated commit (Step 4).
+ * lets the controller skip a full form rebuild after a form-originated commit.
  *
  * Note: text/attribute setters can still *create* a missing element (structural). The
  * controller additionally guards on node-count equality, so this only needs to flag the

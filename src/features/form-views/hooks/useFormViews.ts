@@ -1,14 +1,13 @@
-// The Form View selection/resolution controller (issue 06, Plan.md section 9). Owns:
+// The Form View selection/resolution controller. Owns:
 //   - the combined selectable list (Default + resolved schema views + project custom views);
 //   - the resolved current selection, with safe fallback-to-Default and re-persistence;
-//   - a tab-local, unsaved `FieldVisibilityOverride` slot (issue 07 is the sole owner of the
-//     per-field checkbox UI that actually produces one; this issue only needs the state slot and
-//     a coarse constructor to prove the selector's indicator/reset/discard contract);
+//   - a tab-local, unsaved `FieldVisibilityOverride` slot, with a coarse constructor
+//     (`setOverrideHiddenFieldIds`) that `FormViewFieldChecklist`'s per-field checkbox UI and the
+//     in-form inline hide affordances drive;
 //   - the resulting `effectiveHidden`/`visibleTopLevelFieldIds`, ready to hand straight to
-//     `useXmlFormController`'s `visibleTopLevelFieldIds` (issue 05's contract).
+//     `useXmlFormController`'s `visibleTopLevelFieldIds`.
 //
-// Instantiated once per mounted `XmlEditorPane` (Plan.md section 9: "`useFormViews` in
-// `XmlEditorPane`"). Override/selection-in-progress state is keyed by
+// Instantiated once per mounted `XmlEditorPane`. Override/selection-in-progress state is keyed by
 // `{projectId, gameVersion, defType, ordinal}` *within* this hook instance so two Defs of the
 // same type opened in one multi-Def file don't share state, AND so a game-version (or project)
 // change is treated as an entirely new scope rather than reusing a stale "already loaded"
@@ -60,53 +59,53 @@ export interface UseFormViewsArgs {
   projectId: string | null | undefined;
   gameVersion: string | null | undefined;
   catalog: SchemaCatalog | null;
-  /** Reserved for future per-pane diagnostics/telemetry; not read by this issue. Kept as an
-   * explicit parameter slot (rather than added later) per Plan.md section 9's stated inputs. */
+  /** Reserved for future per-pane diagnostics/telemetry; not currently read. Kept as an
+   * explicit parameter slot rather than added later. */
   pane: FormViewsPaneIdentity | null;
   selectedDef: FormViewsSelectedDef | null;
 }
 
 export interface UseFormViewsResult {
   /** Whether Form View controls should render at all -- `profile === "defs"` with a selected Def
-   * that has a resolvable schema (Plan.md section 11). False for Patch/About/raw and for a Def
+   * that has a resolvable schema. False for Patch/About/raw and for a Def
    * type with no schema entry. */
   applicable: boolean;
   availableViews: ResolvedFormView[];
   selectedView: ResolvedFormView;
   effectiveHidden: ReadonlySet<string>;
   hiddenCount: number;
-  /** Ready to pass straight to `useXmlFormController`'s `visibleTopLevelFieldIds` (issue 05). */
+  /** Ready to pass straight to `useXmlFormController`'s `visibleTopLevelFieldIds`. */
   visibleTopLevelFieldIds: ReadonlySet<string> | null;
   override: FieldVisibilityOverride | null;
   hasDirtyOverride: boolean;
 
-  /** Clean selection change: clears any override and persists the new preference (Plan.md
-   * section 9/12 -- "persist a clean selection preference"; never called while an override is
-   * dirty without the caller having already resolved that via the switch-confirmation flow). */
+  /** Clean selection change: clears any override and persists the new preference. Never called
+   * while an override is dirty without the caller having already resolved that via the
+   * switch-confirmation flow. */
   selectView: (ref: SelectedFormViewRef) => void;
-  /** Convenience for the persistent "Show full form" action (Plan.md section 8). */
+  /** Convenience for the persistent "Show full form" action. */
   selectDefaultView: () => void;
-  /** "Reset to selected view" / "Discard override" (Plan.md section 8 step 4) -- same state
+  /** "Reset to selected view" / "Discard override" -- same state
    * action, different call-site copy. */
   resetOverride: () => void;
-  /** Coarse override constructor. Issue 06 has no field-checkbox UI to drive this from -- it
-   * exists so tests (and issue 07) can exercise the indicator/reset/discard/save-as-custom
-   * contract against a synthetic override. Replaces the override wholesale; `isDirty` is
+  /** Coarse override constructor: replaces the override wholesale, driven by
+   * `FormViewFieldChecklist`'s per-field checkboxes and the in-form inline hide affordances (also
+   * exercised directly by tests against a synthetic override). `isDirty` is
    * computed against the *currently selected* view. */
   setOverrideHiddenFieldIds: (hidden: ReadonlySet<string>) => void;
   /** Materializes the current override's hidden set as a new custom view, selects it, and
-   * clears the override (Plan.md section 8 step 3/6: "Save as custom view"). Throws if there is
+   * clears the override. Throws if there is
    * no active project/Def type or no override to save. */
   saveOverrideAsCustomView: (
     name: string,
     description?: string | null,
   ) => Promise<CustomFormView>;
   /** Creates a new custom view copying `view`'s hidden set (Default/schema/custom all valid
-   * sources -- Plan.md section 8 step 5/17: "schema-defined views ... can be duplicated"). Does
+   * sources -- schema-defined views can be duplicated too). Does
    * not change the current selection. */
   duplicateAsCustomView: (view: ResolvedFormView, name?: string) => Promise<CustomFormView>;
   /** Creates a brand-new custom view with an empty hidden set (hides nothing, same effective
-   * visibility as Default until issue 07's checkbox UI customizes it). Does NOT change the
+   * visibility as Default until the field-checkbox UI customizes it). Does NOT change the
    * current selection -- creating a view is not itself a switch, so it must not silently clear
    * a dirty override. Callers that want to auto-select the freshly created view should route
    * through the same `useViewSwitchConfirmation`/`selectView` gate as any other switch, e.g.
@@ -117,8 +116,7 @@ export interface UseFormViewsResult {
     viewId: string,
     updates: CustomFormViewUpdateInput,
   ) => Promise<CustomFormView>;
-  /** Deletes a custom view; if it was the current selection, immediately selects Default
-   * (Plan.md section 12 edge case). */
+  /** Deletes a custom view; if it was the current selection, immediately selects Default. */
   deleteCustomView: (viewId: string) => Promise<void>;
 
   /**
@@ -211,7 +209,7 @@ export function useFormViews({
   const applicable = !!selectedDef && !!defSchema;
 
   const normalizedGameVersion = gameVersion ?? "";
-  // Custom views are scoped by {project, gameVersion, defType} (Plan.md section 3). Only ask
+  // Custom views are scoped by {project, gameVersion, defType}. Only ask
   // the store for real data once we actually have all three -- an empty defType/gameVersion
   // would otherwise be a meaningless (and misleading) list call.
   const customViewsProjectId = projectId && normalizedGameVersion && defType ? projectId : null;
@@ -287,7 +285,7 @@ export function useFormViews({
     // Includes `projectId`/`gameVersion` so a game-version (or project) change is treated as a
     // brand-new scope with its own `loaded: false` state, not a reuse of whatever was already
     // loaded for the OLD scope's `{project, gameVersion, defType}` custom-view/preference
-    // namespace (Plan.md section 3/6). Without this, switching game version would keep
+    // namespace. Without this, switching game version would keep
     // `active.loaded === true` and the stale OLD-scope `selectionRef`, letting the
     // fallback-reconciliation effect below wrongly conclude the NEW scope's real preference
     // (never actually fetched) doesn't resolve, and re-persist a fallback over it.
@@ -331,7 +329,7 @@ export function useFormViews({
       .catch(() => {
         if (cancelled) return;
         // No `selectionRef`/generation implications on failure -- just unblock `loaded` so the
-        // resolver can fall back to recommended/Default (Plan.md section 6/12) without waiting
+        // resolver can fall back to recommended/Default without waiting
         // forever. Harmless (idempotent) even if a manual selection already flipped `loaded` to
         // `true` in the meantime.
         setActive((prev) => (prev && prev.key === key ? { ...prev, loaded: true } : prev));
@@ -350,8 +348,8 @@ export function useFormViews({
     return view ?? buildFallbackDefault(defType ?? "");
   }, [availableViews, active?.selectionRef, defType]);
 
-  // Fallback reconciliation (Plan.md section 6/12, issue instruction: "correctly re-persist the
-  // fallback as the new clean selection"). Only fires for a *real* stored reference that no
+  // Fallback reconciliation: correctly re-persist the fallback as the new clean selection. Only
+  // fires for a *real* stored reference that no
   // longer resolves (a deleted custom view, a schema view/pack that disappeared) -- never for
   // "no stored reference yet", which is not a fallback, just an unset preference.
   useEffect(() => {
@@ -366,8 +364,7 @@ export function useFormViews({
     // transiently unreadable or corrupt on-disk store) -- those two states are otherwise
     // indistinguishable from here. Treating a load failure as "confirmed gone" would silently
     // overwrite a real persisted custom-view selection with Default/recommended the moment a
-    // transient read error occurs, contradicting Plan.md section 12's "surface diagnostic, do
-    // not overwrite" rule for custom-view store problems. While there's a load error, leave the
+    // transient read error occurs. While there's a load error, leave the
     // current selection exactly as-is (do not reconcile, do not persist) until a subsequent
     // successful reload proves one way or the other.
     if (!defSchema || customFormViews.loading || customFormViews.error) return;

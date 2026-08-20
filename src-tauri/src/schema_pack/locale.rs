@@ -1,7 +1,6 @@
 //! Deterministic locale-resource key grammar for schema-pack locale sidecars, and the merge-time
 //! overlay application that applies a pack's own sidecar overrides onto the catalog it contributed
-//! to. See `docs/i18n/issues/05-schema-pack-localization.md` and `Plan.md`'s "Ownership and
-//! resource model" section.
+//! to. See the "Ownership" section below for the resource-ownership model.
 //!
 //! ## Sidecar shape
 //!
@@ -337,7 +336,7 @@ pub struct LocaleOwnerMaps {
 
 /// Apply every pack's own `locale` overlay onto the already fully-merged catalog maps, in place.
 /// Must run strictly after `merge::merge_packs`'s ordinary pack-precedence/inheritance merge is
-/// complete (see this module's doc comment and the issue's "Risks" section on merge provenance).
+/// complete (see this module's doc comment on merge provenance).
 ///
 /// For each override key: unresolvable resources and resources owned by a different pack are
 /// skipped with a recoverable diagnostic; the rest of the pack's overlay, and every other pack's

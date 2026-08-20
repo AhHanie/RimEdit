@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // CLI wrapper for checkDiagnosticRegistry.mjs -- see that module's doc comment for what this
-// checks and why. Per docs/i18n/issues/10-formatting-rtl-and-release-tooling.md step 4: "Add
-// scripts that validate ... diagnostic code coverage."
+// checks and why.
 //
 // Usage: node scripts/i18n/check-diagnostic-registry.mjs
 

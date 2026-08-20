@@ -6,10 +6,8 @@
  * `args` field of this shape, omitted from the wire entirely when empty.
  *
  * `args` is typed, literal interpolation data (field names, def types/names, paths, xpath
- * strings, counts) for a future frontend renderer (see `docs/i18n/issues/04-frontend-diagnostic-rendering.md`)
- * to interpolate into a localized message looked up by `code`. It is never itself an assembled
- * sentence fragment, and this type does not participate in rendering yet -- see
- * `docs/i18n/issues/03-structured-backend-diagnostics.md`.
+ * strings, counts) for a frontend renderer to interpolate into a localized message looked up by
+ * `code`. It is never itself an assembled sentence fragment.
  */
 export type DiagnosticArgValue = string | number | boolean | string[];
 
@@ -23,7 +21,7 @@ export type DiagnosticArgs = Record<string, DiagnosticArgValue>;
  * than falling through to a raw, untranslatable `Error.message`. `message` is still set (to a
  * plain English sentence) so `instanceof Error` consumers and `.rejects.toThrow(...)` assertions
  * keep working, and so it still reads sensibly as a last-resort fallback if `code` is ever absent
- * from the catalog. See `docs/i18n/issues/04-frontend-diagnostic-rendering.md`.
+ * from the catalog.
  */
 export class DiagnosticError extends Error {
   readonly code: string;

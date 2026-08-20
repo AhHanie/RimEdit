@@ -13,8 +13,7 @@ export function AboutVersionedOverridesSection({ fields }: Props) {
   const { t } = useTranslation("editor");
   // Three translated-label renderers, not a `[dynamicKey, entries][]` loop: react-i18next's
   // generated `t()` overloads require a literal key from the translation-keys union, which a
-  // runtime `string` loop variable can never satisfy (see docs/i18n/issues/10-formatting-rtl-and-
-  // release-tooling.md's "Implementation notes" for the type error this replaced).
+  // runtime `string` loop variable can never satisfy.
   const listGroups: { id: string; label: (version: string) => string; entries: AboutVersionedListEntry[] }[] = [
     {
       id: "loadBefore",

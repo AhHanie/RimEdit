@@ -129,9 +129,7 @@ export const PatchOperationNodeRow = memo(function PatchOperationNodeRow({
                 spellCheck={false}
                 className={styles.rawXml}
                 // XML is machine-readable syntax, not natural-language prose -- keep it forced
-                // LTR even once a future RTL locale flips `dir` on `<html>` (see
-                // docs/i18n/issues/08-editor-and-patch-ui-migration.md's "keep code editor/XML/
-                // XPath controls dir=ltr by semantic policy" carve-out).
+                // LTR even once a future RTL locale flips `dir` on `<html>`.
                 dir="ltr"
                 value={kind.data.rawXml}
                 disabled={readOnly}

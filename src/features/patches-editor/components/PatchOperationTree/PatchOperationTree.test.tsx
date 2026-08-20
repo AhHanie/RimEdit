@@ -6,8 +6,7 @@ import type { PatchOperationNodeRowProps } from "../PatchOperationNodeRow/PatchO
 
 // Replaces the real recursive row renderer with a bare-bones stub that stashes the props it was
 // last called with, keyed by operation id -- lets this test assert on callback *identity*
-// (Plan.md's "operation-id-based dispatcher") without depending on React internals to prove a
-// render was skipped.
+// without depending on React internals to prove a render was skipped.
 const capturedProps = new Map<number, PatchOperationNodeRowProps>();
 vi.mock("../PatchOperationNodeRow/PatchOperationNodeRow", () => ({
   PatchOperationNodeRow: (props: PatchOperationNodeRowProps) => {

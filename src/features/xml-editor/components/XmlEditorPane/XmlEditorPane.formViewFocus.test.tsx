@@ -10,8 +10,8 @@ import type { SchemaCatalog } from "../../../schema-catalog/types";
 // Only the (heavy, Tauri-backed) session hook is mocked here -- `useXmlFormController`,
 // `useFormViews`, and `XmlFormEditor`/`FormViewSelector` all run for real, because this test
 // exists specifically to prove the real wiring between them: that `XmlEditorPane` actually
-// supplies `onFocusedFieldHidden` to `useXmlFormController` (issue 05's signal, issue 06's
-// consumer) and that it moves focus to the Form View selector rather than losing it.
+// supplies `onFocusedFieldHidden` to `useXmlFormController` and that it moves focus to the
+// Form View selector rather than losing it.
 vi.mock("../../hooks/useXmlEditorSession", () => ({
   useXmlEditorSession: vi.fn(),
 }));

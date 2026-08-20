@@ -7,12 +7,11 @@ use super::*;
 // crate can be shown to do "correctly" for a hidden field is what it already does for ANY field
 // an edit doesn't target: leave its subtree completely untouched through an edit + serialize +
 // re-validate cycle. These tests prove exactly that generic guarantee -- using field shapes
-// (object root, list root, attribute, blocking-diagnostic scalar) that Plan.md section 5 calls
-// out as the ones a Form View would hide -- and prove it byte-exact for the untouched
-// object/list roots (their complete original source span, not a handful of hand-picked
-// substrings that would miss reordered attributes or reformatted whitespace anywhere inside
-// that range), matching Plan.md section 13's "hidden known fields survive parse/edit/serialize
-// round trips and still yield diagnostics".
+// (object root, list root, attribute, blocking-diagnostic scalar) that a Form View would hide --
+// and prove it byte-exact for the untouched object/list roots (their complete original source
+// span, not a handful of hand-picked substrings that would miss reordered attributes or
+// reformatted whitespace anywhere inside that range), confirming that hidden known fields
+// survive parse/edit/serialize round trips and still yield diagnostics.
 //
 // What is NOT claimed: there is no "view" type, parameter, or branch anywhere in `XmlEdit`
 // (`xml_document::edit::api`), `ValidationContext`/`validate_document`, or

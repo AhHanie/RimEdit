@@ -113,8 +113,7 @@ fn trigger_settings_reindex(app: &AppHandle, settings: &ProjectSettings) {
     // Registered locations, game version, and active project all feed into the external schema
     // roots/game-version key `SchemaCatalogCacheState` builds catalogs from -- drop every cached
     // catalog so the next XPath completion (or built-in-only) request rebuilds against the new
-    // settings rather than serving one built for the prior root set (Plan.md's cache invalidation
-    // requirement).
+    // settings rather than serving one built for the prior root set.
     app.state::<SchemaCatalogCacheState>().invalidate_all();
 }
 
@@ -166,6 +165,17 @@ pub fn update_location(
 pub fn update_app_locale(app: AppHandle, locale: String) -> Result<ProjectSettings, AppError> {
     let mut settings = load_settings(&app)?;
     ps_service::update_app_locale(&mut settings, locale)?;
+    save_settings(&app, &settings)?;
+    Ok(settings)
+}
+
+#[tauri::command]
+pub fn update_save_backups_enabled(
+    app: AppHandle,
+    enabled: bool,
+) -> Result<ProjectSettings, AppError> {
+    let mut settings = load_settings(&app)?;
+    ps_service::update_save_backups_enabled(&mut settings, enabled);
     save_settings(&app, &settings)?;
     Ok(settings)
 }

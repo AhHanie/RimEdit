@@ -12,8 +12,7 @@ import {
   type TextDirection,
 } from "./locale";
 
-/** Injectable persistence hook. Issue 01 wires the plumbing only; no feature
- * calls this yet (persisting/selecting a locale is out of scope until issue 02). */
+/** Injectable persistence hook for a locale change. */
 export type LocalePersistFn = (locale: SupportedLocaleCode) => void | Promise<void>;
 
 export interface LocaleContextValue {
@@ -36,8 +35,7 @@ export interface LocaleProviderProps {
 /** Applies `document.documentElement.lang`/`dir` for arbitrary locale metadata. Kept independent
  * of the supported-locale registry (unlike `applyDocumentLocale`) so the underlying `lang`/`dir`
  * mechanism itself -- including RTL directionality -- is directly testable against a future-locale
- * fixture without adding that locale to `SUPPORTED_LOCALES` (which would make it selectable; see
- * `docs/i18n/issues/10-formatting-rtl-and-release-tooling.md` step 3). */
+ * fixture without adding that locale to `SUPPORTED_LOCALES` (which would make it selectable). */
 export function applyDocumentLocaleForMetadata(metadata: LocaleMetadata): void {
   if (typeof document === "undefined") return;
   document.documentElement.lang = metadata.code;
@@ -108,14 +106,14 @@ export function LocaleProvider({
       // returns to the event loop and a newer call can start and finish before this call resumes.
       const isCurrent = () => switchSequenceRef.current === mySequence;
 
-      // Plan.md's documented switch order is: set i18next language -> set `<html lang>`/`dir` ->
-      // persist. That means the new locale is visibly live before persistence is confirmed, so
-      // failure handling is this function's own responsibility, not each caller's: if `persist`
-      // rejects, revert i18next/document/state back to `previousLocale` here, deterministically,
-      // before rethrowing -- so Plan.md's contract ("failure leaves the previous locale active")
-      // holds even if a caller's own error handling does nothing beyond surfacing the message. A
-      // caller therefore never needs its own rollback dance, and a second rollback failure (the
-      // old failure mode this replaces) can no longer leave the UI stuck on an unpersisted locale.
+      // The switch order is: set i18next language -> set `<html lang>`/`dir` -> persist. That
+      // means the new locale is visibly live before persistence is confirmed, so failure handling
+      // is this function's own responsibility, not each caller's: if `persist` rejects, revert
+      // i18next/document/state back to `previousLocale` here, deterministically, before
+      // rethrowing -- so failure leaves the previous locale active even if a caller's own error
+      // handling does nothing beyond surfacing the message. A caller therefore never needs its own
+      // rollback dance, and a second rollback failure (the old failure mode this replaces) can no
+      // longer leave the UI stuck on an unpersisted locale.
       await resolvedInstance.changeLanguage(resolved);
       // If a newer `changeLocale` call started (and possibly already finished) while this call's
       // `changeLanguage` was in flight, that newer call now owns document/state/persistence.

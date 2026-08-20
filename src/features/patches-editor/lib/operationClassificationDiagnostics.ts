@@ -31,7 +31,7 @@ export function classificationDiagnostics(
     // to raw-XML preservation because of an unrecognized extra field (`patches::parser`'s
     // `unrecognized_field_name` path), which already pushes its own explanatory
     // `patchFile.diagnostics` entry. Built-in classes are also shipped as schema-pack metadata
-    // (issue 03, so the form renderer is data-driven), so without this guard `metadata` below
+    // (so the form renderer is data-driven), so without this guard `metadata` below
     // would resolve and this would wrongly claim a real built-in is "a custom operation ...
     // preview cannot execute it".
     if (node.kind.type === "unknown" && node.className !== "" && !isBuiltInOperationClass(node.className)) {

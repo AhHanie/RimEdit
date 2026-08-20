@@ -84,9 +84,9 @@ pub(crate) enum StackSlot {
 }
 
 /// A `GraphicPreviewVariant`'s display label, as a translatable discriminant plus typed
-/// literal/numeric args -- never pre-assembled English text (Plan.md: backend-originated UI text
-/// must be `code`/`args`-shaped, translated by the frontend, not raw English). `index` values are
-/// 1-based, matching what a user should see (`"Variant 1"`, not `"Variant 0"`).
+/// literal/numeric args -- never pre-assembled English text, since backend-originated UI text
+/// must be `code`/`args`-shaped and translated by the frontend, not raw English. `index` values
+/// are 1-based, matching what a user should see (`"Variant 1"`, not `"Variant 0"`).
 ///
 /// `AppearanceNamed`'s `suffix` is the one exception carrying free text: it's derived directly from
 /// an actual texture file name on disk (e.g. `"Damaged"` from `Blocks_Damaged.png`), not a fixed UI

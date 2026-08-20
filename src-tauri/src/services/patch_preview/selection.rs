@@ -12,11 +12,10 @@ pub(super) fn def_name_of(el: Element<'_>) -> Option<String> {
 /// True if `el` is the Def the caller identified via `def_type`/`def_name`: a `def_type` element
 /// whose `<defName>` equals `def_name`, or -- falling back for `Abstract="True"` parent templates,
 /// which are never deserialized as real Defs and so have no `defName` at all -- whose `Name`
-/// attribute equals `def_name`. This is the "or node identity" half of issue 08's "Preview selected
-/// Def by Def type and defName or node identity" requirement: the frontend has no way to identify
-/// an abstract template except by its `Name` (there is no correlation between the editor's
-/// `nodeId`s and this preview engine's independently-parsed combined document), so `Name` is used
-/// as that alternate identity wherever the selected Def is looked up by (`def_type`, `def_name`).
+/// attribute equals `def_name`. The frontend has no way to identify an abstract template except
+/// by its `Name` (there is no correlation between the editor's `nodeId`s and this preview
+/// engine's independently-parsed combined document), so `Name` is used as that alternate identity
+/// wherever the selected Def is looked up by (`def_type`, `def_name`).
 pub(super) fn matches_selected_def(el: Element<'_>, def_type: &str, def_name: &str) -> bool {
     if el.name().local_part() != def_type {
         return false;

@@ -41,10 +41,9 @@ interface Props {
 }
 
 /** Raw XML editor plus schema-backed structured subform for a patch operation's `<value>`
- * payload (issue 06). Raw XML is always available; structured mode is offered once the xpath
+ * payload. Raw XML is always available; structured mode is offered once the xpath
  * resolves to a known, structurally-supported Def field (or, for Add/Insert against a bare Def
- * node, once the user picks which direct field they're adding). See
- * docs/patches-editor/06-structured-patch-value-editor.md for the shape-support boundary. */
+ * node, once the user picks which direct field they're adding). */
 export function PatchValueEditor({
   valueXml,
   readOnly,
@@ -111,8 +110,8 @@ export function PatchValueEditor({
     const key = editTarget ? `${operationType}:${editTarget.fieldName}` : null;
     if (key === lastTargetKeyRef.current) return;
     lastTargetKeyRef.current = key;
-    // Insert defaults to raw ("raw-first unless sibling item shape is clear" -- see Plan.md);
-    // every other supported kind defaults to structured when available.
+    // Insert defaults to raw (raw-first unless sibling item shape is clear); every other
+    // supported kind defaults to structured when available.
     setMode(structurallySupported && operationType !== "insert" ? "structured" : "raw");
     setStructureError(null);
   }, [editTarget?.fieldName, operationType, structurallySupported]);
@@ -258,9 +257,7 @@ export function PatchValueEditor({
           rows={4}
           spellCheck={false}
           // XML is machine-readable syntax, not natural-language prose -- keep it forced LTR even
-          // once a future RTL locale flips `dir` on `<html>` (see
-          // docs/i18n/issues/08-editor-and-patch-ui-migration.md's "keep code editor/XML/XPath
-          // controls dir=ltr by semantic policy" carve-out).
+          // once a future RTL locale flips `dir` on `<html>`.
           dir="ltr"
           value={rawDraft}
           disabled={readOnly}

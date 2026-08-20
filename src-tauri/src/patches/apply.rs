@@ -1,7 +1,7 @@
 //! Applies parsed patch operations (`patches::model::PatchOperationNode`) to a combined
 //! `sxd_document` XML tree (`patches::dom`), mirroring the decompiled `Verse.PatchOperation*`
-//! `ApplyWorker` implementations (see `docs/patches-editor/Plan.md`'s "Reference Behavior" for the
-//! source file list). This module does not know about Def files, load order, or the impact graph
+//! `ApplyWorker` implementations. This module does not know about Def files, load order, or the
+//! impact graph
 //! -- it only applies an already-ordered, already-filtered stream of top-level operations to
 //! whatever document it is given; `services::patch_preview` owns combining Defs and scoping the
 //! preview-only enable/disable/reorder controls to the selected Def.
@@ -52,7 +52,7 @@ pub struct TopLevelOperation<'a> {
 
 pub struct PatchApplyOptions<'a> {
     /// Mod display names considered "active" for `PatchOperationFindMod` (RimWorld matches by
-    /// mod name, not package id -- see `Plan.md`'s "Reference Behavior").
+    /// mod name, not package id).
     pub active_mod_names: &'a [String],
     pub custom_operations: &'a CustomOperationMetadataMap,
     /// Operations (any nesting depth) to skip entirely for this preview run. A skipped operation

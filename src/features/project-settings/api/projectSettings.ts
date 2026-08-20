@@ -47,6 +47,12 @@ export function updateAppLocale(locale: string): Promise<ProjectSettings> {
   return invoke<ProjectSettings>("update_app_locale", { locale });
 }
 
+export function updateSaveBackupsEnabled(
+  enabled: boolean,
+): Promise<ProjectSettings> {
+  return invoke<ProjectSettings>("update_save_backups_enabled", { enabled });
+}
+
 export function classifySourceFolder(path: string): Promise<SourceFolderClassification> {
   return invoke<SourceFolderClassification>("classify_source_folder_cmd", { path });
 }

@@ -2,7 +2,7 @@ use crate::def_index::{apply_replacement_overlay, DefIndexReplacement};
 use crate::project_model::{AppError, ProjectSettings};
 use crate::rimworld_load_folders::read_load_folders_version_keys;
 use crate::schema_pack::{build_schema_catalog, schema_pack_roots};
-use crate::services::def_index_cache;
+use crate::services::def_index_cache::{self, IndexLoadPolicy};
 use crate::xml_document::{
     validate_about_metadata_document, validate_document, ValidationContext, XmlDocument,
     XmlDocumentProfile,
@@ -18,6 +18,11 @@ fn find_location_root(settings: &ProjectSettings, location_id: &str) -> Option<P
         .map(|l| PathBuf::from(&l.root_path))
 }
 
+/// Validates a project-owned document for the interactive editor (initial open, in-buffer
+/// parse/edit validation) -- see `services::xml_editor`'s callers. Loads the def index under
+/// `IndexLoadPolicy::Interactive`, so this must never be used for a save/commit decision or any
+/// path that needs a guaranteed-fresh index; those must load `RequireFresh` themselves and pass
+/// the resulting index/context through directly instead of going through this function.
 pub(crate) async fn validate_doc_for_project(
     app: &AppHandle,
     settings: &ProjectSettings,
@@ -44,10 +49,16 @@ pub(crate) async fn validate_doc_for_project(
     // external-schema-pack root (an embedded `SchemaPacks/<name>/` or `About/` folder). Building
     // an unfiltered, all-game-version catalog here (as this used to do) would validate against a
     // merge of every installed schema-pack game version at once, silently diverging from what the
-    // form/catalog UI actually renders -- see Plan.md section 15's "catalog-context mismatch".
+    // form/catalog UI actually renders.
     let roots = schema_pack_roots(settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
-    let base_index = def_index_cache::load_for_project(app, settings, project_id, false).await?;
+    let base_index = def_index_cache::load_for_project_with_policy(
+        app,
+        settings,
+        project_id,
+        IndexLoadPolicy::Interactive,
+    )
+    .await?;
     let def_index = apply_replacement_overlay(
         (*base_index).clone(),
         settings,
@@ -68,7 +79,8 @@ pub(crate) async fn validate_doc_for_project(
 /// Validates a source location document using the project's index without
 /// overlaying the document as a project entry. This avoids false duplicate
 /// or source diagnostics that would occur if the source file were treated as
-/// a project-owned file.
+/// a project-owned file. Like `validate_doc_for_project`, this loads the def index under
+/// `IndexLoadPolicy::Interactive` and must only be used for the interactive editor path.
 pub(crate) async fn validate_doc_for_source(
     app: &AppHandle,
     settings: &ProjectSettings,
@@ -86,7 +98,13 @@ pub(crate) async fn validate_doc_for_source(
 
     let roots = schema_pack_roots(settings);
     let catalog_result = build_schema_catalog(&roots, Some(&settings.game_version));
-    let base_index = def_index_cache::load_for_project(app, settings, project_id, false).await?;
+    let base_index = def_index_cache::load_for_project_with_policy(
+        app,
+        settings,
+        project_id,
+        IndexLoadPolicy::Interactive,
+    )
+    .await?;
     let context = ValidationContext {
         catalog: &catalog_result.catalog,
         def_index: &base_index,
@@ -117,13 +135,11 @@ mod tests {
         }
     }
 
-    // Issue 09 (Plan.md section 2/15's "catalog-context mismatch"): document schema resolution's
-    // catalog now uses the same "every registered location root" policy as
-    // `services::patch_preview::preview_def_for_project`, instead of always passing an empty root
-    // list. This is the prerequisite fix that lets `validate_doc_for_project`/
-    // `validate_doc_for_source` discover a mod-embedded `SchemaPacks/<name>/` or `About/` schema
-    // pack under any registered project/source location, matching what a future AppShell-wired
-    // `useSchemaCatalog` call would also need to resolve for the same project.
+    // Document schema resolution's catalog uses the same "every registered location root"
+    // policy as `services::patch_preview::preview_def_for_project`, instead of always passing an
+    // empty root list. This lets `validate_doc_for_project`/`validate_doc_for_source` discover a
+    // mod-embedded `SchemaPacks/<name>/` or `About/` schema pack under any registered
+    // project/source location.
     #[test]
     fn schema_pack_roots_collects_every_registered_location() {
         let mut settings = ProjectSettings::default();
@@ -204,8 +220,10 @@ mod tests {
         // Registered: a project location whose root is the fixture pack directory, with the
         // matching game version -- exactly what `schema_pack_roots`/`settings.game_version`
         // produce for a real project with a mod-embedded external schema pack.
-        let mut settings_with_root = ProjectSettings::default();
-        settings_with_root.game_version = "1.6".to_string();
+        let mut settings_with_root = ProjectSettings {
+            game_version: "1.6".to_string(),
+            ..Default::default()
+        };
         settings_with_root
             .locations
             .push(make_location("proj", fixture_path.to_str().unwrap()));
@@ -236,8 +254,8 @@ mod tests {
         );
 
         // Not registered: no locations at all -- the old `build_schema_catalog(&[], None)`
-        // behavior this issue replaced. The same XML must now be flagged unknown, proving the
-        // roots plumbing is actually load-bearing rather than incidental.
+        // behavior this replaced. The same XML must now be flagged unknown, proving the roots
+        // plumbing is actually load-bearing rather than incidental.
         let settings_without_root = ProjectSettings::default();
         let roots_without = schema_pack_roots(&settings_without_root);
         assert!(roots_without.is_empty());

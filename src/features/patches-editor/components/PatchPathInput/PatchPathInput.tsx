@@ -20,7 +20,7 @@ interface Props {
   onChange: (value: string | null) => void;
   /** Reports the latest shared completion result for this field's draft text, so a sibling
    * `PatchValueEditor` can derive `target`/`resolvedField` from the same request instead of
-   * issuing its own (Plan.md's "share one completion result"). */
+   * issuing its own. */
   onCompletionResult?: (result: XPathCompletionResult | null) => void;
   /** Registers a callback that commits any pending (not-yet-propagated) draft text immediately.
    * `usePatchOperationTree`'s `flush()` calls every registered draft flush before awaiting its own
@@ -56,8 +56,7 @@ function stringIndexToByteOffset(text: string, stringIndex: number): number {
 }
 
 /** XPath input for patch operation forms: a monospace, multiline `<textarea>` backed by schema-
- * and Def-index-aware completions from `complete_patch_operation_xpath` (see
- * `docs/patches-editor/05-xpath-autocomplete-and-target-inference.md`). Unlike `ReferencePicker`
+ * and Def-index-aware completions from `complete_patch_operation_xpath`. Unlike `ReferencePicker`
  * (which replaces its whole value on selection), completions here replace only the active token --
  * the completion result's `[replaceFrom, replaceTo)` byte span -- since an XPath is composed of
  * many segments typed one after another, and the caret can sit anywhere in the string, not only at
@@ -67,7 +66,7 @@ function stringIndexToByteOffset(text: string, stringIndex: number): number {
  * The textbox is a *staged* editor: typing updates the local draft (and, via
  * `usePatchXPathCompletion`, the dropdown) immediately, but does not itself call `onChange` --
  * committing the patch-operation AST and reserializing the whole file on every keystroke is what
- * made typing feel sluggish (Plan.md finding #1). The draft commits to `onChange` at deliberate
+ * made typing feel sluggish. The draft commits to `onChange` at deliberate
  * boundaries instead: selecting a completion, blurring the field, an idle pause after typing
  * stops, or an explicit `registerDraftFlush` call before save/mode-switch/navigation. Changing only
  * the caret/selection never commits or reserializes -- it just re-queries completions for the new
@@ -273,15 +272,13 @@ export function PatchPathInput({
           ref={textareaRef}
           className={styles.input}
           // XPath is machine-readable syntax, not natural-language prose -- keep it forced LTR
-          // even once a future RTL locale flips `dir` on `<html>` (see
-          // docs/i18n/issues/08-editor-and-patch-ui-migration.md's "keep code editor/XML/XPath
-          // controls dir=ltr by semantic policy" carve-out).
+          // even once a future RTL locale flips `dir` on `<html>`.
           dir="ltr"
           rows={1}
           wrap="off"
           value={draftValue}
           // `readOnly`, not `disabled`: a read-only/source-location file's XPath must remain
-          // selectable, copyable plain text (Plan.md's contract) rather than an inert control --
+          // selectable, copyable plain text rather than an inert control --
           // `disabled` form controls are inconsistently selectable across browsers, `readOnly`
           // ones are reliably both focusable and selectable while still rejecting edits.
           readOnly={readOnly}

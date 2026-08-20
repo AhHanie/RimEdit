@@ -16,7 +16,7 @@ use walkdir::WalkDir;
 /// Renders a `walkdir::Error` without leaking the absolute path it embeds in its own `Display`
 /// impl (e.g. `"IO error for operation on <absolute path>: <os message>"`) -- callers that
 /// surface this text over the wire (e.g. `DefIndexError.message` via `get_def_index_errors`)
-/// must never expose the location root or any absolute filesystem path (Plan.md section 2/5).
+/// must never expose the location root or any absolute filesystem path.
 /// Falls back to a generic, still-path-free message when the underlying `io::Error` isn't
 /// available (e.g. a symlink loop, which `follow_links(false)` should make unreachable here).
 fn safe_walk_error_message(e: &walkdir::Error) -> String {
@@ -198,8 +198,8 @@ pub(crate) fn scan_indexable_def_xml_files(
                     // A single unreadable/unwalkable entry (permission denied, a too-long path,
                     // ...) must not abort the entire location's scan -- for a Steam Workshop
                     // collection that would silently index zero Defs from every item, not just
-                    // the offending one (Plan.md section 5: isolate, don't abort). Record it as a
-                    // non-fatal, isolated diagnostic instead and keep walking.
+                    // the offending one. Record it as a non-fatal, isolated diagnostic instead
+                    // and keep walking.
                     let relative_path = e
                         .path()
                         .and_then(|p| p.strip_prefix(location_root).ok())

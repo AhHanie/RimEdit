@@ -24,8 +24,8 @@ fn store_file_path(form_views_root: &Path, project_id: &str) -> PathBuf {
 }
 
 /// Upgrades a parsed-but-not-yet-typed raw store value to the current `UserFormViewStore` shape,
-/// dispatching on the store's own recorded `schemaVersion`. Plan.md section 12: "migrate store
-/// versions before deserialize."
+/// dispatching on the store's own recorded `schemaVersion`, migrating store versions before
+/// deserializing.
 ///
 /// `CURRENT_SCHEMA_VERSION` is 1 -- the first version this store format has ever had -- so there
 /// is no real prior format to migrate *from* yet, and the only arm below is the identity mapping
@@ -197,8 +197,8 @@ fn claim_backup_path(
     }
 }
 
-/// Recovers from a corrupt/unreadable store per Plan.md section 12 and issue 04 step 6:
-/// "no overwrite; explicit backup-and-reset command/action." If a store file exists at all
+/// Recovers from a corrupt/unreadable store: no overwrite, only an explicit backup-and-reset
+/// command/action. If a store file exists at all
 /// (corrupt, project-id-mismatched, or otherwise), its content is copied into a race-proof `.bak`
 /// sibling (see `claim_backup_path`) -- never deleted -- so a user can still recover data by hand
 /// later, and only then is the original removed and a fresh empty v1 store written in its place.
@@ -563,8 +563,8 @@ mod tests {
         assert_eq!(listed[0].target.game_version, "1.6");
         assert_eq!(listed[0].target.def_type, "ThingDef");
 
-        // The store file itself is pretty-printed JSON under the expected path, matching the
-        // Plan.md section 6 shape (schemaVersion/projectId/customViews/preferences).
+        // The store file itself is pretty-printed JSON under the expected path, with the
+        // schemaVersion/projectId/customViews/preferences shape.
         let path = store_file_path(&root, "proj1");
         assert!(path.exists());
         let raw = std::fs::read_to_string(&path).unwrap();
@@ -984,9 +984,9 @@ mod tests {
 
     #[test]
     fn unknown_hidden_field_ids_and_missing_base_reference_survive_an_unrelated_update_on_disk() {
-        // Plan.md section 6/12: a field ID no longer present in the live schema, or a base
-        // schema view reference to a view/pack that no longer resolves, must never be pruned by
-        // storage itself -- only a resolution-time (issue 05+) layer may compute compatibility.
+        // A field ID no longer present in the live schema, or a base schema view reference to a
+        // view/pack that no longer resolves, must never be pruned by storage itself -- only a
+        // resolution-time layer may compute compatibility.
         //
         // Hand-seed the raw JSON (rather than round-tripping through `create_view_in`, whose
         // return value alone wouldn't prove the *serializer* never prunes) with references that

@@ -1,12 +1,11 @@
-// Form Views (issue 10, Plan.md section 12/13): "schema view renamed/removed, fields
-// removed/added, custom materialized snapshot remains usable, missing base provenance warning"
-// as one explicit end-to-end SEQUENCE, not just each piece verified in isolation across
-// different issues' test files. Walks a single custom view through a real schema-pack upgrade:
-// a schema-defined view it was copied from disappears, one of its hidden fields is removed from
-// the schema, and a brand-new field is introduced - then asserts the custom view survives,
-// remains selectable, and its effective visibility is recomputed correctly against the new
-// schema (Plan.md section 6: "later schema-view changes cannot silently rewrite a user's custom
-// selection").
+// "Schema view renamed/removed, fields removed/added, custom materialized snapshot remains
+// usable, missing base provenance warning" as one explicit end-to-end SEQUENCE, not just each
+// piece verified in isolation across separate test files. Walks a single custom view through a
+// real schema-pack upgrade: a schema-defined view it was copied from disappears, one of its
+// hidden fields is removed from the schema, and a brand-new field is introduced - then asserts
+// the custom view survives, remains selectable, and its effective visibility is recomputed
+// correctly against the new schema: later schema-view changes cannot silently rewrite a user's
+// custom selection.
 import {
   buildAvailableFormViews,
   computeEffectiveVisibility,
@@ -49,8 +48,8 @@ describe("Form View schema-evolution sequence (issue 10, Plan.md section 12)", (
   it("a custom view copied from a schema view survives the view being renamed/removed, one of its hidden fields being removed, and a new field being introduced", () => {
     const v1 = makeSchemaV1();
 
-    // Step 1: user duplicates the "weapon" schema view into a custom view. Per Plan.md section
-    // 6, this materializes the hidden set as a snapshot, not a live reference.
+    // Step 1: user duplicates the "weapon" schema view into a custom view. This materializes the
+    // hidden set as a snapshot, not a live reference.
     const customView: CustomFormView = {
       id: "custom-1",
       target: { gameVersion: "1.6", defType: DEF_TYPE },
@@ -101,11 +100,11 @@ describe("Form View schema-evolution sequence (issue 10, Plan.md section 12)", (
     expect(v2Selected.hiddenFieldIds).toEqual(["a", "b"]);
 
     // Step 4: effective visibility against the NEW schema. "b" is silently dropped from the
-    // effective hidden set (Plan.md section 7: `effectiveHidden = effectiveHidden ∩
-    // knownTopLevel`) because it no longer exists - never a broken/crashing view. "a" is still
-    // known and stays hidden. The new field "d" is visible by default (Plan.md section 4:
-    // "hiddenFields is the sole base visibility semantics ... fields introduced in later schema
-    // releases are visible by default") even though the custom view predates it entirely.
+    // effective hidden set (`effectiveHidden = effectiveHidden ∩ knownTopLevel`) because it no
+    // longer exists - never a broken/crashing view. "a" is still known and stays hidden. The new
+    // field "d" is visible by default (hiddenFields is the sole base visibility semantics; a
+    // field introduced in a later schema release is visible by default) even though the custom
+    // view predates it entirely.
     const v2Visibility = computeEffectiveVisibility({
       selected: v2Selected,
       override: null,
@@ -117,8 +116,8 @@ describe("Form View schema-evolution sequence (issue 10, Plan.md section 12)", (
     // Step 5 ("missing base provenance"): `isCustomViewBaseUnavailable` -- the same function
     // `FormViewManagerDialog` calls to render its "derived from a view that's no longer
     // available" notice -- now reports true, even though (per step 3/4 above) the view remains
-    // fully functional and its effective visibility is correctly recomputed either way. Plan.md
-    // section 6: "a missing/renamed base becomes a nonblocking notice, not a broken view."
+    // fully functional and its effective visibility is correctly recomputed either way. A
+    // missing/renamed base becomes a nonblocking notice, not a broken view.
     expect(v2Selected.baseSchemaView?.viewId).toBe("weapon");
     expect(isCustomViewBaseUnavailable(v2Selected, v2Available)).toBe(true);
   });

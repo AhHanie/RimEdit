@@ -10,7 +10,7 @@ import type { SchemaCatalog } from "../../schema-catalog";
 // `visibleTopLevelFieldIds` Set (or `catalog`) reference - otherwise a caller that
 // re-creates a content-equal Set/catalog on every render (a common React pattern, e.g.
 // `new Set(someComputedArray)` inline) would force the expensive descriptor rebuild/nested
-// expansion this issue's filtering exists to avoid, on every single render.
+// expansion the visibility filtering exists to avoid, on every single render.
 //
 // This file mocks `../lib/formDescriptors` (wrapping the real implementations in `vi.fn` so
 // behavior is unchanged but calls are countable) rather than adding this to the large shared

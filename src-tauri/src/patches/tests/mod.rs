@@ -32,11 +32,12 @@ pub(super) fn settings_with_locations(
     active: &str,
 ) -> ProjectSettings {
     ProjectSettings {
-        schema_version: 3,
+        schema_version: 4,
         game_version: "1.6".to_string(),
         locale: "en".to_string(),
         locations,
         active_project_id: Some(active.to_string()),
+        save_backups_enabled: false,
     }
 }
 
@@ -81,8 +82,8 @@ fixture!(
     "unexpected_child_under_mods.xml"
 );
 
-/// A hand-formatted, multiline `<xpath>` value exercising Plan.md's "readable expression" example:
-/// indentation after `/` and inside a `[defName = "..."]` predicate. Intentionally not part of
+/// A hand-formatted, multiline `<xpath>` value exercising presentation whitespace: indentation
+/// after `/` and inside a `[defName = "..."]` predicate. Intentionally not part of
 /// `ALL_BUILT_IN_FIXTURES` since a serializer round-trip is not required to be byte-for-byte for
 /// hand-formatted whitespace (see `round_trip::multiline_xpath_reparse_preserves_operation_data`).
 pub const MULTILINE_XPATH: &str =

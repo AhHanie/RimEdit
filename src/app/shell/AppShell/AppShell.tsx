@@ -19,17 +19,19 @@ import {
   Info,
   X,
 } from "lucide-react";
-import {
-  pickProjectFolder,
-  pickSourceFolder,
-  useProjectSettings,
-  PreferencesDialog,
-  type ProjectSettingsLoadResult,
-} from "../../../features/project-settings";
-import {
-  EditorWorkspace,
-  useEditorWorkspace,
-} from "../../../features/editor-workspace";
+import { openAppDataFolder } from "../../commands/appDataCommands";
+// Value imports below come from their own files rather than the `project-settings`,
+// `editor-workspace`, and `def-index` barrels: each barrel also re-exports a heavy
+// lazily-loaded component (`PreferencesDialog`, `EditorWorkspace`, `DefSearchPanel` --
+// see the `load*` factories below), and Rollup treats a barrel's own re-export statement as a
+// static edge to that component regardless of which named export an importer actually uses -- so
+// importing any of these barrels here would pull the lazy component (and, for `EditorWorkspace`,
+// all of CodeMirror) back into the eagerly-loaded entry chunk. Type-only imports are unaffected
+// (`import type` is erased before Rollup ever sees it), so those still use the barrels below.
+import { pickProjectFolder, pickSourceFolder } from "../../../features/project-settings/api/projectDialog";
+import { useProjectSettings } from "../../../features/project-settings/hooks/useProjectSettings";
+import type { ProjectSettingsLoadResult } from "../../../features/project-settings";
+import { useEditorWorkspace } from "../../../features/editor-workspace/hooks/useEditorWorkspace";
 import type {
   ActiveEditorCommands,
   OpenFileRef,
@@ -45,18 +47,92 @@ import {
   ProjectExplorerPanel,
 } from "../../../features/project-explorer";
 import type { ProjectFileEntry } from "../../../features/project-explorer";
-import { DefSearchPanel, useIndexingStatus } from "../../../features/def-index";
+import { useIndexingStatus } from "../../../features/def-index/hooks/useIndexingStatus";
+import type { IndexingStatus } from "../../../features/def-index";
 import type { ActivityView } from "../types";
 import type { CommandAction, MenuDescriptor } from "../../commands/commandTypes";
 import { AppTitleBar } from "../AppTitleBar/AppTitleBar";
 import { ActivityRail } from "../ActivityRail/ActivityRail";
 import { StatusBar } from "../StatusBar/StatusBar";
 import { CommandPalette } from "../../commands/CommandPalette/CommandPalette";
-import { AboutDialog } from "../AboutDialog/AboutDialog";
 import { ResizablePaneHandle } from "../ResizablePaneHandle/ResizablePaneHandle";
 import { usePersistentLayoutState } from "../layout/usePersistentLayoutState";
 import { LAYOUT_DEFAULTS } from "../layout/layoutState";
+import { ChunkLoadBoundary } from "../../../lib/ChunkLoadBoundary/ChunkLoadBoundary";
 import styles from "./AppShell.module.css";
+
+// Stable module-scope factories for the lazily loaded panels/dialogs below -- `ChunkLoadBoundary`
+// keys its `lazy()` wrapper off the factory reference, so an inline arrow recreated every render
+// would refetch the chunk on every render instead of only on mount/retry.
+//
+// Each factory imports the component's own file directly rather than its feature's barrel
+// `index.ts`: this module also statically imports other named exports (hooks, helpers) from the
+// same barrels, and Rollup only creates a separate async chunk for a dynamic import() when the
+// imported module isn't *also* reachable via a static import path -- targeting the barrel here
+// would fold the whole lazy component (and, for `EditorWorkspace`, all of CodeMirror) back into
+// the main chunk instead of splitting it out.
+const loadPreferencesDialog = () =>
+  import(
+    "../../../features/project-settings/components/PreferencesDialog/PreferencesDialog"
+  ).then((m) => ({ default: m.PreferencesDialog }));
+const loadAboutDialog = () =>
+  import("../AboutDialog/AboutDialog").then((m) => ({ default: m.AboutDialog }));
+const loadDefSearchPanel = () =>
+  import("../../../features/def-index/components/DefSearchPanel/DefSearchPanel").then(
+    (m) => ({ default: m.DefSearchPanel }),
+  );
+const loadEditorWorkspace = () =>
+  import("../../../features/editor-workspace/components/EditorWorkspace/EditorWorkspace").then(
+    (m) => ({ default: m.EditorWorkspace }),
+  );
+
+/** Pure decision for the `validationRefreshRevision` effect below, extracted so it's directly
+ * unit-testable without rendering `AppShell`. Distinct from `indexRevision`'s own condition: this
+ * only bumps after the index itself actually changes, never merely because a trusted hydrated
+ * cache becomes verified in the background (checking -> verified leaves the same `DefIndex` in
+ * place, untouched -- see `CacheVerification`).
+ *
+ * Compares `status.indexBuiltAtUnixMs` (the completed index's own build timestamp) against the
+ * value observed at the last "complete" status for the *same* active project (see the effect
+ * below, which resets `prevIndexBuiltAtUnixMs` to `null` whenever `activeProjectId` changes),
+ * rather than diffing phase transitions or def/error counts: the backend emits a separate status
+ * event per phase transition, but nothing guarantees the frontend observes each one as its own
+ * render -- a very fast rebuild's pending -> running -> complete events could in principle land
+ * close enough together to be batched into one commit, in which case a phase-transition check
+ * would miss it entirely. Comparing counts instead of a build timestamp has the same gap in the
+ * opposite direction: a genuine rebuild whose def/error counts happen to come out identical to the
+ * prior snapshot (e.g. one Def edited, none added/removed) would be indistinguishable from a
+ * verification-only confirmation. `indexBuiltAtUnixMs` only ever changes when the index was
+ * actually (re)built (a fresh full rebuild or an applied incremental update), never on a mere
+ * verification flag flip, so comparing it catches every real change and only real changes,
+ * regardless of how the intermediate phase events were batched.
+ *
+ * `prevIndexBuiltAtUnixMs === null` bumps unconditionally (rather than treating "no prior
+ * snapshot" as "nothing to compare, don't bump"): a document can already be open -- and validated
+ * against an empty/partial `IndexLoadPolicy::Interactive` fallback index -- before this component
+ * has ever observed a "complete" status at all (e.g. the window became interactive before the
+ * very first hydration/rebuild finished), so the *first* observed completion still needs to
+ * trigger a catch-up revalidation for any tab already open at that point. If nothing is open yet,
+ * bumping the revision is simply inert.
+ *
+ * `status.projectId !== activeProjectId` also refuses to act, independent of the ref-reset the
+ * calling effect does on a project switch: `useIndexingStatus` clears its own status to `null` on
+ * an active-project change, but that clear only takes effect on the *next* render -- the render
+ * where `activeProjectId` first changes still has the *previous* project's `indexingStatus` object
+ * in scope. Checking `projectId` directly here closes that gap regardless of render/effect
+ * ordering, rather than relying on the reset happening to land before this function is next
+ * evaluated.
+ */
+export function shouldBumpValidationRefreshRevision(
+  status: IndexingStatus | null | undefined,
+  prevIndexBuiltAtUnixMs: number | null,
+  activeProjectId: string | undefined,
+): boolean {
+  if (status?.phase !== "complete") return false;
+  if (status.indexBuiltAtUnixMs === undefined) return false;
+  if (status.projectId !== activeProjectId) return false;
+  return prevIndexBuiltAtUnixMs !== status.indexBuiltAtUnixMs;
+}
 
 export interface AppShellProps {
   /** Forwarded to `useProjectSettings` -- see that hook's doc comment. Set by `main.tsx`'s
@@ -79,6 +155,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     deleteLocation,
     editLocation,
     updateGameVersion,
+    updateBackupsEnabled,
     installedSchemaVersions,
   } = useProjectSettings(initialProjectSettingsPromise);
   const activeProjectId = settings?.activeProjectId;
@@ -91,9 +168,9 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
   // uses for document validation and patch preview (see `services::validation::schema_pack_roots`
   // and `services::patch_preview::preview_def_for_project`) -- there is no separate "configured
   // external schema roots" setting anywhere in `ProjectSettings`/`RegisteredLocation` today, so
-  // this reuses the same project-location data rather than inventing a second registry (Plan.md
-  // section 2/15, issue 09's "avoid inventing a second registry"). `schema_pack::loader` searches
-  // each root, its `About/`, and its `SchemaPacks/<name>/` for an embedded schema pack.
+  // this reuses the same project-location data rather than inventing a second registry.
+  // `schema_pack::loader` searches each root, its `About/`, and its `SchemaPacks/<name>/` for an
+  // embedded schema pack.
   // Memoized on `settings?.locations`'s own reference (not recomputed on every unrelated AppShell
   // re-render) so it doesn't churn `useSchemaCatalog`'s reload effect.
   const extraSchemaRoots = useMemo(
@@ -102,16 +179,16 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
   );
   const { mode: themeMode, setMode } = useTheme();
   const { locale, changeLocale } = useLocale();
-  // Locale is threaded through so catalog labels/descriptions reload for the active locale
-  // (issue 06); `useSchemaCatalog` discards any in-flight response superseded by a newer switch.
+  // Locale is threaded through so catalog labels/descriptions reload for the active locale;
+  // `useSchemaCatalog` discards any in-flight response superseded by a newer switch.
   const { catalog } = useSchemaCatalog(extraSchemaRoots, settings?.gameVersion, locale);
 
   // Defensive fallback only: `main.tsx` already resolves the persisted locale from the very same
   // `get_project_settings` call (via `initialProjectSettingsPromise` above) and passes it as
   // `LocaleProvider`'s `initialLocale` *before* this component -- and its locale-sensitive
   // `useSchemaCatalog` call above -- ever mounts, so `settings.locale` and `locale` already agree
-  // by the time this effect's condition is evaluated in the normal startup path (Plan.md: "the
-  // settings command returns the saved locale before locale-sensitive catalog loading"). This
+  // by the time this effect's condition is evaluated in the normal startup path: the settings
+  // command returns the saved locale before locale-sensitive catalog loading. This
   // only does anything when a caller renders `AppShell` without going through that bootstrap
   // (e.g. a future test harness that mounts it under a plain `LocaleProvider` default), in which
   // case it still reconciles the provider to the loaded settings' locale rather than leaving it
@@ -166,6 +243,14 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
 
   const explorerVisible = activeView === "explorer";
   const searchPanelVisible = activeView === "search";
+  // The Def search chunk is only requested the first time the Search activity is opened; once
+  // mounted it stays mounted (hidden via `searchPanelVisible`/`data-visible`, like
+  // `ProjectExplorerPanel`) so its query/results state survives switching to another activity and
+  // back, matching the prior always-mounted behavior for anyone who has opened it at least once.
+  const [searchPanelMounted, setSearchPanelMounted] = useState(false);
+  useEffect(() => {
+    if (searchPanelVisible) setSearchPanelMounted(true);
+  }, [searchPanelVisible]);
 
   const indexingStatus = useIndexingStatus(activeProjectId);
   const [indexRevision, setIndexRevision] = useState(0);
@@ -179,6 +264,55 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     }
     prevIndexPhaseRef.current = indexingStatus?.phase;
   }, [indexingStatus?.phase]);
+
+  // Distinct from `indexRevision` above: this only bumps after a *rebuild* completes (a
+  // pending/running -> complete transition), never merely because a trusted hydrated cache
+  // becomes verified in the background (that transition never leaves `phase: "complete"`, so it
+  // can't trigger this effect at all -- see `CacheVerification`). Threaded down to open XML
+  // editor sessions so they can re-run validation against the rebuilt index without discarding
+  // in-progress edits/undo history/dirty state -- see `useXmlEditorSession`'s revalidation effect.
+  const [validationRefreshRevision, setValidationRefreshRevision] = useState(0);
+  // Tracks the completed index's own build timestamp as of the last observed "complete" status --
+  // see `shouldBumpValidationRefreshRevision`. Reset to `null` on every active-project change (see
+  // `prevValidationProjectIdRef` below): project A's and project B's `indexBuiltAtUnixMs` values
+  // are unrelated timestamps, so comparing across the switch would just be comparing arbitrary
+  // numbers rather than detecting a real rebuild -- resetting establishes a fresh baseline for
+  // whichever project just became active instead.
+  const prevIndexBuiltAtRef = useRef<number | null>(null);
+  const prevValidationProjectIdRef = useRef<string | undefined>(activeProjectId);
+  useEffect(() => {
+    if (prevValidationProjectIdRef.current !== activeProjectId) {
+      prevValidationProjectIdRef.current = activeProjectId;
+      prevIndexBuiltAtRef.current = null;
+    }
+    if (
+      shouldBumpValidationRefreshRevision(
+        indexingStatus,
+        prevIndexBuiltAtRef.current,
+        activeProjectId,
+      )
+    ) {
+      setValidationRefreshRevision((r) => r + 1);
+    }
+    // Guarded by the same `projectId` check as `shouldBumpValidationRefreshRevision`: a status
+    // object left over from the *previous* active project (possible on the very render
+    // `activeProjectId` changes, before `useIndexingStatus`'s own reset-to-null takes effect on
+    // the next render) must never seed the baseline for whichever project is actually current --
+    // otherwise a later, real status for the new project would be compared against another
+    // project's unrelated timestamp.
+    if (
+      indexingStatus?.phase === "complete" &&
+      indexingStatus.indexBuiltAtUnixMs !== undefined &&
+      indexingStatus.projectId === activeProjectId
+    ) {
+      prevIndexBuiltAtRef.current = indexingStatus.indexBuiltAtUnixMs;
+    }
+  }, [
+    activeProjectId,
+    indexingStatus?.phase,
+    indexingStatus?.indexBuiltAtUnixMs,
+    indexingStatus?.projectId,
+  ]);
 
   const fileTree = useMemo(
     () =>
@@ -287,6 +421,14 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
       console.error("Failed to open project:", e);
     }
   }, [activateProject, hasDirtyTabs, t]);
+
+  const handleOpenAppDataFolder = useCallback(async () => {
+    try {
+      await openAppDataFolder();
+    } catch (e: unknown) {
+      console.error("Failed to open RimEdit data folder:", e);
+    }
+  }, []);
 
   function fileEntryToOpenFileRef(file: ProjectFileEntry): OpenFileRef {
     return {
@@ -436,6 +578,13 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         run: handleAddSourceFolder,
       },
       {
+        id: "open-app-data-folder",
+        labelKey: "shell:commands.openAppDataFolder.label",
+        keywordsKey: "shell:commands.openAppDataFolder.keywords",
+        icon: FolderOpen,
+        run: handleOpenAppDataFolder,
+      },
+      {
         id: "refresh",
         labelKey: "shell:commands.refresh.label",
         keywordsKey: "shell:commands.refresh.keywords",
@@ -479,6 +628,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
     [
       handleOpenProject,
       handleAddSourceFolder,
+      handleOpenAppDataFolder,
       workspace.refresh,
       activeProjectId,
       activeTab,
@@ -497,6 +647,7 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         entries: [
           { kind: "command", commandId: "open-project" },
           { kind: "command", commandId: "add-source-folder" },
+          { kind: "command", commandId: "open-app-data-folder" },
           { kind: "separator" },
           { kind: "command", commandId: "open-settings" },
           { kind: "separator" },
@@ -667,34 +818,47 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
               workspace.reconcileDelete(relativePath);
             }}
           />
-          <DefSearchPanel
-            visible={searchPanelVisible}
-            projectId={activeProjectId}
-            hasActiveProject={!!activeProjectId}
-            indexRevision={indexRevision}
-            onOpenProjectDef={(relativePath, nodeId) =>
-              activeProjectId &&
-              void workspace.openTab(
-                projectPathToOpenFileRef(relativePath),
-                nodeId !== undefined ? { selectedDefNodeId: nodeId } : undefined,
-              )
-            }
-            onOpenSourceDef={(locationId, locationName, relativePath, nodeId) =>
-              void workspace.openTab(
-                {
-                  locationId,
-                  locationName,
-                  sourceKind: "source",
-                  readOnly: true,
-                  relativePath,
-                },
-                nodeId !== undefined ? { selectedDefNodeId: nodeId } : undefined,
-              )
-            }
-            onOpenProject={handleOpenProject}
-            onAddSourceFolder={handleAddSourceFolder}
-            searchInputRef={defSearchInputRef}
-          />
+          {searchPanelMounted && (
+            <ChunkLoadBoundary
+              factory={loadDefSearchPanel}
+              loadingFallback={
+                <div className={styles.searchFallback}>
+                  {t("shell:chunkLoading.search")}
+                </div>
+              }
+              componentProps={{
+                visible: searchPanelVisible,
+                projectId: activeProjectId,
+                hasActiveProject: !!activeProjectId,
+                indexRevision,
+                onOpenProjectDef: (relativePath: string, nodeId?: number) =>
+                  activeProjectId &&
+                  void workspace.openTab(
+                    projectPathToOpenFileRef(relativePath),
+                    nodeId !== undefined ? { selectedDefNodeId: nodeId } : undefined,
+                  ),
+                onOpenSourceDef: (
+                  locationId: string,
+                  locationName: string | undefined,
+                  relativePath: string,
+                  nodeId?: number,
+                ) =>
+                  void workspace.openTab(
+                    {
+                      locationId,
+                      locationName,
+                      sourceKind: "source",
+                      readOnly: true,
+                      relativePath,
+                    },
+                    nodeId !== undefined ? { selectedDefNodeId: nodeId } : undefined,
+                  ),
+                onOpenProject: handleOpenProject,
+                onAddSourceFolder: handleAddSourceFolder,
+                searchInputRef: defSearchInputRef,
+              }}
+            />
+          )}
           {activeView !== null && (
             <ResizablePaneHandle
               width={explorerWidth}
@@ -704,23 +868,31 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
               onChange={setExplorerWidth}
             />
           )}
-          <EditorWorkspace
-            tabs={workspace.tabs}
-            activeTabKey={workspace.activeTabKey}
-            projectId={activeProjectId}
-            catalog={catalog}
-            gameVersion={settings?.gameVersion}
-            createDefSignal={createDefSignal}
-            onActivateTab={workspace.activateTab}
-            onCloseTab={workspace.closeTab}
-            onTabDirtyChange={workspace.setTabDirty}
-            onNavigateDef={(fileRef, nodeId) =>
-              workspace.openTab(
-                fileRef,
-                nodeId !== null ? { selectedDefNodeId: nodeId } : undefined,
-              )
+          <ChunkLoadBoundary
+            factory={loadEditorWorkspace}
+            loadingFallback={
+              <div className={styles.editorFallback}>
+                {t("shell:chunkLoading.editor")}
+              </div>
             }
-            onActiveCommandsChange={handleActiveCommandsChange}
+            componentProps={{
+              tabs: workspace.tabs,
+              activeTabKey: workspace.activeTabKey,
+              projectId: activeProjectId,
+              catalog,
+              gameVersion: settings?.gameVersion,
+              validationRefreshRevision,
+              createDefSignal,
+              onActivateTab: workspace.activateTab,
+              onCloseTab: workspace.closeTab,
+              onTabDirtyChange: workspace.setTabDirty,
+              onNavigateDef: (fileRef: OpenFileRef, nodeId: number | null) =>
+                workspace.openTab(
+                  fileRef,
+                  nodeId !== null ? { selectedDefNodeId: nodeId } : undefined,
+                ),
+              onActiveCommandsChange: handleActiveCommandsChange,
+            }}
           />
         </div>
       </div>
@@ -739,24 +911,43 @@ export function AppShell({ initialProjectSettingsPromise }: AppShellProps = {}) 
         onClose={() => setPaletteOpen(false)}
         commands={commands}
       />
-      {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
+      {aboutOpen && (
+        <ChunkLoadBoundary
+          factory={loadAboutDialog}
+          loadingFallback={
+            <div className={styles.dialogFallbackOverlay}>
+              {t("shell:chunkLoading.about")}
+            </div>
+          }
+          componentProps={{ onClose: () => setAboutOpen(false) }}
+        />
+      )}
       {preferencesOpen && (
-        <PreferencesDialog
-          onClose={() => setPreferencesOpen(false)}
-          settings={settings}
-          loading={loading}
-          loadError={settingsLoadError}
-          hasDirtyTabs={hasDirtyTabs}
-          installedSchemaVersions={installedSchemaVersions}
-          locale={locale}
-          themeMode={themeMode}
-          onChangeTheme={setMode}
-          onEditLocation={editLocation}
-          onRemoveLocation={deleteLocation}
-          onUpdateGameVersion={updateGameVersion}
-          onChangeLocale={changeLocale}
-          onOpenProject={handleOpenProject}
-          onAddSourceFolder={handleAddSourceFolder}
+        <ChunkLoadBoundary
+          factory={loadPreferencesDialog}
+          loadingFallback={
+            <div className={styles.dialogFallbackOverlay}>
+              {t("shell:chunkLoading.preferences")}
+            </div>
+          }
+          componentProps={{
+            onClose: () => setPreferencesOpen(false),
+            settings,
+            loading,
+            loadError: settingsLoadError,
+            hasDirtyTabs,
+            installedSchemaVersions,
+            locale,
+            themeMode,
+            onChangeTheme: setMode,
+            onEditLocation: editLocation,
+            onRemoveLocation: deleteLocation,
+            onUpdateGameVersion: updateGameVersion,
+            onUpdateBackupsEnabled: updateBackupsEnabled,
+            onChangeLocale: changeLocale,
+            onOpenProject: handleOpenProject,
+            onAddSourceFolder: handleAddSourceFolder,
+          }}
         />
       )}
     </div>

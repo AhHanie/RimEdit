@@ -130,8 +130,7 @@ describe("PatchEditorPane", () => {
     invokeMock.mockClear();
 
     // A burst of keystrokes updates the field's own draft immediately but must not each trigger
-    // a tree mutation/reserialize (Plan.md finding #1) -- only the commit boundary (here: blur)
-    // should.
+    // a tree mutation/reserialize -- only the commit boundary (here: blur) should.
     fireEvent.change(xpathInput, { target: { value: 'Defs/ThingDef[defName="S' } });
     fireEvent.change(xpathInput, { target: { value: 'Defs/ThingDef[defName="St' } });
     fireEvent.change(xpathInput, { target: { value: 'Defs/ThingDef[defName="Ste' } });

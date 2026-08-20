@@ -120,11 +120,20 @@ export interface DefXmlPreview {
 
 export type IndexingPhase = "idle" | "pending" | "running" | "complete" | "failed";
 
-export type IndexingStage = "discovering" | "indexing";
+export type IndexingStage = "hydratingCache" | "discovering" | "indexing";
+
+/** Whether the def-index cache backing the current status has been verified against the actual
+ * collection on disk. A fast hydrated-cache startup reports "checking" (real Def/error counts,
+ * but not yet fingerprint-verified); a background verification flips a matching status to
+ * "verified" on a match, or triggers a rebuild on a mismatch that itself ends "verified". Every
+ * other status (explicit settings-triggered/manual rebuilds while in progress) reports
+ * "notRequired". */
+export type CacheVerification = "notRequired" | "checking" | "verified";
 
 export interface IndexingStatus {
   projectId?: string;
   phase: IndexingPhase;
+  cacheVerification: CacheVerification;
   pendingFiles: number;
   indexedDefs: number;
   projectDefs: number;
@@ -139,4 +148,10 @@ export interface IndexingStatus {
   currentStage?: IndexingStage;
   /** Display name only -- never a filesystem path. */
   currentLocationName?: string;
+  /** The completed index's own build timestamp, present only on a "complete" status. Distinct
+   * from `updatedAtUnixMs` (which changes on every status write, including a mere cache-
+   * verification confirmation that leaves the underlying index untouched): this only changes when
+   * the index itself was actually (re)built, so it's the signal for "did the collection's data
+   * actually change" -- see `shouldBumpValidationRefreshRevision`. */
+  indexBuiltAtUnixMs?: number;
 }

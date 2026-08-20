@@ -5,7 +5,6 @@
 // already carries a stable `code` plus typed `args`; this module looks `code` up in the
 // `diagnostics` namespace and interpolates `args` verbatim. It never assembles translated text
 // out of literal field/path/xpath values, and never translates those literal values itself.
-// See `docs/i18n/issues/04-frontend-diagnostic-rendering.md`.
 
 import type { i18n as I18nInstance } from "i18next";
 import type { DiagnosticArgs } from "../lib/diagnostics";
@@ -17,8 +16,8 @@ const CODES_KEY_PREFIX = "diagnostics:codes.";
  * output. i18next's default `interpolation.skipOnVariables: true` (see `src/i18n/index.ts`, which
  * does not override it) leaves a variable's `{{name}}` markup verbatim in the output whenever the
  * `args` object passed to `t()` is missing that key -- it does not throw and does not fall back to
- * `defaultValue`. Round 2's typed-interpolation-args work only enforces "all required args
- * supplied" at compile time for literal `t("some.key", { ... })` call sites; `renderDiagnostic`
+ * `defaultValue`. The typed-interpolation-args compile-time check only enforces "all required args
+ * supplied" for literal `t("some.key", { ... })` call sites; `renderDiagnostic`
  * looks up `code` as a runtime string (see `translate`'s doc comment), so that compile-time check
  * never runs here and a diagnostic with missing `args` would otherwise leak this raw markup to the
  * user. */
@@ -39,9 +38,9 @@ function resolveI18n(i18nInstance?: I18nInstance): I18nInstance {
 
 /** Calls `i18n.t` through the "dynamic key" overload (key is a runtime `string`, not one of the
  * generated literal keys) -- required for diagnostic codes, which are backend-defined and
- * inherently open-ended (see Plan.md: "Dynamic codes from Rust are validated against a typed
- * diagnostic-code registry at the frontend boundary, with a generic fallback for unknown/future
- * codes"). `defaultValue` is only ever returned when `key` is missing from the catalog; callers
+ * inherently open-ended: dynamic codes from Rust are validated against a typed diagnostic-code
+ * registry at the frontend boundary, with a generic fallback for unknown/future codes.
+ * `defaultValue` is only ever returned when `key` is missing from the catalog; callers
  * that already checked `i18n.exists(key)` pass the key itself as a harmless placeholder. */
 function translate(
   i18nInstance: I18nInstance,
@@ -54,8 +53,8 @@ function translate(
 
 /**
  * Common shape shared by every backend diagnostic/command-error family: a stable `code`, typed
- * literal `args`, and (until issue 09 fully migrates every producer) a compatibility English
- * `message`. `code`/`args` may be absent on a wire shape issue 03 hasn't reached yet -- see
+ * literal `args`, and a compatibility English `message` for producers that haven't migrated to
+ * `code`/`args` yet. `code`/`args` may be absent on such a wire shape -- see
  * `renderDiagnostic`'s explicit, removable fallback for that case.
  */
 export interface DiagnosticRefLike {
@@ -71,16 +70,14 @@ export interface DiagnosticRefLike {
  *    catalog string references was actually resolved from `args` -> the looked-up text, with
  *    `args` interpolated verbatim (field names/paths/xpath/counts are literal data, never
  *    translated). A catalog hit with one or more *unresolved* placeholders (missing/incomplete
- *    `args`) is treated as if the code were not usable at all and falls through to step 2 --
+ *    `args`) is treated as if the code were not usable at all and falls through to rule 2 below --
  *    see `UNRESOLVED_PLACEHOLDER_PATTERN`'s doc comment for why this can only be checked at
- *    runtime here, and Plan.md's "English fallbacks are deterministic for ... missing app keys"
- *    acceptance criterion.
- * 2. `code` missing from the catalog (most backend codes today -- issue 09 keeps migrating
- *    producers; this issue only seeds a representative set per family), or matched but left an
- *    unresolved placeholder, but a compatibility `message` is present -> `message` verbatim.
- *    Explicit and removable: this is exactly the "old `message` fallback ... during issue 03's
- *    migration window" this issue calls for, not a permanent behavior -- it disappears code by
- *    code as issue 09 adds catalog entries, and entirely once `message` itself is retired.
+ *    runtime here; English fallbacks must stay deterministic even for missing app keys.
+ * 2. `code` missing from the catalog (most backend codes today; producers are migrated to the
+ *    catalog incrementally), or matched but left an unresolved placeholder, but a compatibility
+ *    `message` is present -> `message` verbatim. Explicit and removable: this is a temporary
+ *    fallback during the migration window, not a permanent behavior -- it disappears code by
+ *    code as catalog entries are added, and entirely once `message` itself is retired.
  * 3. `code` present, either not in the catalog or missing required args, and no `message` -> a
  *    safe generic fallback that names the stable code, so an unrecognized/malformed code stays
  *    diagnosable/reportable without ever showing raw/undefined text or a leaked `{{arg}}`

@@ -2,7 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-import { IndexErrorsDialog, type IndexingStatus } from "../../../features/def-index";
+// Imported from their own files rather than the `def-index` barrel: the barrel also re-exports
+// `DefSearchPanel` (loaded lazily by `AppShell`), and Rollup treats a barrel's own re-export
+// statement as a static edge to that component regardless of which named export an importer
+// actually uses -- so importing the barrel here would pull `DefSearchPanel` back into the eagerly
+// loaded entry chunk.
+import { IndexErrorsDialog } from "../../../features/def-index/components/IndexErrorsDialog/IndexErrorsDialog";
+import type { IndexingStatus } from "../../../features/def-index/types";
 import { formatFileSize, formatNumber } from "../../../i18n/format";
 import styles from "./StatusBar.module.css";
 
@@ -12,6 +18,7 @@ function runningStatusLabel(
   locale: string,
 ): string {
   if (status.phase === "pending") return t("statusBar.indexPending");
+  if (status.currentStage === "hydratingCache") return t("statusBar.indexHydratingCache");
   if (status.currentStage === "discovering") return t("statusBar.indexDiscovering");
   if (status.currentStage === "indexing" && status.totalFiles !== undefined) {
     return t("statusBar.indexingProgress", {
@@ -79,6 +86,9 @@ export function StatusBar({
                   <span>{runningStatusLabel(indexingStatus, t, i18n.language)}</span>
                 </>
               ) : indexingStatus.phase === "complete" && indexingStatus.errors > 0 ? (
+                // Known errors take priority over the "checking" indicator below: a hydrated
+                // cache that already knows about errors from a prior session must stay
+                // inspectable while background verification runs, not hidden behind a spinner.
                 <button
                   type="button"
                   className={styles.indexErrorsBtn}
@@ -88,6 +98,12 @@ export function StatusBar({
                   <AlertCircle size={11} className={styles.icon} />
                   <span>{t("shell:statusBar.indexErrors", { count: indexingStatus.errors })}</span>
                 </button>
+              ) : indexingStatus.phase === "complete" &&
+                indexingStatus.cacheVerification === "checking" ? (
+                <>
+                  <Loader2 size={11} className={`${styles.icon} spin`} />
+                  <span>{t("shell:statusBar.cacheChecking")}</span>
+                </>
               ) : indexingStatus.phase === "complete" ? (
                 <>
                   <CheckCircle2 size={11} className={styles.icon} />

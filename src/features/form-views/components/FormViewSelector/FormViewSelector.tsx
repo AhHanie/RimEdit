@@ -10,22 +10,22 @@ import styles from "./FormViewSelector.module.css";
 interface Props {
   controller: UseFormViewsResult;
   onOpenManager: () => void;
-  /** Issue 08 (Plan.md section 8 "Hidden validation feedback"): validation diagnostics for the
+  /** Validation diagnostics for the
    * selected Def that map to a currently hidden top-level root. `null`/omitted (and a summary
    * with `totalCount === 0`) renders no summary/reveal affordance at all -- callers that don't
    * yet compute this (or Patch/About/raw, which never render this component) get byte-identical
-   * behavior to before this issue. */
+   * behavior to before this was added. */
   hiddenIssues?: HiddenFieldDiagnosticsSummary | null;
-  /** `Reveal fields with issues` (Plan.md section 8): unhides only `hiddenIssues.affectedRootIds`
-   * via the SAME `setOverrideHiddenFieldIds` override mechanism issue 07's checkboxes use --
-   * never a Custom View mutation, never a view switch. Required whenever `hiddenIssues` has a
-   * nonzero count; unused otherwise. */
+  /** `Reveal fields with issues`: unhides only `hiddenIssues.affectedRootIds`
+   * via the SAME `setOverrideHiddenFieldIds` override mechanism the field checklist's checkboxes
+   * use -- never a Custom View mutation, never a view switch. Required whenever `hiddenIssues`
+   * has a nonzero count; unused otherwise. */
   onReveal?: () => void;
 }
 
 /** Stable DOM id for the `<select>` -- used both by tests and as the focus-restoration target
- * when a Form View visibility change hides the currently-focused form field (Plan.md section 7:
- * "restore focus to the selector/customize control if the focused field is removed"). */
+ * when a Form View visibility change hides the currently-focused form field (restores focus to
+ * the selector/customize control in that case). */
 export const FORM_VIEW_SELECTOR_SELECT_ID = "form-view-selector-select";
 
 function optionValue(view: Pick<ResolvedFormView, "origin" | "id">): string {
@@ -51,7 +51,7 @@ function sourceText(view: ResolvedFormView, t: TFunction<"editor">): string | nu
 
 /**
  * The compact Form View row rendered directly below `XmlFormEditor`'s existing multi-Def
- * selector and above `.fields` (Plan.md section 8). Only ever rendered for Def forms with a
+ * selector and above `.fields`. Only ever rendered for Def forms with a
  * resolvable schema -- `controller.applicable` mirrors that gate so callers don't need to
  * duplicate the profile/schema check.
  */
@@ -123,13 +123,12 @@ export function FormViewSelector({ controller, onOpenManager, hiddenIssues, onRe
       </button>
 
       <div className={styles.rightGroup}>
-        {/* Issue 08 (Plan.md section 8 "Hidden validation feedback"): counts validation
+        {/* Counts validation
          * diagnostics for the selected Def that map to a root the active Form View is currently
          * hiding. Wording is accessible text, not color alone -- the blocking count (if any) is
          * spelled out rather than conveyed by a color swatch. Clicking `Reveal fields with
          * issues` is the ONLY thing that ever changes visibility here -- merely having a hidden
-         * diagnostic present never auto-reveals anything (Plan.md: "Do not automatically reveal
-         * errors"). */}
+         * diagnostic present never auto-reveals anything. */}
         {hasHiddenIssues && (
           <div className={styles.hiddenIssuesIndicator} role="status">
             <span className={styles.hiddenIssuesText}>

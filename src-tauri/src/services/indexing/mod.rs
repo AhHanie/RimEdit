@@ -4,8 +4,9 @@ pub(crate) mod jobs;
 pub(crate) mod watchers;
 
 pub(crate) use jobs::{
-    enqueue_file_change, enqueue_file_delete, enqueue_folder_delete, enqueue_full_rebuild,
-    get_indexing_status, start_worker, IndexJobReason, IndexingServiceState,
+    enqueue_cache_verification, enqueue_file_change, enqueue_file_delete, enqueue_folder_delete,
+    enqueue_full_rebuild, enqueue_full_rebuild_if_generation_matches, get_indexing_status,
+    start_worker, IndexJobReason, IndexingServiceState, InitKey,
 };
 pub(crate) use watchers::{restart_watchers_for_settings, IndexWatcherState};
 

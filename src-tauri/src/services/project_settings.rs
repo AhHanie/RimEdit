@@ -167,6 +167,10 @@ pub(crate) fn update_app_locale(
     Ok(())
 }
 
+pub(crate) fn update_save_backups_enabled(settings: &mut ProjectSettings, enabled: bool) {
+    settings.save_backups_enabled = enabled;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -191,11 +195,12 @@ mod tests {
 
     fn make_settings_with_version(game_version: &str) -> ProjectSettings {
         ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: game_version.to_string(),
             locale: "en".to_string(),
             locations: vec![],
             active_project_id: None,
+            save_backups_enabled: false,
         }
     }
 
@@ -203,11 +208,12 @@ mod tests {
     fn removing_active_project_clears_active_project_id() {
         let id = "test-id".to_string();
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Project, &id)],
             active_project_id: Some(id.clone()),
+            save_backups_enabled: false,
         };
         remove_location(&mut settings, &id).unwrap();
         assert!(settings.active_project_id.is_none());
@@ -219,7 +225,7 @@ mod tests {
         let id = "loc1".to_string();
         let created = OffsetDateTime::now_utc();
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![RegisteredLocation {
@@ -236,6 +242,7 @@ mod tests {
                 updated_at: created,
             }],
             active_project_id: None,
+            save_backups_enabled: false,
         };
         std::thread::sleep(std::time::Duration::from_millis(1));
         update_location(
@@ -261,11 +268,12 @@ mod tests {
     fn update_location_rejects_blank_display_name() {
         let id = "loc1".to_string();
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Source, &id)],
             active_project_id: None,
+            save_backups_enabled: false,
         };
         let result = update_location(
             &mut settings,
@@ -283,11 +291,12 @@ mod tests {
     #[test]
     fn update_location_missing_id_returns_not_found() {
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Project, "existing")],
             active_project_id: None,
+            save_backups_enabled: false,
         };
         let result = update_location(
             &mut settings,
@@ -307,7 +316,7 @@ mod tests {
         let id = "loc1".to_string();
         let created = OffsetDateTime::now_utc();
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![RegisteredLocation {
@@ -324,6 +333,7 @@ mod tests {
                 updated_at: created,
             }],
             active_project_id: None,
+            save_backups_enabled: false,
         };
         update_location(
             &mut settings,
@@ -397,17 +407,29 @@ mod tests {
     }
 
     #[test]
+    fn update_save_backups_enabled_toggles_only_that_field() {
+        let mut settings = make_settings_with_version("1.6");
+        assert!(!settings.save_backups_enabled);
+        super::update_save_backups_enabled(&mut settings, true);
+        assert!(settings.save_backups_enabled);
+        assert_eq!(settings.game_version, "1.6");
+        super::update_save_backups_enabled(&mut settings, false);
+        assert!(!settings.save_backups_enabled);
+    }
+
+    #[test]
     fn deactivate_missing_active_project_keeps_existing_directory_active() {
         let dir = tempfile::tempdir().unwrap();
         let id = "proj1".to_string();
         let mut location = make_location(LocationKind::Project, &id);
         location.root_path = dir.path().to_string_lossy().to_string();
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![location],
             active_project_id: Some(id.clone()),
+            save_backups_enabled: false,
         };
         let notice = super::deactivate_missing_active_project(&mut settings);
         assert!(notice.is_none());
@@ -423,11 +445,12 @@ mod tests {
         location.display_name = "My Mod".to_string();
         location.root_path = missing_path.to_string_lossy().to_string();
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![location],
             active_project_id: Some(id.clone()),
+            save_backups_enabled: false,
         };
         let notice = super::deactivate_missing_active_project(&mut settings).unwrap();
         assert!(settings.active_project_id.is_none());
@@ -439,11 +462,12 @@ mod tests {
     #[test]
     fn deactivate_missing_active_project_clears_unknown_id_without_notice() {
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![],
             active_project_id: Some("stale-id".to_string()),
+            save_backups_enabled: false,
         };
         let notice = super::deactivate_missing_active_project(&mut settings);
         assert!(notice.is_none());
@@ -454,11 +478,12 @@ mod tests {
     fn deactivate_missing_active_project_clears_id_pointing_at_source_location() {
         let id = "source1".to_string();
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Source, &id)],
             active_project_id: Some(id),
+            save_backups_enabled: false,
         };
         let notice = super::deactivate_missing_active_project(&mut settings);
         assert!(notice.is_none());
@@ -468,11 +493,12 @@ mod tests {
     #[test]
     fn deactivate_missing_active_project_does_nothing_when_no_active_id() {
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![make_location(LocationKind::Project, "proj1")],
             active_project_id: None,
+            save_backups_enabled: false,
         };
         let notice = super::deactivate_missing_active_project(&mut settings);
         assert!(notice.is_none());
@@ -488,11 +514,12 @@ mod tests {
         let mut inactive_location = make_location(LocationKind::Project, "inactive");
         inactive_location.root_path = "/never/created/path".to_string();
         let mut settings = ProjectSettings {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: "en".to_string(),
             locations: vec![active_location, inactive_location],
             active_project_id: Some(active_id.clone()),
+            save_backups_enabled: false,
         };
         let notice = super::deactivate_missing_active_project(&mut settings);
         assert!(notice.is_none());

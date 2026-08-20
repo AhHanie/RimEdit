@@ -1,11 +1,12 @@
 {
   "name": "rimedit",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:analyze": "tsc && vite build --mode analyze",
     "preview": "vite preview",
     "tauri": "tauri",
     "pretest": "pnpm i18n:check",
@@ -45,6 +46,7 @@
     "@vitejs/plugin-react": "^4.6.0",
     "@vitest/ui": "^4.1.7",
     "jsdom": "^29.1.1",
+    "rollup-plugin-visualizer": "^7.1.1",
     "typescript": "~5.8.3",
     "vite": "^7.0.4",
     "vitest": "^4.1.7"

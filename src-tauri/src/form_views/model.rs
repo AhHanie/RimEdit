@@ -4,8 +4,8 @@ use time::OffsetDateTime;
 pub const CURRENT_SCHEMA_VERSION: u32 = 1;
 
 /// Scope key for a custom Form View: project (implicit -- the store file lives under the
-/// project's own directory), selected game version, and concrete Def type. Matches Plan.md
-/// section 3: "Scope custom views by project ID + selected game version + concrete Def type."
+/// project's own directory), selected game version, and concrete Def type. Custom views are
+/// scoped by project ID + selected game version + concrete Def type.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FormViewTarget {
@@ -14,9 +14,9 @@ pub struct FormViewTarget {
 }
 
 /// Optional provenance recorded when a custom view was copied/saved from a schema-defined
-/// view (Plan.md section 6). Purely informational: never used to re-derive `hiddenFieldIds`,
+/// view. Purely informational: never used to re-derive `hiddenFieldIds`,
 /// so a missing/renamed base becomes a nonblocking "derived from unavailable view" notice at
-/// resolution time (issue 05+), not a broken or deleted custom view. Field names mirror
+/// resolution time, not a broken or deleted custom view. Field names mirror
 /// `schema_pack::model::SchemaFormView`/`FormViewSource` (`view_id` <-> `SchemaFormView.id`,
 /// `pack_id`/`pack_version` <-> `FormViewSource`, `declared_on_def_type` <->
 /// `SchemaFormView.declared_on_def_type`) so a caller can construct one directly from a
@@ -33,7 +33,7 @@ pub struct BaseSchemaViewReference {
 /// A project-owned, user-editable Form View. `hidden_field_ids` is always a materialized
 /// snapshot -- never a diff against `base_schema_view` -- so later schema-view changes can
 /// never silently rewrite a user's custom selection, and fields introduced by a later schema
-/// release remain visible because they are simply absent from this set (Plan.md section 6).
+/// release remain visible because they are simply absent from this set.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CustomFormView {
@@ -43,7 +43,7 @@ pub struct CustomFormView {
     pub description: Option<String>,
     /// Canonical top-level Def schema field keys hidden by this view. Entries that no longer
     /// exist in the live schema are retained verbatim on read/write -- compatibility filtering
-    /// against the current catalog is a resolution-time (issue 05+) concern, not a storage one.
+    /// against the current catalog is a resolution-time concern, not a storage one.
     pub hidden_field_ids: Vec<String>,
     pub base_schema_view: Option<BaseSchemaViewReference>,
     #[serde(with = "time::serde::rfc3339")]
@@ -64,7 +64,7 @@ pub struct NewCustomFormView {
 
 /// Fields accepted when updating an existing custom view. Deliberately excludes `target` (a
 /// custom view's scope is immutable after creation) and `base_schema_view` (provenance is set
-/// only at creation; not needed by any issue-04 caller).
+/// only at creation).
 ///
 /// `name`/`hidden_field_ids` use plain `Option<T>`: `None` leaves the field unchanged, `Some`
 /// replaces it -- there is no meaningful "explicitly clear to blank" state for either (a blank
@@ -85,8 +85,8 @@ pub struct CustomFormViewUpdate {
 }
 
 /// Which kind of Form View a persisted selection reference points at. Mirrors
-/// `ResolvedFormView.origin` in Plan.md section 3 (`"default" | "schema" | "custom"`), though
-/// that TypeScript type belongs to issue 05's runtime resolver, not this store.
+/// `ResolvedFormView.origin` (`"default" | "schema" | "custom"`), though that TypeScript type
+/// belongs to the frontend's runtime resolver, not this store.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum FormViewOrigin {
@@ -107,7 +107,7 @@ pub struct SelectedFormViewRef {
 
 /// One entry in `preferences.lastSelected`: the last clean (non-overridden) view selection for
 /// a given `{gameVersion, defType}` scope. At most one entry per scope; a new selection in the
-/// same scope replaces the previous entry (Plan.md section 6).
+/// same scope replaces the previous entry.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LastSelectedFormView {
@@ -124,8 +124,7 @@ pub struct FormViewPreferences {
 
 /// The on-disk store shape at `{app config}/RimEdit/form-views/projects/<projectId>/form-views.json`.
 /// Mirrors `def_templates::model::UserDefTemplateStore` (schema-versioned, project-scoped, atomic
-/// write) but for custom Form Views + the last-selected-view preference. See Plan.md section 6
-/// for the canonical JSON shape this type serializes to.
+/// write) but for custom Form Views + the last-selected-view preference.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UserFormViewStore {

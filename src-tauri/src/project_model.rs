@@ -75,20 +75,24 @@ pub struct ProjectSettings {
     pub game_version: String,
     /// Global app UI locale (BCP-47, e.g. `"en"`). Validated against
     /// `crate::locale::SUPPORTED_LOCALES`. Despite `ProjectSettings`' name this
-    /// field is app-wide, not per-project -- see `docs/i18n/issues/02-global-locale-settings.md`.
+    /// field is app-wide, not per-project.
     pub locale: String,
     pub locations: Vec<RegisteredLocation>,
     pub active_project_id: Option<String>,
+    /// Global preference: when true, XML saves retain one recovery copy per project file
+    /// (see `project_save`). App-wide, like `locale`, and defaults to off.
+    pub save_backups_enabled: bool,
 }
 
 impl Default for ProjectSettings {
     fn default() -> Self {
         Self {
-            schema_version: 3,
+            schema_version: 4,
             game_version: "1.6".to_string(),
             locale: crate::locale::FALLBACK_LOCALE.to_string(),
             locations: Vec::new(),
             active_project_id: None,
+            save_backups_enabled: false,
         }
     }
 }
@@ -283,10 +287,11 @@ mod tests {
     fn default_settings_have_no_locations() {
         let s = ProjectSettings::default();
         assert!(s.locations.is_empty());
-        assert_eq!(s.schema_version, 3);
+        assert_eq!(s.schema_version, 4);
         assert!(s.active_project_id.is_none());
         assert_eq!(s.game_version, "1.6");
         assert_eq!(s.locale, "en");
+        assert!(!s.save_backups_enabled);
     }
 
     #[test]

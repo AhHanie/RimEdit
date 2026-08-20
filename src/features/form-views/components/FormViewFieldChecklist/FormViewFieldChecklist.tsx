@@ -54,8 +54,8 @@ function badgeLabel(summary: TopLevelFieldSummary, t: TFunction<"editor">): stri
 }
 
 /**
- * The per-field checkbox grid inside `FormViewManagerDialog`'s customize area (issue 07,
- * Plan.md section 8). Sourced from `collectTopLevelFieldSummaries` -- the canonical top-level
+ * The per-field checkbox grid inside `FormViewManagerDialog`'s customize area. Sourced from
+ * `collectTopLevelFieldSummaries` -- the canonical top-level
  * schema field universe, not rendered `FormFieldModel`s -- so a currently-hidden field still has
  * a checkbox row here even though its own control never mounts in the form itself. Every toggle
  * (search-filtered checkbox, Show all, Hide all) funnels through the same
@@ -112,13 +112,13 @@ export function FormViewFieldChecklist({ controller, def, defSchema, catalog }: 
     // override belongs to the scope that's active NOW.
     const startScopeKey = controller.getScopeKey();
     try {
-      // Preserve orphaned ids (Plan.md section 12 / issue 07 edge case: "a root no longer in
-      // schema remains stored but is not listed until it returns"). `effectiveHidden`/the
+      // Preserve orphaned ids: a root no longer in schema remains stored but is not listed until
+      // it returns. `effectiveHidden`/the
       // override are already intersected with the CURRENT known field universe -- they can
       // never carry a stale field id forward. Without this union, saving would silently
       // overwrite the view's stored `hiddenFieldIds` with only the checklist-representable
       // subset, permanently dropping anything the checklist can't show a row for (a field
-      // removed from the schema, or a nested/legacy id predating this issue). Union the
+      // removed from the schema, or a nested/legacy id). Union the
       // locally-toggled known-field set with whatever ids were ALREADY stored on this exact
       // view that this checklist doesn't/can't represent, so an unrelated toggle never erases
       // them.

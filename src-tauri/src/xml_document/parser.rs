@@ -334,47 +334,6 @@ pub fn parse_to_document(relative_path: &str, source: &str) -> XmlDocument {
     doc
 }
 
-#[cfg(test)]
-mod bom_tests {
-    use super::*;
-
-    /// `quick_xml::Reader::from_str` consumes a leading UTF-8 BOM without
-    /// counting its bytes toward `buffer_position()` - proven by comparing a
-    /// BOM-prefixed source against the same source without one. Left
-    /// uncorrected, every node span in a BOM-prefixed document lands 3 bytes
-    /// short of where it needs to be in `source`, corrupting any exact
-    /// `doc.source[span.start..span.end]` slice (e.g. indexed-def cloning).
-    #[test]
-    fn element_span_is_correct_in_a_bom_prefixed_document() {
-        let without_bom =
-            "<Defs>\n  <ThingDef>\n    <defName>Foo</defName>\n  </ThingDef>\n</Defs>";
-        let with_bom = format!("\u{feff}{without_bom}");
-
-        let doc = parse_to_document("Defs/Foo.xml", &with_bom);
-        assert!(!doc.had_fatal_parse_error);
-        let def_id = doc.def_summaries[0].node_id;
-        let span = &doc.nodes[def_id].span;
-
-        assert_eq!(
-            &with_bom[span.start..span.end],
-            "<ThingDef>\n    <defName>Foo</defName>\n  </ThingDef>"
-        );
-    }
-
-    #[test]
-    fn element_span_is_unaffected_without_a_bom() {
-        let raw = "<Defs>\n  <ThingDef>\n    <defName>Foo</defName>\n  </ThingDef>\n</Defs>";
-        let doc = parse_to_document("Defs/Foo.xml", raw);
-        let def_id = doc.def_summaries[0].node_id;
-        let span = &doc.nodes[def_id].span;
-
-        assert_eq!(
-            &raw[span.start..span.end],
-            "<ThingDef>\n    <defName>Foo</defName>\n  </ThingDef>"
-        );
-    }
-}
-
 pub fn parse_xml_document(relative_path: &str, source: &str) -> XmlDocumentLoadResult {
     let doc = parse_to_document(relative_path, source);
 
@@ -438,5 +397,46 @@ pub fn parse_xml_document(relative_path: &str, source: &str) -> XmlDocumentLoadR
         document: Some(view),
         parse_diagnostics: doc.parse_diagnostics,
         validation_diagnostics: doc.validation_diagnostics,
+    }
+}
+
+#[cfg(test)]
+mod bom_tests {
+    use super::*;
+
+    /// `quick_xml::Reader::from_str` consumes a leading UTF-8 BOM without
+    /// counting its bytes toward `buffer_position()` - proven by comparing a
+    /// BOM-prefixed source against the same source without one. Left
+    /// uncorrected, every node span in a BOM-prefixed document lands 3 bytes
+    /// short of where it needs to be in `source`, corrupting any exact
+    /// `doc.source[span.start..span.end]` slice (e.g. indexed-def cloning).
+    #[test]
+    fn element_span_is_correct_in_a_bom_prefixed_document() {
+        let without_bom =
+            "<Defs>\n  <ThingDef>\n    <defName>Foo</defName>\n  </ThingDef>\n</Defs>";
+        let with_bom = format!("\u{feff}{without_bom}");
+
+        let doc = parse_to_document("Defs/Foo.xml", &with_bom);
+        assert!(!doc.had_fatal_parse_error);
+        let def_id = doc.def_summaries[0].node_id;
+        let span = &doc.nodes[def_id].span;
+
+        assert_eq!(
+            &with_bom[span.start..span.end],
+            "<ThingDef>\n    <defName>Foo</defName>\n  </ThingDef>"
+        );
+    }
+
+    #[test]
+    fn element_span_is_unaffected_without_a_bom() {
+        let raw = "<Defs>\n  <ThingDef>\n    <defName>Foo</defName>\n  </ThingDef>\n</Defs>";
+        let doc = parse_to_document("Defs/Foo.xml", raw);
+        let def_id = doc.def_summaries[0].node_id;
+        let span = &doc.nodes[def_id].span;
+
+        assert_eq!(
+            &raw[span.start..span.end],
+            "<ThingDef>\n    <defName>Foo</defName>\n  </ThingDef>"
+        );
     }
 }

@@ -1,5 +1,5 @@
-// Form Views (issue 10, Plan.md section 10/13): count-based, non-timing performance-shape
-// regression guards for descriptor construction against a realistically large (135 top-level
+// Count-based, non-timing performance-shape regression guards for descriptor construction
+// against a realistically large (135 top-level
 // field, exactly 210-descriptor -- see `LARGE_FULL_DESCRIPTOR_COUNT`) synthetic ThingDef-shaped
 // fixture -- the same order of magnitude as the real `rimworld-core` `ThingDef.json` (~196
 // top-level fields). Each of the fixture's 3 object-list roots carries
@@ -9,7 +9,7 @@
 // `formDescriptors.test.ts` "hidden roots skip expensive expansion" tests already prove the
 // mechanism correct at 1-2 field scale; these tests prove the same contract holds across many
 // hidden roots (and many-item object lists) at once, with concrete before/after counts as the
-// regression guard (Plan.md section 10/13 explicitly asks for counts, not wall-clock timing).
+// regression guard (counts, not wall-clock timing).
 import { buildFormDescriptors } from "./formDescriptors";
 import {
   buildLargeThingDefCatalog,

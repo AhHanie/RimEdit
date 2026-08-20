@@ -51,7 +51,9 @@ pub async fn preview_project_xml_save(
             "commands.previewProjectXmlSave.loadIndex",
             save_tags(tid, &relative_path),
         );
-        def_index_cache::load_for_project(&app, &settings, &project_id, false).await?
+        // RequireFresh: a save preview's diff/duplicate diagnostics must reflect the actual
+        // collection, not a possibly-stale interactive index.
+        def_index_cache::load_fresh_for_project(&app, &settings, &project_id).await?
     };
 
     let mut preview = {
@@ -248,7 +250,8 @@ pub async fn save_project_xml_file(
             "commands.saveProjectXmlFile.slowPath.loadIndex",
             save_tags(tid, &relative_path),
         );
-        def_index_cache::load_for_project(&app, &settings, &project_id, false).await?
+        // RequireFresh: the slow save path must validate/write against the actual collection.
+        def_index_cache::load_fresh_for_project(&app, &settings, &project_id).await?
     };
     let result = {
         let _s = crate::instrumentation::span_with_tags(

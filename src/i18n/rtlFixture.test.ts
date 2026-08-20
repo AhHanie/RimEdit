@@ -1,9 +1,8 @@
-// Direction ("dir") fixture tests (docs/i18n/issues/10-formatting-rtl-and-release-tooling.md,
-// step 3): "Add `dir` fixture tests using a future RTL metadata fixture without advertising it as
-// selectable." `FUTURE_RTL_LOCALE_FIXTURE` is deliberately not added to `SUPPORTED_LOCALES` --
-// English remains the only shipped, selectable locale (Plan.md) -- but the underlying
-// `lang`/`dir` application mechanism is still exercised end-to-end against a hypothetical RTL
-// locale so a real RTL locale can be added later without redesigning this plumbing.
+// Direction ("dir") fixture tests: `FUTURE_RTL_LOCALE_FIXTURE` is deliberately not added to
+// `SUPPORTED_LOCALES` -- English remains the only shipped, selectable locale -- but the
+// underlying `lang`/`dir` application mechanism is still exercised end-to-end against a
+// hypothetical RTL locale so a real RTL locale can be added later without redesigning this
+// plumbing.
 
 import { afterEach, describe, expect, it } from "vitest";
 import { applyDocumentLocaleForMetadata } from "./LocaleProvider";

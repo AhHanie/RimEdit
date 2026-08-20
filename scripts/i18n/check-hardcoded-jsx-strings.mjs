@@ -1,9 +1,7 @@
 #!/usr/bin/env node
-// Guards against new hardcoded UI copy landing in JSX after issue 01 established the rule that
-// "JSX text, ARIA text, titles, and user-visible errors must use translation descriptors/keys"
-// (docs/i18n/issues/01-frontend-foundation.md). Per
-// docs/i18n/issues/10-formatting-rtl-and-release-tooling.md step 4: "Add ... no new bare JSX UI
-// literals outside approved technical/test fixtures."
+// Guards against new hardcoded UI copy landing in JSX: JSX text, ARIA text, titles, and
+// user-visible errors must use translation descriptors/keys, with no new bare JSX UI literals
+// outside approved technical/test fixtures.
 //
 // This is a source-level heuristic (does a JSX text node / user-facing attribute string literal
 // contain a letter), not a semantic translation check -- see checkHardcodedJsxStrings.mjs's module
@@ -29,7 +27,7 @@ const EXEMPTIONS = {
   // field expects (e.g. "packageId", "mod.a,mod.b") -- these are technical identifier-format
   // examples for a mod author familiar with About.xml/PatchOperation XML, not translatable UI
   // sentences, matching the existing `patch_missing_class_attribute`-style treatment of XML
-  // identifiers as literal, never-translated data (see Plan.md's non-goals).
+  // identifiers as literal, never-translated data.
   "src/features/about-editor/components/AboutDependencySection/AboutDependencySection.tsx": new Set([
     "packageId",
     "displayName",

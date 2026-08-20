@@ -69,12 +69,12 @@ interface UseXmlFormControllerArgs {
   ) => Promise<string>;
   clearPreview: () => void;
   /**
-   * Form Views (issue 05, Plan.md section 7/9/10): canonical top-level Def schema field keys
+   * Canonical top-level Def schema field keys
    * (`descriptor.fieldPath[0]`, i.e. `DefTypeSchema.fields` keys) that should be rendered.
    * `undefined`/`null` means "no filter" - the existing unfiltered full form - and MUST
-   * produce byte-identical behavior to omitting this argument entirely; no real caller
-   * passes a value yet (issue 06's `useFormViews`/`XmlEditorPane` will own selection state
-   * and supply this Set). Passed straight through to `buildFormDescriptors`/
+   * produce byte-identical behavior to omitting this argument entirely. Supplied by
+   * `useFormViews`/`XmlEditorPane`, which own selection state and compute this Set. Passed
+   * straight through to `buildFormDescriptors`/
    * `buildFormFieldModels`, which skip hidden top-level roots before any expensive nested
    * expansion. Changing this value is an explicit dependency of the descriptor/model
    * rebuild below (`resetKey`), so a visibility change rebuilds the store/models exactly
@@ -83,13 +83,12 @@ interface UseXmlFormControllerArgs {
    */
   visibleTopLevelFieldIds?: ReadonlySet<string> | null;
   /**
-   * Form Views (issue 05, Plan.md section 7) focus-fallback hook. Called once per field id
+   * Focus-fallback hook. Called once per field id
    * that was focused immediately before a descriptor/model rebuild (e.g. a visibility
    * change hiding the focused field's top-level root) and is no longer present afterward.
-   * This issue does not implement a fallback focus target itself - there is no selector/
-   * customize control to focus yet - so it is exposed purely as a signal for the future
-   * owner (issue 06/07's Form View selector/`FormViewManagerDialog`) to move DOM focus to
-   * their own control when they wire this hook up.
+   * This hook does not implement a fallback focus target itself; it is exposed purely as a
+   * signal for the Form View selector/`FormViewManagerDialog` to move DOM focus to
+   * their own control.
    */
   onFocusedFieldHidden?: (fieldId: FormFieldId) => void;
 }
@@ -167,8 +166,8 @@ function getCatalogId(catalog: SchemaCatalog): number {
 // `descriptors` (they must re-resolve translated text on a locale switch)
 // but wrong for `docKey`'s draft-preservation decision below. `load_schema_catalog` resolves
 // `label`/`description`/`message` through the active locale's sidecar overlay server-side
-// (see `src-tauri/src/schema_pack/merge.rs`'s "locale sidecar" handling) and issue 06 made the
-// catalog re-fetch itself locale-aware, so a locale switch legitimately produces a brand-new
+// (see `src-tauri/src/schema_pack/merge.rs`'s "locale sidecar" handling) and the
+// catalog re-fetch is itself locale-aware, so a locale switch legitimately produces a brand-new
 // `SchemaCatalog` object whose translated text differs while its field set/shape does not. If
 // `docKey` used `getCatalogId` directly, that new-object-same-structure catalog would look like
 // a genuine structural/document change and wipe any in-progress, not-yet-flushed draft field
@@ -259,8 +258,8 @@ function getStructuralCatalogId(catalog: SchemaCatalog): number {
 }
 
 // Same content-stable-id pattern as `getCatalogId`, applied to the Form Views visibility
-// set (issue 05). `0` is reserved for "no filter" (the argument omitted/null), so the
-// resetKey suffix is a fixed constant for every caller that doesn't pass this yet - it can
+// set. `0` is reserved for "no filter" (the argument omitted/null), so the
+// resetKey suffix is a fixed constant for every caller that doesn't pass this - it can
 // never change across renders and therefore never changes today's rebuild behavior.
 const visibilityIdByRef = new WeakMap<ReadonlySet<string>, number>();
 const visibilityIdBySignature = new Map<string, number>();
@@ -303,7 +302,7 @@ function focusedFieldIdsGoneAfterReset(
 }
 
 /**
- * Form Views (issue 05, Plan.md section 7/9 - "no value is discarded"): every field in
+ * No value is discarded: every field in
  * `store` with an uncommitted draft (a dirty edit or an explicit clear request), keyed by
  * its canonical `FormFieldId`. Must be read *before* `store.reset(...)` replaces the field
  * map, since a plain rebuild otherwise silently drops in-memory drafts in favor of the
@@ -382,7 +381,7 @@ export function useXmlFormController({
     );
   }, [snapshot, selectedDefNodeId]);
 
-  // Step 2: cheap, content-stable ids. Computed before `models`/`descriptors` below so those
+  // Cheap, content-stable ids. Computed before `models`/`descriptors` below so those
   // memos can depend on stable primitives instead of the raw `catalog`/`visibleTopLevelFieldIds`
   // references: a caller re-creating a content-equal catalog or
   // Set on every render (e.g. `new Set(someComputedArray)` inline) must not force the
@@ -392,7 +391,7 @@ export function useXmlFormController({
   // `getStructuralCatalogId`'s doc comment) - unchanged by a locale-only catalog reload, used
   // only by `docKey` below.
   const structuralCatalogId = catalog ? getStructuralCatalogId(catalog) : 0;
-  // Form Views (issue 05): `0` when no visibility filter is supplied, so this is a fixed
+  // `0` when no visibility filter is supplied, so this is a fixed
   // constant (never changes across renders) until a real caller passes a Set.
   const visibilityId = getVisibilityId(visibleTopLevelFieldIds);
 
@@ -477,14 +476,14 @@ export function useXmlFormController({
     Promise.resolve(null),
   );
 
-  // Step 4: markers recorded when the form commits, so the reset path can recognise a
+  // Markers recorded when the form commits, so the reset path can recognise a
   // form-originated content change and skip the redundant whole-form rebuild.
   const lastCommittedRawXmlRef = useRef<string | null>(null);
   const lastCommitStructuralRef = useRef(false);
   const lastCommitPrevNodeCountRef = useRef<number | null>(null);
   const appliedResetKeyRef = useRef<string | null>(null);
 
-  // Form Views (issue 05), extended to also cover locale, with the comparison itself later
+  // Extended to also cover locale, with the comparison itself later
   // refined - see `isPureDisplayOnlyChange`'s doc comment: the
   // `docKey`/`i18n.language` last applied, so the rebuild effect can tell a pure visibility-,
   // locale-, or locale-driven-catalog-metadata-only rebuild apart from every other rebuild cause
@@ -534,7 +533,7 @@ export function useXmlFormController({
   );
   useSyncExternalStore(store.subscribeStructure, store.getStructureVersion);
 
-  // Rebuild (or, per Step 4, deliberately skip) the field store when the reset key changes.
+  // Rebuild (or deliberately skip) the field store when the reset key changes.
   // Runs as a layout effect so the rebuilt store is committed + subscribers notified before
   // paint, avoiding a visible stale frame.
   useLayoutEffect(() => {
@@ -543,7 +542,7 @@ export function useXmlFormController({
     const newRawXml = snapshotRef.current?.rawXml ?? null;
     const newNodeCount = snapshotRef.current?.parsed?.nodeCount ?? null;
 
-    // Step 4: a form-originated commit produced exactly this rawXml. If it changed no
+    // A form-originated commit produced exactly this rawXml. If it changed no
     // document structure (no structural edits AND node count unchanged), every parse-order
     // node id maps to the same element and the post-flush field state is already correct -
     // so the full rebuild is redundant work and we skip it. Anything else (raw edit,
@@ -568,7 +567,7 @@ export function useXmlFormController({
       newNodeCount === lastCommitPrevNodeCountRef.current &&
       !localeChanged;
 
-    // Form Views (issue 05, Plan.md section 7/9 - "no value is discarded"), extended to
+    // No value is discarded, extended to
     // locale: this rebuild is caused *purely* by a display-only change
     // (the visibility filter, the active locale, or a locale-only
     // catalog re-fetch landing on a LATER render than the `i18n.language` flip that triggered it,
@@ -605,10 +604,10 @@ export function useXmlFormController({
     // rebuild reflects a REAL document/def/catalog change - a pure visibility toggle alters
     // no field's value (see the draft-preservation branch below), so an in-flight flush from
     // before the toggle is still valid and must not be invalidated purely because the user
-    // switched views mid-flight. The same reasoning applies to the Step 4 one-shot commit
+    // switched views mid-flight. The same reasoning applies to the one-shot commit
     // markers: consuming them here for a rebuild that hasn't actually observed the commit's
     // rawXml yet would make the *next*, real rebuild wrongly pay for a full rebuild instead
-    // of the Step 4 fast path.
+    // of the skip-rebuild fast path.
     //
     // This used to RESET `draftVersionRef` to the fixed constant 0, which is
     // a genuine (pre-existing, not introduced by Form Views) race: an in-flight flush that
@@ -641,7 +640,7 @@ export function useXmlFormController({
       return;
     }
 
-    // Form Views (issue 05): capture focused-but-about-to-disappear field ids *before*
+    // Capture focused-but-about-to-disappear field ids *before*
     // `store.reset` replaces the field set, so the fallback hook can still be told which
     // field lost focus (e.g. its top-level root was just hidden by a visibility change).
     const goneFocusedIds = focusedFieldIdsGoneAfterReset(store, models);
@@ -776,7 +775,7 @@ export function useXmlFormController({
       if (edits.length === 0) return null;
 
       const dirtyIds = dirtyFields.map((field) => field.model.id);
-      // Step 4 markers captured synchronously before the await.
+      // Skip-rebuild markers captured synchronously before the await.
       const structural = edits.some(isStructuralEdit);
       const prevNodeCount = snapshotRef.current?.parsed?.nodeCount ?? null;
 
@@ -811,7 +810,7 @@ export function useXmlFormController({
             const rawXml = await commitEditsRef.current(edits, editContext);
 
             // Check staleness BEFORE any of the following side effects
-            // (Step 4 markers, `store.applyCommit`, the hidden-draft stash update) rather
+            // (skip-rebuild markers, `store.applyCommit`, the hidden-draft stash update) rather
             // than applying them first and only afterward deciding whether to also flag an
             // error. `draftVersionRef` is a monotonic generation counter (bumped on every
             // per-edit action and every real, non-visibility rebuild - see the rebuild
@@ -1001,7 +1000,7 @@ function buildInitialFieldState(
 
 /**
  * Whether the store's current per-field values match a freshly-derived build from the
- * re-parsed document. Used to validate the optimistic skip-rebuild path (Step 4): if any
+ * re-parsed document. Used to validate the optimistic skip-rebuild path: if any
  * field's value differs - or the id set differs - the form's in-memory state has diverged
  * from the file and we must rebuild rather than skip.
  */

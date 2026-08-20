@@ -1,3 +1,4 @@
+mod app_data;
 mod create_def;
 mod def_index;
 mod def_templates;
@@ -9,9 +10,11 @@ mod project_files;
 mod project_settings;
 mod project_validation;
 mod schema_catalog;
+mod window;
 mod xml_editor;
 mod xml_save;
 
+pub use app_data::open_app_data_folder;
 pub use create_def::create_def_from_template;
 pub use def_index::{
     get_def_index_errors, get_def_index_facets, get_indexing_status, query_def_duplicates,
@@ -40,10 +43,12 @@ pub use project_files::{
 };
 pub use project_settings::{
     classify_source_folder_cmd, get_project_settings, remove_location, set_active_project,
-    update_app_locale, update_location, update_project_game_version, upsert_location,
+    update_app_locale, update_location, update_project_game_version, update_save_backups_enabled,
+    upsert_location,
 };
 pub use project_validation::validate_project;
 pub use schema_catalog::{list_installed_schema_game_versions_cmd, load_schema_catalog};
+pub use window::signal_startup_ready;
 pub use xml_editor::{
     apply_xml_editor_edit, apply_xml_editor_edits, parse_xml_editor_buffer,
     read_location_xml_editor_document, read_project_xml_document, read_project_xml_editor_document,

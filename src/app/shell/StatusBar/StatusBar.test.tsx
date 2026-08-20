@@ -43,6 +43,7 @@ describe("StatusBar", () => {
         {...defaultProps({
           indexingStatus: {
             phase: "complete",
+            cacheVerification: "verified",
             pendingFiles: 0,
             indexedDefs: 5,
             projectDefs: 5,
@@ -62,6 +63,7 @@ describe("StatusBar", () => {
         {...defaultProps({
           indexingStatus: {
             phase: "complete",
+            cacheVerification: "verified",
             pendingFiles: 0,
             indexedDefs: 5,
             projectDefs: 5,
@@ -75,12 +77,83 @@ describe("StatusBar", () => {
     expect(screen.getByText("2 index errors")).toBeDefined();
   });
 
+  it("shows a checking label for a completed hydrated cache pending background verification", () => {
+    renderWithI18n(
+      <StatusBar
+        {...defaultProps({
+          indexingStatus: {
+            phase: "complete",
+            cacheVerification: "checking",
+            pendingFiles: 0,
+            indexedDefs: 5,
+            projectDefs: 5,
+            sourceDefs: 0,
+            errors: 0,
+            updatedAtUnixMs: 0,
+          },
+        })}
+      />,
+    );
+    expect(
+      screen.getByText("Using cached index - checking for updates…"),
+    ).toBeDefined();
+  });
+
+  it("shows the clickable error count, not the checking spinner, when a hydrated cache already has known errors", () => {
+    renderWithI18n(
+      <StatusBar
+        {...defaultProps({
+          projectId: "proj1",
+          indexingStatus: {
+            phase: "complete",
+            cacheVerification: "checking",
+            pendingFiles: 0,
+            indexedDefs: 5,
+            projectDefs: 5,
+            sourceDefs: 0,
+            errors: 2,
+            updatedAtUnixMs: 0,
+          },
+        })}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "2 index errors" }),
+    ).toBeDefined();
+    expect(
+      screen.queryByText("Using cached index - checking for updates…"),
+    ).toBeNull();
+  });
+
+  it("shows a hydrating-cache label with no file counter during background disk-cache hydration", () => {
+    renderWithI18n(
+      <StatusBar
+        {...defaultProps({
+          indexingStatus: {
+            phase: "running",
+            cacheVerification: "notRequired",
+            pendingFiles: 0,
+            indexedDefs: 0,
+            projectDefs: 0,
+            sourceDefs: 0,
+            errors: 0,
+            updatedAtUnixMs: 0,
+            currentStage: "hydratingCache",
+          },
+        })}
+      />,
+    );
+    expect(screen.getByText("Loading Def index cache…")).toBeDefined();
+    expect(screen.queryByText(/\d+ \/ \d+ files/)).toBeNull();
+  });
+
   it("shows a discovering label during the discovering stage", () => {
     renderWithI18n(
       <StatusBar
         {...defaultProps({
           indexingStatus: {
             phase: "running",
+            cacheVerification: "notRequired",
             pendingFiles: 0,
             indexedDefs: 0,
             projectDefs: 0,
@@ -101,6 +174,7 @@ describe("StatusBar", () => {
         {...defaultProps({
           indexingStatus: {
             phase: "running",
+            cacheVerification: "notRequired",
             pendingFiles: 0,
             indexedDefs: 0,
             projectDefs: 0,
@@ -123,6 +197,7 @@ describe("StatusBar", () => {
         {...defaultProps({
           indexingStatus: {
             phase: "running",
+            cacheVerification: "notRequired",
             pendingFiles: 3,
             indexedDefs: 0,
             projectDefs: 0,
@@ -157,6 +232,7 @@ describe("StatusBar", () => {
           projectId: "proj1",
           indexingStatus: {
             phase: "complete",
+            cacheVerification: "verified",
             pendingFiles: 0,
             indexedDefs: 5,
             projectDefs: 5,
@@ -177,6 +253,7 @@ describe("StatusBar", () => {
         {...defaultProps({
           indexingStatus: {
             phase: "complete",
+            cacheVerification: "verified",
             pendingFiles: 0,
             indexedDefs: 5,
             projectDefs: 5,
@@ -204,6 +281,7 @@ describe("StatusBar", () => {
           projectId: "proj1",
           indexingStatus: {
             phase: "complete",
+            cacheVerification: "verified",
             pendingFiles: 0,
             indexedDefs: 5,
             projectDefs: 5,

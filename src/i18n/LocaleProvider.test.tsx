@@ -61,8 +61,8 @@ describe("LocaleProvider", () => {
   // `changeLocale` used to apply the new locale to i18next/document/state before awaiting
   // persistence. If persistence failed, that unpersisted state stayed active, and callers were
   // left to attempt their own rollback -- which itself could
-  // fail and get silently swallowed, contradicting Plan.md's "failure leaves the previous locale
-  // active" contract. `changeLocale` must now guarantee the revert itself.
+  // fail and get silently swallowed, leaving the UI on an unpersisted locale instead of the
+  // previous one. `changeLocale` must now guarantee the revert itself.
   it("reverts locale state to the prior value and rejects when persistence fails", async () => {
     const i18nInstance = createI18nInstance();
     const changeLanguageSpy = vi.spyOn(i18nInstance, "changeLanguage");

@@ -112,18 +112,17 @@ export const XmlRawEditor = forwardRef<XmlRawEditorHandle, Props>(
           spellcheck: "false",
           // XML is machine-readable syntax, not natural-language prose -- keep the editable
           // content region forced LTR even once a future RTL locale flips `dir` on `<html>`
-          // (see docs/i18n/issues/08-editor-and-patch-ui-migration.md's "keep code editor/XML/
-          // XPath controls dir=ltr by semantic policy" carve-out). Setting this on the
+          // (code editor/XML/XPath controls stay dir=ltr by semantic policy). Setting this on the
           // contenteditable region itself (not just an ancestor wrapper) matters because browsers
           // use the contenteditable element's own `dir` for caret movement and bidi auto-detection.
           dir: "ltr",
         }),
       ],
       // extensions are stable by design; readOnly changes go through the compartment. The
-      // aria-label is captured once at mount (English-only in this release, per Plan.md); a
+      // aria-label is captured once at mount (English-only in this release); a
       // future non-English locale would need this compartmentalized like `readOnlyCompartment`
       // to update live, matching this file's existing "keep code editor controls dir=ltr by
-      // semantic policy" carve-out from full runtime-locale reactivity (issue 08 scope).
+      // semantic policy" carve-out from full runtime-locale reactivity.
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [],
     );

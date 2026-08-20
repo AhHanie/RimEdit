@@ -101,7 +101,7 @@
   font-size: 12px;
 }
 
-/* Form Views customize mode (issue 07): inline hide affordances on top-level scalar fields and
+/* Form Views customize mode: inline hide affordances on top-level scalar fields and
  * object-section headers. Only rendered while customize mode is active (the manager dialog is
  * open) -- ordinary form rendering never mounts these wrappers, so there is no layout/behavior
  * change outside customize mode. */

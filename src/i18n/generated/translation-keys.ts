@@ -4,8 +4,7 @@
 // Each namespace's English resource object below is embedded as a literal (not imported from its
 // `.json` file) so every string value keeps its literal TypeScript type, which activates i18next's
 // built-in per-key interpolation-argument checking on every `t(...)` call site -- see
-// `scripts/i18n/shared.mjs`'s `generateTranslationKeysSource` doc comment for the full mechanism,
-// and Plan.md's "Translation key and type-safety policy".
+// `scripts/i18n/shared.mjs`'s `generateTranslationKeysSource` doc comment for the full mechanism.
 
 export const defaultNamespace = "common" as const;
 
@@ -17,6 +16,9 @@ export const enResources = {
   common: {
     "app": {
       "name": "RimEdit"
+    },
+    "startup": {
+      "loading": "Loading RimEdit…"
     },
     "actions": {
       "ok": "OK",
@@ -78,6 +80,8 @@ export const enResources = {
       "ready": "Ready",
       "noProject": "No project",
       "indexPending": "Index pending",
+      "cacheChecking": "Using cached index - checking for updates…",
+      "indexHydratingCache": "Loading Def index cache…",
       "indexDiscovering": "Discovering files…",
       "indexingProgress": "Indexing {{processed}} / {{total}} files…",
       "indexing": "Indexing…",
@@ -132,6 +136,10 @@ export const enResources = {
       "showAbout": {
         "label": "About RimEdit",
         "keywords": "about, version, help, info"
+      },
+      "openAppDataFolder": {
+        "label": "Open RimEdit Data Folder",
+        "keywords": "data, app data, settings, cache, storage, folder, explorer"
       }
     },
     "startupNotice": {
@@ -203,6 +211,16 @@ export const enResources = {
       "copyDetails": "Copy details",
       "copied": "Copied"
     },
+    "chunkLoading": {
+      "editor": "Loading editor…",
+      "search": "Loading search…",
+      "preferences": "Loading preferences…",
+      "about": "Loading…"
+    },
+    "chunkLoad": {
+      "failed": "Failed to load this panel.",
+      "retry": "Retry"
+    },
     "search": {
       "title": "Def Search",
       "rebuildIndex": "Rebuild index",
@@ -240,6 +258,9 @@ export const enResources = {
       },
       "languageHeader": "Language",
       "languageAriaLabel": "Language",
+      "backupHeader": "Backup",
+      "backupDescription": "Keep one previous version per file, so you can recover from an XML save you didn't mean to make.",
+      "backupCheckboxLabel": "Create a backup before saving",
       "gameVersionHeader": "Game Version",
       "locationsDescription": "A location is either your active project (the mod you're editing) or a read-only source folder, such as the base game or another mod, registered so its Defs are available for reference, autocomplete, and validation without being editable."
     },
@@ -1007,13 +1028,16 @@ export const enResources = {
       "xml_editor_session_no_def_selected": "No Def is selected.",
       "xml_editor_session_no_active_project": "No active project is selected.",
       "xml_editor_session_form_edit_no_document": "This change could not be applied because the document currently has a syntax error. Fix the XML and try again.",
+      "xml_editor_session_buffer_changed_during_insert": "The document changed while the new Def was being inserted (e.g. an undo/redo). Nothing was added -- please try again.",
       "def_not_indexed": "\"{{defName}}\" ({{defType}}) was not found in the index at \"{{relativePath}}\".",
       "file_read_error": "Failed to read \"{{path}}\".",
       "file_read_failed": "Failed to read \"{{path}}\".",
       "xml_edit_failed": "The edit could not be applied to the XML document.",
       "indexing_already_started": "The indexing worker has already started.",
       "def_index_cache_write_failed": "The Def index cache could not be saved.",
+      "def_index_cache_too_large": "The Def index cache is too large to save and was skipped.",
       "def_index_load_failed": "Could not resolve the app storage directory for the Def index.",
+      "def_index_load_join_failed": "The Def index could not be loaded because a background task failed.",
       "def_index_rebuild_failed": "Could not resolve the app storage directory to rebuild the Def index.",
       "def_index_location_scan_failed": "This location could not be scanned for Def files.",
       "def_index_file_read_failed": "A file could not be read while building the Def index.",

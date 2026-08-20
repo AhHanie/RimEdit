@@ -152,19 +152,19 @@ export interface DefTemplate {
  * The resolved shape that actually crosses the Tauri boundary is `SchemaFormView`.
  *
  * The id `"default"` is reserved for the synthetic Default View and must never be used here;
- * validation of that constraint is issue 02's job.
+ * this type does not itself enforce that constraint.
  */
 export interface FormViewDef {
   /**
    * Optional (not required) because a child-schema *delta* amendment to an inherited view is
-   * valid with no label at all -- e.g. `{ hiddenFields: [...] }` or `{ disabled: true }` (see
-   * `Plan.md` section 4's `unhideFields`/`disabled` examples). A brand-new/base view declaration
-   * is expected to always provide one in practice, but that is enforced by issue 02/03's
-   * validation layer, not this type. The resolved `SchemaFormView.label` stays required.
+   * valid with no label at all -- e.g. `{ hiddenFields: [...] }` or `{ disabled: true }`.
+   * A brand-new/base view declaration is expected to always provide one in practice, but that is
+   * enforced by the schema validation layer, not this type. The resolved `SchemaFormView.label`
+   * stays required.
    */
   label?: string;
   description?: string;
-  /** Named icon token; no arbitrary SVG/URL. Token validation is deferred (issue 02+). */
+  /** Named icon token; no arbitrary SVG/URL. Token validation happens elsewhere, not by this type. */
   icon?: string;
   order?: number;
   recommended?: boolean;
@@ -184,8 +184,7 @@ export interface FormViewSource {
 
 /**
  * A resolved schema-defined Form View in the merged catalog, keyed by view id on
- * `DefTypeSchema.formViews`. Empty/absent until issue 03 implements inheritance/pack-precedence
- * resolution -- issue 01 only establishes the shape. The id `"default"` is reserved for the
+ * `DefTypeSchema.formViews`. The id `"default"` is reserved for the
  * synthetic Default View and never appears as a key here.
  */
 export interface SchemaFormView {
@@ -249,7 +248,7 @@ export interface ObjectTypeSchema {
 }
 
 /** Only `"unsupported"` is meaningful today; declarative preview behaviors are a documented
- * future extension (see `docs/patches-editor/Plan.md`). */
+ * future extension. */
 export type PatchOperationPreviewKind = "unsupported";
 
 export interface PatchOperationPreview {

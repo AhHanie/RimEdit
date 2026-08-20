@@ -1,5 +1,10 @@
 use crate::project_files::{read_xml_file, validate_and_resolve_location};
 use crate::project_model::AppError;
+// Every function below validates through `validation::validate_doc_for_project`/
+// `validate_doc_for_source`, which load the def index under `IndexLoadPolicy::Interactive` --
+// this is the interactive editor path (initial document open, in-buffer parse/edit validation)
+// that must never block on a project-wide file scan. Save/commit and explicit-validation paths
+// use `RequireFresh` directly and do not go through this module.
 use crate::services::validation;
 use crate::settings_store::load_settings;
 use crate::xml_document::{

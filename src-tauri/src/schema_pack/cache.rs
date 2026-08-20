@@ -3,11 +3,10 @@ use super::{build_schema_catalog_with_locale, resolve_catalog_locale, SchemaCata
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
-/// Caches built schema catalogs -- both the built-in-only catalog and, per Plan.md's "cache
-/// localized catalogs for projects with external schema roots", catalogs built from a project's
-/// registered-location external schema roots -- for callers that rebuild on a hot path (e.g.
-/// per-keystroke XPath completion, whose suggestion `detail` text surfaces catalog labels to the
-/// user -- see issue 06).
+/// Caches built, locale-resolved schema catalogs -- both the built-in-only catalog and catalogs
+/// built from a project's registered-location external schema roots -- for callers that rebuild
+/// on a hot path (e.g. per-keystroke XPath completion, whose suggestion `detail` text surfaces
+/// catalog labels to the user).
 ///
 /// Keyed by `(gameVersion, locale, externalRootsSignature)`:
 /// - `locale` is resolved through [`resolve_catalog_locale`] before it becomes part of the key, so

@@ -7,7 +7,7 @@ import type { UseXmlEditorSessionReturn, XmlEditorFileRef } from "../../hooks/us
 import { FORM_VIEW_SELECTOR_SELECT_ID } from "../../../form-views/components/FormViewSelector/FormViewSelector";
 import type { SchemaCatalog } from "../../../schema-catalog/types";
 
-// Issue 09 (Plan.md section 11): Form Views apply only when `profile === "defs"` AND the
+// Form Views apply only when `profile === "defs"` AND the
 // selected Def resolves a schema. This file proves that gate for Defs-profile documents at
 // the `XmlEditorPane` integration boundary, running the exact same unmocked
 // `useFormViews`/`useXmlFormController`/`XmlFormEditor` wiring as

@@ -20,9 +20,10 @@ const confirmDiscardChangesMock = vi.mocked(confirmDiscardChanges);
 
 function makeSettings(overrides: Partial<ProjectSettings> = {}): ProjectSettings {
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     gameVersion: "1.6",
     locale: "en",
+    saveBackupsEnabled: false,
     locations: [
       {
         id: "p1",
@@ -66,6 +67,7 @@ function defaultProps(
     onEditLocation: vi.fn().mockResolvedValue(undefined),
     onRemoveLocation: vi.fn().mockResolvedValue(undefined),
     onUpdateGameVersion: vi.fn().mockResolvedValue(undefined),
+    onUpdateBackupsEnabled: vi.fn().mockResolvedValue(undefined),
     onChangeLocale: vi.fn().mockResolvedValue(undefined),
     onOpenProject: vi.fn(),
     onAddSourceFolder: vi.fn(),
@@ -178,7 +180,14 @@ describe("PreferencesDialog locations grouping", () => {
 
 describe("PreferencesDialog locations empty state", () => {
   function emptySettings(): ProjectSettings {
-    return { schemaVersion: 3, gameVersion: "1.6", locale: "en", locations: [], activeProjectId: undefined };
+    return {
+      schemaVersion: 4,
+      gameVersion: "1.6",
+      locale: "en",
+      locations: [],
+      activeProjectId: undefined,
+      saveBackupsEnabled: false,
+    };
   }
 
   it("shows Open Project and Add Source Folder buttons when no locations", () => {
@@ -335,6 +344,74 @@ describe("PreferencesDialog language", () => {
     expect(screen.getByText("locale save failed")).toBeDefined();
     expect(onChangeLocale).toHaveBeenCalledTimes(1);
     expect(onChangeLocale).toHaveBeenCalledWith("en");
+  });
+});
+
+describe("PreferencesDialog backup preference", () => {
+  it("is unchecked by default", () => {
+    render(<PreferencesDialog {...defaultProps()} />);
+    const checkbox = screen.getByRole("checkbox", {
+      name: "Create a backup before saving",
+    }) as HTMLInputElement;
+    expect(checkbox.checked).toBe(false);
+  });
+
+  it("reflects an enabled setting", () => {
+    const settings = makeSettings({ saveBackupsEnabled: true });
+    render(<PreferencesDialog {...defaultProps({ settings })} />);
+    const checkbox = screen.getByRole("checkbox", {
+      name: "Create a backup before saving",
+    }) as HTMLInputElement;
+    expect(checkbox.checked).toBe(true);
+  });
+
+  it("calls onUpdateBackupsEnabled with true when checked", async () => {
+    const onUpdateBackupsEnabled = vi.fn().mockResolvedValue(undefined);
+    render(<PreferencesDialog {...defaultProps({ onUpdateBackupsEnabled })} />);
+    const checkbox = screen.getByRole("checkbox", {
+      name: "Create a backup before saving",
+    });
+    fireEvent.click(checkbox);
+    await waitFor(() => expect(onUpdateBackupsEnabled).toHaveBeenCalledWith(true));
+  });
+
+  it("calls onUpdateBackupsEnabled with false when unchecked", async () => {
+    const settings = makeSettings({ saveBackupsEnabled: true });
+    const onUpdateBackupsEnabled = vi.fn().mockResolvedValue(undefined);
+    render(
+      <PreferencesDialog {...defaultProps({ settings, onUpdateBackupsEnabled })} />,
+    );
+    const checkbox = screen.getByRole("checkbox", {
+      name: "Create a backup before saving",
+    });
+    fireEvent.click(checkbox);
+    await waitFor(() => expect(onUpdateBackupsEnabled).toHaveBeenCalledWith(false));
+  });
+
+  it("disables the checkbox while persistence is pending", async () => {
+    let resolveChange!: () => void;
+    const onUpdateBackupsEnabled = vi.fn(
+      () => new Promise<void>((resolve) => { resolveChange = resolve; }),
+    );
+    render(<PreferencesDialog {...defaultProps({ onUpdateBackupsEnabled })} />);
+    const checkbox = screen.getByRole("checkbox", {
+      name: "Create a backup before saving",
+    }) as HTMLInputElement;
+    fireEvent.click(checkbox);
+    await waitFor(() => expect(checkbox.disabled).toBe(true));
+    resolveChange();
+    await waitFor(() => expect(checkbox.disabled).toBe(false));
+  });
+
+  it("exposes a rejected update through the dialog alert", async () => {
+    const onUpdateBackupsEnabled = vi.fn().mockRejectedValueOnce({ message: "backup save failed" });
+    render(<PreferencesDialog {...defaultProps({ onUpdateBackupsEnabled })} />);
+    const checkbox = screen.getByRole("checkbox", {
+      name: "Create a backup before saving",
+    });
+    fireEvent.click(checkbox);
+    await waitFor(() => expect(screen.getByRole("alert")).toBeDefined());
+    expect(screen.getByText("backup save failed")).toBeDefined();
   });
 });
 

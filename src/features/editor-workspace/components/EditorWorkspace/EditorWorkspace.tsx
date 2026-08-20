@@ -14,9 +14,12 @@ interface EditorWorkspaceProps {
   activeTabKey: string | null;
   projectId: string | undefined;
   catalog: SchemaCatalog | null;
-  /** Form Views (issue 06): threaded through to `XmlEditorPane` -> `useFormViews`, which scopes
-   * custom-view selection/persistence by `{project, gameVersion, defType}`. */
+  /** Threaded through to `XmlEditorPane` -> `useFormViews`, which scopes custom-view
+   * selection/persistence by `{project, gameVersion, defType}`. */
   gameVersion?: string;
+  /** Bumped only after a completed index rebuild (not a mere cache-verification); threaded down
+   * to `useXmlEditorSession` so open sessions revalidate against the rebuilt index. */
+  validationRefreshRevision?: number;
   createDefSignal?: number;
   onActivateTab: (tabKey: string) => void;
   onCloseTab: (tabKey: string) => void;
@@ -31,6 +34,7 @@ export function EditorWorkspace({
   projectId,
   catalog,
   gameVersion,
+  validationRefreshRevision,
   createDefSignal,
   onActivateTab,
   onCloseTab,
@@ -93,6 +97,7 @@ export function EditorWorkspace({
             file={undefined}
             catalog={catalog}
             gameVersion={gameVersion}
+            validationRefreshRevision={validationRefreshRevision}
             hasOpenTabs={false}
             onNavigateDef={onNavigateDef}
           />
@@ -113,6 +118,7 @@ export function EditorWorkspace({
                     file={tab}
                     catalog={catalog}
                     gameVersion={gameVersion}
+                    validationRefreshRevision={validationRefreshRevision}
                     hasOpenTabs={tabs.length > 0}
                     active={active}
                     selectedDefNodeId={tab.selectedDefNodeId}

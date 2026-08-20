@@ -247,7 +247,7 @@ describe("XmlEditorPane - About.xml routing", () => {
     expect(screen.queryByTestId("about-editor-pane-stub")).toBeNull();
   });
 
-  // Issue 09 (Plan.md section 11): Def `formViews` never apply to About.xml -- `XmlFormEditor`
+  // Def `formViews` never apply to About.xml -- `XmlFormEditor`
   // (and the Form View selector it owns) must never mount for a `<ModMetaData>`-rooted file.
   // `XmlFormEditor` is stubbed above, so this also guards against a future change accidentally
   // rendering the real `FormViewSelector` outside of `XmlFormEditor`.

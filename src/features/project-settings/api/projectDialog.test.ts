@@ -37,7 +37,13 @@ function makeLocation(overrides: Partial<RegisteredLocation> = {}): RegisteredLo
 }
 
 function makeSettings(locations: RegisteredLocation[] = []): ProjectSettings {
-  return { schemaVersion: 3, gameVersion: "1.6", locale: "en", locations };
+  return {
+    schemaVersion: 4,
+    gameVersion: "1.6",
+    locale: "en",
+    locations,
+    saveBackupsEnabled: false,
+  };
 }
 
 beforeEach(() => {

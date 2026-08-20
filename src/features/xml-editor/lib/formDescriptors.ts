@@ -96,13 +96,12 @@ function getAllSchemaFields(
 }
 
 /**
- * Form Views (issue 06, Plan.md section 5/7): the shared, explicit `knownTopLevel` resolver --
- * every canonical top-level Def schema field id (`DefTypeSchema.fields` key, ancestor-first,
- * first-encountered-wins) that `buildFormDescriptors` would render for this Def type. This is
- * intentionally the exact same traversal `buildFormDescriptors` itself uses (`getAllSchemaFields`
- * above), not a reimplementation, so the Form View resolver's `knownTopLevel` set can never
- * disagree with what the form actually renders (Plan.md section 5: "avoiding a backend/frontend
- * disagreement"). Used to intersect a selected/overridden hidden-field set so a stale or
+ * The shared, explicit `knownTopLevel` resolver -- every canonical top-level Def schema field id
+ * (`DefTypeSchema.fields` key, ancestor-first, first-encountered-wins) that `buildFormDescriptors`
+ * would render for this Def type. This is intentionally the exact same traversal
+ * `buildFormDescriptors` itself uses (`getAllSchemaFields` above), not a reimplementation, so the
+ * Form View resolver's `knownTopLevel` set can never disagree with what the form actually renders.
+ * Used to intersect a selected/overridden hidden-field set so a stale or
  * removed field reference can never hide (or fail to hide) anything the form doesn't actually
  * have a field for.
  */
@@ -113,14 +112,13 @@ export function collectEffectiveTopLevelDefFields(
   return new Set(getAllSchemaFields(defSchema, catalog).keys());
 }
 
-/** One row's worth of presentation metadata for the Form View customization checklist
- * (issue 07). */
+/** One row's worth of presentation metadata for the Form View customization checklist. */
 export interface TopLevelFieldSummary {
   /** Canonical `DefTypeSchema.fields` key -- the same `TopLevelFieldId` a Form View hides. */
   id: string;
   label: string;
-  /** True for an object-root field (Plan.md section 8: "gives each object-root a 'section'
-   * badge") -- the same expandable-object-shape test `buildFormDescriptors` uses to decide
+  /** True for an object-root field (gives each object-root a "section"
+   * badge) -- the same expandable-object-shape test `buildFormDescriptors` uses to decide
    * whether to recurse into `buildNestedObjectDescriptors`. */
   isSection: boolean;
   /** The control this field would render as if visible -- used by the checklist UI to pick a
@@ -133,14 +131,14 @@ export interface TopLevelFieldSummary {
 }
 
 /**
- * Form Views (issue 07, Plan.md section 8 step 1): the customization checklist's field list --
+ * The customization checklist's field list --
  * every canonical top-level Def schema field, in the exact same universe/order as
  * `collectEffectiveTopLevelDefFields` above, each summarized with just enough presentation
  * metadata for a checkbox row. Built directly from the schema + raw XML child/attribute maps,
- * NOT from rendered `FormFieldModel`s -- a hidden field's models never reach the form (issue 05
- * skips their entire descriptor subtree), so a checklist sourced from rendered models could never
- * list (or un-hide) a currently-hidden field. Also deliberately does not expand into nested
- * descriptors or object-list items ("not rendered model descendants" -- issue 07's step 1); only
+ * NOT from rendered `FormFieldModel`s -- a hidden field's models never reach the form (the
+ * visibility filter skips their entire descriptor subtree), so a checklist sourced from rendered
+ * models could never list (or un-hide) a currently-hidden field. Also deliberately does not
+ * expand into nested descriptors or object-list items ("not rendered model descendants"); only
  * a cheap top-level presence check is needed here.
  */
 export function collectTopLevelFieldSummaries(
@@ -479,7 +477,7 @@ export function buildFormDescriptors(
       // `fieldName` here is already the canonical top-level Def schema field key (the same
       // key used by `DefTypeSchema.fields`/`fieldOrder`/`lookup_field`, and equal to what
       // becomes `descriptor.fieldPath[0]` below) - the exact TopLevelFieldId identity Form
-      // Views (Plan.md section 7) filter on. Mark it (and any matched alias) handled before
+      // Views filter on. Mark it (and any matched alias) handled before
       // the visibility check so a hidden field's XML still counts as "known" and never falls
       // through to `UnknownXmlFields` below.
       handledKeys.add(fieldName);
@@ -501,7 +499,7 @@ export function buildFormDescriptors(
         ? attributeByName.get(fieldName)
         : undefined;
 
-      // Form View visibility filter (issue 05, Plan.md section 7/10): skip this top-level
+      // Form View visibility filter: skip this top-level
       // field entirely - before any nested-object-schema resolution, discriminator
       // resolution, `buildNestedObjectDescriptors` recursion, or object-list item value
       // construction (`buildObjectListItemValue` et al.) - so a hidden root never pays for

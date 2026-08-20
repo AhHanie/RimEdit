@@ -18,21 +18,30 @@ import { FORM_VIEW_SELECTOR_SELECT_ID } from "../../../form-views/components/For
 import { XmlEditorContextProvider } from "../../context/XmlEditorContext";
 import { XmlEditorToolbar } from "../XmlEditorToolbar/XmlEditorToolbar";
 import { XmlFormEditor } from "../XmlFormEditor/XmlFormEditor";
-import { XmlRawEditor } from "../XmlRawEditor/XmlRawEditor";
 import { XmlDiagnosticsPanel } from "../XmlDiagnosticsPanel/XmlDiagnosticsPanel";
 import { SavePreviewDialog } from "../SavePreviewDialog/SavePreviewDialog";
 import { CreateDefWizard } from "../CreateDefWizard/CreateDefWizard";
 import { SaveDefTemplateDialog } from "../SaveDefTemplateDialog/SaveDefTemplateDialog";
+import { ChunkLoadBoundary } from "../../../../lib/ChunkLoadBoundary/ChunkLoadBoundary";
 import styles from "./XmlEditorPane.module.css";
+
+// CodeMirror (imported by `XmlRawEditor`) is only needed for the "Raw XML" view mode -- most
+// sessions default to and stay on the form editor (see `useXmlEditorSession`'s `mode` state) --
+// so it's loaded lazily rather than pulled into the editor workspace's chunk unconditionally.
+const loadXmlRawEditor = () =>
+  import("../XmlRawEditor/XmlRawEditor").then((m) => ({ default: m.XmlRawEditor }));
 
 interface Props {
   projectId: string | undefined;
   file: XmlEditorFileRef | undefined;
   catalog: SchemaCatalog | null;
-  /** Form Views (issue 06) are scoped by `{project, gameVersion, defType}` -- threaded down from
+  /** Form Views are scoped by `{project, gameVersion, defType}` -- threaded down from
    * `ProjectSettings.gameVersion` (`AppShell` -> `EditorWorkspace` -> here) so `useFormViews` can
    * resolve/persist selections against the right custom-view scope. */
   gameVersion?: string;
+  /** Bumped only after a completed index rebuild -- see `useXmlEditorSession`'s revalidation
+   * effect, which this is forwarded to unchanged. */
+  validationRefreshRevision?: number;
   hasOpenTabs: boolean;
   active?: boolean;
   selectedDefNodeId?: number;
@@ -49,6 +58,7 @@ export function XmlEditorPane({
   file,
   catalog,
   gameVersion,
+  validationRefreshRevision,
   hasOpenTabs,
   active,
   selectedDefNodeId,
@@ -65,7 +75,7 @@ export function XmlEditorPane({
   const [previewOpen, setPreviewOpen] = useState(false);
   const patchFlushRef = useRef<() => Promise<void>>(async () => undefined);
   const aboutFlushRef = useRef<() => Promise<void>>(async () => undefined);
-  const session = useXmlEditorSession(projectId, file);
+  const session = useXmlEditorSession(projectId, file, validationRefreshRevision);
   const editorSnapshot = session
     ? session.lastValidSnapshot ?? {
         rawXml: session.currentRawXml,
@@ -99,14 +109,14 @@ export function XmlEditorPane({
         : null,
   });
 
-  // Form Views (issue 05's `onFocusedFieldHidden` signal, wired up by issue 06): when a view
+  // Form Views' `onFocusedFieldHidden` signal: when a view
   // switch hides the top-level root of the field the user was actually focused in (real DOM
   // focus, not a click-triggered blur -- see the doc comment on `useXmlFormController`), that
   // control unmounts and focus would otherwise fall back to `document.body`/nowhere. Redirect it
   // to the Form View selector's `<select>` -- always present whenever Form View controls are
   // applicable at all -- so the user lands somewhere meaningful instead of losing focus outright
-  // (Plan.md section 7: "restore focus to the selector/customize control if the focused field is
-  // removed"). A plain DOM id lookup (rather than threading a ref through `XmlFormEditor` into
+  // (restore focus to the selector/customize control if the focused field is
+  // removed). A plain DOM id lookup (rather than threading a ref through `XmlFormEditor` into
   // `FormViewSelector`) keeps this a one-line, low-coupling fix; `FormViewSelector` already
   // exports this id for exactly this purpose.
   const onFocusedFieldHidden = useCallback(() => {
@@ -489,35 +499,44 @@ export function XmlEditorPane({
             />
           </XmlEditorContextProvider>
         ) : (
-          <XmlRawEditor
-            value={activeSession.currentRawXml}
-            onChange={activeSession.updateRawXml}
-            readOnly={file.readOnly}
-            onShortcut={(shortcut) => {
-              if (shortcut === "undo") {
-                if (editorSession.canUndo) editorSession.undo();
-                return true;
-              }
-              if (shortcut === "redo") {
-                if (editorSession.canRedo) editorSession.redo();
-                return true;
-              }
-              if (shortcut === "save") {
-                if (commandCanSave) {
-                  const startedAt = performance.now();
-                  const traceId = generateTraceId();
-                  void measureAsync(
-                    "xmlEditor.previewSave.entrypoint",
-                    () => editorSession.requestSavePreview(traceId, "shortcut", startedAt),
-                    { traceId, relativePath: file.relativePath, source: "shortcut", mode: "raw" },
-                  );
+          <ChunkLoadBoundary
+            factory={loadXmlRawEditor}
+            loadingFallback={
+              <div className="state-loading">
+                <Loader2 size={14} className="spin" />
+                <span>{t("editorPane.loading")}</span>
+              </div>
+            }
+            componentProps={{
+              value: activeSession.currentRawXml,
+              onChange: activeSession.updateRawXml,
+              readOnly: file.readOnly,
+              onShortcut: (shortcut: "undo" | "redo" | "save" | "close") => {
+                if (shortcut === "undo") {
+                  if (editorSession.canUndo) editorSession.undo();
+                  return true;
                 }
-                return true;
-              }
-              if (shortcut === "close") {
-                void onCloseActiveTab?.();
-                return true;
-              }
+                if (shortcut === "redo") {
+                  if (editorSession.canRedo) editorSession.redo();
+                  return true;
+                }
+                if (shortcut === "save") {
+                  if (commandCanSave) {
+                    const startedAt = performance.now();
+                    const traceId = generateTraceId();
+                    void measureAsync(
+                      "xmlEditor.previewSave.entrypoint",
+                      () => editorSession.requestSavePreview(traceId, "shortcut", startedAt),
+                      { traceId, relativePath: file.relativePath, source: "shortcut", mode: "raw" },
+                    );
+                  }
+                  return true;
+                }
+                if (shortcut === "close") {
+                  void onCloseActiveTab?.();
+                  return true;
+                }
+              },
             }}
           />
         )}

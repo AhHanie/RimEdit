@@ -1,4 +1,4 @@
-//! Structured `<value>` XML fragment support for the patch value editor (issue 06).
+//! Structured `<value>` XML fragment support for the patch value editor.
 //!
 //! `PatchOperationAdd`/`Insert`/`Replace`/`AddModExtension` (and metadata-defined custom
 //! operations with an `xmlValue` field) store their value payload as a raw XML string --

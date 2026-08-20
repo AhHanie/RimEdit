@@ -2,78 +2,91 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithI18n as render } from "../../../i18n/testing/renderWithI18n";
 import { AppShell } from "./AppShell";
-import { pickSourceFolder } from "../../../features/project-settings";
+import { pickSourceFolder } from "../../../features/project-settings/api/projectDialog";
+import { useIndexingStatus } from "../../../features/def-index/hooks/useIndexingStatus";
+import { openAppDataFolder } from "../../commands/appDataCommands";
 import type { ProjectSettings } from "../../../features/project-settings";
 
 const pickSourceFolderMock = vi.mocked(pickSourceFolder);
+const useIndexingStatusMock = vi.mocked(useIndexingStatus);
+const openAppDataFolderMock = vi.mocked(openAppDataFolder);
+
+vi.mock("../../commands/appDataCommands", () => ({
+  openAppDataFolder: vi.fn(),
+}));
 
 // AppShell orchestrates several heavy features (project explorer, editor workspace, def search,
-// schema catalog). This test only exercises the Preferences-dialog wiring described in Plan.md
-// ("Preferences window implementation plan"): both entry points open the same dialog, and opening
-// it doesn't disturb the current activity pane or create a resize handle -- so every unrelated
-// feature is stubbed out to keep the test scoped and independent of their own IPC calls.
+// schema catalog). This test only exercises the Preferences-dialog wiring: both entry points open
+// the same dialog, and opening it doesn't disturb the current activity pane or create a resize
+// handle -- so every unrelated feature is stubbed out to keep the test scoped and independent of
+// their own IPC calls.
 
 const settings: ProjectSettings = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   gameVersion: "1.6",
   locale: "en",
   locations: [],
   activeProjectId: undefined,
+  saveBackupsEnabled: false,
 };
 
-vi.mock("../../../features/project-settings", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../../features/project-settings")>();
-  return {
-    ...actual,
-    useProjectSettings: () => ({
-      settings,
-      loading: false,
-      error: null,
-      installedSchemaVersions: [],
-      startupNotice: null,
-      clearStartupNotice: vi.fn(),
-      addLocation: vi.fn(),
-      deleteLocation: vi.fn(),
-      editLocation: vi.fn(),
-      activateProject: vi.fn(),
-      updateGameVersion: vi.fn(),
-      replaceSettings: vi.fn(),
-    }),
-    pickProjectFolder: vi.fn(),
-    pickSourceFolder: vi.fn(),
-  };
-});
+// `AppShell` imports its hooks/dialogs/panels from these features' own files rather than each
+// feature's barrel `index.ts` (see `AppShell.tsx`'s import-comment: a barrel's re-export of a
+// lazily loaded component is a static edge Rollup follows regardless of which named export is
+// actually used, which would defeat the chunk split), so mocks below target those same file paths
+// -- mocking the barrel no longer intercepts what `AppShell` actually imports.
+vi.mock("../../../features/project-settings/hooks/useProjectSettings", () => ({
+  useProjectSettings: () => ({
+    settings,
+    loading: false,
+    error: null,
+    installedSchemaVersions: [],
+    startupNotice: null,
+    clearStartupNotice: vi.fn(),
+    addLocation: vi.fn(),
+    deleteLocation: vi.fn(),
+    editLocation: vi.fn(),
+    activateProject: vi.fn(),
+    updateGameVersion: vi.fn(),
+    updateBackupsEnabled: vi.fn(),
+    replaceSettings: vi.fn(),
+  }),
+}));
 
-vi.mock("../../../features/editor-workspace", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../../features/editor-workspace")>();
-  return {
-    ...actual,
-    useEditorWorkspace: () => ({
-      scan: null,
-      loadingScan: false,
-      refreshingScan: false,
-      scanError: null,
-      refresh: vi.fn(),
-      tabs: [],
-      activeTabKey: null,
-      openTab: vi.fn(),
-      activateTab: vi.fn(),
-      closeTab: vi.fn(),
-      setTabDirty: vi.fn(),
-      reconcileRename: vi.fn(),
-      reconcileDelete: vi.fn(),
-      forceCloseTabs: vi.fn(),
-      mutatingPath: null,
-      mutationError: null,
-      clearMutationError: vi.fn(),
-      createFile: vi.fn(),
-      createFolder: vi.fn(),
-      renamePath: vi.fn(),
-      deletePath: vi.fn(),
-    }),
-    EditorWorkspace: () => <div data-testid="editor-workspace" />,
-  };
-});
+vi.mock("../../../features/project-settings/api/projectDialog", () => ({
+  pickProjectFolder: vi.fn(),
+  pickSourceFolder: vi.fn(),
+}));
+
+vi.mock("../../../features/editor-workspace/hooks/useEditorWorkspace", () => ({
+  useEditorWorkspace: () => ({
+    scan: null,
+    loadingScan: false,
+    refreshingScan: false,
+    scanError: null,
+    refresh: vi.fn(),
+    tabs: [],
+    activeTabKey: null,
+    openTab: vi.fn(),
+    activateTab: vi.fn(),
+    closeTab: vi.fn(),
+    setTabDirty: vi.fn(),
+    reconcileRename: vi.fn(),
+    reconcileDelete: vi.fn(),
+    forceCloseTabs: vi.fn(),
+    mutatingPath: null,
+    mutationError: null,
+    clearMutationError: vi.fn(),
+    createFile: vi.fn(),
+    createFolder: vi.fn(),
+    renamePath: vi.fn(),
+    deletePath: vi.fn(),
+  }),
+}));
+
+vi.mock("../../../features/editor-workspace/components/EditorWorkspace/EditorWorkspace", () => ({
+  EditorWorkspace: () => <div data-testid="editor-workspace" />,
+}));
 
 vi.mock("../../../features/project-explorer", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../../features/project-explorer")>();
@@ -88,16 +101,15 @@ vi.mock("../../../features/project-explorer", async (importOriginal) => {
   };
 });
 
-vi.mock("../../../features/def-index", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../../../features/def-index")>();
-  return {
-    ...actual,
-    DefSearchPanel: ({ visible }: { visible: boolean }) => (
-      <div data-testid="search-panel" data-visible={visible} />
-    ),
-    useIndexingStatus: () => null,
-  };
-});
+vi.mock("../../../features/def-index/hooks/useIndexingStatus", () => ({
+  useIndexingStatus: vi.fn(() => null),
+}));
+
+vi.mock("../../../features/def-index/components/DefSearchPanel/DefSearchPanel", () => ({
+  DefSearchPanel: ({ visible }: { visible: boolean }) => (
+    <div data-testid="search-panel" data-visible={visible} />
+  ),
+}));
 
 vi.mock("../../../features/schema-catalog", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../../features/schema-catalog")>();
@@ -134,7 +146,9 @@ describe("AppShell Preferences integration", () => {
     render(<AppShell />);
     expect(screen.queryByRole("dialog", { name: "Preferences" })).toBeNull();
     await user.click(screen.getByRole("button", { name: "Preferences" }));
-    expect(screen.getByRole("dialog", { name: "Preferences" })).toBeDefined();
+    // `PreferencesDialog` is lazy-loaded -- its dynamic import resolves after the click, so the
+    // dialog only appears once that Suspense boundary settles.
+    expect(await screen.findByRole("dialog", { name: "Preferences" })).toBeDefined();
   });
 
   it("opens the same Preferences dialog from File > Preferences", async () => {
@@ -142,7 +156,7 @@ describe("AppShell Preferences integration", () => {
     render(<AppShell />);
     await user.click(screen.getByRole("button", { name: "File" }));
     await user.click(screen.getByRole("menuitem", { name: "Preferences" }));
-    expect(screen.getByRole("dialog", { name: "Preferences" })).toBeDefined();
+    expect(await screen.findByRole("dialog", { name: "Preferences" })).toBeDefined();
   });
 
   it("does not hide the current explorer pane or create a resize handle when opened", async () => {
@@ -162,9 +176,94 @@ describe("AppShell Preferences integration", () => {
     const user = userEvent.setup();
     render(<AppShell />);
     await user.click(screen.getByRole("button", { name: "Preferences" }));
-    expect(screen.getByRole("dialog", { name: "Preferences" })).toBeDefined();
+    expect(await screen.findByRole("dialog", { name: "Preferences" })).toBeDefined();
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("dialog", { name: "Preferences" })).toBeNull();
+  });
+});
+
+// `PreferencesDialog`, `AboutDialog`, the Def search panel, and `EditorWorkspace` are all
+// React.lazy-loaded (see `AppShell.tsx`'s `load*` factories) -- this exercises that each still
+// exposes its existing UI and close behavior once its Suspense boundary settles.
+describe("AppShell lazy-loaded panels", () => {
+  it("opens the About dialog from Help > About RimEdit and closes it with Escape", async () => {
+    const user = userEvent.setup();
+    render(<AppShell />);
+    expect(screen.queryByRole("dialog", { name: "About RimEdit" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Help" }));
+    await user.click(screen.getByRole("menuitem", { name: "About RimEdit" }));
+    expect(await screen.findByRole("dialog", { name: "About RimEdit" })).toBeDefined();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "About RimEdit" })).toBeNull();
+  });
+
+  it("opens the Def search panel from the activity rail and keeps it mounted when switching back to Explorer", async () => {
+    const user = userEvent.setup();
+    render(<AppShell />);
+    expect(screen.queryByTestId("search-panel")).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Search" }));
+    const searchPanel = await screen.findByTestId("search-panel");
+    expect(searchPanel.dataset.visible).toBe("true");
+
+    await user.click(screen.getByRole("button", { name: "Explorer" }));
+    // Toggling back to Explorer hides (not unmounts) the search panel, matching the
+    // always-mounted-once-opened behavior it had before the panel's chunk was split out.
+    expect(screen.getByTestId("search-panel").dataset.visible).toBe("false");
+  });
+});
+
+// The window must stay usable while Def-index initialization is still asynchronously
+// hydrating/rebuilding in the background -- this exercises the shell with the real (unmocked) StatusBar
+// receiving a live-looking `IndexingStatus`, unlike the suite above which stubs `useIndexingStatus` to `null`.
+describe("AppShell while the Def index is still initializing", () => {
+  afterEach(() => {
+    useIndexingStatusMock.mockReturnValue(null);
+  });
+
+  it("stays interactive and shows the hydrating-cache status while the background thread reads the disk cache", async () => {
+    useIndexingStatusMock.mockReturnValue({
+      phase: "running",
+      cacheVerification: "notRequired",
+      pendingFiles: 0,
+      indexedDefs: 0,
+      projectDefs: 0,
+      sourceDefs: 0,
+      errors: 0,
+      updatedAtUnixMs: 0,
+      currentStage: "hydratingCache",
+    });
+
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    expect(screen.getByText("Loading Def index cache…")).toBeDefined();
+    // The shell's other affordances must remain fully usable -- initialization must not block
+    // the window from accepting input.
+    await user.click(screen.getByRole("button", { name: "Preferences" }));
+    expect(await screen.findByRole("dialog", { name: "Preferences" })).toBeDefined();
+  });
+
+  it("stays interactive while a Pending status precedes any hydration/discovery detail", async () => {
+    useIndexingStatusMock.mockReturnValue({
+      phase: "pending",
+      cacheVerification: "notRequired",
+      pendingFiles: 0,
+      indexedDefs: 0,
+      projectDefs: 0,
+      sourceDefs: 0,
+      errors: 0,
+      updatedAtUnixMs: 0,
+    });
+
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    expect(screen.getByText("Index pending")).toBeDefined();
+    await user.click(screen.getByRole("button", { name: "Preferences" }));
+    expect(await screen.findByRole("dialog", { name: "Preferences" })).toBeDefined();
   });
 });
 
@@ -214,5 +313,51 @@ describe("AppShell add source folder", () => {
     await user.click(screen.getByRole("button", { name: "Add source folder" }));
 
     expect(screen.queryByText(/was added as a Folder source/)).toBeNull();
+  });
+});
+
+describe("AppShell open RimEdit data folder", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("invokes the app-data-folder IPC command from File > Open RimEdit Data Folder", async () => {
+    openAppDataFolderMock.mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    await user.click(screen.getByRole("button", { name: "File" }));
+    await user.click(screen.getByRole("menuitem", { name: "Open RimEdit Data Folder" }));
+
+    expect(openAppDataFolderMock).toHaveBeenCalledOnce();
+  });
+
+  it("catches a rejected invoke instead of leaving an unhandled rejection", async () => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    openAppDataFolderMock.mockRejectedValue(new Error("boom"));
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    await user.click(screen.getByRole("button", { name: "File" }));
+    await user.click(screen.getByRole("menuitem", { name: "Open RimEdit Data Folder" }));
+
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Failed to open RimEdit data folder:",
+        expect.any(Error),
+      );
+    });
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("is enabled with no active project", async () => {
+    const user = userEvent.setup();
+    render(<AppShell />);
+
+    await user.click(screen.getByRole("button", { name: "File" }));
+
+    expect(
+      screen.getByRole("menuitem", { name: "Open RimEdit Data Folder" }),
+    ).toHaveProperty("disabled", false);
   });
 });

@@ -6,6 +6,7 @@
 
 mod builder;
 mod cache;
+mod cache_v3;
 mod fingerprint;
 mod model;
 mod overlay;
@@ -18,9 +19,10 @@ pub use builder::{
     ScanDiscoveryStats,
 };
 pub use cache::{
-    cache_state_inputs, load_cached_index_only, load_or_rebuild_def_index,
-    rebuild_and_store_def_index, rebuild_and_store_def_index_with_progress, store_prebuilt_index,
-    CachedDefIndex, DefIndexCacheError,
+    cache_state_inputs, load_cached_index_only, load_cached_index_unverified,
+    load_or_rebuild_def_index, rebuild_and_store_def_index,
+    rebuild_and_store_def_index_with_progress, store_prebuilt_index, verify_fingerprints,
+    CachedDefIndex, DefIndexCacheError, FingerprintVerification,
 };
 pub(crate) use fingerprint::settings_fingerprint;
 pub use fingerprint::IndexedFileFingerprint;
@@ -35,7 +37,7 @@ pub use query::{
     get_facet_summary, resolve_def_reference, search_def_results, suggest_def_references,
     summarize_index,
 };
-pub use state::{DefIndexState, IndexingPhase, IndexingStage, IndexingStatus};
+pub use state::{CacheVerification, DefIndexState, IndexingPhase, IndexingStage, IndexingStatus};
 
 #[cfg(test)]
 mod tests;

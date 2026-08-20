@@ -88,10 +88,10 @@ pub struct ScanDiscoveryStats {
 /// Discovers scan statistics for every location that would be included in a full rebuild with
 /// `options`, without parsing any XML. Reuses the same `resolve_load_folders`/
 /// `scan_indexable_def_xml_files` calls the real build performs (see `add_location_to_index`) --
-/// so this walks each location's directories twice per rebuild. Intentionally not deduplicated
-/// yet (Plan.md: "only make that optimization after the timing shows it is a material
-/// bottleneck") -- this function exists purely to make discovery observable before parsing
-/// starts, per `IndexingStage::Discovering`.
+/// so this walks each location's directories twice per rebuild. Intentionally not deduplicated;
+/// that optimization is only worth making once timing shows it is a material bottleneck. This
+/// function exists purely to make discovery observable before parsing starts, per
+/// `IndexingStage::Discovering`.
 pub fn discover_scan_stats(
     settings: &ProjectSettings,
     options: &DefIndexBuildOptions<'_>,

@@ -45,7 +45,7 @@ pub fn parse_def_type_schema(
         return (None, diags);
     }
 
-    // formViews requires manifest formatVersion 3 (Plan.md section 4). This gate MUST run before
+    // formViews requires manifest formatVersion 3. This gate MUST run before
     // any v3-only structural validation: a v1/v2 pack's formViews (whether well-formed, malformed
     // shape, or semantically invalid -- e.g. the reserved "default" id) is simply not a supported
     // feature on that pack version. It is a contract violation worth a diagnostic, but must not
@@ -154,10 +154,10 @@ pub fn parse_def_type_schema(
         }
     }
 
-    // Per Plan.md section 5, a malformed formViews shape, blank/reserved id, blank/missing
-    // label, impossible `disabled` combination, or contradictory/duplicate field list is fatal
-    // for the whole v3 Def schema file -- not a recoverable per-declaration skip. Mirror the same
-    // whole-file-rejection mechanism used above for a genuinely malformed def file. Only reached
+    // A malformed formViews shape, blank/reserved id, blank/missing label, impossible `disabled`
+    // combination, or contradictory/duplicate field list is fatal for the whole v3 Def schema
+    // file -- not a recoverable per-declaration skip. Mirror the same whole-file-rejection
+    // mechanism used above for a genuinely malformed def file. Only reached
     // for a confirmed v3+ pack: a v1/v2 pack's formViews was already stripped to empty above, so
     // this loop body never runs for it.
     if manifest_format_version >= 3 && !def_file.schema.form_views.is_empty() {

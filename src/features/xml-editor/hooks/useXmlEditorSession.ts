@@ -22,6 +22,7 @@ import {
   type LineEnding,
 } from "../lib/lineEndings";
 import {
+  bufferChangedDuringInsertError,
   formEditNoDocumentError,
   noActiveFileError,
   noActiveProjectError,
@@ -130,6 +131,12 @@ export interface XmlEditorFileRef {
 export function useXmlEditorSession(
   projectId: string | undefined,
   file: XmlEditorFileRef | undefined,
+  /** Bumped by `AppShell` only after a completed def-index rebuild (not a mere
+   * cache-verification) -- see its own doc comment. When it changes, the session re-runs
+   * validation for the current buffer against the rebuilt index, replacing only the parsed
+   * document/diagnostics in the current history snapshot; `rawXml`, dirty state, undo/redo
+   * history, and the selected Def are all preserved. */
+  validationRefreshRevision?: number,
 ): UseXmlEditorSessionReturn | null {
   const relativePath = file?.relativePath;
   const readOnly = file?.readOnly ?? false;
@@ -229,6 +236,84 @@ export function useXmlEditorSession(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, file?.locationId, file?.relativePath, file?.readOnly]);
 
+  // Re-validates the current buffer against a rebuilt def index (see this parameter's doc
+  // comment above) without discarding text, dirty state, or undo/redo history -- only the parsed
+  // document/diagnostics of the *current* history snapshot are replaced. Skips while a load/save
+  // is already in flight; since `loading`/`saveBusy` are dependencies, it retries automatically
+  // once they clear rather than dropping the refresh request.
+  //
+  // Seeded from the *first* render's value (not `undefined`) so a freshly mounted session -- e.g.
+  // a tab opened after `validationRefreshRevision` has already advanced past 0 earlier in the
+  // session -- starts "caught up" and only fires on a later change, not immediately on mount
+  // (its own initial load already used the current index via `IndexLoadPolicy::Interactive`).
+  const validationRefreshAppliedRef = useRef(validationRefreshRevision);
+  useEffect(() => {
+    if (validationRefreshRevision === undefined) return;
+    if (validationRefreshAppliedRef.current === validationRefreshRevision) return;
+    if (!projectId || !relativePath) return;
+    if (loading || saveBusy) return;
+
+    let cancelled = false;
+    const xmlAtRequestTime = latestRawXmlRef.current;
+    // For a read-only (source-location) file, the backend re-reads the file from disk rather
+    // than taking `rawXml` as input, so `result.rawXml` can differ from `xmlAtRequestTime` if the
+    // file changed on disk since this tab was opened. For the editable path, `result.rawXml`
+    // always equals `xmlAtRequestTime` (it's exactly what was sent), so applying it below is a
+    // no-op there.
+    const revalidate = readOnly
+      ? readLocationXmlEditorDocument(projectId, file!.locationId, relativePath)
+      : parseXmlEditorBuffer(projectId, relativePath, xmlAtRequestTime);
+
+    revalidate
+      .then((result) => {
+        if (cancelled) return;
+        let applied = false;
+        setHistory((prev) => {
+          // The buffer changed (a new edit/keystroke, undo/redo, or a switched tab reusing this
+          // hook instance) since this request was issued -- this result no longer applies.
+          if (prev.present.rawXml !== xmlAtRequestTime) return prev;
+          applied = true;
+          return {
+            ...prev,
+            present: {
+              ...prev.present,
+              rawXml: result.rawXml,
+              parsed: result.document,
+              parseDiagnostics: result.parseDiagnostics,
+              validationDiagnostics: result.validationDiagnostics,
+            },
+          };
+        });
+        // Only mark this revision "applied" when the result actually landed: a discarded result
+        // (buffer changed mid-flight, above) or a failed request (network hiccup, project/location
+        // becoming invalid, ...) must remain eligible for a later retry rather than being silently
+        // treated as done forever, since `validationRefreshRevision` itself won't necessarily
+        // change again soon.
+        if (!applied) return;
+        validationRefreshAppliedRef.current = validationRefreshRevision;
+        if (readOnly && result.rawXml !== xmlAtRequestTime) {
+          latestRawXmlRef.current = result.rawXml;
+        }
+      })
+      .catch(() => {
+        // Best-effort refresh: leave existing diagnostics as-is on failure and allow a retry
+        // (see the applied-only ref update above).
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    validationRefreshRevision,
+    projectId,
+    relativePath,
+    file?.locationId,
+    readOnly,
+    loading,
+    saveBusy,
+  ]);
+
   const applyFormEdits = useCallback(
     (edits: XmlEdit[], editContext?: XmlEditContext): Promise<string> => {
       if (readOnly || !projectId || !relativePath || edits.length === 0) {
@@ -272,7 +357,7 @@ export function useXmlEditorSession(
           if (changed) clearPreviewState();
 
           // Commit the post-commit history update synchronously. The form controller now
-          // skips the redundant whole-form rebuild for a form-originated commit (Step 4),
+          // skips the redundant whole-form rebuild for a form-originated commit,
           // so there is no longer an expensive render to defer here - the earlier
           // startTransition only added a small delay and is removed.
           setHistory((prev) => {
@@ -474,15 +559,25 @@ export function useXmlEditorSession(
             ),
           baseTags,
         );
-        measure(
-          "xmlEditor.previewSave.setPreviewState",
-          () => {
-            savePreviewXmlRef.current = proposedXml;
-            savePreviewTokenRef.current = preview.validationToken;
-            setSavePreview(preview);
-          },
-          baseTags,
-        );
+        // The buffer changed (a keystroke reaching the underlying editor, since this preview
+        // request has no dialog open yet to capture focus) while `previewProjectXmlSave` was in
+        // flight -- `updateRawXml` already called `clearPreviewState()` synchronously for that
+        // edit. Applying this now-stale response unconditionally would silently resurrect the
+        // preview dialog showing a diff that doesn't include the user's later edit, undoing that
+        // clear. `flushed` is exactly what `latestRawXmlRef.current` was right after the flush
+        // above resolved (see `flushPendingFormEdits`), so comparing against it here catches any
+        // change since.
+        if (latestRawXmlRef.current === flushed) {
+          measure(
+            "xmlEditor.previewSave.setPreviewState",
+            () => {
+              savePreviewXmlRef.current = proposedXml;
+              savePreviewTokenRef.current = preview.validationToken;
+              setSavePreview(preview);
+            },
+            baseTags,
+          );
+        }
       } catch (e: unknown) {
         setSaveError(formatError(e));
       } finally {
@@ -509,8 +604,13 @@ export function useXmlEditorSession(
         savePreviewTraceIdRef.current ?? undefined,
         true,
       );
-      savePreviewTokenRef.current = preview.validationToken;
-      setSavePreview(preview);
+      // The dialog was closed/invalidated (`clearPreviewState()`, e.g. a keystroke reaching the
+      // underlying editor) while this full-diff re-fetch was in flight -- applying it now would
+      // resurrect a preview for a buffer the dialog is no longer showing.
+      if (savePreviewXmlRef.current === proposedXml) {
+        savePreviewTokenRef.current = preview.validationToken;
+        setSavePreview(preview);
+      }
     } catch (e: unknown) {
       setSaveError(formatError(e));
     } finally {
@@ -555,11 +655,25 @@ export function useXmlEditorSession(
                 ),
               baseTags,
             );
-            latestRawXmlRef.current = proposedXml;
+            // The disk write above already succeeded and genuinely reflects `proposedXml` now,
+            // regardless of what happened to the buffer in the meantime -- update the "last
+            // saved" baseline unconditionally so `dirty` stays accurate against the real on-disk
+            // content. But don't forcibly overwrite the *visible* buffer/history below if the
+            // user changed it (undo/redo, or a keystroke reaching an unfocused-trapped underlying
+            // editor -- see requestSavePreview's identical reasoning) while this save was in
+            // flight: that would silently discard their newer edits, resetting them back to the
+            // content that was just confirmed. AppShell's global Ctrl+Z/Ctrl+Y handler isn't
+            // gated by `saveBusy` or by this dialog, so this is genuinely reachable, not just a
+            // contrived race.
+            const bufferChangedDuringSave = latestRawXmlRef.current !== proposedXml;
             setBaseRawXml(proposedXml);
             savePreviewXmlRef.current = null;
             savePreviewTokenRef.current = null;
             setSavePreview(null);
+            if (bufferChangedDuringSave) {
+              return;
+            }
+            latestRawXmlRef.current = proposedXml;
 
             const result = await measureAsync(
               "xmlEditor.previewSave.confirm.postSaveParse",
@@ -619,6 +733,19 @@ export function useXmlEditorSession(
         fieldValues,
       );
 
+      // The buffer changed (undo/redo, or otherwise) while this insert was in flight: the
+      // backend's result was computed against `currentXml`, which is no longer current. Neither
+      // this wizard nor the save-preview dialog traps keyboard focus or blocks AppShell's global
+      // Ctrl+Z/Ctrl+Y handler, so an undo firing mid-request is genuinely reachable. Applying the
+      // result unconditionally would silently re-apply whatever was just undone (push it back
+      // onto `past`) and wipe the redo stack (`future: []`) -- discard it instead and let the
+      // caller surface a retry prompt.
+      if (latestRawXmlRef.current !== currentXml) {
+        throw bufferChangedDuringInsertError(
+          "The document changed while the new Def was being inserted.",
+        );
+      }
+
       const { editorDocument } = result;
       latestRawXmlRef.current = editorDocument.rawXml;
       clearPreviewState();
@@ -663,6 +790,13 @@ export function useXmlEditorSession(
         templateId,
         defName,
       );
+
+      // See insertDefFromTemplate's identical check above.
+      if (latestRawXmlRef.current !== currentXml) {
+        throw bufferChangedDuringInsertError(
+          "The document changed while the new Def was being inserted.",
+        );
+      }
 
       const { editorDocument } = result;
       latestRawXmlRef.current = editorDocument.rawXml;
@@ -710,6 +844,13 @@ export function useXmlEditorSession(
         source.nodeId ?? null,
         defName,
       );
+
+      // See insertDefFromTemplate's identical check above.
+      if (latestRawXmlRef.current !== currentXml) {
+        throw bufferChangedDuringInsertError(
+          "The document changed while the new Def was being inserted.",
+        );
+      }
 
       const { editorDocument } = result;
       latestRawXmlRef.current = editorDocument.rawXml;

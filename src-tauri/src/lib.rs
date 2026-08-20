@@ -24,17 +24,18 @@ use commands::{
     delete_user_def_template, get_def_index_errors, get_def_index_facets, get_indexing_status,
     get_instrumentation_config, get_last_selected_form_view, get_project_settings,
     list_custom_form_views, list_installed_schema_game_versions_cmd, list_user_def_templates,
-    load_schema_catalog, parse_patch_operations, parse_patch_value_xml, parse_xml_editor_buffer,
-    preview_def_patches, preview_project_xml_save, query_def_duplicates,
+    load_schema_catalog, open_app_data_folder, parse_patch_operations, parse_patch_value_xml,
+    parse_xml_editor_buffer, preview_def_patches, preview_project_xml_save, query_def_duplicates,
     query_patch_operations_for_def, read_indexed_def_xml, read_location_xml_editor_document,
     read_project_xml_document, read_project_xml_editor_document, read_project_xml_file,
     rebuild_def_index, rebuild_patch_index, remove_location, rename_project_path_cmd,
     reset_custom_form_view_store, resolve_def_reference_cmd, resolve_graphic_preview_assets,
     save_project_xml_file, save_user_def_template, scan_project_files, search_defs,
     serialize_patch_operations, serialize_patch_value_fragment, set_active_project,
-    set_instrumentation_enabled, set_last_selected_form_view, start_background_indexing,
-    suggest_def_references_cmd, update_app_locale, update_custom_form_view, update_location,
-    update_project_game_version, upsert_location, validate_project,
+    set_instrumentation_enabled, set_last_selected_form_view, signal_startup_ready,
+    start_background_indexing, suggest_def_references_cmd, update_app_locale,
+    update_custom_form_view, update_location, update_project_game_version,
+    update_save_backups_enabled, upsert_location, validate_project,
 };
 use def_index::DefIndexState;
 use instrumentation::InstrumentationState;
@@ -100,6 +101,23 @@ pub fn run() {
         })
         .setup(|app| {
             let handle = app.handle();
+            // `tauri.conf.json`'s window is created with `visible: false` and `backgroundColor`
+            // set to the light `--surface-app` value (`src/styles/tokens.css`); the frontend calls
+            // `signal_startup_ready` (`commands/window.rs`) to reveal it once real content has
+            // painted -- see that command's doc comment for why hiding the window, not just
+            // recoloring it, is what actually eliminates the startup white flash on Windows. For a
+            // dark-themed OS/window, override the background here to the dark `--surface-app`
+            // value first, before any other setup work, so the still-hidden window is already
+            // showing the right color once it's revealed. `theme()` already reflects the OS
+            // preference (no window `theme` override is configured), so no extra OS-theme-detection
+            // dependency is needed.
+            if let Some(window) = handle.get_webview_window("main") {
+                if matches!(window.theme(), Ok(tauri::Theme::Dark)) {
+                    let _ = window.set_background_color(Some(tauri::utils::config::Color(
+                        0x11, 0x13, 0x18, 0xFF,
+                    )));
+                }
+            }
             if let Err(e) = services::indexing::start_worker(handle) {
                 eprintln!("[rimedit] Failed to start indexing worker: {}", e.message);
             }
@@ -119,49 +137,25 @@ pub fn run() {
                 // job queued mid-hydration slip through under the old generation.
                 let _ = services::indexing::restart_for_settings(handle, &indexing_settings);
                 if let Some(pid) = indexing_settings.active_project_id.clone() {
-                    // Cache-only hydration still walks every indexed file to verify content
-                    // fingerprints (see Plan.md's "Out of scope" note), which can take a while
-                    // for a large collection (e.g. Steam Workshop). `.setup()` runs on the main
-                    // thread before the window is shown, so that work must never happen inline
-                    // here -- do it on a blocking thread and let startup continue immediately.
-                    let hydrate_handle = handle.clone();
-                    let hydrate_settings = indexing_settings.clone();
-                    tauri::async_runtime::spawn(async move {
-                        let blocking_handle = hydrate_handle.clone();
-                        let blocking_settings = hydrate_settings.clone();
-                        let blocking_pid = pid.clone();
-                        let hydrated = tauri::async_runtime::spawn_blocking(move || {
-                            services::def_index_cache::hydrate_for_project(
-                                &blocking_handle,
-                                &blocking_settings,
-                                &blocking_pid,
-                            )
-                        })
-                        .await
-                        .ok()
-                        .and_then(Result::ok)
-                        .flatten();
-
-                        match hydrated {
-                            Some(index) => {
-                                let state = hydrate_handle.state::<DefIndexState>();
-                                state.set_status_complete_for_project(Some(pid), &index);
-                                services::indexing::events::emit_indexing_status(
-                                    &hydrate_handle,
-                                    &state.status(),
-                                );
-                            }
-                            None => {
-                                // Miss (including a failure to resolve the app storage
-                                // directory): fall back to the existing full-rebuild path.
-                                services::indexing::enqueue_full_rebuild(
-                                    &hydrate_handle,
-                                    Some(pid),
-                                    services::indexing::IndexJobReason::InitialProjectOpen,
-                                );
-                            }
-                        }
-                    });
+                    // `schedule_initialization` never reads/deserializes the disk-cache file or
+                    // scans the collection itself -- it publishes a `HydratingCache` status and
+                    // hands that work off to a named background thread
+                    // (`rimedit-def-index-hydrate`), returning immediately. This is what lets
+                    // `.setup()` return without waiting on a (potentially very large, for a Steam
+                    // Workshop-sized collection) disk read. The window becomes interactive first;
+                    // the background thread keeps running and populates
+                    // `DefIndexState`/emits status updates whenever it completes. A cache hit
+                    // schedules a background `VerifyCache` job; a miss enqueues a single
+                    // `FullRebuild` -- both go through the same single-flight helper used by
+                    // `start_background_indexing` and interactive editor loads, so whichever caller
+                    // reaches it first is the only one that actually starts work. Timing for the
+                    // hydration itself is covered end-to-end by the `defIndex.cacheHydrate` span
+                    // inside `hydrate_unverified_for_project`, not here.
+                    let _ = services::def_index_cache::schedule_initialization(
+                        handle,
+                        &indexing_settings,
+                        Some(pid),
+                    );
                 }
             }
             Ok(())
@@ -174,6 +168,7 @@ pub fn run() {
             update_location,
             update_project_game_version,
             update_app_locale,
+            update_save_backups_enabled,
             list_installed_schema_game_versions_cmd,
             scan_project_files,
             read_project_xml_file,
@@ -226,6 +221,8 @@ pub fn run() {
             reset_custom_form_view_store,
             set_last_selected_form_view,
             get_last_selected_form_view,
+            open_app_data_folder,
+            signal_startup_ready,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

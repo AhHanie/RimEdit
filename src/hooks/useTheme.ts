@@ -1,17 +1,6 @@
 import { useState, useEffect } from "react";
 import type { ThemeMode } from "../types/ui";
-
-const STORAGE_KEY = "rimedit-theme-mode";
-const VALID_MODES: ThemeMode[] = ["light", "dark", "system"];
-
-function readStoredMode(): ThemeMode {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return VALID_MODES.includes(stored as ThemeMode) ? (stored as ThemeMode) : "system";
-}
-
-function resolveFromSystem(): "light" | "dark" {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
+import { readStoredThemeMode, resolveSystemTheme, THEME_STORAGE_KEY } from "./themeResolution";
 
 export interface UseThemeReturn {
   mode: ThemeMode;
@@ -21,13 +10,13 @@ export interface UseThemeReturn {
 }
 
 export function useTheme(): UseThemeReturn {
-  const [mode, setModeState] = useState<ThemeMode>(readStoredMode);
+  const [mode, setModeState] = useState<ThemeMode>(readStoredThemeMode);
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">(() =>
-    mode === "system" ? resolveFromSystem() : mode,
+    mode === "system" ? resolveSystemTheme() : mode,
   );
 
   useEffect(() => {
-    const resolved = mode === "system" ? resolveFromSystem() : mode;
+    const resolved = mode === "system" ? resolveSystemTheme() : mode;
     setResolvedTheme(resolved);
   }, [mode]);
 
@@ -48,7 +37,7 @@ export function useTheme(): UseThemeReturn {
   }, [mode]);
 
   function setMode(newMode: ThemeMode) {
-    localStorage.setItem(STORAGE_KEY, newMode);
+    localStorage.setItem(THEME_STORAGE_KEY, newMode);
     setModeState(newMode);
   }
 

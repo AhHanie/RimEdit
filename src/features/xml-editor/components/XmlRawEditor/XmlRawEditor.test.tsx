@@ -42,8 +42,8 @@ describe("XmlRawEditor", () => {
 
   it("forces dir=ltr on the editable content region regardless of app locale direction", () => {
     // XML is machine-readable syntax, not natural-language prose -- this must stay LTR even once
-    // a future RTL locale flips `dir` on `<html>` (docs/i18n/issues/08-editor-and-patch-ui-
-    // migration.md's "keep code editor/XML/XPath controls dir=ltr by semantic policy").
+    // a future RTL locale flips `dir` on `<html>` (code editor/XML/XPath controls stay
+    // dir=ltr by semantic policy).
     render(<XmlRawEditor value="<Defs/>" onChange={vi.fn()} />);
     expect(screen.getByLabelText("Raw XML editor").getAttribute("dir")).toBe("ltr");
   });

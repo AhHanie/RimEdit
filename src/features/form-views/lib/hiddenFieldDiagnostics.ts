@@ -1,10 +1,10 @@
-// Issue 08 (Plan.md section 8 "Hidden validation feedback"): pure logic mapping full-document
+// Pure logic mapping full-document
 // `ValidationDiagnostic`s onto the currently selected Def's canonical top-level Form View roots,
 // so a Form View header can report "N hidden field issue(s)" and offer `Reveal fields with
 // issues`. No React, no Tauri `invoke` -- `XmlFormEditor` is the sole caller that wires this to
 // live session/controller data (mirrors `resolveFormViews.ts`'s pure-logic/thin-wiring split).
 //
-// Constraint (Plan.md, issue 08 non-goals): this module never changes what Rust validates or how
+// This module never changes what Rust validates or how
 // severe a diagnostic is -- it only *reads* the existing `fieldPath`/`nodeId`/`blocking` fields
 // already produced by `xml_document/validation/*` and decides whether a diagnostic is (a) inside
 // the currently selected Def instance and (b) currently hidden by the active Form View.
@@ -12,9 +12,8 @@ import type { DefEditorView, ValidationDiagnostic } from "../../xml-editor/types
 import type { XmlListItemView, XmlNestedChildView } from "../../xml-editor/types/xmlDocument";
 
 /**
- * Maps a `ValidationDiagnostic.fieldPath` to its canonical top-level Form View root id (Plan.md
- * section 8: "the first dot segment and strips list/map suffixes (`foo[0]`, `foo[key]`) to root
- * `foo`").
+ * Maps a `ValidationDiagnostic.fieldPath` to its canonical top-level Form View root id: takes
+ * the first dot segment and strips list/map suffixes (`foo[0]`, `foo[key]`) down to root `foo`.
  *
  * Examples:
  * - `"foo"` -> `"foo"` (top-level scalar)
@@ -26,7 +25,7 @@ import type { XmlListItemView, XmlNestedChildView } from "../../xml-editor/types
  *
  * Returns `null` for `null`/`undefined`/empty/whitespace-only input and for a malformed path
  * whose first segment has no field name at all (e.g. `"[0]"`, `"."`) -- these are exactly the
- * "no path or an unmapped/Def-level path" diagnostics the issue requires to stay in the bottom
+ * "no path or an unmapped/Def-level path" diagnostics that stay in the bottom
  * panel rather than be claimed as "revealed" by anything this module computes. This function does
  * NOT validate the root against the actual known schema field universe -- that intersection
  * happens in `computeHiddenFieldDiagnosticsSummary` below (via `effectiveHidden`, which is itself
@@ -67,8 +66,7 @@ function collectNodeIds(node: WalkableXmlNode, ids: Set<number>): void {
  * Every `XmlNodeId` belonging to `def`'s own subtree: its own root node id plus every descendant
  * (direct children, nested object fields, list/map items, at any depth). Used to scope
  * document-wide diagnostics down to "belongs to the currently selected Def instance" via node id
- * containment (issue 08 step 2: "Filter session validation diagnostics to selected Def via node
- * ID where present") -- a diagnostic's `nodeId` is the specific field/element node it was raised
+ * containment -- a diagnostic's `nodeId` is the specific field/element node it was raised
  * against (see `xml_document/validation/fields.rs`'s `error_at_node`/`warning_at_node`), not
  * necessarily the Def's own root node id, so a plain `nodeId === def.nodeId` equality check would
  * wrongly exclude every diagnostic raised against an existing field value (it only happens to
@@ -84,12 +82,11 @@ export function collectDefSubtreeNodeIds(def: DefEditorView): ReadonlySet<number
 
 export interface HiddenFieldDiagnosticsSummary {
   /** Canonical top-level root ids that have at least one diagnostic hidden behind them --
-   * exactly the set `Reveal fields with issues` unhides (Plan.md: "unhides only affected
-   * top-level roots"). */
+   * exactly the set `Reveal fields with issues` unhides. */
   affectedRootIds: ReadonlySet<string>;
   /** Total diagnostic count mapped to a currently-hidden root, for the selected Def only. */
   totalCount: number;
-  /** Subset of `totalCount` whose `blocking` flag is true (Plan.md section 2/8: blocking vs.
+  /** Subset of `totalCount` whose `blocking` flag is true (blocking vs.
    * non-blocking is already a first-class diagnostic property; the header surfaces it
    * separately rather than conflating it with plain severity). */
   blockingCount: number;
@@ -102,11 +99,11 @@ const EMPTY_SUMMARY: HiddenFieldDiagnosticsSummary = {
 };
 
 /**
- * The full "hidden validation feedback" computation (Plan.md section 8 / issue 08 steps 2-3):
+ * The full "hidden validation feedback" computation:
  * full-document diagnostics -> scoped to the selected Def instance (via node id containment) ->
  * mapped to a canonical top-level root -> intersected with the currently *hidden* set. Never
  * mutates anything and never itself changes `effectiveHidden` -- purely a read/count, matching
- * the issue's "no auto-reveal" requirement (only an explicit caller-driven override change, in
+ * the "no auto-reveal" requirement (only an explicit caller-driven override change, in
  * response to a user clicking `Reveal fields with issues`, can ever change visibility).
  *
  * A diagnostic contributes to the summary only when ALL of:
@@ -115,7 +112,7 @@ const EMPTY_SUMMARY: HiddenFieldDiagnosticsSummary = {
  *    counted here, even if its `fieldPath` happens to name a root that's hidden on this Def;
  * 2. its `fieldPath` maps to a non-null root (`mapFieldPathToTopLevelRoot`) -- a diagnostic with
  *    no path, or an unmapped/malformed one, is left for the bottom panel and never claimed as
- *    "revealed" by this module (issue 08 step 5);
+ *    "revealed" by this module;
  * 3. that root is currently hidden (`effectiveHidden.has(root)`) -- a diagnostic on an already
  *    visible field is not a "hidden field issue" at all.
  */

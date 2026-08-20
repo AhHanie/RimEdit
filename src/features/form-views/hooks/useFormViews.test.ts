@@ -201,7 +201,7 @@ describe("useFormViews", () => {
     };
 
     // Each game version scope has its OWN genuinely-different custom view list and persisted
-    // selection -- exactly the `{project, gameVersion, defType}` scoping Plan.md section 3/6
+    // selection -- exactly the `{project, gameVersion, defType}` scoping this feature
     // requires. A correct implementation must fetch each scope's real data independently rather
     // than reusing whatever was already loaded for a previously-active version.
     invokeMock.mockImplementation((cmd: string, args?: unknown) => {
@@ -604,8 +604,8 @@ describe("useFormViews", () => {
       children: [],
     };
 
-    // "weapon" hides apparel/plant -- the catalog's own real, resolved schema view data (issue
-    // 03), flowing through `useFormViews` (issue 06) into `buildFormFieldModels` (issue 05).
+    // "weapon" hides apparel/plant -- the catalog's own real, resolved schema view data,
+    // flowing through `useFormViews` into `buildFormFieldModels`.
     const hiddenModels = buildFormFieldModels(
       def,
       catalog.defTypes.ThingDef,

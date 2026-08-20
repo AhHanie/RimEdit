@@ -33,6 +33,8 @@
     "ready": "Ready",
     "noProject": "No project",
     "indexPending": "Index pending",
+    "cacheChecking": "Using cached index - checking for updates…",
+    "indexHydratingCache": "Loading Def index cache…",
     "indexDiscovering": "Discovering files…",
     "indexingProgress": "Indexing {{processed}} / {{total}} files…",
     "indexing": "Indexing…",
@@ -60,7 +62,8 @@
     "focusSearch": { "label": "Focus Def Search", "keywords": "filter, find, search, def" },
     "createDef": { "label": "Create Def from Template", "keywords": "new, def, template, insert, create, add" },
     "openCommandPalette": { "label": "Command Palette", "keywords": "command, palette, search, actions" },
-    "showAbout": { "label": "About RimEdit", "keywords": "about, version, help, info" }
+    "showAbout": { "label": "About RimEdit", "keywords": "about, version, help, info" },
+    "openAppDataFolder": { "label": "Open RimEdit Data Folder", "keywords": "data, app data, settings, cache, storage, folder, explorer" }
   },
   "startupNotice": {
     "projectNotFound": "Project folder not found: {{displayName}} ({{rootPath}})",
@@ -130,6 +133,16 @@
     "truncatedNotice": "Showing {{shown}} of {{total}} errors",
     "copyDetails": "Copy details",
     "copied": "Copied"
+  },
+  "chunkLoading": {
+    "editor": "Loading editor…",
+    "search": "Loading search…",
+    "preferences": "Loading preferences…",
+    "about": "Loading…"
+  },
+  "chunkLoad": {
+    "failed": "Failed to load this panel.",
+    "retry": "Retry"
   },
   "search": {
     "title": "Def Search",

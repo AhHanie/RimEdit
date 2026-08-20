@@ -68,7 +68,7 @@ pub(crate) fn parse_locale_bundle(
 }
 
 /// Read every `<tag>.json` file directly inside a pack's declared `localesDirectory` (not
-/// recursive -- locale sidecars are a flat `locales/<bcp47>.json` layout per `Plan.md`) into
+/// recursive -- locale sidecars are a flat `locales/<bcp47>.json` layout) into
 /// `(path_label, raw_content)` pairs, applying the same path-escape/symlink/size safety limits
 /// used for def/object/patch-operation directories. A declared-but-missing/non-directory
 /// `localesDirectory`, or an absent one entirely, silently yields no files and no diagnostic --

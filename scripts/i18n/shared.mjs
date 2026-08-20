@@ -112,8 +112,8 @@ function resourceObjectLiteral(rawJsonText, indent = "  ") {
  * `generate-translation-keys.mjs`'s `readEnResourceTexts()` / `validate-i18n-resources.mjs`'s
  * `readAllLocaleResourceTexts()[BASE_LOCALE]` already produce). Each namespace's resource object is
  * embedded as a literal TypeScript object (via `resourceObjectLiteral`), NOT `import`-ed from its
- * `.json` file. This is the load-bearing choice for translation-argument type safety (Plan.md's
- * "Translation key and type-safety policy"): TypeScript's `resolveJsonModule` import machinery
+ * `.json` file. This is the load-bearing choice for translation-argument type safety: TypeScript's
+ * `resolveJsonModule` import machinery
  * always widens a JSON string property's type to the general `string` type, discarding the actual
  * `"...{{fieldName}}..."` text; i18next's own advanced TypeScript support (`InterpolationMap` /
  * `ParseInterpolationEntries` in i18next's `typescript/t.d.ts`, shipped since i18next v21+) parses
@@ -139,8 +139,7 @@ export function generateTranslationKeysSource(namespaces, resourceTexts) {
 // Each namespace's English resource object below is embedded as a literal (not imported from its
 // \`.json\` file) so every string value keeps its literal TypeScript type, which activates i18next's
 // built-in per-key interpolation-argument checking on every \`t(...)\` call site -- see
-// \`scripts/i18n/shared.mjs\`'s \`generateTranslationKeysSource\` doc comment for the full mechanism,
-// and Plan.md's "Translation key and type-safety policy".
+// \`scripts/i18n/shared.mjs\`'s \`generateTranslationKeysSource\` doc comment for the full mechanism.
 
 export const defaultNamespace = "common" as const;
 
