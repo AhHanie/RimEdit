@@ -1,0 +1,340 @@
+name: Nightly Builds
+
+on:
+  schedule:
+    - cron: "15 1 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: >-
+          Force a build even if there are no new commits, or retry today's
+          nightly for the same development commit if it already exists.
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly-development
+  cancel-in-progress: false
+
+env:
+  PNPM_VERSION: "11.21.0"
+  NODE_VERSION: "22"
+
+jobs:
+  prepare:
+    name: Decide whether to build
+    runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.decide.outputs.should_build }}
+      source_sha: ${{ steps.decide.outputs.source_sha }}
+      previous_sha: ${{ steps.decide.outputs.previous_sha }}
+      build_date: ${{ steps.decide.outputs.build_date }}
+      tag_name: ${{ steps.decide.outputs.tag_name }}
+      release_title: ${{ steps.decide.outputs.release_title }}
+    steps:
+      - name: Check out development
+        uses: actions/checkout@v5
+        with:
+          ref: development
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Decide whether a nightly build is needed
+        id: decide
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_INPUT: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.force) || 'false' }}
+        run: |
+          set -euo pipefail
+
+          source_sha="$(git rev-parse HEAD)"
+          build_date="$(date -u +%Y%m%d)"
+          tag_name="nightly-${build_date}"
+          release_title="nightly-build-${build_date}"
+
+          echo "source_sha=${source_sha}" >> "$GITHUB_OUTPUT"
+          echo "build_date=${build_date}" >> "$GITHUB_OUTPUT"
+          echo "tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
+          echo "release_title=${release_title}" >> "$GITHUB_OUTPUT"
+
+          echo "development HEAD is ${source_sha}"
+
+          # If today's tag already has a release, this is only ever a retry.
+          if existing_target="$(gh release view "$tag_name" --repo "$GITHUB_REPOSITORY" --json targetCommitish --jq '.targetCommitish' 2>/dev/null)"; then
+            if [ "$FORCE_INPUT" != "true" ]; then
+              echo "::error::Release ${tag_name} already exists. Re-run this workflow manually with force=true to retry it, only if development has not moved on."
+              exit 1
+            fi
+
+            existing_sha="$(git rev-parse "${existing_target}^{commit}" 2>/dev/null || echo "$existing_target")"
+            if [ "$existing_sha" != "$source_sha" ]; then
+              echo "::error::Release ${tag_name} already targets ${existing_sha}, which differs from the current development HEAD ${source_sha}. Refusing to retarget an existing nightly tag; wait for tomorrow's nightly instead."
+              exit 1
+            fi
+
+            echo "Retrying nightly ${tag_name}; it already targets the current commit ${source_sha}."
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "previous_sha=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Otherwise, compare against the most recently published nightly (any date).
+          previous_tag="$(gh release list --repo "$GITHUB_REPOSITORY" --limit 200 --json tagName \
+            --jq '[.[] | .tagName | select(test("^nightly-[0-9]{8}$"))] | sort | last // empty')"
+
+          if [ -z "$previous_tag" ]; then
+            echo "No previous nightly release found; building unconditionally."
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "previous_sha=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Most recent previous nightly tag: ${previous_tag}"
+
+          previous_sha="$(git rev-parse "${previous_tag}^{commit}" 2>/dev/null || true)"
+          if [ -z "$previous_sha" ]; then
+            echo "::error::Could not resolve a local commit for previous nightly tag ${previous_tag}."
+            exit 1
+          fi
+          echo "previous_sha=${previous_sha}" >> "$GITHUB_OUTPUT"
+
+          if ! git merge-base --is-ancestor "$previous_sha" "$source_sha"; then
+            echo "::warning::Previous nightly commit ${previous_sha} (tag ${previous_tag}) is not an ancestor of ${source_sha}. This can happen after a force-push or history rewrite on development."
+            if [ "$FORCE_INPUT" != "true" ]; then
+              echo "::error::Refusing an ambiguous comparison. Re-run manually with force=true to build unconditionally once this divergence is confirmed intentional."
+              exit 1
+            fi
+            echo "force=true was set; building unconditionally without a commit-range comparison."
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          new_commits="$(git rev-list --count "${previous_sha}..${source_sha}")"
+          echo "Found ${new_commits} new commit(s) since ${previous_tag} (${previous_sha})."
+
+          if [ "$new_commits" -gt 0 ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          elif [ "$FORCE_INPUT" = "true" ]; then
+            echo "No new commits, but force=true was requested; building anyway."
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No new commits since the last nightly; nothing to do."
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build-windows:
+    name: Build Windows x64
+    needs: prepare
+    if: needs.prepare.outputs.should_build == 'true'
+    runs-on: windows-latest
+    steps:
+      - name: Check out source commit
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare.outputs.source_sha }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Restore Rust build cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Windows NSIS installer
+        run: pnpm tauri build --bundles nsis
+
+      - name: Stage Windows release asset
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $buildDate = "${{ needs.prepare.outputs.build_date }}"
+
+          $stageDir = "release-stage"
+          New-Item -ItemType Directory -Path $stageDir -Force | Out-Null
+
+          $installer = Get-ChildItem -Path "src-tauri/target/release/bundle/nsis" -Filter "*.exe" | Select-Object -First 1
+          if (-not $installer) {
+            throw "No NSIS installer found under src-tauri/target/release/bundle/nsis"
+          }
+
+          Copy-Item $installer.FullName -Destination $stageDir
+          Copy-Item "README.md" -Destination $stageDir
+          Copy-Item "LICENSE" -Destination $stageDir
+
+          New-Item -ItemType Directory -Path "release-assets" -Force | Out-Null
+
+          $zipName = "rimedit-windows-x64-nightly-build-$buildDate.zip"
+          $zipPath = Join-Path "release-assets" $zipName
+          Compress-Archive -Path "$stageDir/*" -DestinationPath $zipPath -Force
+
+          $hash = (Get-FileHash -Algorithm SHA256 -Path $zipPath).Hash.ToLower()
+          Set-Location "release-assets"
+          "$hash  $zipName" | Out-File -FilePath "$zipName.sha256" -Encoding ascii -NoNewline
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-windows
+          path: release-assets/*
+          if-no-files-found: error
+
+  build-linux:
+    name: Build Linux x64
+    needs: prepare
+    if: needs.prepare.outputs.should_build == 'true'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out source commit
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare.outputs.source_sha }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Restore Rust build cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install Linux build prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            xdg-utils \
+            libfuse2 \
+            rpm \
+            file \
+            build-essential \
+            curl \
+            wget
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build AppImage, deb, and rpm bundles
+        run: pnpm tauri build --bundles appimage,deb,rpm
+
+      - name: Stage Linux release assets
+        run: |
+          set -euo pipefail
+          build_date="${{ needs.prepare.outputs.build_date }}"
+
+          mkdir -p release-assets
+          cd release-assets
+
+          appimage_src="$(find ../src-tauri/target/release/bundle/appimage -maxdepth 1 -name '*.AppImage' | head -n1)"
+          deb_src="$(find ../src-tauri/target/release/bundle/deb -maxdepth 1 -name '*.deb' | head -n1)"
+          rpm_src="$(find ../src-tauri/target/release/bundle/rpm -maxdepth 1 -name '*.rpm' | head -n1)"
+
+          if [ -z "$appimage_src" ] || [ -z "$deb_src" ] || [ -z "$rpm_src" ]; then
+            echo "::error::Missing one or more Linux bundle outputs (appimage=$appimage_src deb=$deb_src rpm=$rpm_src)"
+            exit 1
+          fi
+
+          cp "$appimage_src" "rimedit-linux-x64-nightly-build-${build_date}.AppImage"
+          cp "$deb_src" "rimedit-linux-x64-nightly-build-${build_date}.deb"
+          cp "$rpm_src" "rimedit-linux-x64-nightly-build-${build_date}.rpm"
+
+          for f in *.AppImage *.deb *.rpm; do
+            sha256sum "$f" > "$f.sha256"
+          done
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-linux
+          path: release-assets/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish nightly release
+    needs: [prepare, build-windows, build-linux]
+    if: needs.prepare.outputs.should_build == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: nightly-windows
+          path: release-assets
+
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: nightly-linux
+          path: release-assets
+
+      - name: Verify checksums
+        run: |
+          set -euo pipefail
+          cd release-assets
+          for f in *.sha256; do
+            sha256sum -c "$f"
+          done
+
+      - name: Combine checksums
+        run: |
+          set -euo pipefail
+          cd release-assets
+          cat *.sha256 > SHA256SUMS.txt
+          rm -f *.sha256
+
+      - name: Build release notes header
+        run: |
+          {
+            echo "Source commit: \`${{ needs.prepare.outputs.source_sha }}\`"
+            if [ -n "${{ needs.prepare.outputs.previous_sha }}" ]; then
+              echo "Commits: \`${{ needs.prepare.outputs.previous_sha }}...${{ needs.prepare.outputs.source_sha }}\`"
+            else
+              echo "First nightly build; no previous nightly to compare against."
+            fi
+          } > notes-header.md
+
+      - name: Create nightly release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.tag_name }}
+          name: ${{ needs.prepare.outputs.release_title }}
+          target_commitish: ${{ needs.prepare.outputs.source_sha }}
+          prerelease: true
+          generate_release_notes: true
+          body_path: notes-header.md
+          files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
