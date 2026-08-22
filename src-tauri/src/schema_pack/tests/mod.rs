@@ -1342,6 +1342,7 @@ fn unresolvable_game_version_falls_back_to_full_catalog_not_universal_only() {
         &ValidationContext {
             catalog: &catalog,
             def_index: &def_index,
+            source_document_location_id: None,
         },
     );
     assert!(

@@ -2,6 +2,7 @@ use super::context::ValidationContext;
 use super::diagnostics as diag;
 use super::fields::{default_value_as_str, validate_object_children, validate_schema_field};
 use super::xml::scalar_text;
+use crate::def_index::{normalize_relative_path, IndexedDef};
 use crate::schema_pack::{
     lookup_def_type, lookup_field, ValidationRule, ValidationRuleCondition, ValidationRuleOperator,
     XmlFieldShape,
@@ -86,9 +87,12 @@ fn validate_def_identity(
         );
     }
 
-    let source_occurrences = context
+    let source_occurrences: Vec<_> = context
         .def_index
-        .find_source_duplicates(&summary.def_type, def_name);
+        .find_source_duplicates(&summary.def_type, def_name)
+        .into_iter()
+        .filter(|indexed| !is_current_source_document(doc, summary, indexed, context))
+        .collect();
     if !source_occurrences.is_empty() {
         let locations = diag::format_index_occurrences(&source_occurrences);
         diagnostics.push(
@@ -111,6 +115,26 @@ fn validate_def_identity(
             ])),
         );
     }
+}
+
+/// True when `indexed` is the exact same Def node as `summary` within the read-only source
+/// document currently being validated (see `ValidationContext::source_document_location_id`).
+/// Matches on location, normalized relative path, and node ID -- not merely def type/name or file
+/// path -- so a duplicate elsewhere in the same source file, or an unrelated source location that
+/// happens to share a relative path and node-number layout, is never suppressed.
+fn is_current_source_document(
+    doc: &XmlDocument,
+    summary: &DefSummary,
+    indexed: &IndexedDef,
+    context: &ValidationContext<'_>,
+) -> bool {
+    let Some(location_id) = context.source_document_location_id else {
+        return false;
+    };
+    indexed.source.location_id == location_id
+        && normalize_relative_path(&indexed.relative_path)
+            == normalize_relative_path(&doc.relative_path)
+        && indexed.node_id == Some(summary.node_id)
 }
 
 fn validate_def_fields(

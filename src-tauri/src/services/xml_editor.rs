@@ -58,8 +58,9 @@ pub(crate) async fn read_location_editor_document(
     })?;
     let mut doc = parse_to_document(&relative_path, &contents);
     if !doc.had_fatal_parse_error {
-        // Use source validation (no replacement overlay) so the source file is
-        // not inserted as a project entry, avoiding false duplicate diagnostics.
+        // Use source validation: it consults the full index (so a conflict with another
+        // project/source Def is still reported) but identifies this document as the active
+        // source location, so its own indexed Def does not conflict with itself.
         validation::validate_doc_for_source(app, &settings, &project_id, &location_id, &mut doc)
             .await?;
     }
@@ -154,6 +155,7 @@ mod tests {
         let context = ValidationContext {
             catalog: &catalog_result.catalog,
             def_index: &def_index,
+            source_document_location_id: None,
         };
         doc.validation_diagnostics = validate_document(doc, &context);
     }

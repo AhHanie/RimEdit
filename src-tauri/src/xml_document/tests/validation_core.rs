@@ -213,6 +213,144 @@ fn validation_source_duplicate_without_matching_project_def_is_not_reported() {
 }
 
 #[test]
+fn validation_source_self_only_occurrence_is_suppressed() {
+    let src = r#"<Defs><ThingDef><defName>AV_CultivationPod</defName></ThingDef></Defs>"#;
+    let doc = parse_to_document("source.xml", src);
+    let node_id = doc.def_summaries[0].node_id;
+
+    let mut indexed = indexed_test_def("source.xml", IndexedSourceKind::Source);
+    indexed.def_type = "ThingDef".to_string();
+    indexed.def_name = "AV_CultivationPod".to_string();
+    indexed.key.def_type = "ThingDef".to_string();
+    indexed.key.def_name = "AV_CultivationPod".to_string();
+    indexed.node_id = Some(node_id);
+    let location_id = indexed.source.location_id.clone();
+
+    let def_index = DefIndex {
+        defs: vec![indexed],
+        errors: vec![],
+        built_at_unix_ms: 0,
+        by_type: Default::default(),
+    };
+    let diagnostics = validate_test_doc_as_source(&doc, &def_index, &location_id);
+    assert!(
+        !diagnostics
+            .iter()
+            .any(|d| d.code == "validation_duplicate_source_def_name"),
+        "a source Def viewed through its own source document must not warn about itself: {:?}",
+        diagnostics
+    );
+}
+
+#[test]
+fn validation_source_different_source_still_warns() {
+    let src = r#"<Defs><ThingDef><defName>AV_CultivationPod</defName></ThingDef></Defs>"#;
+    let doc = parse_to_document("source.xml", src);
+    let node_id = doc.def_summaries[0].node_id;
+
+    let mut self_entry = indexed_test_def("source.xml", IndexedSourceKind::Source);
+    self_entry.def_type = "ThingDef".to_string();
+    self_entry.def_name = "AV_CultivationPod".to_string();
+    self_entry.key.def_type = "ThingDef".to_string();
+    self_entry.key.def_name = "AV_CultivationPod".to_string();
+    self_entry.node_id = Some(node_id);
+    let location_id = self_entry.source.location_id.clone();
+
+    let mut other_entry = indexed_test_def("other_source.xml", IndexedSourceKind::Source);
+    other_entry.def_type = "ThingDef".to_string();
+    other_entry.def_name = "AV_CultivationPod".to_string();
+    other_entry.key.def_type = "ThingDef".to_string();
+    other_entry.key.def_name = "AV_CultivationPod".to_string();
+    other_entry.node_id = Some(999);
+
+    let def_index = DefIndex {
+        defs: vec![self_entry, other_entry],
+        errors: vec![],
+        built_at_unix_ms: 0,
+        by_type: Default::default(),
+    };
+    let diagnostics = validate_test_doc_as_source(&doc, &def_index, &location_id);
+    let diagnostic = diagnostics
+        .iter()
+        .find(|d| d.code == "validation_duplicate_source_def_name")
+        .expect("a genuinely different source occurrence must still warn");
+    assert!(
+        diagnostic.message.contains("other_source.xml"),
+        "message should identify the other occurrence, not the currently viewed file: {}",
+        diagnostic.message
+    );
+}
+
+#[test]
+fn validation_source_duplicate_within_same_file_still_warns() {
+    let src = r#"<Defs>
+  <ThingDef><defName>AV_CultivationPod</defName></ThingDef>
+  <ThingDef><defName>AV_CultivationPod</defName></ThingDef>
+</Defs>"#;
+    let doc = parse_to_document("source.xml", src);
+    assert_eq!(doc.def_summaries.len(), 2);
+
+    let mut entries = Vec::new();
+    for summary in &doc.def_summaries {
+        let mut entry = indexed_test_def("source.xml", IndexedSourceKind::Source);
+        entry.def_type = "ThingDef".to_string();
+        entry.def_name = "AV_CultivationPod".to_string();
+        entry.key.def_type = "ThingDef".to_string();
+        entry.key.def_name = "AV_CultivationPod".to_string();
+        entry.node_id = Some(summary.node_id);
+        entries.push(entry);
+    }
+    let location_id = entries[0].source.location_id.clone();
+
+    let def_index = DefIndex {
+        defs: entries,
+        errors: vec![],
+        built_at_unix_ms: 0,
+        by_type: Default::default(),
+    };
+    let diagnostics = validate_test_doc_as_source(&doc, &def_index, &location_id);
+    let count = diagnostics
+        .iter()
+        .filter(|d| d.code == "validation_duplicate_source_def_name")
+        .count();
+    assert_eq!(
+        count, 2,
+        "a real duplicate within the same source file must still warn for both nodes: {:?}",
+        diagnostics
+    );
+}
+
+#[test]
+fn validation_source_self_match_normalizes_path_separators() {
+    let src = r#"<Defs><ThingDef><defName>AV_CultivationPod</defName></ThingDef></Defs>"#;
+    let doc = parse_to_document("Source\\File.xml", src);
+    let node_id = doc.def_summaries[0].node_id;
+
+    let mut indexed = indexed_test_def("Source/File.xml", IndexedSourceKind::Source);
+    indexed.def_type = "ThingDef".to_string();
+    indexed.def_name = "AV_CultivationPod".to_string();
+    indexed.key.def_type = "ThingDef".to_string();
+    indexed.key.def_name = "AV_CultivationPod".to_string();
+    indexed.node_id = Some(node_id);
+    let location_id = indexed.source.location_id.clone();
+
+    let def_index = DefIndex {
+        defs: vec![indexed],
+        errors: vec![],
+        built_at_unix_ms: 0,
+        by_type: Default::default(),
+    };
+    let diagnostics = validate_test_doc_as_source(&doc, &def_index, &location_id);
+    assert!(
+        !diagnostics
+            .iter()
+            .any(|d| d.code == "validation_duplicate_source_def_name"),
+        "backslash vs slash relative paths for the same file must still be recognized as self: {:?}",
+        diagnostics
+    );
+}
+
+#[test]
 fn validation_recipe_maker_skill_requirements_accept_keyed_value_list() {
     let src = r#"<Defs>
   <ThingDef>
