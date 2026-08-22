@@ -24,7 +24,11 @@ pub fn validate_project(
 ) -> Result<ProjectValidationResult, AppError> {
     let scan = scan_xml_files(settings, project_id).map_err(AppError::from)?;
     let root = PathBuf::from(&scan.project_root);
-    let context = ValidationContext { catalog, def_index };
+    let context = ValidationContext {
+        catalog,
+        def_index,
+        source_document_location_id: None,
+    };
     let mut parse_diagnostics = Vec::new();
     let mut validation_diagnostics = Vec::new();
 

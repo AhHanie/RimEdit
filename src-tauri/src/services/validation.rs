@@ -71,16 +71,18 @@ pub(crate) async fn validate_doc_for_project(
     let context = ValidationContext {
         catalog: &catalog_result.catalog,
         def_index: &def_index,
+        source_document_location_id: None,
     };
     doc.validation_diagnostics = validate_document(doc, &context);
     Ok(())
 }
 
-/// Validates a source location document using the project's index without
-/// overlaying the document as a project entry. This avoids false duplicate
-/// or source diagnostics that would occur if the source file were treated as
-/// a project-owned file. Like `validate_doc_for_project`, this loads the def index under
-/// `IndexLoadPolicy::Interactive` and must only be used for the interactive editor path.
+/// Validates a source location document using the full project index -- so it still surfaces
+/// cross-source conflicts -- while identifying the document itself via
+/// `source_document_location_id` so `validate_def_identity` recognizes its own indexed Defs as
+/// their own identity rather than a source-duplicate conflict with themselves. Like
+/// `validate_doc_for_project`, this loads the def index under `IndexLoadPolicy::Interactive` and
+/// must only be used for the interactive editor path.
 pub(crate) async fn validate_doc_for_source(
     app: &AppHandle,
     settings: &ProjectSettings,
@@ -108,6 +110,7 @@ pub(crate) async fn validate_doc_for_source(
     let context = ValidationContext {
         catalog: &catalog_result.catalog,
         def_index: &base_index,
+        source_document_location_id: Some(location_id),
     };
     doc.validation_diagnostics = validate_document(doc, &context);
     Ok(())
@@ -236,6 +239,7 @@ mod tests {
             &ValidationContext {
                 catalog: &catalog_with_root.catalog,
                 def_index: &def_index,
+                source_document_location_id: None,
             },
         );
         assert!(
@@ -265,6 +269,7 @@ mod tests {
             &ValidationContext {
                 catalog: &catalog_without_root.catalog,
                 def_index: &def_index,
+                source_document_location_id: None,
             },
         );
         assert!(

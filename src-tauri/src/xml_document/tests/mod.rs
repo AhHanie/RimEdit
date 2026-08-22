@@ -1,6 +1,6 @@
 pub use super::diagnostics::DiagnosticSeverity;
 pub use super::edit::{InitialElement, KeyValuePair, NameValuePair};
-pub use super::model::XmlChildShape;
+pub use super::model::{XmlChildShape, XmlDocument};
 pub use super::{
     apply_xml_edit, build_editor_view, parse_to_document, parse_xml_document,
     serialize_xml_document, validate_document, ValidationContext, ValidationDiagnostic, XmlEdit,
@@ -57,8 +57,26 @@ pub fn validate_test_xml(src: &str, def_index: &DefIndex) -> Vec<ValidationDiagn
     let context = ValidationContext {
         catalog: &catalog_result.catalog,
         def_index,
+        source_document_location_id: None,
     };
     validate_document(&doc, &context)
+}
+
+/// Like `validate_test_xml`, but validates `doc` as the active read-only source document for
+/// `location_id` -- exercising `ValidationContext::source_document_location_id` the same way
+/// `validate_doc_for_source` does.
+pub fn validate_test_doc_as_source(
+    doc: &XmlDocument,
+    def_index: &DefIndex,
+    location_id: &str,
+) -> Vec<ValidationDiagnostic> {
+    let catalog_result = build_schema_catalog(&[], None);
+    let context = ValidationContext {
+        catalog: &catalog_result.catalog,
+        def_index,
+        source_document_location_id: Some(location_id),
+    };
+    validate_document(doc, &context)
 }
 
 pub fn empty_def_index() -> DefIndex {
@@ -137,6 +155,7 @@ pub fn validate_test_xml_with_fixture(
     let context = ValidationContext {
         catalog: &catalog_result.catalog,
         def_index,
+        source_document_location_id: None,
     };
     validate_document(&doc, &context)
 }

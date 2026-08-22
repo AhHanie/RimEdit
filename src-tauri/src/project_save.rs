@@ -359,6 +359,7 @@ pub fn validate_proposed_xml_with_index(
         let context = ValidationContext {
             catalog: &catalog_result.catalog,
             def_index: &def_index,
+            source_document_location_id: None,
         };
         doc.validation_diagnostics = validate_document(&doc, &context);
     }
